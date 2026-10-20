@@ -66,7 +66,7 @@ const isBasketball=p=>p?.category==='nba'||p?.kind==='nba'||/\b(nba|basketball)\
 let catalog=(Array.isArray(window.STREETBALL_CATALOG)?window.STREETBALL_CATALOG:[]).filter(p=>!isBasketball(p));
 const ls=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const persist=(key,val)=>{try{localStorage.setItem(key,JSON.stringify(val))}catch{}};
-let state={category:'todos',club:'todos',query:'',sort:'featured',limit:PRODUCT_LIMIT,favoritesOnly:false,favorites:ls('streetball_favorites',[]),cart:ls('streetball_cart',[]),detail:null,choice:null,drawer:false,checkout:false};
+let state={checkoutReady:false,checkoutSandbox:false,checkoutShipping:null,category:'todos',club:'todos',query:'',sort:'featured',limit:PRODUCT_LIMIT,favoritesOnly:false,favorites:ls('streetball_favorites',[]),cart:ls('streetball_cart',[]),detail:null,choice:null,drawer:false,checkout:false};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);
 const localImageURL=u=>String(u||'').startsWith('/images/')?new URL(String(u).slice(1),document.baseURI).href:String(u||'');
@@ -178,7 +178,7 @@ function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('sho
 function findProduct(id){return catalog.find(p=>p.id===id)}
 function unitPrice(item){const p=findProduct(item.id);return p?(p.price+(ADDON.size[item.size]||0)+(item.patch?ADDON.patch:0)+(item.personalize?ADDON.personalization:0)):0}
 function cartSum(){return state.cart.reduce((acc,it)=>acc+unitPrice(it)*it.qty,0)}
-function cartRender(){const count=state.cart.reduce((a,it)=>a+it.qty,0);$('cartCount').textContent=count;$('drawerCount').textContent=`(${count})`;$('cartSubtotal').textContent=money(cartSum());$('checkoutSubtotal').textContent=money(cartSum());$('checkoutBtn').disabled=!count;
+function cartRender(){const count=state.cart.reduce((a,it)=>a+it.qty,0);$('cartCount').textContent=count;$('drawerCount').textContent=`(${count})`;$('cartSubtotal').textContent=money(cartSum());$('checkoutSubtotal').textContent=money(cartSum());$('checkoutShipping').textContent=state.checkoutReady?money(state.checkoutShipping):'A calcular';$('checkoutGrandTotal').textContent=state.checkoutReady?money(cartSum()+state.checkoutShipping):'A calcular';$('checkoutBtn').disabled=!count||!state.checkoutReady;
  $('cartItems').innerHTML=state.cart.map((it,index)=>{const p=findProduct(it.id);if(!p)return '';return `<div class="cart-item"><div class="cart-thumb">${imageHTML(p)}</div><div><div class="cart-title">${esc(p.title)}</div><div class="cart-sub">${esc(it.size)} ${it.personalize?` · ${esc(it.customName)} #${esc(it.customNumber)}`:''}${it.patch?' · Patch':''}</div><div class="cart-qty"><button data-qty="${index}" data-dir="-1" aria-label="Diminuir quantidade">−</button><span>${it.qty}</span><button data-qty="${index}" data-dir="1" aria-label="Aumentar quantidade">+</button></div></div><div><button class="cart-remove" data-remove="${index}" title="Remover">×</button><div class="cart-price">${money(unitPrice(it)*it.qty)}</div></div></div>`}).join('')||'<div class="empty-cart"><svg viewBox="0 0 24 24"><path d="M4 7h16l-1 14H5L4 7ZM8 8V5a4 4 0 0 1 8 0v3" stroke-width="1.2"/></svg><strong>Sua sacola está vazia</strong><p>Encontre seu próximo manto na coleção.</p></div>';
  persist('streetball_cart',state.cart)}
 function detailPrice(){const p=findProduct(state.detail);if(!p)return 0;const c=state.choice;return p.price+(ADDON.size[c.size]||0)+(c.patch?ADDON.patch:0)+(c.personalize?ADDON.personalization:0)}
@@ -187,9 +187,9 @@ function detailOpen(id){const p=findProduct(id);if(!p)return;state.detail=id;sta
 function addCart(){const c={...state.choice},p=findProduct(state.detail);if(!p||!c.size){toast('Selecione um tamanho.');return}if(c.personalize&&!c.customName.trim()&&!c.customNumber.trim()){toast('Preencha o nome ou o número para personalizar.');return}const record={id:p.id,size:c.size,patch:c.patch,personalize:c.personalize,customName:c.personalize?c.customName.trim():'',customNumber:c.personalize?c.customNumber.trim():'',qty:1};const found=state.cart.find(it=>it.id===record.id&&it.size===record.size&&it.patch===record.patch&&it.personalize===record.personalize&&it.customName===record.customName&&it.customNumber===record.customNumber);if(found)found.qty++;else state.cart.push(record);cartRender();openUI('cart');toast('Produto adicionado à sacola.');}
 function toggleFav(id){state.favorites=state.favorites.includes(id)?state.favorites.filter(x=>x!==id):[...state.favorites,id];persist('streetball_favorites',state.favorites);catalogRender();}
 function totals(){return {items:state.cart,subtotal:cartSum()}}
-function openCheckout(){if(!state.cart.length)return;openUI('checkout');$('checkoutStatus').textContent='';}
-async function submitOrder(e){e.preventDefault();const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length){status.textContent='Sua sacola está vazia.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={customer,items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};btn.disabled=true;status.textContent='Verificando integração segura...';
- try{if(location.hostname.endsWith('.github.io'))throw new Error('Esta é uma vitrine de demonstração. O checkout exige a publicação do backend de pagamentos (Cloudflare/Asaas).');const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const result=await res.json().catch(()=>null);if(!res.ok)throw new Error(result?.error||'Checkout indisponível. A loja ainda não está conectada a um provedor de pagamento.');if(!result?.paymentUrl||!/^https:\/\//.test(result.paymentUrl))throw new Error('A cobrança não retornou um endereço seguro.');status.textContent='Redirecionando ao pagamento...';window.location.assign(result.paymentUrl)}catch(err){status.textContent=err.message.includes('Failed to fetch')?'Prévia: conecte o backend e o Asaas antes de receber pedidos reais.':err.message;btn.disabled=false;}}
+function openCheckout(){if(!state.cart.length||!state.checkoutReady)return;openUI('checkout');$('checkoutStatus').textContent='';}
+async function submitOrder(e){e.preventDefault();const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length||!state.checkoutReady){status.textContent='Checkout ainda não habilitado.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={customer,paymentMethod:data.get('paymentMethod'),items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};btn.disabled=true;status.textContent='Verificando integração segura...';
+ try{if(location.hostname.endsWith('.github.io'))throw new Error('Esta é uma vitrine de demonstração. O checkout exige a publicação do backend de pagamentos (Cloudflare/Asaas).');const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const result=await res.json().catch(()=>null);if(!res.ok)throw new Error(result?.error||'Checkout indisponível. A loja ainda não está conectada a um provedor de pagamento.');if(!result?.paymentUrl||!/^https:\/\//.test(result.paymentUrl))throw new Error('A cobrança não retornou um endereço seguro.');status.textContent=result.sandbox?'Redirecionando ao ambiente de testes Asaas...':'Redirecionando para o pagamento seguro no Asaas...';window.location.assign(result.paymentUrl)}catch(err){status.textContent=err.message.includes('Failed to fetch')?'Prévia: conecte o backend e o Asaas antes de receber pedidos reais.':err.message;btn.disabled=false;}}
 // Delegate events from cards, tabs and cart controls.
 document.addEventListener('click',e=>{const brClub=e.target.closest('[data-br-club]');if(brClub){selectBrazilClub(brClub.dataset.brClub);return}const cat=e.target.closest('[data-category]');if(cat){selectCategory(cat.dataset.category);return}const foot=e.target.closest('[data-footer-category]');if(foot){selectCategory(foot.dataset.footerCategory);return}const fav=e.target.closest('[data-fav]');if(fav){toggleFav(fav.dataset.fav);return}const photo=e.target.closest('[data-photo-index]');if(photo&&state.detail){const p=findProduct(state.detail),i=Number(photo.dataset.photoIndex),u=photoSources(p||{})[i];if(trustedPhoto(u)){const main=$('detailMainPhoto');main.innerHTML=imageHTML({...p,image:u});document.querySelectorAll('.detail-photo-btn').forEach(b=>b.classList.toggle('active',b===photo));}return}const product=e.target.closest('[data-open]')||e.target.closest('.product-card');if(product){detailOpen(product.dataset.open||product.dataset.id);return}const size=e.target.closest('[data-size]');if(size&&state.choice){state.choice.size=size.dataset.size;document.querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===state.choice.size));updateDetailPrice();return}const remove=e.target.closest('[data-remove]');if(remove){state.cart.splice(+remove.dataset.remove,1);cartRender();return}const qty=e.target.closest('[data-qty]');if(qty){const it=state.cart[+qty.dataset.qty];if(!it)return;it.qty+=+qty.dataset.dir;if(it.qty<=0)state.cart.splice(+qty.dataset.qty,1);cartRender();return}});
 $('globalSearch').addEventListener('input',e=>{state.query=e.target.value.trim();state.limit=PRODUCT_LIMIT;catalogRender();if(state.query)$('colecao').scrollIntoView({behavior:'smooth',block:'start'})});
@@ -218,6 +218,36 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){openUI(null);docume
 $('year').textContent=new Date().getFullYear();
 $('heroJersey').innerHTML=jersey({primary:'#eeefee',accent:'#ce272e',kind:'fan'});
 categoryRender();catalogRender();cartRender();
+
+function checkoutIndicator(){
+ const info=$('checkoutAvailability'),banner=$('demoText'),note=$('checkoutNote'),intro=$('checkoutIntro');
+ if(state.checkoutReady){
+   info.textContent=state.checkoutSandbox?'Pagamento em ambiente de testes: nenhuma cobrança real será feita.':'Pagamento seguro por Pix ou cartão. Valor de entrega incluído no total antes do pagamento.';
+   note.textContent=state.checkoutSandbox?'AMBIENTE DE TESTES. Valores, frete e tributos devem ser conferidos antes de ativar a produção.':'O total inclui o frete configurado. Verifique se ele cobre os custos obrigatórios e tributos antes de concluir.';
+   intro.textContent=state.checkoutSandbox?'Teste de cobrança Asaas: não utilize dados financeiros reais.':'Preencha seus dados. Você será direcionado à página segura de cobrança do Asaas.';
+   banner.textContent=state.checkoutSandbox?'LOJA EM TESTES · nenhum pagamento real será cobrado':'LOJA · pagamento seguro via Asaas';
+ }else{
+   info.textContent='Checkout não liberado. O pagamento será disponibilizado após a configuração e os testes do backend.';
+   note.textContent='Nenhuma cobrança será gerada nesta prévia.';
+   intro.textContent='A finalização dos pedidos ainda não está habilitada.';
+   banner.textContent='PRÉVIA · pagamentos ainda não habilitados';
+ }
+ cartRender();
+}
+async function loadCheckoutConfig(){
+ if(location.hostname.endsWith('.github.io')){checkoutIndicator();return;}
+ try{
+   const response=await fetch('/api/checkout/config',{cache:'no-store'});
+   if(!response.ok)throw Error('Checkout não disponível');
+   const info=await response.json();
+   state.checkoutReady=info.enabled===true&&Number.isFinite(Number(info.shipping));
+   state.checkoutSandbox=info.sandbox===true;
+   state.checkoutShipping=state.checkoutReady?Number(info.shipping):null;
+ }catch(e){state.checkoutReady=false;state.checkoutShipping=null;}
+ checkoutIndicator();
+}
+
+loadCheckoutConfig();
 // If published with catalog.json generated by importer, use its full validated catalog.
 if(/^https?:$/.test(location.protocol)){fetch('catalog.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catálogo indisponível');return r.json()}).then(data=>{if(Array.isArray(data)&&data.length){catalog=prepareCatalog(data);state.cart=state.cart.filter(it=>findProduct(it.id));catalogRender();cartRender()}}).catch(err=>{$('catalogSubtitle').textContent='Falha ao carregar o catálogo. Atualize a página para tentar novamente.';console.error('Erro ao carregar catálogo:',err);});}
 })();
