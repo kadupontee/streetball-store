@@ -5,6 +5,7 @@ compatibility_date = "2026-07-01"
 [assets]
 directory = "./public"
 binding = "ASSETS"
+run_worker_first = ["/api/*"]
 
 # Configure o identificador real retornado por 'npx wrangler d1 create streetball-orders'
 [[d1_databases]]
