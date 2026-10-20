@@ -17,6 +17,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from PIL import Image, ImageOps, UnidentifiedImageError
+from catalog_utils import is_nba_product
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = ROOT / "public"
@@ -117,7 +118,7 @@ def run(limit: int, workers: int):
     eligible = []
     for p in products:
         pid = str(p.get("id") or "")
-        if not pid.startswith("YUP-") or safe_cached(p):
+        if not pid.startswith("YUP-") or safe_cached(p) or is_nba_product(p):
             continue
         # Evite rebaixar produtos modificados manualmente.
         if str(p.get("image") or "").startswith("/images/"):
