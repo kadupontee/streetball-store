@@ -1,0 +1,28 @@
+name: Testar checkout e automação
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - 'public/app.js'
+      - 'public/index.html'
+      - 'package.json'
+      - 'tests/**'
+      - '.github/workflows/test-checkout.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar integrações sem pagamentos reais
+        run: npm test
