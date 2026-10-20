@@ -1,11 +1,12 @@
 (() => {
 'use strict';
 const $=id=>document.getElementById(id);
-const CATS=[['todos','Todos'],['brasileirao','Brasileirão'],['europa','Europa'],['selecoes','Seleções'],['retro','Retrô'],['player','Jogador'],['infantil','Infantil'],['feminino','Feminino'],['nba','NBA'],['treino','Treino'],['acessorios','Acessórios']];
+const CATS=[['todos','Todos'],['brasileirao','Brasileirão'],['europa','Europa'],['selecoes','Seleções'],['retro','Retrô'],['player','Jogador'],['infantil','Infantil'],['feminino','Feminino'],['treino','Treino'],['acessorios','Acessórios']];
 const TILES=[['brasileirao','BRASILEIRÃO','Clubes nacionais','#fcfcfc','#cf292c'],['europa','EUROPA','Grandes ligas','#152f6f','#cf3b4f'],['selecoes','SELEÇÕES','Futebol mundial','#ead039','#136849'],['retro','RETRÔ','Lendas eternas','#17549d','#f8e4c6'],['player','JOGADOR','Versão de campo','#eee','#1b2b4a'],['infantil','INFANTIL','Pequenos craques','#c42c3c','#1b1d1c']];
 const ADDON={personalization:20,patch:8,size:{XXL:5,'3XL':10,'4XL':15}};
 const PRODUCT_LIMIT=12;
-let catalog=Array.isArray(window.STREETBALL_CATALOG)?window.STREETBALL_CATALOG:[];
+const isBasketball=p=>p?.category==='nba'||p?.kind==='nba'||/\b(nba|basketball)\b/i.test(String(p?.title||''));
+let catalog=(Array.isArray(window.STREETBALL_CATALOG)?window.STREETBALL_CATALOG:[]).filter(p=>!isBasketball(p));
 const ls=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const persist=(key,val)=>{try{localStorage.setItem(key,JSON.stringify(val))}catch{}};
 let state={category:'todos',query:'',sort:'featured',limit:PRODUCT_LIMIT,favoritesOnly:false,favorites:ls('streetball_favorites',[]),cart:ls('streetball_cart',[]),detail:null,choice:null,drawer:false,checkout:false};
@@ -23,8 +24,9 @@ if(isShort)return `<svg class="jersey-drawing ${extra}" viewBox="0 0 280 300" ro
 return `<svg class="jersey-drawing ${extra}" viewBox="0 0 310 330" role="img" aria-label="Ilustração de produto; foto a confirmar"><defs><filter id="${id}" x="-20%" y="-20%" width="150%" height="170%"><feDropShadow dx="0" dy="11" stdDeviation="7" flood-opacity=".19"/></filter><linearGradient id="shine-${id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".28"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".19"/></linearGradient><clipPath id="shirt-${id}"><path d="M105 54q50 36 100 0l52 26 35 74-50 23-21-36v143H89V141l-21 36-50-23 35-74Z"/></clipPath></defs><path filter="url(#${id})" d="M105 54q50 36 100 0l52 26 35 74-50 23-21-36v143H89V141l-21 36-50-23 35-74Z" fill="${a}" stroke="${b}" stroke-opacity=".36" stroke-width="2"/><g clip-path="url(#shirt-${id})">${(isNBA?`<path d="M122 47h66v31q-33 18-66 0Z" fill="${b}"/>`:`<path d="M89 80h132v200H89Z" fill="${b}" opacity=".13"/><path d="M106 81h19v208h-19zm40 0h19v208h-19zm40 0h19v208h-19z" fill="${b}" opacity=".3"/>`)}<rect x="18" y="50" width="274" height="234" fill="url(#shine-${id})"/></g><path d="M125 65q30 26 60 0l-7 21q-23 15-46 0Z" fill="${b}"/><path d="M154 104v173" stroke="${b}" stroke-opacity=".17"/><circle cx="189" cy="119" r="10" fill="${b}" stroke="#fff" stroke-opacity=".6" stroke-width="2"/><path d="M115 115h24" stroke="${b}" stroke-width="7" stroke-linecap="round"/>${isNBA?`<text x="155" y="191" font-size="50" font-family="Arial" text-anchor="middle" font-weight="900" fill="${b}">30</text>`:''}</svg>`;
 }
 function imageHTML(p,extra=''){
- if(imgValid(p.image))return `<span class="product-asset">${jersey(p,extra)}<img class="product-photo" src="${esc(localImageURL(p.image))}" alt="${esc(p.title)} — imagem de referência, conferir com fornecedor" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"></span>`;
- return jersey(p,extra);
+ // Nunca renderizar a ilustração antiga atrás das fotos reais.
+ if(imgValid(p.image))return `<span class="product-asset"><img class="product-photo" src="${esc(localImageURL(p.image))}" alt="${esc(p.title)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.product-asset').classList.add('missing-photo');this.remove()"></span>`;
+ return '<span class="product-no-photo">FOTO INDISPONÍVEL</span>';
 }
 const matchCategory=(p,c)=>c==='todos'||p.category===c||(c==='player'&&String(p.kind).startsWith('player_'));
 function filtered(){
@@ -49,7 +51,7 @@ function catalogRender(){
  $('activeFilters').innerHTML=CATS.map(([id,label])=>`<button class="filter-tag ${id===state.category?'active':''}" data-category="${id}">${label}</button>`).join('');
  document.querySelectorAll('[data-category]').forEach(b=>b.classList.toggle('active',b.dataset.category===state.category));
 }
-function categoryLabel(p){const labels={brasileirao:'Clubes Brasileiros',europa:'Clubes Europeus',selecoes:'Seleções',retro:'Coleção Retrô',nba:'Basquete',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios'};return labels[p.category]||p.category;}
+function categoryLabel(p){const labels={brasileirao:'Clubes Brasileiros',europa:'Clubes Europeus',selecoes:'Seleções',retro:'Coleção Retrô',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios'};return labels[p.category]||p.category;}
 function categoryRender(){$('categoryGrid').innerHTML=TILES.map(([id,label,sub,c,a])=>`<button class="category-tile" data-category="${id}"><span class="category-shirt">${jersey({primary:c,accent:a,kind:'fan'})}</span><strong>${label}</strong><small>${sub}</small></button>`).join('');}
 function selectCategory(cat){state.category=cat;state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
 function openUI(kind){state.drawer=kind==='cart';state.checkout=kind==='checkout';$('cartDrawer').classList.toggle('open',state.drawer);$('checkoutModal').classList.toggle('open',state.checkout);$('productModal').classList.toggle('open',kind==='product');$('overlay').classList.toggle('visible',!!kind);document.body.classList.toggle('lock',!!kind);$('cartDrawer').setAttribute('aria-hidden',String(!state.drawer));}
