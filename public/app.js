@@ -56,6 +56,47 @@ function filtered(){
  if(state.sort==='az')ps.sort((a,b)=>a.title.localeCompare(b.title,'pt-BR'));
  return ps;
 }
+
+// O nome original do fornecedor e mantido em supplierTitle.
+const TEAM_NAMES={
+ 'ivory coast':'Costa do Marfim','united states':'Estados Unidos','south korea':'Coreia do Sul','saudi arabia':'Arábia Saudita',
+ 'real madrid':'Real Madrid','atletico madrid':'Atlético de Madrid','vasco da gama':'Vasco da Gama','sao paulo':'São Paulo',
+ 'bayern munich':'Bayern de Munique','borussia dortmund':'Borussia Dortmund','dortmund':'Borussia Dortmund',
+ 'marseille':'Olympique de Marseille','braga':'SC Braga','brazil':'Brasil','spain':'Espanha','germany':'Alemanha',
+ 'england':'Inglaterra','france':'França','netherlands':'Holanda','italy':'Itália','japan':'Japão','korea':'Coreia',
+ 'uruguay':'Uruguai','morocco':'Marrocos','tunisia':'Tunísia','algeria':'Argélia','egypt':'Egito','switzerland':'Suíça',
+ 'sweden':'Suécia','denmark':'Dinamarca','norway':'Noruega','finland':'Finlândia','turkey':'Turquia','mexico':'México',
+ 'colombia':'Colômbia','australia':'Austrália','croatia':'Croácia','serbia':'Sérvia','poland':'Polônia','greece':'Grécia',
+ 'usa':'Estados Unidos','scotland':'Escócia','ireland':'Irlanda','wales':'País de Gales','belgium':'Bélgica',
+ 'austria':'Áustria','almeria':'Almería','gremio':'Grêmio','psg':'Paris Saint-Germain'
+};
+const REPLACEMENTS=Object.entries(TEAM_NAMES).sort((a,b)=>b[0].length-a[0].length).map(([name,pt])=>[new RegExp('\\b'+name+'\\b','gi'),pt]);
+const KEEP_UPPER=new Set(['sc','fc','ac','pec','rb','afc','psg','psv','usa','cf','cd','ss','as']);
+function niceCase(s){return s.split(/\s+/).map((word,i)=>{let l=word.toLocaleLowerCase('pt-BR');return KEEP_UPPER.has(l)?l.toUpperCase():i&&['de','do','da','dos','das','e'].includes(l)?l:l.replace(/^\p{L}/u,v=>v.toLocaleUpperCase('pt-BR'));}).join(' ')}
+function displayTitle(p){
+ if(!String(p.id||'').startsWith('YUP-'))return p.title;
+ let t=String(p.supplierTitle||p.title||'').replace(/[\u4e00-\u9fff]/g,' ').replace(/[‐‑–—]/g,'-').replace(/\s+/g,' ').trim();
+ const kids=/\b16\s*[-~]\s*(28|30)\b|\b(kids?|children|child|youth)\b/i.test(t)||p.kind==='kids';
+ t=t.replace(/\b16\s*[-~]\s*(28|30)\b/g,' ').replace(/^(\d{2})(\d{2})(?=[A-Za-zÀ-ÿ])/,'$1-$2 ');
+ let season='',m=t.match(/\b(20\d{2})\s*[-_/]\s*(\d{2})\b/);
+ if(m)season=m[1]+'/'+m[2];else{m=t.match(/\b([0-9]{2})\s*[-_/]\s*(\d{2})\b/);if(m)season=(Number(m[1])>=80?'19':'20')+m[1]+'/'+m[2];}
+ if(m&&season)t=t.replace(m[0],' ');
+ let type='Camisa';
+ const types=[[/trench\s*coat|long\s*coat|winter\s*coat/i,'Casaco longo'],[/tracksuit|track\s*suit|training\s*suit/i,'Agasalho'],[/windbreaker|wind\s*breaker/i,'Jaqueta corta-vento'],[/\bpolo\b/i,'Camisa polo'],[/\bshorts?\b/i,'Calção'],[/\bsocks?\b|stockings?/i,'Meião'],[/\bpre\s*-?\s*match\s*kit/i,'Kit pré-jogo'],[/\btraining\s*(?:shirt|jersey)\b/i,'Camisa de treino'],[/\bhalf\s*pull\b/i,'Blusa de treino'],[/\bvest\b/i,'Regata'],[/\bcultural\s*shirt\b/i,'Camisa cultural'],[/\bkit\b|\bset\b/i,'Conjunto']];
+ for(const [re,v] of types)if(re.test(t)){type=v;t=t.replace(new RegExp(re.source,'gi'),' ');break}
+ const tags=[],patterns=[[/\bgoal\s*keeper\b|\bgoalkeeper\b|\bgk\b/i,'Goleiro'],[/\b2\s*away\b/i,'Segunda reserva'],[/\bthird\b|\b3rd\b/i,'Terceira'],[/\bfourth\b|\b4th\b/i,'Quarta'],[/\baway\b/i,'Reserva'],[/\bhome\b/i,'Titular'],[/\bretro\b|\bvintage\b|\bclassic\b/i,'Retrô'],[/\bspecial\s*edition\b/i,'Edição especial'],[/\banniversary\b/i,'Comemorativa'],[/\bpre\s*-?\s*match\b/i,'Pré-jogo'],[/\blong\s*-?\s*sleeves?\b/i,'Manga longa'],[/\bplayer\s*version\b|\bplayers?\s*edition\b|\bplayer\b/i,'Versão jogador'],[/\bfan\s*version\b|\bfan\b/i,'Versão torcedor'],[/\bchildren\b|\bchild\b|\bkids?\b|\byouth\b/i,'Infantil'],[/\bwomen\b|\bwoman\b|\bfemale\b/i,'Feminina']];
+ for(const [re,v] of patterns)if(re.test(t)){tags.push(v);t=t.replace(new RegExp(re.source,'gi'),' ')}
+ if(kids)tags.push('Infantil');
+ if(p.kind==='female')tags.push('Feminina');
+ if(String(p.kind).startsWith('player_'))tags.push('Versão jogador');
+ t=t.replace(/\b(?:XXS|XS|S|M|L|XL|XXL|[2-6]XL)\s*[-~]\s*(?:XXS|XS|S|M|L|XL|XXL|[2-6]XL|[2-6]X)\b/gi,' ').replace(/\b(?:XXL|[2-6]XL)\b(?=\s*$)/gi,' ').replace(/\b(?:jersey|shirt|soccer|football|uniform)\b/gi,' ').replace(/_+/g,' ').replace(/\s+/g,' ').trim();
+ for(const [re,pt] of REPLACEMENTS)t=t.replace(re,pt);
+ t=niceCase(t.replace(/^[\s./-]+|[\s./-]+$/g,''));
+ if(!t)t='Modelo '+String(p.id).replace('YUP-','');
+ return (t+(season?' '+season:'')+' — '+type+(tags.length?' · '+[...new Set(tags)].join(' · '):'')).slice(0,170);
+}
+function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>({...p,supplierTitle:p.supplierTitle||p.title,title:displayTitle(p)}));}
+
 function catalogRender(){
  const ps=filtered();const visible=ps.slice(0,state.limit);$('catalogSubtitle').textContent=state.favoritesOnly?'Modelos que você salvou.':state.query?`Resultados da busca por “${state.query}”.`:'Modelos com fotografias cadastradas no catálogo do fornecedor.';
  $('productsGrid').innerHTML=visible.map(p=>`<article class="product-card" data-id="${esc(p.id)}"><div class="product-image"><span class="label-chip ${p.badge==='NOVO'||p.badge==='COPA 2026'?'highlight':''}">${esc(p.badge||'STREETBALL')}</span><button class="fav-btn ${state.favorites.includes(p.id)?'active':''}" data-fav="${esc(p.id)}" aria-label="Adicionar aos favoritos"><svg viewBox="0 0 24 24"><path d="M20 4c-2.3-2-5.3-1.2-8 1.6C9.3 2.8 6.4 2 4 4c-3.1 3-2.2 7.2 0 9.4L12 21l8-7.6c2.2-2.2 3.1-6.4 0-9.4Z"/></svg></button>${imageHTML(p)}<button class="quick-btn" data-open="${esc(p.id)}">ESCOLHER OPÇÕES ↗</button></div><div class="product-meta"><div class="product-label">${esc(categoryLabel(p))}</div><h3 class="product-title">${esc(p.title)}</h3><div class="product-price"><small>A partir de</small>${money(p.price)}</div><div class="product-price-note">Tamanhos e personalização disponíveis</div></div></article>`).join('')||'<div class="empty-cart">Nenhum modelo encontrado. Experimente outra pesquisa ou categoria.</div>';
@@ -113,5 +154,5 @@ $('year').textContent=new Date().getFullYear();
 $('heroJersey').innerHTML=jersey({primary:'#eeefee',accent:'#ce272e',kind:'fan'});
 categoryRender();catalogRender();cartRender();
 // If published with catalog.json generated by importer, use its full validated catalog.
-if(/^https?:$/.test(location.protocol)){fetch('catalog.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catálogo indisponível');return r.json()}).then(data=>{if(Array.isArray(data)&&data.length){catalog=data.filter(p=>p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p));state.cart=state.cart.filter(it=>findProduct(it.id));catalogRender();cartRender()}}).catch(err=>{$('catalogSubtitle').textContent='Falha ao carregar o catálogo. Atualize a página para tentar novamente.';console.error('Erro ao carregar catálogo:',err);});}
+if(/^https?:$/.test(location.protocol)){fetch('catalog.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catálogo indisponível');return r.json()}).then(data=>{if(Array.isArray(data)&&data.length){catalog=prepareCatalog(data);state.cart=state.cart.filter(it=>findProduct(it.id));catalogRender();cartRender()}}).catch(err=>{$('catalogSubtitle').textContent='Falha ao carregar o catálogo. Atualize a página para tentar novamente.';console.error('Erro ao carregar catálogo:',err);});}
 })();
