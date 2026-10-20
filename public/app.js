@@ -3,13 +3,70 @@
 const $=id=>document.getElementById(id);
 const CATS=[['todos','Todos'],['brasileirao','Brasileirão'],['europa','Europa'],['selecoes','Seleções'],['retro','Retrô'],['player','Jogador'],['infantil','Infantil'],['feminino','Feminino'],['treino','Treino'],['acessorios','Acessórios'],['outras','Outros produtos']];
 const TILES=[['brasileirao','BRASILEIRÃO','Clubes nacionais','#fcfcfc','#cf292c'],['europa','EUROPA','Grandes ligas','#152f6f','#cf3b4f'],['selecoes','SELEÇÕES','Futebol mundial','#ead039','#136849'],['retro','RETRÔ','Lendas eternas','#17549d','#f8e4c6'],['player','JOGADOR','Versão de campo','#eee','#1b2b4a'],['infantil','INFANTIL','Pequenos craques','#c42c3c','#1b1d1c']];
+
+// Subcategorias da Série A 2026 (lista oficial da CBF).
+const BR_CLUBS=[
+ ['athletico-pr','Athletico-PR',['athletico paranaense','athletico pr','athletico']],
+ ['atletico-mg','Atlético-MG',['atletico mineiro','atletico mg','atletico m g']],
+ ['bahia','Bahia',['bahia']], ['botafogo','Botafogo',['botafogo']],
+ ['chapecoense','Chapecoense',['chapecoense']], ['corinthians','Corinthians',['corinthians','corinthian']],
+ ['coritiba','Coritiba',['coritiba']], ['cruzeiro','Cruzeiro',['cruzeiro']],
+ ['flamengo','Flamengo',['flamengo']], ['fluminense','Fluminense',['fluminense']],
+ ['gremio','Grêmio',['gremio']], ['internacional','Internacional',['internacional porto alegre','internacional rs','internacional']],
+ ['mirassol','Mirassol',['mirassol']], ['palmeiras','Palmeiras',['palmeiras']],
+ ['bragantino','Red Bull Bragantino',['red bull bragantino','rb bragantino','bragantino']],
+ ['remo','Remo',['clube do remo','clube remo','remo']], ['santos','Santos',['santos']],
+ ['sao-paulo','São Paulo',['sao paulo','saopaulo']], ['vasco','Vasco da Gama',['vasco da gama','vasco']],
+ ['vitoria','Vitória',['vitoria']]
+];
+const clubNormalized=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+function findBrazilClub(p){
+ if(p.category==='europa'||p.category==='selecoes')return '';
+ const name=' '+clubNormalized(p.supplierTitle||p.title)+' ';
+ for(const [slug,,aliases] of BR_CLUBS){
+   if(!aliases.some(term=>name.includes(' '+term+' ')))continue;
+   if(slug==='santos'&&/\bsantos laguna\b/.test(name))continue;
+   if(slug==='botafogo'&&/\bbotafogo (sp|pb)\b/.test(name))continue;
+   if(slug==='vitoria'&&/\bvitoria (guimaraes|setubal)\b/.test(name))continue;
+   if(slug==='cruzeiro'&&/\bcruzeiro (rs|do sul)\b/.test(name))continue;
+   return slug;
+ }
+ return '';
+}
+const clubFor=p=>p.brazilClub===undefined?findBrazilClub(p):p.brazilClub;
+const isBrazilProduct=p=>p.category==='brasileirao'||!!clubFor(p);
+function renderBrazilClubNavigation(){
+ const section=$('brasileiraoClubs');
+ if(!section)return;
+ section.hidden=state.category!=='brasileirao'||state.favoritesOnly;
+ if(section.hidden)return;
+ const totals=Object.fromEntries(BR_CLUBS.map(([slug])=>[slug,0]));
+ let all=0,other=0;
+ for(const p of catalog){
+   if(!hasVerifiedPhoto(p)||!isBrazilProduct(p))continue;
+   all++;
+   const club=clubFor(p);
+   if(club&&Object.hasOwn(totals,club))totals[club]++;
+   else other++;
+ }
+ const current=state.club;
+ const opts=[['todos','Todos os clubes',all],...BR_CLUBS.map(([slug,title])=>[slug,title,totals[slug]]),['outros','Outros clubes brasileiros',other]];
+ $('brasileiraoClubGrid').innerHTML=opts.map(([slug,title,n])=>'<button type="button" class="br-club '+(current===slug?'active':'')+'" data-br-club="'+esc(slug)+'" aria-pressed="'+(current===slug)+'" aria-label="'+esc(title)+', '+n+' modelos"><span class="br-club-name">'+esc(title)+'</span><span class="br-club-count">'+n+' '+(n===1?'modelo':'modelos')+'</span></button>').join('');
+}
+function selectBrazilClub(slug){
+ if(!BR_CLUBS.some(([id])=>id===slug)&&slug!=='todos'&&slug!=='outros')return;
+ state.category='brasileirao';state.club=slug;state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;state.query='';$('globalSearch').value='';
+ catalogRender();
+ $('productsGrid').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 const ADDON={personalization:20,patch:8,size:{XXL:5,'3XL':10,'4XL':15}};
 const PRODUCT_LIMIT=36;
 const isBasketball=p=>p?.category==='nba'||p?.kind==='nba'||/\b(nba|basketball)\b/i.test(String(p?.title||''));
 let catalog=(Array.isArray(window.STREETBALL_CATALOG)?window.STREETBALL_CATALOG:[]).filter(p=>!isBasketball(p));
 const ls=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const persist=(key,val)=>{try{localStorage.setItem(key,JSON.stringify(val))}catch{}};
-let state={category:'todos',query:'',sort:'featured',limit:PRODUCT_LIMIT,favoritesOnly:false,favorites:ls('streetball_favorites',[]),cart:ls('streetball_cart',[]),detail:null,choice:null,drawer:false,checkout:false};
+let state={category:'todos',club:'todos',query:'',sort:'featured',limit:PRODUCT_LIMIT,favoritesOnly:false,favorites:ls('streetball_favorites',[]),cart:ls('streetball_cart',[]),detail:null,choice:null,drawer:false,checkout:false};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);
 const localImageURL=u=>String(u||'').startsWith('/images/')?new URL(String(u).slice(1),document.baseURI).href:String(u||'');
@@ -41,9 +98,12 @@ document.addEventListener('error', e=>{
  const holder=img.closest('.product-asset');
  if(holder){holder.classList.add('missing-photo');holder.innerHTML='<span class="product-no-photo">FOTO TEMPORARIAMENTE INDISPONÍVEL</span>';}
 },true);
-const matchCategory=(p,c)=>c==='todos'||p.category===c||(c==='player'&&String(p.kind).startsWith('player_'));
+const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):p.category===c)||(c==='player'&&String(p.kind).startsWith('player_'));
 function filtered(){
  let ps=catalog.filter(p=>hasVerifiedPhoto(p)&&matchCategory(p,state.category));
+ if(state.category==='brasileirao'&&state.club!=='todos'){
+   ps=ps.filter(p=>state.club==='outros'?!clubFor(p):clubFor(p)===state.club);
+ }
  if(state.query)ps=ps.filter(p=>[p.title,p.category,p.kind].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(state.query.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()));
  if(state.favoritesOnly)ps=ps.filter(p=>state.favorites.includes(p.id));
  // Fotos efetivamente guardadas na loja primeiro; exemplos sem imagem por último.
@@ -95,19 +155,24 @@ function displayTitle(p){
  if(!t)t='Modelo '+String(p.id).replace('YUP-','');
  return (t+(season?' '+season:'')+' — '+type+(tags.length?' · '+[...new Set(tags)].join(' · '):'')).slice(0,170);
 }
-function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>({...p,supplierTitle:p.supplierTitle||p.title,title:displayTitle(p)}));}
+function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>{const clean={...p,supplierTitle:p.supplierTitle||p.title,title:displayTitle(p)};clean.brazilClub=findBrazilClub(clean);return clean;});}
 
 function catalogRender(){
  const ps=filtered();const visible=ps.slice(0,state.limit);$('catalogSubtitle').textContent=state.favoritesOnly?'Modelos que você salvou.':state.query?`Resultados da busca por “${state.query}”.`:'Modelos com fotografias cadastradas no catálogo do fornecedor.';
+ if(state.category==='brasileirao'){
+ const club=BR_CLUBS.find(([id])=>id===state.club);
+ $('catalogSubtitle').textContent=state.club==='todos'?'Escolha seu clube e explore as camisas dos times brasileiros.':state.club==='outros'?'Modelos dos demais clubes brasileiros.':club?'Camisas, versões de jogador, retrôs e modelos infantis do '+club[1]+'.':'Escolha seu clube.';
+ }
  $('productsGrid').innerHTML=visible.map(p=>`<article class="product-card" data-id="${esc(p.id)}"><div class="product-image"><span class="label-chip ${p.badge==='NOVO'||p.badge==='COPA 2026'?'highlight':''}">${esc(p.badge||'STREETBALL')}</span><button class="fav-btn ${state.favorites.includes(p.id)?'active':''}" data-fav="${esc(p.id)}" aria-label="Adicionar aos favoritos"><svg viewBox="0 0 24 24"><path d="M20 4c-2.3-2-5.3-1.2-8 1.6C9.3 2.8 6.4 2 4 4c-3.1 3-2.2 7.2 0 9.4L12 21l8-7.6c2.2-2.2 3.1-6.4 0-9.4Z"/></svg></button>${imageHTML(p)}<button class="quick-btn" data-open="${esc(p.id)}">ESCOLHER OPÇÕES ↗</button></div><div class="product-meta"><div class="product-label">${esc(categoryLabel(p))}</div><h3 class="product-title">${esc(p.title)}</h3><div class="product-price"><small>A partir de</small>${money(p.price)}</div><div class="product-price-note">Tamanhos e personalização disponíveis</div></div></article>`).join('')||'<div class="empty-cart">Nenhum modelo encontrado. Experimente outra pesquisa ou categoria.</div>';
  $('catalogTotal').textContent=`Exibindo ${visible.length} de ${ps.length} modelos · ${catalog.filter(hasVerifiedPhoto).length} produtos com foto cadastrada`;
  $('loadMore').classList.toggle('hide',visible.length>=ps.length);
+ renderBrazilClubNavigation();
  $('activeFilters').innerHTML=CATS.map(([id,label])=>`<button class="filter-tag ${id===state.category?'active':''}" data-category="${id}">${label}</button>`).join('');
  document.querySelectorAll('[data-category]').forEach(b=>b.classList.toggle('active',b.dataset.category===state.category));
 }
 function categoryLabel(p){const labels={brasileirao:'Clubes Brasileiros',europa:'Clubes Europeus',selecoes:'Seleções',retro:'Coleção Retrô',outras:'Outros produtos',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios'};return labels[p.category]||p.category;}
 function categoryRender(){$('categoryGrid').innerHTML=TILES.map(([id,label,sub,c,a])=>`<button class="category-tile" data-category="${id}"><span class="category-shirt">${jersey({primary:c,accent:a,kind:'fan'})}</span><strong>${label}</strong><small>${sub}</small></button>`).join('');}
-function selectCategory(cat){state.category=cat;state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
+function selectCategory(cat){state.category=cat;state.club='todos';state.query='';$('globalSearch').value='';state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
 function openUI(kind){state.drawer=kind==='cart';state.checkout=kind==='checkout';$('cartDrawer').classList.toggle('open',state.drawer);$('checkoutModal').classList.toggle('open',state.checkout);$('productModal').classList.toggle('open',kind==='product');$('overlay').classList.toggle('visible',!!kind);document.body.classList.toggle('lock',!!kind);$('cartDrawer').setAttribute('aria-hidden',String(!state.drawer));}
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),3100);}
 function findProduct(id){return catalog.find(p=>p.id===id)}
@@ -126,7 +191,7 @@ function openCheckout(){if(!state.cart.length)return;openUI('checkout');$('check
 async function submitOrder(e){e.preventDefault();const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length){status.textContent='Sua sacola está vazia.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={customer,items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};btn.disabled=true;status.textContent='Verificando integração segura...';
  try{if(location.hostname.endsWith('.github.io'))throw new Error('Esta é uma vitrine de demonstração. O checkout exige a publicação do backend de pagamentos (Cloudflare/Asaas).');const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const result=await res.json().catch(()=>null);if(!res.ok)throw new Error(result?.error||'Checkout indisponível. A loja ainda não está conectada a um provedor de pagamento.');if(!result?.paymentUrl||!/^https:\/\//.test(result.paymentUrl))throw new Error('A cobrança não retornou um endereço seguro.');status.textContent='Redirecionando ao pagamento...';window.location.assign(result.paymentUrl)}catch(err){status.textContent=err.message.includes('Failed to fetch')?'Prévia: conecte o backend e o Asaas antes de receber pedidos reais.':err.message;btn.disabled=false;}}
 // Delegate events from cards, tabs and cart controls.
-document.addEventListener('click',e=>{const cat=e.target.closest('[data-category]');if(cat){selectCategory(cat.dataset.category);return}const foot=e.target.closest('[data-footer-category]');if(foot){selectCategory(foot.dataset.footerCategory);return}const fav=e.target.closest('[data-fav]');if(fav){toggleFav(fav.dataset.fav);return}const photo=e.target.closest('[data-photo-index]');if(photo&&state.detail){const p=findProduct(state.detail),i=Number(photo.dataset.photoIndex),u=photoSources(p||{})[i];if(trustedPhoto(u)){const main=$('detailMainPhoto');main.innerHTML=imageHTML({...p,image:u});document.querySelectorAll('.detail-photo-btn').forEach(b=>b.classList.toggle('active',b===photo));}return}const product=e.target.closest('[data-open]')||e.target.closest('.product-card');if(product){detailOpen(product.dataset.open||product.dataset.id);return}const size=e.target.closest('[data-size]');if(size&&state.choice){state.choice.size=size.dataset.size;document.querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===state.choice.size));updateDetailPrice();return}const remove=e.target.closest('[data-remove]');if(remove){state.cart.splice(+remove.dataset.remove,1);cartRender();return}const qty=e.target.closest('[data-qty]');if(qty){const it=state.cart[+qty.dataset.qty];if(!it)return;it.qty+=+qty.dataset.dir;if(it.qty<=0)state.cart.splice(+qty.dataset.qty,1);cartRender();return}});
+document.addEventListener('click',e=>{const brClub=e.target.closest('[data-br-club]');if(brClub){selectBrazilClub(brClub.dataset.brClub);return}const cat=e.target.closest('[data-category]');if(cat){selectCategory(cat.dataset.category);return}const foot=e.target.closest('[data-footer-category]');if(foot){selectCategory(foot.dataset.footerCategory);return}const fav=e.target.closest('[data-fav]');if(fav){toggleFav(fav.dataset.fav);return}const photo=e.target.closest('[data-photo-index]');if(photo&&state.detail){const p=findProduct(state.detail),i=Number(photo.dataset.photoIndex),u=photoSources(p||{})[i];if(trustedPhoto(u)){const main=$('detailMainPhoto');main.innerHTML=imageHTML({...p,image:u});document.querySelectorAll('.detail-photo-btn').forEach(b=>b.classList.toggle('active',b===photo));}return}const product=e.target.closest('[data-open]')||e.target.closest('.product-card');if(product){detailOpen(product.dataset.open||product.dataset.id);return}const size=e.target.closest('[data-size]');if(size&&state.choice){state.choice.size=size.dataset.size;document.querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===state.choice.size));updateDetailPrice();return}const remove=e.target.closest('[data-remove]');if(remove){state.cart.splice(+remove.dataset.remove,1);cartRender();return}const qty=e.target.closest('[data-qty]');if(qty){const it=state.cart[+qty.dataset.qty];if(!it)return;it.qty+=+qty.dataset.dir;if(it.qty<=0)state.cart.splice(+qty.dataset.qty,1);cartRender();return}});
 $('globalSearch').addEventListener('input',e=>{state.query=e.target.value.trim();state.limit=PRODUCT_LIMIT;catalogRender();if(state.query)$('colecao').scrollIntoView({behavior:'smooth',block:'start'})});
 $('sortSelect').addEventListener('change',e=>{state.sort=e.target.value;catalogRender()});
 $('loadMore').addEventListener('click',()=>{state.limit+=PRODUCT_LIMIT;catalogRender()});
