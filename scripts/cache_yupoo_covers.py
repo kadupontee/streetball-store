@@ -120,8 +120,9 @@ def run(limit: int, workers: int):
         pid = str(p.get("id") or "")
         if not pid.startswith("YUP-") or safe_cached(p) or is_nba_product(p):
             continue
-        # Evite rebaixar produtos modificados manualmente.
-        if str(p.get("image") or "").startswith("/images/"):
+        # Arquivo local apontado mas ausente: permitir recuperar a capa pelo URL original.
+        # Nao substitui imagens manuais que ainda existem no armazenamento.
+        if str(p.get("image") or "").startswith("/images/") and not str(p.get("id", "")).startswith("YUP-"):
             continue
         if not any(source_urls(p)):
             continue
