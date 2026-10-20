@@ -1186,14 +1186,15 @@
     "category": "treino",
     "kind": "long",
     "price": 189.9,
-    "image": "https://photo.yupoo.com/james66jersey/374ff2428f/medium.jpeg",
+    "image": "/images/yupoo/258349976.jpg",
     "images": [
+      "/images/yupoo/258349976.jpg",
       "https://photo.yupoo.com/james66jersey/374ff2428f/medium.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1214,14 +1215,15 @@
     "category": "selecoes",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/0305e7b8f0/small.jpeg",
+    "image": "/images/yupoo/258349972.jpg",
     "images": [
+      "/images/yupoo/258349972.jpg",
       "https://photo.yupoo.com/james66jersey/0305e7b8f0/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1242,14 +1244,15 @@
     "category": "treino",
     "kind": "set",
     "price": 299.9,
-    "image": "https://photo.yupoo.com/james66jersey/a15cb1b904/small.png",
+    "image": "/images/yupoo/258349966.jpg",
     "images": [
+      "/images/yupoo/258349966.jpg",
       "https://photo.yupoo.com/james66jersey/a15cb1b904/small.png"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1270,14 +1273,15 @@
     "category": "outras",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/c18971a804/small.jpeg",
+    "image": "/images/yupoo/258349960.jpg",
     "images": [
+      "/images/yupoo/258349960.jpg",
       "https://photo.yupoo.com/james66jersey/c18971a804/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1298,14 +1302,15 @@
     "category": "retro",
     "kind": "retro",
     "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/daf3c83bf0/small.jpeg",
+    "image": "/images/yupoo/258349957.jpg",
     "images": [
+      "/images/yupoo/258349957.jpg",
       "https://photo.yupoo.com/james66jersey/daf3c83bf0/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1326,14 +1331,15 @@
     "category": "retro",
     "kind": "retro",
     "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/38cf9e27d5/small.jpeg",
+    "image": "/images/yupoo/258349953.jpg",
     "images": [
+      "/images/yupoo/258349953.jpg",
       "https://photo.yupoo.com/james66jersey/38cf9e27d5/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1354,14 +1360,15 @@
     "category": "europa",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/839f18d07c/small.jpeg",
+    "image": "/images/yupoo/258349946.jpg",
     "images": [
+      "/images/yupoo/258349946.jpg",
       "https://photo.yupoo.com/james66jersey/839f18d07c/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1382,14 +1389,15 @@
     "category": "europa",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/f85b3b00cb/small.jpeg",
+    "image": "/images/yupoo/258349938.jpg",
     "images": [
+      "/images/yupoo/258349938.jpg",
       "https://photo.yupoo.com/james66jersey/f85b3b00cb/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1410,14 +1418,15 @@
     "category": "europa",
     "kind": "long",
     "price": 189.9,
-    "image": "https://photo.yupoo.com/james66jersey/1c28321ee4/small.jpeg",
+    "image": "/images/yupoo/258349933.jpg",
     "images": [
+      "/images/yupoo/258349933.jpg",
       "https://photo.yupoo.com/james66jersey/1c28321ee4/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1438,14 +1447,15 @@
     "category": "europa",
     "kind": "long",
     "price": 189.9,
-    "image": "https://photo.yupoo.com/james66jersey/215f264580/small.jpeg",
+    "image": "/images/yupoo/258349928.jpg",
     "images": [
+      "/images/yupoo/258349928.jpg",
       "https://photo.yupoo.com/james66jersey/215f264580/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1466,14 +1476,15 @@
     "category": "retro",
     "kind": "retro",
     "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/5ebccc07ab/small.jpeg",
+    "image": "/images/yupoo/258349926.jpg",
     "images": [
+      "/images/yupoo/258349926.jpg",
       "https://photo.yupoo.com/james66jersey/5ebccc07ab/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -1494,14 +1505,15 @@
     "category": "selecoes",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/929eb6a46d/small.jpeg",
+    "image": "/images/yupoo/258349923.jpg",
     "images": [
+      "/images/yupoo/258349923.jpg",
       "https://photo.yupoo.com/james66jersey/929eb6a46d/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
