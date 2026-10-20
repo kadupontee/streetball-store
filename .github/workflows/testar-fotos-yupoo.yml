@@ -1,15 +1,17 @@
-name: Verificar e salvar fotos autorizadas do Yupoo
+name: Guardar capas James Jersey na loja
 on:
   push:
     paths:
       - '.github/workflows/testar-fotos-yupoo.yml'
+  schedule:
+    - cron: '18 3,9,15,21 * * *' # 4 lotes por dia, UTC
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
   verificar:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,7 +29,7 @@ jobs:
           from PIL import Image
           catalog_file=Path('public/catalog.json')
           products=json.loads(catalog_file.read_text(encoding='utf-8'))
-          candidates=[p for p in products if str(p.get('id','')).startswith('YUP-') and str(p.get('image','')).startswith('https://photo.yupoo.com/james66jersey/')][:12]
+          candidates=[p for p in products if str(p.get('id','')).startswith('YUP-') and str(p.get('image','')).startswith('https://photo.yupoo.com/james66jersey/')][:200]
           downloads=[];errors=[]
           for p in candidates:
               url=p['image']; result=None; status=[]
@@ -54,6 +56,9 @@ jobs:
                   errors.append({'id':p['id'],'message':'; '.join(status)})
                   print('SEM FOTO',p['id'],status,flush=True)
               time.sleep(.35)
+              if len(errors)>=15:
+                  print('Limite de falhas atingido nesta rodada; interrompendo para não insistir no fornecedor.',flush=True)
+                  break
           repeats=Counter(x[2] for x in downloads)
           saved=0
           for p,raw,digest in downloads:
