@@ -1,45 +1,12 @@
 {
-  "testedAt": "2026-10-20T19:28:27.437380+00:00",
+  "testedAt": "2026-10-20T19:31:18.148904+00:00",
   "checked": 500,
-  "savedLocal": 492,
-  "validFiles": 492,
-  "cachedTotal": 5698,
+  "savedLocal": 500,
+  "validFiles": 500,
+  "cachedTotal": 6198,
   "totalYupooProducts": 10890,
-  "batchBytes": 16245674,
-  "errors": [
-    {
-      "id": "YUP-234980326",
-      "reason": "HTTP Error 567: Unknown Status; The read operation timed out"
-    },
-    {
-      "id": "YUP-234979545",
-      "reason": "HTTP Error 567: Unknown Status; The read operation timed out"
-    },
-    {
-      "id": "YUP-234978814",
-      "reason": "HTTP Error 567: Unknown Status; The read operation timed out"
-    },
-    {
-      "id": "YUP-234952949",
-      "reason": "HTTP Error 567: Unknown Status; The read operation timed out"
-    },
-    {
-      "id": "YUP-234948555",
-      "reason": "HTTP Error 567: Unknown Status; The read operation timed out"
-    },
-    {
-      "id": "YUP-234865400",
-      "reason": "HTTP Error 567: Unknown Status; The read operation timed out"
-    },
-    {
-      "id": "YUP-234852815",
-      "reason": "HTTP Error 567: Unknown Status; The read operation timed out"
-    },
-    {
-      "id": "YUP-234443768",
-      "reason": "HTTP Error 567: Unknown Status; The read operation timed out"
-    }
-  ],
-  "pendingWithExternal": 5187,
+  "batchBytes": 19340972,
+  "errors": [],
+  "pendingWithExternal": 4687,
   "failedRetryLater": 8
 }
