@@ -63,7 +63,7 @@ async function adminApi(request,env,ctx){
  if(!env.DB)return clientError('Banco não configurado.',503);
  const url=new URL(request.url);
  if(request.method==='GET'&&url.pathname==='/api/admin/orders'){
-  const data=await env.DB.prepare('SELECT o.id,o.created_at,o.status,o.name,o.email,o.phone,o.city,o.state,o.items_json,o.subtotal,o.shipping,o.total,j.status AS supplier_status,j.updated_at AS supplier_updated_at FROM orders o LEFT JOIN supplier_jobs j ON j.order_id=o.id ORDER BY o.created_at DESC LIMIT 75').all();
+  const data=await env.DB.prepare('SELECT o.id,o.created_at,o.status,o.name,o.email,o.phone,o.city,o.state,o.items_json,o.subtotal,o.shipping,o.total,j.status AS supplier_status,j.updated_at AS supplier_updated_at,d.supplier_id,d.state AS dispatch_state,d.sent_at AS sent_to_supplier_at,d.responded_at AS supplier_replied_at,d.last_error AS supplier_error,n.state AS buyer_notification_status FROM orders o LEFT JOIN supplier_jobs j ON j.order_id=o.id LEFT JOIN supplier_dispatch d ON d.order_id=o.id LEFT JOIN buyer_notifications n ON n.order_id=o.id ORDER BY o.created_at DESC LIMIT 75').all();
   return json({orders:data.results||[]});
  }
  if(request.method==='POST'&&url.pathname==='/api/admin/supplier-status'){
