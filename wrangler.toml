@@ -17,5 +17,18 @@ crons = ["0 * * * *"]
 
 [vars]
 ASAAS_SANDBOX = "true"
+SALES_ENABLED = "false"
+PAYMENTS_PRODUCTION_ENABLED = "false"
+WA_AUTOMATION_ENABLED = "false"
+# Configure o identificador de um fornecedor autorizado no SUPPLIERS_JSON:
+# DEFAULT_SUPPLIER_ID = "james"
+# STORE_PUBLIC_URL = "https://sua-loja.com.br"
 # Depois de simular custo de entrega, definir frete: exemplo SHIPPING_FLAT_BRL = "19.90"
 # Não habilite checkout sem validar imposto de importação e prazos reais.
+
+# Segredos necessários (NUNCA escreva as chaves neste arquivo):
+# ASAAS_API_KEY, ASAAS_WEBHOOK_TOKEN, ADMIN_TOKEN
+# WA_TOKEN, WA_APP_SECRET, WA_VERIFY_TOKEN, WA_PHONE_NUMBER_ID
+# SUPPLIERS_JSON (até 5 fornecedores), BUYER_WA_TEMPLATE,
+# SUPPLIER_WA_TEMPLATE_MEDIA, OWNER_WA_PHONE, OWNER_WA_TEMPLATE
+# Configuração e implantação: worker/SETUP.md
