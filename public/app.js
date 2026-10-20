@@ -12,7 +12,7 @@ let state={category:'todos',query:'',sort:'featured',limit:PRODUCT_LIMIT,favorit
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);
 const localImageURL=u=>String(u||'').startsWith('/images/')?new URL(String(u).slice(1),document.baseURI).href:String(u||'');
-const imgValid=u=>/^(https:\/\/[^\s"<>]+|\/images\/[a-zA-Z0-9_.-]+)$/i.test(String(u||''));
+const imgValid=u=>/^(https:\/\/[^\s"<>]+|\/images\/(?:yupoo\/)?[a-zA-Z0-9_.-]+)$/i.test(String(u||''));
 // So anunciar produtos cuja fotografia autorizada foi hospedada na propria loja.
 const hasVerifiedPhoto=p=>/^(\/images\/yupoo\/[0-9]+\.(?:webp|jpe?g|png)|\/images\/[a-zA-Z0-9_.-]+)$/i.test(String(p.image||''))&&['cache_autorizado','upload_local'].includes(p.imageOrigin);
 function jersey(p,extra=''){
