@@ -17,6 +17,25 @@ COUNTRIES = ('brazil','brasil','argentina','portugal','france','franca','england
 def normalized(text):
     return ''.join(ch for ch in unicodedata.normalize('NFD',str(text).lower()) if unicodedata.category(ch)!='Mn')
 
+# Linha de basquete removida da Streetball Store. Evitar reimportação de NBA.
+NBA_TEAM_MARKERS = ('warriors','lakers','celtics','basketball','brooklyn nets',
+                    'chicago bulls','new york knicks','miami heat','toronto raptors',
+                    'milwaukee bucks','phoenix suns','dallas mavericks','denver nuggets',
+                    'san antonio spurs','memphis grizzlies','los angeles clippers',
+                    'oklahoma city thunder','houston rockets','utah jazz','sacramento kings',
+                    'new orleans pelicans','philadelphia 76ers','detroit pistons',
+                    'minnesota timberwolves','cleveland cavaliers','portland trail blazers',
+                    'orlando magic','washington wizards','charlotte hornets','indiana pacers',
+                    'atlanta hawks')
+def is_nba_product(item):
+    if not isinstance(item,dict): return False
+    if str(item.get('category','')).strip().lower() == 'nba': return True
+    if str(item.get('kind','')).strip().lower() == 'nba': return True
+    title = normalized(item.get('title') or '')
+    if re.search(r'\bnba\b',title): return True
+    return any(term in title for term in NBA_TEAM_MARKERS)
+
+
 def classify(title, category_hint=''):
     s = normalized(f'{title} {category_hint}')
     if re.search(r'\b(retro|vintage|classic)\b',s) or re.search(r'\b(?:19[5-9]\d|200[0-9]|201[0-3])\b',s): cat = 'retro'
@@ -95,6 +114,7 @@ def read_catalog():
     except (OSError,ValueError):return []
 
 def save_catalog(products):
+    products=[p for p in products if not is_nba_product(p)]
     CATALOG.parent.mkdir(parents=True,exist_ok=True)
     content=json.dumps(products,ensure_ascii=False,indent=2)
     path=CATALOG.with_suffix('.json.tmp')
@@ -109,7 +129,9 @@ def merge_catalog(new_products, *, keep_existing=True):
     out={p['id']:p for p in before}
     added=updated=0
     for raw in new_products:
+        if is_nba_product(raw): continue
         entry=normalize_product(raw)
+        if is_nba_product(entry): continue
         if entry['id'] in out:
             old=out[entry['id']]
             # No-data imports must never discard existing imagery or manually set prices.
