@@ -1,12 +1,12 @@
 {
-  "testedAt": "2026-10-20T19:45:38.337180+00:00",
+  "testedAt": "2026-10-20T19:47:28.783012+00:00",
   "checked": 500,
   "savedLocal": 500,
   "validFiles": 500,
-  "cachedTotal": 9698,
+  "cachedTotal": 10198,
   "totalYupooProducts": 10890,
-  "batchBytes": 15965456,
+  "batchBytes": 14809880,
   "errors": [],
-  "pendingWithExternal": 1187,
+  "pendingWithExternal": 687,
   "failedRetryLater": 8
 }
