@@ -1,0 +1,66 @@
+name: Completar fotos da Streetball Store
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/complete-covers.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '45 7 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: streetball-catalog
+  cancel-in-progress: false
+
+jobs:
+  atualizar-capas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar bibliotecas de validacao de imagem
+        run: python -m pip install --disable-pip-version-check Pillow
+      - name: Baixar e validar as capas publicas autorizadas em lotes
+        run: |
+          set -e
+          git config user.name 'Streetball Catalog Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          for batch in $(seq 1 24); do
+            echo "======= LOTE $batch / 24 ======="
+            python scripts/cache_yupoo_covers.py --limit 500 --workers 4
+            python scripts/audit_catalog_images.py
+            git add public/images/yupoo/ public/catalog.json public/catalog.js public/catalog-image-audit.json scripts/yupoo_image_probe.json scripts/yupoo_cover_failures.json
+            if ! git diff --cached --quiet; then
+              git commit -m "Guardar e validar capas Yupoo: lote $batch"
+              git pull --rebase origin main
+              git push origin main
+            fi
+            saved=$(python -c "import json;print(json.load(open('scripts/yupoo_image_probe.json'))['savedLocal'])")
+            pending=$(python -c "import json;print(json.load(open('scripts/yupoo_image_probe.json'))['pendingWithExternal'])")
+            echo "Lote $batch: novas=$saved, ainda externas=$pending"
+            if [ "$pending" -eq 0 ]; then
+              echo "Todas as capas com fonte acessivel foram armazenadas."
+              break
+            fi
+            if [ "$saved" -eq 0 ]; then
+              echo "Sem novas fotos neste lote: conferir falhas/restricoes do fornecedor; nao inventar imagens."
+              break
+            fi
+            sleep 8
+          done
+      - name: Exibir contagem auditada
+        if: always()
+        run: |
+          if [ -f public/catalog-image-audit.json ]; then
+            cat public/catalog-image-audit.json
+          fi
