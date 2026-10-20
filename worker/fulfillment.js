@@ -123,7 +123,7 @@ export async function handleSupplierInbound(env,message,ctx){
  if(results.results?.length!==1)return;
  const order=results.results[0],op=match[1].toUpperCase();
  await env.DB.prepare("INSERT OR IGNORE INTO wa_message_events(id,order_id,received_at) VALUES(?,?,?)").bind(message.id,order.id,now()).run();
- if(!['awaiting_reply','details_sent','confirmed'].includes(order.dispatch_state))return;
+ if(!['awaiting_reply','details_sent','confirmed','overdue_24h'].includes(order.dispatch_state))return;
  if(op==='DETALHES'&&!order.details_sent_at){
    try{
      await sendOrderDetails(env,order,{supplier_phone:from});
@@ -132,14 +132,14 @@ export async function handleSupplierInbound(env,message,ctx){
      await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_review',last_error=?,updated_at=? WHERE order_id=?").bind(trim(err?.message,250),now(),order.id).run();
    }
  }
- if((op==='PREPARANDO'||op==='CONFIRMAR')&&['awaiting_reply','details_sent'].includes(order.dispatch_state)){
+ if((op==='PREPARANDO'||op==='CONFIRMAR')&&['awaiting_reply','details_sent','overdue_24h'].includes(order.dispatch_state)){
    const items=JSON.parse(order.items_json||'[]');
    // Se há mais de uma peça, exigir que todas as fotos tenham sido encaminhadas antes de confirmar.
    if(items.length>1&&!order.details_sent_at){
      await sendWa(env,from,{type:'text',text:{body:'Antes de confirmar, responda DETALHES '+order.id.slice(0,8)+' para receber a lista completa e as fotos.'}}).catch(()=>{});
      return;
    }
-   const update=await env.DB.prepare("UPDATE supplier_dispatch SET state='confirmed',responded_at=?,updated_at=? WHERE order_id=? AND state IN ('awaiting_reply','details_sent')").bind(now(),now(),order.id).run();
+   const update=await env.DB.prepare("UPDATE supplier_dispatch SET state='confirmed',responded_at=?,updated_at=? WHERE order_id=? AND state IN ('awaiting_reply','details_sent','overdue_24h')").bind(now(),now(),order.id).run();
    if(!update.meta?.changes)return;
    await env.DB.prepare("UPDATE supplier_jobs SET status='supplier_confirmed',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
    await env.DB.prepare("UPDATE orders SET status='supplier_preparing',updated_at=? WHERE id=? AND status='paid_supplier_pending'").bind(now(),now(),order.id).run();
