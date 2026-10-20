@@ -7,3 +7,8 @@ html{overflow-x:clip}
 
 /* Fotos reais vinculadas ao catálogo: galeria dentro da ficha do produto */
 .detail-photo-strip{display:flex;gap:8px;flex-wrap:wrap;padding:13px 4px 3px;justify-content:center}.detail-photo-btn{width:52px;height:62px;padding:3px;border:1px solid #d5dbd3;background:white;overflow:hidden;cursor:pointer}.detail-photo-btn.active{border:2px solid #1e2c1d}.detail-photo-btn img{width:100%;height:100%;object-fit:contain}
+
+/* Fotos do catálogo: sem ilustração/PNG antigo por baixo ou por cima. */
+.product-asset{display:flex;align-items:center;justify-content:center;isolation:isolate}
+.product-asset>.product-photo{position:relative;inset:auto;display:block;width:100%;height:100%;object-fit:contain;mix-blend-mode:normal;z-index:auto}
+.product-asset.missing-photo::after,.product-no-photo{content:"FOTO INDISPONÍVEL";display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:20px;text-align:center;font:700 11px/1.5 Arial,sans-serif;letter-spacing:.08em;color:#879084;background:#f0f1ef}
