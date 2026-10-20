@@ -264,7 +264,10 @@ async def main(args):
                             fail_count += 1
                             break
                         index.update(found)
-                        added, _ = integrate_cards(by_id, found)
+                        # Indexar sem publicar capas quando a autorização não foi confirmada.
+                        added = 0
+                        if not args.stage_only:
+                            added, _ = integrate_cards(by_id, found)
                         new_count += added; seen_count += len(found)
                         pages_done.add(str(pno))
                         print(f'INDEXADOS NA PÁGINA {pno}: {len(found)} álbuns, {added} novos, total {len(index)}',flush=True)
@@ -340,6 +343,7 @@ if __name__ == '__main__':
     parser.add_argument('--start-page', type=int, default=1)
     parser.add_argument('--max-albums', type=int, default=30, help='Álbuns a processar fotos nesta execução; 0 = todos os pendentes')
     parser.add_argument('--index-only', action='store_true', help='Indexa todos os álbuns e capas, sem entrar nas galerias')
+    parser.add_argument('--stage-only', action='store_true', help='Registra álbuns sem publicar os produtos ou fotos na vitrine')
     parser.add_argument('--refresh-index', action='store_true', help='Revisita as páginas já indexadas para captar novidades')
     parser.add_argument('--photos-per-album', type=int, default=0, help='Compatibilidade; agora coleta todas as fotos disponíveis até 200')
     parser.add_argument('--pause', type=float, default=1.2)
@@ -351,6 +355,7 @@ if __name__ == '__main__':
     options = parser.parse_args()
     if not (1 <= options.start_page <= options.max_pages <= 200):parser.error('Páginas inválidas')
     if not 0 <= options.max_albums <= 100000: parser.error('Limite inválido')
+    if options.stage_only and not options.index_only: parser.error('--stage-only exige --index-only')
     try: sys.exit(asyncio.run(main(options)))
     except (ValueError,KeyboardInterrupt) as exc:
         print('ERRO:',str(exc),file=sys.stderr);sys.exit(1)
