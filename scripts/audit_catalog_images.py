@@ -20,7 +20,7 @@ def local_ok(path):
         return False
     with dest.open("rb") as file:
         signature = file.read(12)
-    return signature.startswith(b"\\xff\\xd8\\xff") or signature.startswith(b"\\x89PNG\\r\\n\\x1a\\n") or (signature.startswith(b"RIFF") and signature[8:12] == b"WEBP")
+    return signature.startswith(b"\xff\xd8\xff") or signature.startswith(b"\x89PNG\r\n\x1a\n") or (signature.startswith(b"RIFF") and signature[8:12] == b"WEBP")
 
 def remote_ok(url):
     try:
@@ -65,7 +65,7 @@ def main():
         "remoteExamples": remote_ids[:20],
         "method": "Local: arquivo existente e assinatura JPEG/PNG/WebP. Remoto: URL valida, sem teste de acesso do navegador. Fotos do fornecedor so sao validadas ao baixar e conferir o arquivo.",
     }
-    REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2)+"\\n", encoding="utf-8")
+    REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2), flush=True)
     return 0
 
