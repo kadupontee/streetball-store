@@ -4,7 +4,7 @@ on:
     paths:
       - '.github/workflows/testar-fotos-yupoo.yml'
   schedule:
-    - cron: '17 * * * *' # lote a cada hora; horarios aproximados UTC
+    - cron: '17,47 * * * *' # 2 lotes por hora; se o fornecedor limitar acesso, os erros ficam em espera
   workflow_dispatch:
     inputs:
       limit:
