@@ -11,3 +11,33 @@ CREATE TABLE IF NOT EXISTS supplier_jobs(id TEXT PRIMARY KEY,order_id TEXT NOT N
  status TEXT NOT NULL,created_at TEXT NOT NULL,updated_at TEXT NOT NULL,
  FOREIGN KEY (order_id) REFERENCES orders(id));
 CREATE INDEX IF NOT EXISTS idx_jobs_status_created ON supplier_jobs(status,created_at);
+
+-- Migração aditiva, também segura para bases já existentes.
+CREATE TABLE IF NOT EXISTS supplier_dispatch (
+  order_id TEXT PRIMARY KEY REFERENCES orders(id),
+  supplier_id TEXT NOT NULL DEFAULT '',
+  supplier_phone TEXT NOT NULL DEFAULT '',
+  state TEXT NOT NULL,
+  message_id TEXT,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  sent_at TEXT,
+  responded_at TEXT,
+  details_sent_at TEXT,
+  last_error TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_supplier_dispatch_sla ON supplier_dispatch(state,sent_at);
+CREATE TABLE IF NOT EXISTS wa_message_events (
+  id TEXT PRIMARY KEY,
+  order_id TEXT NOT NULL,
+  received_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS buyer_notifications (
+  order_id TEXT PRIMARY KEY REFERENCES orders(id),
+  state TEXT NOT NULL,
+  message_id TEXT,
+  error TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
