@@ -1,0 +1,44 @@
+name: Publicar Streetball Store (GitHub Pages)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Importar catálogo James Jersey
+      - Encontrar fotos em fontes esportivas confiáveis
+    types: [completed]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages-deploy
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Baixar catálogo atualizado
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Preparar apenas a vitrine publica
+        run: |
+          mkdir -p _site
+          cp -R public/. _site/
+          rm -f _site/admin.html
+          touch _site/.nojekyll
+      - name: Enviar arquivos da vitrine
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v4

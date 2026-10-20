@@ -1,0 +1,448 @@
+{
+  "generatedAt": "2026-10-20T15:51:39.374209+00:00",
+  "publishedNewImages": 0,
+  "allowedDomains": [],
+  "items": [
+    {
+      "id": "SB-0001",
+      "title": "São Paulo 26/27 I — Jogador",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0002",
+      "title": "São Paulo 26/27 II — Jogador",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0003",
+      "title": "Brasil 2026 I — Torcedor",
+      "referenceUrl": "https://www.nike.com.br/camisa-brasil-nike-i-2026-27-fa-masculina-098437.html?cor=00",
+      "referenceTitle": "Camisa Brasil Nike I 2026/27 Fã Masculina",
+      "sources": [],
+      "errors": [],
+      "status": "fonte_identificada_sem_fotos"
+    },
+    {
+      "id": "SB-0004",
+      "title": "Brasil 2026 II — Jogador",
+      "referenceUrl": "https://www.nike.com.br/camisa-brasil-jordan-ii-2026-27-jogador-masculina-097619.html",
+      "referenceTitle": "Camisa Brasil Jordan II 2026/27 Jogador Masculina",
+      "sources": [],
+      "errors": [],
+      "status": "fonte_identificada_sem_fotos"
+    },
+    {
+      "id": "SB-0005",
+      "title": "Real Madrid 26/27 I — Torcedor",
+      "referenceUrl": "https://www.adidas.com.br/camisa-i-real-madrid-26-27/JZ7206.html",
+      "referenceTitle": "Camisa I Real Madrid 26/27",
+      "sources": [],
+      "errors": [],
+      "status": "fonte_identificada_sem_fotos"
+    },
+    {
+      "id": "SB-0006",
+      "title": "Corinthians 26/27 I — Torcedor",
+      "referenceUrl": "https://www.nike.com.br/camisa-corinthians-nike-i-2026-27-fa-masculina-110130.html",
+      "referenceTitle": "Camisa Corinthians Nike I 2026/27 Fã Masculina",
+      "sources": [],
+      "errors": [],
+      "status": "fonte_identificada_sem_fotos"
+    },
+    {
+      "id": "SB-0007",
+      "title": "Golden State Warriors — Curry 30",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0008",
+      "title": "Brasil 1994 II — Retrô",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0009",
+      "title": "Flamengo 25/26 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0010",
+      "title": "Corinthians 26/27 II — Jogador",
+      "referenceUrl": "https://www.nike.com.br/camisa-corinthians-nike-ii-2026-27-jogador-masculina-103996.html",
+      "referenceTitle": "Camisa Corinthians Nike II 2026/27 Jogador Masculina",
+      "sources": [],
+      "errors": [],
+      "status": "fonte_identificada_sem_fotos"
+    },
+    {
+      "id": "SB-0011",
+      "title": "Palmeiras 26/27 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0012",
+      "title": "Santos 26/27 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0013",
+      "title": "Grêmio 26/27 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0014",
+      "title": "Internacional 26/27 II — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0015",
+      "title": "Botafogo 26/27 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0016",
+      "title": "Bahia 26/27 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0017",
+      "title": "Vasco 26/27 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0018",
+      "title": "Cruzeiro 26/27 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0019",
+      "title": "Palmeiras 26/27 I — Infantil",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0020",
+      "title": "São Paulo 26/27 II — Infantil",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0021",
+      "title": "Brasil 2026 I — Infantil",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0022",
+      "title": "Argentina 2026 I — Infantil",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0023",
+      "title": "Barcelona 26/27 I — Torcedor",
+      "referenceUrl": "https://www.nike.com.br/camisa-barcelona-nike-i-2026-27-torcedor-pro-masculina-110158.html",
+      "referenceTitle": "Camisa Barcelona Nike I 2026/27 Torcedor Pro Masculina",
+      "sources": [],
+      "errors": [],
+      "status": "fonte_identificada_sem_fotos"
+    },
+    {
+      "id": "SB-0024",
+      "title": "Manchester City 26/27 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0025",
+      "title": "Manchester United 26/27 I — Jogador",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0026",
+      "title": "Arsenal 26/27 II — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0027",
+      "title": "Benfica 26/27 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0028",
+      "title": "Juventus 03/04 I — Retrô",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0029",
+      "title": "Manchester United 98/99 II — Retrô",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0030",
+      "title": "Manchester United 98/99 — Retrô Manga Longa",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0031",
+      "title": "Barcelona 03/04 — Retrô",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0032",
+      "title": "França 2026 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0033",
+      "title": "Portugal 2026 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0034",
+      "title": "Japão 2026 I — Jogador",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0035",
+      "title": "Inglaterra 2026 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0036",
+      "title": "Alemanha 2026 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0037",
+      "title": "México 2026 I — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0038",
+      "title": "Marrocos 2026 II — Torcedor",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0039",
+      "title": "Brasil 2026 I — Feminina",
+      "referenceUrl": "https://www.nike.com.br/camisa-brasil-nike-i-2026-27-fa-feminina-098715.html?cor=00",
+      "referenceTitle": "Camisa Brasil Nike I 2026/27 Fã Feminina",
+      "sources": [],
+      "errors": [],
+      "status": "fonte_identificada_sem_fotos"
+    },
+    {
+      "id": "SB-0040",
+      "title": "Corinthians 26/27 I — Feminina",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0041",
+      "title": "Flamengo 26/27 II — Feminina",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0042",
+      "title": "Real Madrid 26/27 I — Infantil",
+      "referenceUrl": "https://www.adidas.com.br/camisa-i-real-madrid-26-27-infantil/KC3993.html",
+      "referenceTitle": "Camisa I Real Madrid 26/27 Infantil",
+      "sources": [],
+      "errors": [],
+      "status": "fonte_identificada_sem_fotos"
+    },
+    {
+      "id": "SB-0043",
+      "title": "Santos 26/27 I — Feminina",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0044",
+      "title": "Camiseta de treino Brasil 2026",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0045",
+      "title": "Conjunto de treino Brasil 2026",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0046",
+      "title": "Calção Brasil 2026",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0047",
+      "title": "Meião Brasil 2026",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0048",
+      "title": "Regata de basquete Real Madrid",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "SB-0049",
+      "title": "Regata de basquete Barcelona",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    }
+  ]
+}

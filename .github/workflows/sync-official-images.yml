@@ -1,0 +1,49 @@
+name: Encontrar fotos em fontes esportivas confiáveis
+on:
+  schedule:
+    # Todos os dias, 10:35 no horário de Brasília (UTC-3)
+    - cron: '35 13 * * *'
+  workflow_dispatch:
+    inputs:
+      discovery:
+        description: 'Pesquisar também outros sites via RSS público? (experimental)'
+        type: boolean
+        default: true
+permissions:
+  contents: write
+concurrency:
+  group: streetball-official-images
+  cancel-in-progress: false
+jobs:
+  find-official-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      AUTHORIZED_IMAGE_DOMAINS: ${{ vars.AUTHORIZED_IMAGE_DOMAINS }}
+      APPROVED_PRODUCT_IMAGE_IDS: ${{ vars.APPROVED_PRODUCT_IMAGE_IDS }}
+      IMAGE_LICENSE_CONFIRMED: ${{ vars.IMAGE_LICENSE_CONFIRMED }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Consultar as referências e procurar correspondências
+        env:
+          DISCOVERY: ${{ github.event.inputs.discovery || 'true' }}
+        run: |
+          ARGS='--max-products 49'
+          if [ "$DISCOVERY" = 'true' ]; then ARGS="$ARGS --discover"; fi
+          # Só publica fotos com licença previamente confirmada pelo operador.
+          if [ "$IMAGE_LICENSE_CONFIRMED" = 'true' ] && [ -n "$AUTHORIZED_IMAGE_DOMAINS" ]; then
+            ARGS="$ARGS --publish-authorized"
+          fi
+          python scripts/sync_official_images.py $ARGS
+      - name: Registrar fila de referências / mudanças autorizadas
+        run: |
+          git config user.name 'Streetball Catalog Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add scripts/official_image_candidates.json public/catalog.json public/catalog.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'Atualizar referências fotográficas de fabricantes'
+            git push
+          fi

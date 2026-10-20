@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+.DS_Store
+.playwright/
+
+.venv/
+
+# Dados de precificacao e notas internas; nao enviar ao repositorio publico
+DOCUMENTACAO_INTERNA.md
+scripts/costs.json
+scripts/retail_unit_economics.csv

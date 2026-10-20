@@ -1,0 +1,77 @@
+{
+  "description": "Páginas de fabricantes verificadas em 20/10/2026. Fontes para COMPARAÇÃO de modelos, não autorização para republicação de fotos.",
+  "sources": [
+    {
+      "product_id": "SB-0003",
+      "site": "Nike Brasil",
+      "url": "https://www.nike.com.br/camisa-brasil-nike-i-2026-27-fa-masculina-098437.html?cor=00",
+      "expected": "Camisa Brasil Nike I 2026/27 Fã Masculina"
+    },
+    {
+      "product_id": "SB-0004",
+      "site": "Nike Brasil",
+      "url": "https://www.nike.com.br/camisa-brasil-jordan-ii-2026-27-jogador-masculina-097619.html",
+      "expected": "Camisa Brasil Jordan II 2026/27 Jogador Masculina"
+    },
+    {
+      "product_id": "SB-0005",
+      "site": "adidas Brasil",
+      "url": "https://www.adidas.com.br/camisa-i-real-madrid-26-27/JZ7206.html",
+      "expected": "Camisa I Real Madrid 26/27"
+    },
+    {
+      "product_id": "SB-0006",
+      "site": "Nike Brasil",
+      "url": "https://www.nike.com.br/camisa-corinthians-nike-i-2026-27-fa-masculina-110130.html",
+      "expected": "Camisa Corinthians Nike I 2026/27 Fã Masculina"
+    },
+    {
+      "product_id": "SB-0009",
+      "site": "adidas Brasil",
+      "url": "https://www.adidas.com.br/flamengo-camisas-futebol",
+      "expected": "Camisa I Flamengo 25/26",
+      "listing_only": true
+    },
+    {
+      "product_id": "SB-0010",
+      "site": "Nike Brasil",
+      "url": "https://www.nike.com.br/camisa-corinthians-nike-ii-2026-27-jogador-masculina-103996.html",
+      "expected": "Camisa Corinthians Nike II 2026/27 Jogador Masculina"
+    },
+    {
+      "product_id": "SB-0039",
+      "site": "Nike Brasil",
+      "url": "https://www.nike.com.br/camisa-brasil-nike-i-2026-27-fa-feminina-098715.html?cor=00",
+      "expected": "Camisa Brasil Nike I 2026/27 Fã Feminina"
+    },
+    {
+      "product_id": "SB-0040",
+      "site": "Nike Brasil",
+      "url": "https://www.nike.com.br/camisa-corinthians-nike-i-2026-27-fa-feminina-110131.html",
+      "expected": "Camisa Corinthians Nike I 2026/27 Fã Feminina",
+      "unverified": true
+    },
+    {
+      "product_id": "SB-0042",
+      "site": "adidas Brasil",
+      "url": "https://www.adidas.com.br/camisa-i-real-madrid-26-27-infantil/KC3993.html",
+      "expected": "Camisa I Real Madrid 26/27 Infantil",
+      "unverified": false
+    },
+    {
+      "product_id": "SB-0023",
+      "site": "Nike Brasil",
+      "url": "https://www.nike.com.br/camisa-barcelona-nike-i-2026-27-torcedor-pro-masculina-110158.html",
+      "expected": "Camisa Barcelona Nike I 2026/27 Torcedor Pro Masculina"
+    }
+  ],
+  "trusted_domains": [
+    "nike.com.br",
+    "adidas.com.br",
+    "newbalance.com.br",
+    "netshoes.com.br",
+    "futfanatics.com.br",
+    "centauro.com.br"
+  ],
+  "note": "Links não confirmados são marcados unverified e NÃO são usados automaticamente. Listagens sem URL de produto individual nunca são fonte de imagem."
+}

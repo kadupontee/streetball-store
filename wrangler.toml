@@ -1,0 +1,21 @@
+name = "streetball-store"
+main = "worker/index.js"
+compatibility_date = "2026-07-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# Configure o identificador real retornado por 'npx wrangler d1 create streetball-orders'
+[[d1_databases]]
+binding = "DB"
+database_name = "streetball-orders"
+database_id = "INSIRA-ID-DO-SEU-BANCO-D1"
+
+[triggers]
+crons = ["0 * * * *"]
+
+[vars]
+ASAAS_SANDBOX = "true"
+# Depois de simular custo de entrega, definir frete: exemplo SHIPPING_FLAT_BRL = "19.90"
+# Não habilite checkout sem validar imposto de importação e prazos reais.
