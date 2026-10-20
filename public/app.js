@@ -19,7 +19,7 @@ const BR_CLUBS=[
  ['sao-paulo','São Paulo',['sao paulo','saopaulo']], ['vasco','Vasco da Gama',['vasco da gama','vasco']],
  ['vitoria','Vitória',['vitoria']]
 ];
-const clubNormalized=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const clubNormalized=s=>String(s||'').replace(/(\d)([A-Za-zÀ-ÿ])/g,'$1 $2').replace(/([a-zà-ÿ])([A-Z])/g,'$1 $2').replace(/(flamengo|gremio|vasco|santos|remo)(home|away|black|special|goalkeeper)/gi,'$1 $2').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 function findBrazilClub(p){
  if(p.category==='europa'||p.category==='selecoes')return '';
  const name=' '+clubNormalized(p.supplierTitle||p.title)+' ';
@@ -34,7 +34,7 @@ function findBrazilClub(p){
  return '';
 }
 const clubFor=p=>p.brazilClub===undefined?findBrazilClub(p):p.brazilClub;
-const isBrazilProduct=p=>p.category==='brasileirao'||!!clubFor(p);
+const isBrazilProduct=p=>!!clubFor(p)||(p.category==='brasileirao'&&!/\b(santos laguna|manchester united|cremona)\b/.test(clubNormalized(p.supplierTitle||p.title)));
 function renderBrazilClubNavigation(){
  const section=$('brasileiraoClubs');
  if(!section)return;
