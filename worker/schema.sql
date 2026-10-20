@@ -41,3 +41,12 @@ CREATE TABLE IF NOT EXISTS buyer_notifications (
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+
+-- Não criar cobranças duplicadas quando o navegador repetir o mesmo envio.
+CREATE TABLE IF NOT EXISTS checkout_attempts (
+  request_key TEXT PRIMARY KEY,
+  payload_hash TEXT NOT NULL,
+  order_id TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_checkout_attempt_order ON checkout_attempts(order_id);
