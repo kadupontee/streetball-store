@@ -1,0 +1,4 @@
+# Arquivos que não devem ser publicados como assets da Cloudflare.
+admin.html
+catalog.js
+*.map
