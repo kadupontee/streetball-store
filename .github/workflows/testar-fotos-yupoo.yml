@@ -4,90 +4,61 @@ on:
     paths:
       - '.github/workflows/testar-fotos-yupoo.yml'
   schedule:
-    - cron: '18 3,9,15,21 * * *' # 4 lotes por dia, UTC
+    - cron: '17 * * * *' # lote a cada hora; horarios aproximados UTC
   workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximo de capas por lote (1 a 500)'
+        required: false
+        default: '200'
 permissions:
   contents: write
+concurrency:
+  group: streetball-catalog
+  cancel-in-progress: false
 jobs:
-  verificar:
+  importar:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Carregar catalogo atualizado
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Preparar Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Preparar verificador
-        run: python -m pip install Pillow
-      - name: Verificar links reais e guardar capas válidas
+      - name: Instalar biblioteca de imagens
+        run: python -m pip install --disable-pip-version-check pillow
+      - name: Baixar e validar capas reais do fornecedor
+        env:
+          IMAGE_LIMIT: ${{ github.event.inputs.limit || '200' }}
         run: |
-          python - <<'PY'
-          import json, urllib.request, io, hashlib, re, time
-          from datetime import datetime,timezone
-          from collections import Counter
-          from pathlib import Path
-          from PIL import Image
-          catalog_file=Path('public/catalog.json')
-          products=json.loads(catalog_file.read_text(encoding='utf-8'))
-          candidates=[p for p in products if str(p.get('id','')).startswith('YUP-') and str(p.get('image','')).startswith('https://photo.yupoo.com/james66jersey/')][:200]
-          downloads=[];errors=[]
-          for p in candidates:
-              url=p['image']; result=None; status=[]
-              for ref in ['',p.get('sourceUrl') or 'https://james66jersey.x.yupoo.com/']:
-                  headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/129 Safari/537.36','Accept':'image/avif,image/webp,image/apng,image/jpeg,image/png,image/*'}
-                  if ref:headers['Referer']=ref
-                  try:
-                      req=urllib.request.Request(url,headers=headers)
-                      with urllib.request.urlopen(req,timeout=8) as response:
-                          raw=response.read(3000001)
-                          ctype=response.headers.get('Content-Type','')
-                      if len(raw)>3000000:raise ValueError('arquivo > 3 MB')
-                      if not (raw.startswith(b'\xff\xd8\xff') or raw.startswith(b'\x89PNG\r\n\x1a\n') or raw.startswith(b'RIFF')):
-                          raise ValueError('sem JPEG/PNG/WebP: '+ctype)
-                      im=Image.open(io.BytesIO(raw));im.load()
-                      if min(im.size)<200:raise ValueError('imagem menor que 200 pixels: '+str(im.size))
-                      result=raw
-                      print('ARQUIVO REAL',p['id'],'dimensões',im.size,'bytes',len(raw),flush=True)
-                      break
-                  except Exception as e:
-                      status.append(str(e)[:120])
-              if result is not None:downloads.append((p,result,hashlib.sha256(result).hexdigest()))
-              else:
-                  errors.append({'id':p['id'],'message':'; '.join(status)})
-                  print('SEM FOTO',p['id'],status,flush=True)
-              time.sleep(.35)
-              if len(errors)>=15:
-                  print('Limite de falhas atingido nesta rodada; interrompendo para não insistir no fornecedor.',flush=True)
-                  break
-          repeats=Counter(x[2] for x in downloads)
-          saved=0
-          for p,raw,digest in downloads:
-              if repeats[digest]>=3:
-                  errors.append({'id':p['id'],'message':'resposta idêntica em muitos produtos (possível proteção anti-hotlink)'})
-                  continue
-              im=Image.open(io.BytesIO(raw)).convert('RGB');im.thumbnail((900,900))
-              folder=Path('public/images/yupoo');folder.mkdir(parents=True,exist_ok=True)
-              filename=re.sub('[^0-9]','',p['id'])+'.jpg'
-              im.save(folder/filename,'JPEG',quality=78,optimize=True)
-              local='/images/yupoo/'+filename
-              p['image']=local
-              p['images']=[local]+[u for u in p.get('images',[]) if u!=local]
-              p['imageOrigin']='cache_autorizado'
-              saved+=1
-          if saved:
-              catalog_file.write_text(json.dumps(products,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-              Path('public/catalog.js').write_text('window.STREETBALL_CATALOG = '+json.dumps(products,ensure_ascii=False,separators=(',',':'))+';\n',encoding='utf-8')
-          report={'testedAt':datetime.now(timezone.utc).isoformat(),'checked':len(candidates),'validFiles':len(downloads),'savedLocal':saved,'errors':errors}
-          Path('scripts/yupoo_image_probe.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-          print('RELATÓRIO',json.dumps({k:v for k,v in report.items() if k!='errors'},ensure_ascii=False),flush=True)
-          PY
-      - name: Publicar relatório e capas validadas
+          python scripts/cache_yupoo_covers.py --limit "$IMAGE_LIMIT" --workers 5
+      - name: Publicar fotos e salvar progresso (com tentativa apos commits simultaneos)
         if: always()
         run: |
-          git config user.name 'Streetball Image Test'
+          git config user.name 'Streetball Image Bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add scripts/yupoo_image_probe.json public/catalog.json public/catalog.js public/images/yupoo || true
-          if ! git diff --cached --quiet; then
-            git commit -m 'Validar imagens do fornecedor e armazenar capas reais'
-            git push
+          git add public/catalog.json public/catalog.js public/images/yupoo scripts/yupoo_image_probe.json scripts/yupoo_cover_failures.json
+          if git diff --cached --quiet; then
+            echo 'Nenhuma alteracao neste lote.'
+            exit 0
           fi
+          git commit -m 'Importar e otimizar capas do James Jersey [automatico]'
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort
+              echo 'Conflito no catalogo: interrompendo sem substituir edicoes.'
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              echo 'Lote publicado no repositorio.'
+              exit 0
+            fi
+            sleep 4
+          done
+          echo 'Nao foi possivel enviar as fotos sem conflito.'
+          exit 1
