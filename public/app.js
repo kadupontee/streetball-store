@@ -13,6 +13,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const money=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);
 const localImageURL=u=>String(u||'').startsWith('/images/')?new URL(String(u).slice(1),document.baseURI).href:String(u||'');
 const imgValid=u=>/^(https:\/\/[^\s"<>]+|\/images\/[a-zA-Z0-9_.-]+)$/i.test(String(u||''));
+// So anunciar produtos cuja fotografia autorizada foi hospedada na propria loja.
+const hasVerifiedPhoto=p=>/^(\/images\/yupoo\/[0-9]+\.(?:webp|jpe?g|png)|\/images\/[a-zA-Z0-9_.-]+)$/i.test(String(p.image||''))&&['cache_autorizado','upload_local'].includes(p.imageOrigin);
 function jersey(p,extra=''){
 const a=esc(p.primary||'#ededed'),b=esc(p.accent||'#304130'),id='i'+Math.random().toString(36).slice(2,9);
 const isNBA=p.kind==='nba',isShort=p.kind==='shorts',isSocks=p.kind==='socks';
@@ -26,7 +28,7 @@ function imageHTML(p,extra=''){
 }
 const matchCategory=(p,c)=>c==='todos'||p.category===c||(c==='player'&&String(p.kind).startsWith('player_'));
 function filtered(){
- let ps=catalog.filter(p=>matchCategory(p,state.category));
+ let ps=catalog.filter(p=>hasVerifiedPhoto(p)&&matchCategory(p,state.category));
  if(state.query)ps=ps.filter(p=>[p.title,p.category,p.kind].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(state.query.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()));
  if(state.favoritesOnly)ps=ps.filter(p=>state.favorites.includes(p.id));
  // Fotos efetivamente guardadas na loja primeiro; exemplos sem imagem por último.
@@ -40,9 +42,9 @@ function filtered(){
  return ps;
 }
 function catalogRender(){
- const ps=filtered();const visible=ps.slice(0,state.limit);$('catalogSubtitle').textContent=state.favoritesOnly?'Modelos que você salvou.':state.query?`Resultados da busca por “${state.query}”.`:'Escolha um modelo, tamanho e personalização para sua coleção.';
+ const ps=filtered();const visible=ps.slice(0,state.limit);$('catalogSubtitle').textContent=state.favoritesOnly?'Modelos que você salvou.':state.query?`Resultados da busca por “${state.query}”.`:'Camisas com fotos reais do fornecedor. Novos modelos são adicionados automaticamente ao catálogo.';
  $('productsGrid').innerHTML=visible.map(p=>`<article class="product-card" data-id="${esc(p.id)}"><div class="product-image"><span class="label-chip ${p.badge==='NOVO'||p.badge==='COPA 2026'?'highlight':''}">${esc(p.badge||'STREETBALL')}</span><button class="fav-btn ${state.favorites.includes(p.id)?'active':''}" data-fav="${esc(p.id)}" aria-label="Adicionar aos favoritos"><svg viewBox="0 0 24 24"><path d="M20 4c-2.3-2-5.3-1.2-8 1.6C9.3 2.8 6.4 2 4 4c-3.1 3-2.2 7.2 0 9.4L12 21l8-7.6c2.2-2.2 3.1-6.4 0-9.4Z"/></svg></button>${imageHTML(p)}<button class="quick-btn" data-open="${esc(p.id)}">ESCOLHER OPÇÕES ↗</button></div><div class="product-meta"><div class="product-label">${esc(categoryLabel(p))}</div><h3 class="product-title">${esc(p.title)}</h3><div class="product-price"><small>A partir de</small>${money(p.price)}</div><div class="product-price-note">Tamanhos e personalização disponíveis</div></div></article>`).join('')||'<div class="empty-cart">Nenhum modelo encontrado. Experimente outra pesquisa ou categoria.</div>';
- $('catalogTotal').textContent=`Exibindo ${visible.length} de ${ps.length} modelos`;
+ $('catalogTotal').textContent=`Exibindo ${visible.length} de ${ps.length} modelos com fotos verificadas`;
  $('loadMore').classList.toggle('hide',visible.length>=ps.length);
  $('activeFilters').innerHTML=CATS.map(([id,label])=>`<button class="filter-tag ${id===state.category?'active':''}" data-category="${id}">${label}</button>`).join('');
  document.querySelectorAll('[data-category]').forEach(b=>b.classList.toggle('active',b.dataset.category===state.category));
