@@ -61,7 +61,7 @@ export async function routePaidOrder(env,orderId){
  // Rastrear a preparação mesmo quando não for possível automatizar o WhatsApp.
  await env.DB.prepare("INSERT OR IGNORE INTO supplier_dispatch(order_id,supplier_id,supplier_phone,state,created_at,updated_at) VALUES(?,?,?,?,?,?)")
  .bind(order.id,supplier?.id||'',supplier?.phone||'','pending',t,t).run();
- if(!supplier||!env.SUPPLIER_WA_TEMPLATE||!env.STORE_PUBLIC_URL||!firstPhoto||env.WA_AUTOMATION_ENABLED!=='true'){
+ if(!supplier||!env.STORE_PUBLIC_URL||!firstPhoto||env.WA_AUTOMATION_ENABLED!=='true'){
    await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_configuration',updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
    await env.DB.prepare("UPDATE supplier_jobs SET status='manual_review',updated_at=? WHERE order_id=? AND status='requires_supplier_routing'").bind(now(),order.id).run();
    return false;
@@ -72,6 +72,8 @@ export async function routePaidOrder(env,orderId){
    await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_configuration',last_error='Template com foto não configurado',updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
    return false;
  }
+ await env.DB.prepare("UPDATE supplier_dispatch SET state='pending',supplier_id=?,supplier_phone=?,updated_at=?,last_error=NULL WHERE order_id=? AND state='needs_configuration'")
+   .bind(supplier.id,supplier.phone,now(),order.id).run();
  const lock=await env.DB.prepare("UPDATE supplier_dispatch SET state='sending',attempts=attempts+1,updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
  if(!lock.meta?.changes)return false;
  try{
@@ -151,7 +153,12 @@ export async function monitorSupplierSLA(env){
  const rows=await env.DB.prepare("SELECT order_id FROM supplier_dispatch WHERE state='awaiting_reply' AND sent_at<? LIMIT 100").bind(cutoff).all();
  for(const row of rows.results||[]){
    const change=await env.DB.prepare("UPDATE supplier_dispatch SET state='overdue_24h',updated_at=? WHERE order_id=? AND state='awaiting_reply'").bind(now(),row.order_id).run();
-   if(change.meta?.changes)await env.DB.prepare("UPDATE supplier_jobs SET status='overdue_24h',updated_at=? WHERE order_id=?").bind(now(),row.order_id).run();
+   if(change.meta?.changes){
+    await env.DB.prepare("UPDATE supplier_jobs SET status='overdue_24h',updated_at=? WHERE order_id=?").bind(now(),row.order_id).run();
+    if(env.OWNER_WA_PHONE&&env.OWNER_WA_TEMPLATE&&env.WA_AUTOMATION_ENABLED==='true'){
+      await sendTemplate(env,env.OWNER_WA_PHONE,env.OWNER_WA_TEMPLATE,[row.order_id.slice(0,8)]).catch(()=>{});
+    }
+   }
  }
 }
 export async function retryPendingRoutes(env){
