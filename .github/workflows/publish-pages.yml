@@ -7,6 +7,7 @@ on:
     workflows:
       - Importar catálogo James Jersey
       - Encontrar fotos em fontes esportivas confiáveis
+      - Guardar capas James Jersey na loja
     types: [completed]
 permissions:
   contents: read
