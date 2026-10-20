@@ -29,6 +29,11 @@ function filtered(){
  let ps=catalog.filter(p=>matchCategory(p,state.category));
  if(state.query)ps=ps.filter(p=>[p.title,p.category,p.kind].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(state.query.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()));
  if(state.favoritesOnly)ps=ps.filter(p=>state.favorites.includes(p.id));
+ // Fotos efetivamente guardadas na loja primeiro; exemplos sem imagem por último.
+ if(state.sort==='featured'){
+  const rank=p=>p.imageOrigin==='cache_autorizado'||p.imageOrigin==='upload_local'?3:(p.image&&String(p.id).startsWith('YUP-')?2:(p.image?1:0));
+  ps.sort((a,b)=>rank(b)-rank(a));
+ }
  if(state.sort==='lowest')ps.sort((a,b)=>a.price-b.price);
  if(state.sort==='highest')ps.sort((a,b)=>b.price-a.price);
  if(state.sort==='az')ps.sort((a,b)=>a.title.localeCompare(b.title,'pt-BR'));
