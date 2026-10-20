@@ -16,7 +16,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
-from catalog_utils import ROOT, PRICES, classify, normalize_product, is_yupoo_album_url, valid_image_url, read_catalog, save_catalog
+from catalog_utils import ROOT, PRICES, classify, normalize_product, is_yupoo_album_url, valid_image_url, read_catalog, save_catalog, is_nba_product
 
 BASE = 'https://james66jersey.x.yupoo.com'
 CHECKPOINT = ROOT / 'scripts' / 'yupoo_import_checkpoint.json'
@@ -161,6 +161,7 @@ def protected_album(html):
 def integrate_cards(by_id, new_cards):
     added = changed = 0
     for card in new_cards.values():
+        if is_nba_product(card): continue
         pid = 'YUP-' + card['id']
         old = by_id.get(pid)
         if old:
@@ -185,6 +186,7 @@ def integrate_cards(by_id, new_cards):
 
 
 def integrate_photos(by_id, card, images, title):
+    if is_nba_product({'title':title}): return False
     pid = 'YUP-' + card['id']
     cat, kind = classify(title)
     raw = {'id': pid, 'title': title, 'sourceUrl': card['url'], 'category': cat,
@@ -288,6 +290,7 @@ async def main(args):
             scanned = 0
             # Ordem de indexação por página; não repetir álbuns já processados.
             for aid, card in list(index.items()):
+                if is_nba_product(card): continue
                 if aid in done and not args.refresh: continue
                 if aid in protected: continue
                 previous_error = errors.get(aid)
