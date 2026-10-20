@@ -8,6 +8,7 @@ on:
       - Importar catálogo James Jersey
       - Encontrar fotos em fontes esportivas confiáveis
       - Guardar capas James Jersey na loja
+      - Completar fotos da Streetball Store
     types: [completed]
 permissions:
   contents: read
@@ -30,11 +31,13 @@ jobs:
           ref: main
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
+      - name: Auditar fotografias existentes
+        run: python scripts/audit_catalog_images.py
       - name: Preparar apenas a vitrine publica
         run: |
           mkdir -p _site
           cp -R public/. _site/
-          rm -f _site/admin.html
+          rm -f _site/admin.html _site/catalog.js
           touch _site/.nojekyll
       - name: Enviar arquivos da vitrine
         uses: actions/upload-pages-artifact@v4
