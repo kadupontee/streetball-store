@@ -1,0 +1,46 @@
+name: Remover NBA do catálogo Streetball
+on:
+  push:
+    paths:
+      - '.github/workflows/remove-nba.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: streetball-catalog
+  cancel-in-progress: false
+jobs:
+  remover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Remover NBA e atualizar catálogo estático
+        run: python scripts/remove_nba.py
+      - name: Publicar exclusão no repositório
+        run: |
+          git config user.name 'Streetball Catalog Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add public/catalog.json public/catalog.js public/images/yupoo
+          if git diff --cached --quiet; then
+            echo 'Nenhum produto NBA para retirar.'
+            exit 0
+          fi
+          git commit -m 'Retirar NBA da loja e catálogo'
+          for retry in 1 2 3; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort
+              echo 'Conflito ao atualizar catálogo; não substituir dados existentes.'
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              echo 'NBA removida e catálogo publicado.'
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
