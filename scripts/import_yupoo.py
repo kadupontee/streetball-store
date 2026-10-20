@@ -195,8 +195,10 @@ def integrate_photos(by_id, card, images, title):
     if old := by_id.get(pid):
         if old.get('priceLocked'): normalized['price'] = old['price']; normalized['priceLocked'] = True
         if old.get('categoryLocked'): normalized['category'] = old['category']; normalized['categoryLocked'] = True
-        if old.get('imageOrigin') == 'upload_local' and old.get('images'):
-            normalized['images'] = old['images']; normalized['image'] = old['image']; normalized['imageOrigin'] = 'upload_local'
+        if old.get('imageOrigin') in ('upload_local', 'cache_autorizado') and old.get('images'):
+            normalized['images'] = old['images']; normalized['image'] = old['image']; normalized['imageOrigin'] = old['imageOrigin']
+            if old.get('sourceImageUrl'):
+                normalized['sourceImageUrl'] = old['sourceImageUrl']
         by_id[pid] = {**old, **normalized}
         return False
     by_id[pid] = normalized
