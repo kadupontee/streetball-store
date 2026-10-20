@@ -10,7 +10,7 @@ on:
       limit:
         description: 'Maximo de capas por lote (1 a 500)'
         required: false
-        default: '200'
+        default: '500'
 permissions:
   contents: write
 concurrency:
@@ -33,7 +33,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check pillow
       - name: Baixar e validar capas reais do fornecedor
         env:
-          IMAGE_LIMIT: ${{ github.event.inputs.limit || '200' }}
+          IMAGE_LIMIT: ${{ github.event.inputs.limit || '500' }}
         run: |
           python scripts/cache_yupoo_covers.py --limit "$IMAGE_LIMIT" --workers 5
       - name: Publicar fotos e salvar progresso (com tentativa apos commits simultaneos)
