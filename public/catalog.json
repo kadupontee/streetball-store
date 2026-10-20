@@ -150,31 +150,6 @@
     "images": []
   },
   {
-    "id": "SB-0007",
-    "title": "Golden State Warriors — Curry 30",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "",
-    "imageOrigin": "ilustracao_svg",
-    "primary": "#174c9d",
-    "accent": "#f3d222",
-    "badge": "NBA",
-    "source": "exemplo_sem_foto_fornecedor",
-    "sourceUrl": "",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "description": "Modelo referenciado no catálogo do fornecedor. Foto, composição, detalhes, tamanho e disponibilidade devem ser confirmados antes da publicação.",
-    "images": []
-  },
-  {
     "id": "SB-0008",
     "title": "Brasil 1994 II — Retrô",
     "category": "retro",
@@ -1128,54 +1103,6 @@
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums?tab=gallery",
     "sizes": [
       "Único"
-    ],
-    "description": "Modelo referenciado no catálogo do fornecedor. Foto, composição, detalhes, tamanho e disponibilidade devem ser confirmados antes da publicação."
-  },
-  {
-    "id": "SB-0048",
-    "title": "Regata de basquete Real Madrid",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": null,
-    "imageOrigin": "ilustracao_svg",
-    "primary": "#efefee",
-    "accent": "#2f5589",
-    "badge": "BASQUETE",
-    "source": "catalogo_yupoo_indexado",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums?tab=gallery",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "description": "Modelo referenciado no catálogo do fornecedor. Foto, composição, detalhes, tamanho e disponibilidade devem ser confirmados antes da publicação."
-  },
-  {
-    "id": "SB-0049",
-    "title": "Regata de basquete Barcelona",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": null,
-    "imageOrigin": "ilustracao_svg",
-    "primary": "#243785",
-    "accent": "#b83b43",
-    "badge": "BASQUETE",
-    "source": "catalogo_yupoo_indexado",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums?tab=gallery",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
     ],
     "description": "Modelo referenciado no catálogo do fornecedor. Foto, composição, detalhes, tamanho e disponibilidade devem ser confirmados antes da publicação."
   },
@@ -6023,35 +5950,6 @@
     "sourceImageUrl": "https://photo.yupoo.com/james66jersey/d9de3a8d3b/small.jpeg"
   },
   {
-    "id": "YUP-258348938",
-    "title": "Malaga Basketball Jersey Home Green S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/258348938",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "/images/yupoo/258348938.webp",
-    "images": [
-      "/images/yupoo/258348938.webp"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "cache_autorizado",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/c711f5724d/small.jpeg"
-  },
-  {
     "id": "YUP-258348934",
     "title": "F1 Ferrari Red S—-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/258348934",
@@ -6340,35 +6238,6 @@
     "accent": "#2e3936",
     "badge": "",
     "sourceImageUrl": "https://photo.yupoo.com/james66jersey/08639ccf96/small.jpeg"
-  },
-  {
-    "id": "YUP-258348890",
-    "title": "Real Madrid Basketball Jersey S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/258348890",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "/images/yupoo/258348890.webp",
-    "images": [
-      "/images/yupoo/258348890.webp"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "cache_autorizado",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/55d2462733/small.jpeg"
   },
   {
     "id": "YUP-258348882",
@@ -8631,64 +8500,6 @@
     "accent": "#2e3936",
     "badge": "",
     "sourceImageUrl": "https://photo.yupoo.com/james66jersey/8f89fc98bf/small.jpg"
-  },
-  {
-    "id": "YUP-256578633",
-    "title": "26-27 Celtics home S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/256578633",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "/images/yupoo/256578633.webp",
-    "images": [
-      "/images/yupoo/256578633.webp"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "cache_autorizado",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/bfc4f6f754/small.jpg"
-  },
-  {
-    "id": "YUP-256578529",
-    "title": "26-27 Celtics away S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/256578529",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "/images/yupoo/256578529.webp",
-    "images": [
-      "/images/yupoo/256578529.webp"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "cache_autorizado",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/47dd2402c9/small.jpg"
   },
   {
     "id": "YUP-256578367",
@@ -12720,35 +12531,6 @@
     "accent": "#2e3936",
     "badge": "",
     "sourceImageUrl": "https://photo.yupoo.com/james66jersey/975111b92d/small.jpeg"
-  },
-  {
-    "id": "YUP-255955796",
-    "title": "Flamenco home Blue Basketball Jersey S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/255955796",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "/images/yupoo/255955796.webp",
-    "images": [
-      "/images/yupoo/255955796.webp"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "cache_autorizado",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/b5fe5a010a/small.jpeg"
   },
   {
     "id": "YUP-255955789",
@@ -20146,35 +19928,6 @@
     "sourceImageUrl": "https://photo.yupoo.com/james66jersey/18b05251c9/small.jpeg"
   },
   {
-    "id": "YUP-254050169",
-    "title": "NBA",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/254050169",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "/images/yupoo/254050169.webp",
-    "images": [
-      "/images/yupoo/254050169.webp"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "cache_autorizado",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/c6fc7d43b2/small.png"
-  },
-  {
     "id": "YUP-254049781",
     "title": "26-27 Bournemouth Home S-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/254049781",
@@ -23004,34 +22757,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-253723085",
-    "title": "NBA All-Star basketball shorts",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/253723085",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/f9ce153c47/small.jpeg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/f9ce153c47/small.jpeg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-253722773",
     "title": "26-27 Athletic Bilbao S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/253722773",
@@ -23069,34 +22794,6 @@
     "image": "https://photo.yupoo.com/james66jersey/e77b1e54dd/small.jpeg",
     "images": [
       "https://photo.yupoo.com/james66jersey/e77b1e54dd/small.jpeg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-253722405",
-    "title": "player 2627 Celtics away S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/253722405",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/928474aa3e/small.jpeg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/928474aa3e/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -26261,34 +25958,6 @@
     "image": "https://photo.yupoo.com/james66jersey/b2223bba29/small.jpeg",
     "images": [
       "https://photo.yupoo.com/james66jersey/b2223bba29/small.jpeg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-253003910",
-    "title": "Flamenco away Basketball Tank Top S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/253003910",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/c8f0488173/small.jpeg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/c8f0488173/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -33302,118 +32971,6 @@
       "24",
       "26",
       "28"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-251444090",
-    "title": "NBA Hot pressing S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251444090",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/f7a1771528/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/f7a1771528/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-251443943",
-    "title": "NBA Hot pressing S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251443943",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/79670917a9/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/79670917a9/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-251443857",
-    "title": "NBA Hot pressing S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251443857",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/6205e618e9/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/6205e618e9/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-251443716",
-    "title": "NBA Hot pressing S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251443716",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/c2897833f4/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/c2897833f4/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
@@ -41465,34 +41022,6 @@
     "image": "https://photo.yupoo.com/james66jersey/3ea7eeba01/small.jpeg",
     "images": [
       "https://photo.yupoo.com/james66jersey/3ea7eeba01/small.jpeg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-249268846",
-    "title": "26-27 Celtics away S-4XL 正确版",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/249268846",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/fdf1c6bdf1/small.jpeg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/fdf1c6bdf1/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -51508,34 +51037,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-247579796",
-    "title": "NRL 2026 One NZ Warriors s-7xl",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/247579796",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/0a8288ad38/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/0a8288ad38/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-247579158",
     "title": "NRL 2026 Ireland S-5XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/247579158",
@@ -53154,34 +52655,6 @@
       "XXL",
       "3XL",
       "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-247301036",
-    "title": "26-27 Celtics 2 Away 16-28",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/247301036",
-    "category": "infantil",
-    "kind": "kids",
-    "price": 179.9,
-    "image": "https://photo.yupoo.com/james66jersey/1aa47b4c7e/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/1aa47b4c7e/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "16",
-      "18",
-      "20",
-      "22",
-      "24",
-      "26",
-      "28"
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
@@ -56772,34 +56245,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-246852392",
-    "title": "Celtics European Cup Winning 60th Anniversary Edition S-4X",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/246852392",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/4b5791a630/small.jpeg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/4b5791a630/small.jpeg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-246851966",
     "title": "player 26-27 Barcelona training kit S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/246851966",
@@ -56809,34 +56254,6 @@
     "image": "https://photo.yupoo.com/james66jersey/931838d36b/small.jpeg",
     "images": [
       "https://photo.yupoo.com/james66jersey/931838d36b/small.jpeg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-246851100",
-    "title": "player 2627 Celtics 2away S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/246851100",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/f8ed387502/small.jpeg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/f8ed387502/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -57444,34 +56861,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-246702847",
-    "title": "26-27 Celtics Dark Green POLO S-3XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/246702847",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/2776e4bccc/small.jpeg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/2776e4bccc/small.jpeg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-246702705",
     "title": "Nigeria Special Edition Black S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/246702705",
@@ -57957,34 +57346,6 @@
     "image": "https://photo.yupoo.com/james66jersey/7cd7da911b/small.jpeg",
     "images": [
       "https://photo.yupoo.com/james66jersey/7cd7da911b/small.jpeg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-246550855",
-    "title": "26-27 Celtics POLO shirt S to 3XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/246550855",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/5db324e6e9/small.jpeg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/5db324e6e9/small.jpeg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -62099,34 +61460,6 @@
     "image": "https://photo.yupoo.com/james66jersey/f4f4248526/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/f4f4248526/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-245880089",
-    "title": "Celtics 2away S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/245880089",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/f92c13b39a/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/f92c13b39a/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -73654,34 +72987,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-243032285",
-    "title": "Celtics Special Edition",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/243032285",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/a82eb8f1d9/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/a82eb8f1d9/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-243032211",
     "title": "player 2627 Chelsea Special Edition",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/243032211",
@@ -77602,314 +76907,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-242366394",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242366394",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/88d8438e8a/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/88d8438e8a/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242366367",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242366367",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/9d4d58961c/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/9d4d58961c/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242366305",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242366305",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/3670203a44/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/3670203a44/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242366241",
-    "title": "Paris Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242366241",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/5f635e3086/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/5f635e3086/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242366178",
-    "title": "Paris Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242366178",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/c8dc3909d9/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/c8dc3909d9/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242366106",
-    "title": "Paris Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242366106",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/df21a633ad/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/df21a633ad/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242366039",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242366039",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/d98e6081bc/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/d98e6081bc/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365983",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365983",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/cdcc0a01e7/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/cdcc0a01e7/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365908",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365908",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/68b1d0119d/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/68b1d0119d/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365855",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365855",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/0fdeddf427/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/0fdeddf427/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365732",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365732",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/5be79e410b/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/5be79e410b/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-242365721",
     "title": "woman 26-27 Paris Twin Stars Champion Edition",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365721",
@@ -77919,202 +76916,6 @@
     "image": "https://photo.yupoo.com/james66jersey/d5cb0dac56/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/d5cb0dac56/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365671",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365671",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/9941ae1a43/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/9941ae1a43/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365635",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365635",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/65a6cb99d9/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/65a6cb99d9/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365574",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365574",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/6efa5c546e/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/6efa5c546e/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365513",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365513",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/c9b4ec6b61/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/c9b4ec6b61/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365446",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365446",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/8d514acbd1/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/8d514acbd1/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365357",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365357",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/64cf3e0967/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/64cf3e0967/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-242365263",
-    "title": "Nike AJ Casual Basketball Shorts Series XS~4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242365263",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/4047e70fec/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/4047e70fec/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -86170,62 +84971,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-240908174",
-    "title": "26-27 Celtics Goalkeeper S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/240908174",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/a96f861584/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/a96f861584/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-240908112",
-    "title": "26-27 Celtics Goalkeeper 16-28",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/240908112",
-    "category": "infantil",
-    "kind": "kids",
-    "price": 179.9,
-    "image": "https://photo.yupoo.com/james66jersey/450f755722/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/450f755722/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "16",
-      "18",
-      "20",
-      "22",
-      "24",
-      "26",
-      "28"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-240907988",
     "title": "26-27 Manchester United Goalkeeper 16-28",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/240907988",
@@ -92442,34 +91187,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-240127197",
-    "title": "Celtics home S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/240127197",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/d4a539ecc0/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/d4a539ecc0/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-240127152",
     "title": "Arsenal S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/240127152",
@@ -92955,34 +91672,6 @@
     "image": "https://photo.yupoo.com/james66jersey/3723307df7/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/3723307df7/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-240126045",
-    "title": "retro Celtics away S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/240126045",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/71e7675b4c/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/71e7675b4c/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -101290,62 +99979,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-239378230",
-    "title": "NBA",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/239378230",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/83a53dd470/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/83a53dd470/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-239373860",
-    "title": "NBA S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/239373860",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/5d33100965/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/5d33100965/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-239373093",
     "title": "Borussia Mönchengladbach",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/239373093",
@@ -102195,34 +100828,6 @@
     "image": "https://photo.yupoo.com/james66jersey/122e99c43b/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/122e99c43b/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-239354393",
-    "title": "Celtics home S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/239354393",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/236f514927/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/236f514927/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -114758,34 +113363,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-238472627",
-    "title": "Celtics home 16-28",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/238472627",
-    "category": "infantil",
-    "kind": "kids",
-    "price": 179.9,
-    "image": "https://photo.yupoo.com/james66jersey/972b1dec9c/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/972b1dec9c/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "16",
-      "18",
-      "20",
-      "22",
-      "24",
-      "26",
-      "28"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-238468774",
     "title": "Qatar Away S-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/238468774",
@@ -123326,34 +121903,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-237597065",
-    "title": "Celtics S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237597065",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/17c1fa63fe/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/17c1fa63fe/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-237594809",
     "title": "Arsenal Away S-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237594809",
@@ -128870,34 +127419,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-237048687",
-    "title": "Celtics Home Game S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237048687",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/335fd13d21/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/335fd13d21/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-237048217",
     "title": "Player Barcelona Special Edition",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237048217",
@@ -132099,34 +130620,6 @@
     "image": "https://photo.yupoo.com/james66jersey/96363ae58b/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/96363ae58b/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-236513103",
-    "title": "Celtics retro",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/236513103",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/adbe0faf8b/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/adbe0faf8b/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -157794,90 +156287,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-233652038",
-    "title": "Malaga Basketball vest S-2xL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/233652038",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/159516cba7/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/159516cba7/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-233651884",
-    "title": "Real Madrid basketball jersey",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/233651884",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/a1100042ee/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/a1100042ee/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-233651805",
-    "title": "Barcelona basketball jersey",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/233651805",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/56784f8f71/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/56784f8f71/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-233651477",
     "title": "Players 25-26 Aston Villa second away game S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/233651477",
@@ -161723,34 +160132,6 @@
     "image": "https://photo.yupoo.com/james66jersey/f9600aefac/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/f9600aefac/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-233440343",
-    "title": "Celtics away game (S-4XL)",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/233440343",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/1292ef490d/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/1292ef490d/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -166119,62 +164500,6 @@
     "image": "https://photo.yupoo.com/james66jersey/6cf63ca275/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/6cf63ca275/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-232884049",
-    "title": "1998-99 Celtics home retro",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/232884049",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/5423809d38/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/5423809d38/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-232883802",
-    "title": "87-88 Celtics retro home",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/232883802",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/37d21e26fa/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/37d21e26fa/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -179718,34 +178043,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-230554170",
-    "title": "26-27 Celtics home S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/230554170",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/eca460f2/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/eca460f2/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-230549452",
     "title": "26-27 Australia home S-4XL 澳大利亚",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/230549452",
@@ -181883,62 +180180,6 @@
     "image": "https://photo.yupoo.com/james66jersey/0e5b7eb1/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/0e5b7eb1/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-230186437",
-    "title": "Celtics Home 138th Anniversary Edition",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/230186437",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/94e2ae13/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/94e2ae13/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-230186357",
-    "title": "2006-07 Celtics away",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/230186357",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/7c0dde57/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/7c0dde57/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -185579,34 +183820,6 @@
     "image": "https://photo.yupoo.com/james66jersey/f8f80846/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/f8f80846/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-229779634",
-    "title": "Celtics home S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/229779634",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/976d4e90/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/976d4e90/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -208780,34 +206993,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-226925092",
-    "title": "26-27 Celtics away S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/226925092",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/2409cb9b/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/2409cb9b/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-226924946",
     "title": "26-27 Argentina home player shorts S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/226924946",
@@ -216433,34 +214618,6 @@
     "image": "https://photo.yupoo.com/james66jersey/f549942e/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/f549942e/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-226327219",
-    "title": "Celtics S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/226327219",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/c3b6c1ed/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/c3b6c1ed/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -234146,34 +232303,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-224091339",
-    "title": "25-26 Chelsea player version half pull training uniform in basketball color, S-2XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/224091339",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/4cbd22cb/small.jpeg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/4cbd22cb/small.jpeg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-224091227",
     "title": "25-26 season Atletico Madrid jersey, player version - 2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/224091227",
@@ -245710,34 +243839,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-223323435",
-    "title": "25-26 Flamengo away basketball vest S -4xL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223323435",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/49a2b041/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/49a2b041/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-223323400",
     "title": "Portugal Adult Set S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223323400",
@@ -247455,34 +245556,6 @@
     "image": "https://photo.yupoo.com/james66jersey/34efc407/small.png",
     "images": [
       "https://photo.yupoo.com/james66jersey/34efc407/small.png"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-223107849",
-    "title": "Celtics home retro",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223107849",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/a47edba9/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/a47edba9/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -265446,34 +263519,6 @@
     "badge": ""
   },
   {
-    "id": "YUP-221773388",
-    "title": "NBA 305 models",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221773388",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/f3bf42c0/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/f3bf42c0/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
     "id": "YUP-221731073",
     "title": "NFL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221731073",
@@ -268199,34 +266244,6 @@
     "image": "https://photo.yupoo.com/james66jersey/fdc4390e/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/fdc4390e/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-221541560",
-    "title": "26-27 Celtics home S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221541560",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/f8de1c65/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/f8de1c65/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
@@ -273407,34 +271424,6 @@
     "image": "https://photo.yupoo.com/james66jersey/ccb9235e/small.jpg",
     "images": [
       "https://photo.yupoo.com/james66jersey/ccb9235e/small.jpg"
-    ],
-    "source": "import_yupoo_publico",
-    "importStatus": "capa_catalogo",
-    "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
-    "sizes": [
-      "P",
-      "M",
-      "G",
-      "GG",
-      "XXL",
-      "3XL",
-      "4XL"
-    ],
-    "primary": "#ededed",
-    "accent": "#2e3936",
-    "badge": ""
-  },
-  {
-    "id": "YUP-221190645",
-    "title": "26-27 Celtics Home Commemorative Edition S-4XL",
-    "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221190645",
-    "category": "nba",
-    "kind": "nba",
-    "price": 219.9,
-    "image": "https://photo.yupoo.com/james66jersey/5bd5ff3f/small.jpg",
-    "images": [
-      "https://photo.yupoo.com/james66jersey/5bd5ff3f/small.jpg"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
