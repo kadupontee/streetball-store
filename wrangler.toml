@@ -21,6 +21,8 @@ ASAAS_SANDBOX = "true"
 SALES_ENABLED = "true"
 PAYMENTS_PRODUCTION_ENABLED = "false"
 WA_AUTOMATION_ENABLED = "false"
+# Dominio HTTPS da vitrine usado somente para montar URLs publicas das fotos na previa.
+STORE_PUBLIC_URL = "https://streetball-store.kpgmer.workers.dev"
 # Valor TEMPORARIO apenas para simular cobranças no Sandbox. Nao habilitar producao com este frete.
 SHIPPING_FLAT_BRL = "0.00"
 # Configure o identificador de um fornecedor autorizado no SUPPLIERS_JSON:
