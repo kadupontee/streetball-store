@@ -1,79 +1,59 @@
-# Streetball Store — Prévia segura dos pedidos para fornecedores
+# Streetball Store — fila de fornecedores para o catálogo compartilhado
 
-## Cadastro da origem de cada produto (cinco fornecedores)
+## Como funciona
 
-O catálogo da Streetball Store contém produtos de fornecedores diferentes. **Nome do clube, foto e link de álbum não bastam para inferir o vendedor correto.** As atribuições deverão ser conferidas pelo responsável antes de salvar.
+Todos os cinco fornecedores são candidatos a atender qualquer camisa do catálogo. **Não associe cada produto a um fornecedor.**
 
-1. Atualize o código com `git pull`.
-2. Faça a migração no D1 existente com `npx wrangler d1 execute streetball-db --remote --file=worker/schema.sql`. O script usa `CREATE TABLE IF NOT EXISTS`, preservando pedidos e pagamentos já registrados.
-3. Execute `npm test` e publique apenas após aprovação dos testes: `npx wrangler deploy`.
-4. Acesse `https://streetball-store.kpgmer.workers.dev/suppliers.html` (ou use o link do painel administrativo) e informe seu `ADMIN_TOKEN`.
-5. Cadastre de um a cinco **nomes reais** e IDs estáveis, por exemplo `fornecedor_a`, `fornecedor_b` etc. Esses exemplos **não** são fornecedores cadastrados automaticamente.
-6. Pesquise produtos pelo nome, ID ou link do álbum. Confira com qual fornecedor cada produto realmente é fornecido.
-7. Selecione o fornecedor em cada linha e clique em **SALVAR**, ou marque até 25 produtos de origem comprovadamente igual e use o botão de lote. Você pode remover uma atribuição usando “Não identificado”.
+1. Após o Asaas informar `PAYMENT_RECEIVED`, o pedido fica apto a uma consulta.
+2. O primeiro fornecedor da fila recebe foto e resumo do pedido por template WhatsApp aprovado.
+3. O fornecedor responde `SEM_ESTOQUE ID` se não tiver os modelos/tamanhos, ou responde à própria mensagem com “sem estoque” ou “não temos”.
+4. A negativa inequívoca é armazenada em `supplier_attempts`. O sistema passa ao próximo contato configurado.
+5. Quando responder `DISPONIVEL ID`, são enviados os detalhes necessários para preparar o pedido. Só após `CONFIRMAR ID` o cliente poderá receber confirmação de preparação.
+6. Se os cinco responderem sem estoque, o pedido fica em `all_unavailable` para revisão manual. Não é cancelado nem reembolsado automaticamente.
+7. Respostas ambíguas, sem referência a uma mensagem/pedido, não são interpretadas como negativa: exigem conferência.
 
-A tabela `supplier_product_map` guarda o vínculo por ID estável no D1, então novos imports e mudanças de imagem não apagam as atribuições. A loja acrescenta a atribuição aos **novos pedidos feitos após a publicação**. Pedidos anteriores também podem ser consultados na prévia administrativa a partir do mapa atual, mas não são encaminhados automaticamente.
+O acompanhamento de 24 horas é um **alerta por ausência de resposta**, não uma declaração automática de falta de estoque.
 
-**Pedidos mistos:** se um carrinho tiver itens de fornecedores distintos ou sem identificação, a automação não pode eleger um único fornecedor e fica pendente de revisão humana. O projeto não divide pedidos entre múltiplos fornecedores nesta versão.
+## Cadastro na Streetball Store
 
-**Somente cadastro:** telefones, tokens, templates aprovados, envios de WhatsApp e Pix ao fornecedor não são configurados por esta tela. O envio continua desativado com `WA_AUTOMATION_ENABLED = "false"`.
-
-
-Este recurso permite conferir o **texto, as variantes e a primeira foto** antes de conectar a API do WhatsApp.
-
-## Estado atual (modo de testes)
-
-- Asaas Sandbox: ativo.
-- `WA_AUTOMATION_ENABLED = "false"`: **mantido**. Nenhuma mensagem é enviada.
-- `PAYMENTS_PRODUCTION_ENABLED = "false"`: cobranças reais bloqueadas.
-- Pagamento Pix aos fornecedores: requer aprovação humana e conferência de beneficiário, valor e comprovante.
-- Meta Business: aguardando análise da verificação empresarial para investigar o erro `131031`.
-
-## Publicar a prévia
-
-No Mac, dentro da pasta do repositório:
+Execute no Mac:
 
 ```bash
+cd ~/Downloads/streetball-store
 git pull
+npx wrangler d1 execute streetball-db --remote --file=worker/schema.sql
 npm test
 npx wrangler deploy
 ```
 
-Acesse `https://streetball-store.kpgmer.workers.dev/admin.html`, informe o `ADMIN_TOKEN`, clique em **CARREGAR PEDIDOS** e escolha **PRÉVIA SEM ENVIO** no pedido. O botão somente consulta a API administrativa autenticada.
+A migração é aditiva; preserva as tabelas existentes. Publique somente quando todos os testes passarem.
 
-## O que a prévia revela
+Acesse `https://streetball-store.kpgmer.workers.dev/suppliers.html` e informe seu `ADMIN_TOKEN`. Cadastre os nomes reais e os IDs internos de até cinco fornecedores. **Números e credenciais não entram nessa tela**.
 
-- Identificador reduzido do pedido, status de pagamento, itens, quantidade, tamanho, nome/número personalizado e patch;
-- Identificador do fornecedor e últimos quatro dígitos do WhatsApp (quando houver fornecedor cadastrado);
-- Resumo da mensagem inicial e URL permitida da primeira foto;
-- Checagens de configuração (fornecedor, foto, template, token e ID do número).
+Depois, quando a Meta aprovar sua conta, será possível configurar os cinco telefones e templates aprovados no segredo `SUPPLIERS_JSON` do Cloudflare. **A ordem dos objetos nesse segredo será a prioridade de consulta.** IDs precisam corresponder aos IDs administrativos.
 
-A prévia **não** cria cobrança, não envia WhatsApp, não modifica pedidos, não revela o token do WhatsApp e não apresenta o endereço ou CPF do comprador.
+Exemplo de estrutura (valores fictícios; não utilizar como números reais):
 
-## Preparação dos até cinco fornecedores
+```json
+[
+ {"id":"fornecedor_a","phone":"8613800138000","template":"consulta_estoque","mediaTemplate":"pedido_fornecedor_foto"},
+ {"id":"fornecedor_b","phone":"8613800138001","template":"consulta_estoque","mediaTemplate":"pedido_fornecedor_foto"}
+]
+```
 
-Os dados precisam ser validados antes do uso:
-- ID interno único de cada fornecedor, por exemplo `fornecedor1`;
-- Número completo com DDI (para fornecedores chineses, `86` + número);
-- Autorização do fornecedor para receber mensagens comerciais por WhatsApp;
-- Modelo aprovado pela Meta com cabeçalho **IMAGE** e duas variáveis de corpo: ID curto do pedido e resumo dos produtos.
+Use `npx wrangler secret put SUPPLIERS_JSON` com até cinco fornecedores reais autorizados; não publique esses contatos ou segredos no GitHub.
 
-Salve a lista como **segredo**, nunca em arquivo versionado, usando `npx wrangler secret put SUPPLIERS_JSON` no Terminal. O JSON deve conter no máximo cinco objetos no formato descrito em `worker/SETUP.md`. Nunca envie a lista de números pessoais em prints públicos.
+## Prévia dos pedidos
 
-Antes de enviar mensagens, vincule o produto ao fornecedor certo via `supplierId`, ou configure `DEFAULT_SUPPLIER_ID` **somente** se todos os produtos vierem realmente do mesmo fornecedor. Pedidos com fornecedores misturados devem seguir para revisão manual.
+No painel `/admin.html`, clique em **PRÉVIA SEM ENVIO**. A prévia mostra a fila de fornecedores configurados, tentativas de consulta e verificações pendentes. Ela não envia mensagens nem realiza Pix.
 
-## Por que pode aparecer "PENDENTE"
+## Estado atual — NÃO ATIVAR ENVIOS
 
-É normal: enquanto `SUPPLIERS_JSON` e `DEFAULT_SUPPLIER_ID` não forem configurados, a prévia não identifica o destinatário. Sem `WA_TOKEN` válido e template aprovado, a integração também não está pronta. **Não habilite `WA_AUTOMATION_ENABLED` ainda.**
+- `ASAAS_SANDBOX = "true"`
+- `WA_AUTOMATION_ENABLED = "false"`
+- `PAYMENTS_PRODUCTION_ENABLED = "false"`
+- O código impede qualquer disparo automático pelo Sandbox, mesmo se uma variável de automação for alterada isoladamente.
+- Os pagamentos aos fornecedores continuam manuais, com conferência de destinatário e valor.
+- A Meta ainda está analisando o portfólio empresarial; é preciso resolver o erro `131031`, validar destinatários e templates, testar webhooks e só depois avaliar uma ativação gradual.
 
-## Quando a Meta aprovar
-
-1. Conferir no WhatsApp Manager se a conta deixou de apresentar `131031` e se a API entrega mensagens ao número autorizado de teste.
-2. Trocar o token temporário da Meta por token adequado à operação contínua, com permissões mínimas.
-3. Configurar `WA_PHONE_NUMBER_ID`, `WA_TOKEN`, `WA_APP_SECRET` e `WA_VERIFY_TOKEN` como segredos no Cloudflare.
-4. Validar a URL `/api/webhooks/whatsapp` na Meta e inscrever o campo `messages`.
-5. Aprovar os templates, autorizar destinatários, testar cabeçalho com foto e respostas `DETALHES ID` e `CONFIRMAR ID`.
-6. Testar com pedido **simulado**, confirmando que nenhuma mensagem nem transferência é enviada a fornecedores reais inesperadamente.
-7. Só depois planejar ativação gradual do envio, com autorização explícita do proprietário.
-
-> Os dados de compradores são pessoais. Não use compradores reais em testes e não envie endereços aos fornecedores antes de validar o destinatário e a necessidade da informação.
+**Não trate a resposta “disponível” como prova de postagem ou entrega.** A confirmação deve ser auditada, e dados do comprador só devem ser enviados ao fornecedor certo quando necessários.
