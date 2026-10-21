@@ -97,3 +97,19 @@ CREATE TABLE IF NOT EXISTS supplier_priority (
  updated_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_supplier_priority_rank ON supplier_priority(rank);
+
+-- Consentimento opcional e comprovável para atualizações de pedido via WhatsApp.
+CREATE TABLE IF NOT EXISTS buyer_message_optin (
+ order_id TEXT PRIMARY KEY REFERENCES orders(id),
+ consented_at TEXT NOT NULL
+);
+
+-- Registro único de aviso de atraso, separado da notificação de preparação.
+CREATE TABLE IF NOT EXISTS buyer_delay_notifications (
+ order_id TEXT PRIMARY KEY REFERENCES orders(id),
+ state TEXT NOT NULL,
+ message_id TEXT,
+ error TEXT,
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL
+);
