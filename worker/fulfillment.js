@@ -80,8 +80,9 @@ function sendTemplate(env,to,name,args,headerImage){
  return sendWa(env,to,{type:'template',template:{name,language:{code:'pt_BR'},components}});
 }
 function getSupplier(env,items){
- const desired=new Set(items.map(i=>trim(i.supplierId||env.DEFAULT_SUPPLIER_ID,40)).filter(Boolean));
- if(desired.size!==1)return null;
+ // Catálogo com múltiplas origens: nunca inventar fornecedor para item sem identificação.
+ const desired=new Set(items.map(i=>trim(i.supplierId,40)));
+ if(desired.size!==1||desired.has(''))return null;
  return suppliers(env).find(s=>s.id===[...desired][0])||null;
 }
 function messageSummary(items){
