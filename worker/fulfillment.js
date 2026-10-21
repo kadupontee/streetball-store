@@ -12,6 +12,31 @@ function suppliers(env){
  if(!Array.isArray(list))return [];
  return list.slice(0,5).filter(p=>p&&/^[a-z0-9_-]{2,40}$/i.test(p.id)&&!!normalizeWaPhone(p.phone)&&/^[a-z0-9_]{2,100}$/i.test(p.template||env.SUPPLIER_WA_TEMPLATE||'')).map(p=>({...p,phone:digits(p.phone),template:p.template||env.SUPPLIER_WA_TEMPLATE}));
 }
+/**
+ * A fila cadastrada no D1 tem prioridade sobre a lista legada em secrets.
+ * Só contatos explicitamente autorizados são elegíveis para o WhatsApp.
+ * Nenhum número é devolvido ao navegador; prévia fornece apenas 4 dígitos.
+ */
+export async function loadSupplierCandidates(env){
+ if(env.DB){
+  try{
+   const data=await env.DB.prepare(
+     'SELECT d.id,c.phone_e164,c.authorized FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id ORDER BY d.created_at,d.id'
+   ).all();
+   const rows=data.results||[];
+   if(rows.length)return rows.filter(r=>r.authorized===1&&normalizeWaPhone(r.phone_e164)).map(r=>({
+     id:r.id,phone:normalizeWaPhone(r.phone_e164),
+     template:env.SUPPLIER_WA_TEMPLATE||'',
+     mediaTemplate:env.SUPPLIER_WA_TEMPLATE_MEDIA||''
+   }));
+  }catch(err){
+   // Nunca escolher um fornecedor legado por engano se o cadastro D1 estiver indisponível.
+   console.error('Unable to load registered supplier contacts',err?.message);
+   return [];
+  }
+ }
+ return suppliers(env);
+}
 function phoneBR(raw){
  let p=digits(raw);
  if(p.length===10||p.length===11)p='55'+p;
@@ -29,9 +54,9 @@ function imageLink(raw,env){
  * Prévia administrativa de encaminhamento. Não gera mensagens, gravações ou chamadas de rede.
  * Nenhum dado de endereço/CPF do comprador é incluído aqui.
  */
-export function previewSupplierOrder(env,order){
+export function previewSupplierOrder(env,order,candidateOverride=null){
  const items=JSON.parse(order.items_json||'[]');
- const candidates=suppliers(env);
+ const candidates=candidateOverride||suppliers(env);
  const supplier=candidates[0]||null;
  const firstPhoto=imageLink(items[0]?.image,env);
  const photoTemplate=env.SUPPLIER_WA_TEMPLATE_MEDIA||supplier?.mediaTemplate||'';
@@ -108,7 +133,7 @@ export async function routePaidOrder(env,orderId){
  const order=await env.DB.prepare("SELECT id,status,items_json FROM orders WHERE id=?").bind(orderId).first();
  if(!order||order.status!=='paid_supplier_pending')return false;
  const items=JSON.parse(order.items_json||'[]');
- const candidates=suppliers(env);
+ const candidates=await loadSupplierCandidates(env);
  const excluded=await env.DB.prepare("SELECT supplier_id FROM supplier_attempts WHERE order_id=? AND state='unavailable'").bind(order.id).all();
  const exhausted=new Set((excluded.results||[]).map(x=>x.supplier_id));
  const supplier=candidates.find(c=>!exhausted.has(c.id))||null;
