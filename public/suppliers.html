@@ -57,6 +57,18 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <pre id="simResult" aria-live="polite" style="white-space:pre-wrap;background:#f4f6f3;padding:13px;font:13px/1.6 ui-monospace,monospace;overflow-wrap:anywhere"></pre>
 <p class="note">Simulação somente no navegador. Não consulta nem grava o D1, não cria pedidos, não entra no Asaas e não envia WhatsApp. Cada fornecedor tem até 12 horas; silêncio e resposta ambígua levam ao próximo fornecedor. O prazo total é de 72 horas desde o início da busca. Sem confirmação até lá, revisão manual e pedido de desculpas ao cliente, por template aprovado e apenas com autorização.</p>
 </section>
+<section class="panel" id="waLab">
+<h2>5. Laboratório de respostas do WhatsApp — SEM ENVIO</h2>
+<p>Teste como o sistema interpreta a mensagem de um fornecedor, usando apenas texto fictício. O painel não cria mensagens, não modifica o D1 e não abre conversas reais.</p>
+<form id="waLabForm">
+<label style="min-width:280px;flex:2">Mensagem fictícia recebida
+<input id="waLabText" maxlength="400" value="não temos" placeholder="Ex.: não temos" required></label>
+<label style="min-width:230px"><input type="checkbox" id="waLabLinked" checked style="display:inline;width:auto;vertical-align:middle"> Respondeu diretamente à consulta? (vínculo fictício)</label>
+<button type="submit">ANALISAR SEM ENVIO</button>
+</form>
+<pre id="waLabResult" aria-live="polite" style="white-space:pre-wrap;background:#f4f6f3;padding:13px;font:13px/1.6 ui-monospace,monospace;overflow-wrap:anywhere">Aguardando mensagem fictícia.</pre>
+<p class="note">Experimente “não temos”, “temos em estoque”, “talvez semana que vem” ou “SEM_ESTOQUE 1234abcd”. Sem vínculo seguro, uma resposta livre não pode identificar um pedido real. Nenhum número de telefone, endereço ou token deve ser digitado aqui.</p>
+</section>
 </main><script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -143,6 +155,25 @@ $('simulateStock').addEventListener('click',()=>{
   '',
   'Nenhuma mensagem enviada. Nenhum pedido real alterado.'
  ].join('\n');
+});
+$('waLabForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ $('waLabResult').textContent='Analisando resposta fictícia...';
+ try{
+  const result=await api('whatsapp-dry-run',{
+   text:$('waLabText').value,
+   linked:$('waLabLinked').checked
+  });
+  $('waLabResult').textContent=[
+   'Modo: SIMULAÇÃO SEM ENVIO',
+   'Classificação: '+result.replyKind,
+   'Vínculo: '+result.correlation,
+   'Próximo passo: '+result.nextAction,
+   '',
+   'Nenhuma mensagem enviada. Nenhum pedido alterado.',
+   result.note
+  ].join('\n');
+ }catch(err){$('waLabResult').textContent='Erro no teste: '+err.message}
 });
 $('cancelEdit').addEventListener('click',()=>{
  $('editPanel').hidden=true;$('editSupplierForm').reset();$('editId').value='';
