@@ -30,6 +30,8 @@ A migração é aditiva; preserva as tabelas existentes. Publique somente quando
 
 Acesse `https://streetball-store.kpgmer.workers.dev/suppliers.html` e informe seu `ADMIN_TOKEN`. Cadastre os nomes reais, IDs internos e números de WhatsApp com DDI de até cinco fornecedores. Também é possível alterar o telefone de um cadastro já existente.
 
+**Alterar a ordem de preferência:** abra `/suppliers.html`, autentique com `ADMIN_TOKEN` e clique em **↑** ou **↓** ao lado de um fornecedor. Em seguida clique em **SALVAR ORDEM DE PREFERÊNCIA**. A ordem será armazenada na tabela `supplier_priority` do D1. O primeiro da lista será consultado antes dos demais, mas apenas fornecedores com WhatsApp cadastrado e autorização para consultas são elegíveis. Nenhuma mensagem é enviada ao mudar a prioridade.
+
 Os telefones ficam **apenas no Cloudflare D1** (`supplier_contacts`) e são exibidos no painel somente pelos últimos quatro dígitos. O campo **Autorizou consultas automáticas?** documenta consentimento; sem ele, o contato não entra na fila elegível de mensagens. Credenciais da Meta continuam em secrets, nunca no catálogo público.
 
 Depois do cadastro, os contatos autorizados do D1 passam a compor a fila de consultas **na ordem de cadastro**. A lista antiga `SUPPLIERS_JSON` serve apenas como fallback de compatibilidade quando não há fornecedores cadastrados no D1. Os campos de template continuam dependentes da aprovação da Meta e de configuração segura no Worker.
