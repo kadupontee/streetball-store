@@ -1,4 +1,4 @@
-import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder} from './fulfillment.js';
+import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates} from './fulfillment.js';
 import {supplierIdValid} from './supplier-mapping.js';
 /** Streetball Store - Cloudflare Worker + D1 + Asaas sandbox/production
  * Nunca armazene tokens ou chaves na pasta public/.
@@ -123,7 +123,8 @@ async function adminApi(request,env,ctx){
   if(!/^[a-f0-9-]{36}$/i.test(orderId))return clientError('ID do pedido inválido.');
   const order=await env.DB.prepare('SELECT id,status,items_json FROM orders WHERE id=?').bind(orderId).first();
   if(!order)return clientError('Pedido não encontrado.',404);
-  const preview=previewSupplierOrder(env,order);
+  const candidates=await loadSupplierCandidates(env);
+  const preview=previewSupplierOrder(env,order,candidates);
   const directory=await env.DB.prepare('SELECT id,display_name FROM supplier_directory ORDER BY created_at,id').all();
   const attempts=await env.DB.prepare('SELECT supplier_id,state,updated_at FROM supplier_attempts WHERE order_id=? ORDER BY created_at').bind(order.id).all();
   const blocked=new Set((attempts.results||[]).filter(a=>a.state==='unavailable').map(a=>a.supplier_id));
