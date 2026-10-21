@@ -25,8 +25,9 @@ WA_AUTOMATION_ENABLED = "false"
 STORE_PUBLIC_URL = "https://streetball-store.kpgmer.workers.dev"
 # Valor TEMPORARIO apenas para simular cobranças no Sandbox. Nao habilitar producao com este frete.
 SHIPPING_FLAT_BRL = "0.00"
-# Catálogo compartilhado: a ordem dos cinco contatos no segredo SUPPLIERS_JSON
-# define a ordem de consulta de estoque. Nunca informe números em arquivo público.
+# Catálogo compartilhado: números autorizados são cadastrados no painel /suppliers.html
+# e guardados no D1. A ordem de cadastro define a prioridade de consulta.
+# Nunca informe números de fornecedores em arquivo público.
 # Depois de simular custo de entrega, definir frete: exemplo SHIPPING_FLAT_BRL = "19.90"
 # Não habilite checkout sem validar imposto de importação e prazos reais.
 
