@@ -134,9 +134,9 @@ export async function handleSupplierInbound(env,message,ctx){
    }
  }
  if((op==='PREPARANDO'||op==='CONFIRMAR')&&['awaiting_reply','details_sent','overdue_24h'].includes(order.dispatch_state)){
-   const items=JSON.parse(order.items_json||'[]');
-   // Se há mais de uma peça, exigir que todas as fotos tenham sido encaminhadas antes de confirmar.
-   if(items.length>1&&!order.details_sent_at){
+   // Mesmo em pedidos de uma peça, o fornecedor só pode confirmar depois
+   // de receber endereço, variantes e fotos do pedido.
+   if(!order.details_sent_at){
      await sendWa(env,from,{type:'text',text:{body:'Antes de confirmar, responda DETALHES '+order.id.slice(0,8)+' para receber a lista completa e as fotos.'}}).catch(()=>{});
      return;
    }
