@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T15:51:39.374209+00:00",
+  "generatedAt": "2026-10-21T18:12:07.023578+00:00",
   "publishedNewImages": 0,
   "allowedDomains": [],
   "items": [
@@ -27,7 +27,9 @@
       "referenceUrl": "https://www.nike.com.br/camisa-brasil-nike-i-2026-27-fa-masculina-098437.html?cor=00",
       "referenceTitle": "Camisa Brasil Nike I 2026/27 Fã Masculina",
       "sources": [],
-      "errors": [],
+      "errors": [
+        "Fonte inacessível www.nike.com.br: HTTPError"
+      ],
       "status": "fonte_identificada_sem_fotos"
     },
     {
@@ -36,7 +38,9 @@
       "referenceUrl": "https://www.nike.com.br/camisa-brasil-jordan-ii-2026-27-jogador-masculina-097619.html",
       "referenceTitle": "Camisa Brasil Jordan II 2026/27 Jogador Masculina",
       "sources": [],
-      "errors": [],
+      "errors": [
+        "Fonte inacessível www.nike.com.br: HTTPError"
+      ],
       "status": "fonte_identificada_sem_fotos"
     },
     {
@@ -45,7 +49,9 @@
       "referenceUrl": "https://www.adidas.com.br/camisa-i-real-madrid-26-27/JZ7206.html",
       "referenceTitle": "Camisa I Real Madrid 26/27",
       "sources": [],
-      "errors": [],
+      "errors": [
+        "Fonte inacessível www.adidas.com.br: HTTPError"
+      ],
       "status": "fonte_identificada_sem_fotos"
     },
     {
@@ -54,17 +60,10 @@
       "referenceUrl": "https://www.nike.com.br/camisa-corinthians-nike-i-2026-27-fa-masculina-110130.html",
       "referenceTitle": "Camisa Corinthians Nike I 2026/27 Fã Masculina",
       "sources": [],
-      "errors": [],
+      "errors": [
+        "Fonte inacessível www.nike.com.br: HTTPError"
+      ],
       "status": "fonte_identificada_sem_fotos"
-    },
-    {
-      "id": "SB-0007",
-      "title": "Golden State Warriors — Curry 30",
-      "referenceUrl": "",
-      "referenceTitle": "",
-      "sources": [],
-      "errors": [],
-      "status": "sem_correspondencia_confirmada"
     },
     {
       "id": "SB-0008",
@@ -90,7 +89,9 @@
       "referenceUrl": "https://www.nike.com.br/camisa-corinthians-nike-ii-2026-27-jogador-masculina-103996.html",
       "referenceTitle": "Camisa Corinthians Nike II 2026/27 Jogador Masculina",
       "sources": [],
-      "errors": [],
+      "errors": [
+        "Fonte inacessível www.nike.com.br: HTTPError"
+      ],
       "status": "fonte_identificada_sem_fotos"
     },
     {
@@ -207,7 +208,9 @@
       "referenceUrl": "https://www.nike.com.br/camisa-barcelona-nike-i-2026-27-torcedor-pro-masculina-110158.html",
       "referenceTitle": "Camisa Barcelona Nike I 2026/27 Torcedor Pro Masculina",
       "sources": [],
-      "errors": [],
+      "errors": [
+        "Fonte inacessível www.nike.com.br: HTTPError"
+      ],
       "status": "fonte_identificada_sem_fotos"
     },
     {
@@ -351,7 +354,9 @@
       "referenceUrl": "https://www.nike.com.br/camisa-brasil-nike-i-2026-27-fa-feminina-098715.html?cor=00",
       "referenceTitle": "Camisa Brasil Nike I 2026/27 Fã Feminina",
       "sources": [],
-      "errors": [],
+      "errors": [
+        "Fonte inacessível www.nike.com.br: HTTPError"
+      ],
       "status": "fonte_identificada_sem_fotos"
     },
     {
@@ -378,7 +383,9 @@
       "referenceUrl": "https://www.adidas.com.br/camisa-i-real-madrid-26-27-infantil/KC3993.html",
       "referenceTitle": "Camisa I Real Madrid 26/27 Infantil",
       "sources": [],
-      "errors": [],
+      "errors": [
+        "Fonte inacessível www.adidas.com.br: HTTPError"
+      ],
       "status": "fonte_identificada_sem_fotos"
     },
     {
@@ -427,8 +434,8 @@
       "status": "sem_correspondencia_confirmada"
     },
     {
-      "id": "SB-0048",
-      "title": "Regata de basquete Real Madrid",
+      "id": "YUP-258349976",
+      "title": "Barcelona POLO S-2XL",
       "referenceUrl": "",
       "referenceTitle": "",
       "sources": [],
@@ -436,8 +443,17 @@
       "status": "sem_correspondencia_confirmada"
     },
     {
-      "id": "SB-0049",
-      "title": "Regata de basquete Barcelona",
+      "id": "YUP-258349972",
+      "title": "Argentina Cultural Shirt S-3XL",
+      "referenceUrl": "",
+      "referenceTitle": "",
+      "sources": [],
+      "errors": [],
+      "status": "sem_correspondencia_confirmada"
+    },
+    {
+      "id": "YUP-258349966",
+      "title": "player 26_27 Real Madrid pre-match kit S-2XL",
       "referenceUrl": "",
       "referenceTitle": "",
       "sources": [],
