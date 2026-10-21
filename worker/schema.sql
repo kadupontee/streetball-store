@@ -50,3 +50,20 @@ CREATE TABLE IF NOT EXISTS checkout_attempts (
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_checkout_attempt_order ON checkout_attempts(order_id);
+
+-- Cadastro administrativo dos fornecedores (sem telefone: contatos WhatsApp ficam em segredo)
+CREATE TABLE IF NOT EXISTS supplier_directory (
+  id TEXT PRIMARY KEY,
+  display_name TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+-- Associação individual por ID estável, independente dos imports de imagens/catálogo
+CREATE TABLE IF NOT EXISTS supplier_product_map (
+  product_id TEXT PRIMARY KEY,
+  supplier_id TEXT NOT NULL,
+  assigned_at TEXT NOT NULL,
+  FOREIGN KEY (supplier_id) REFERENCES supplier_directory(id)
+);
+CREATE INDEX IF NOT EXISTS idx_supplier_product_supplier ON supplier_product_map(supplier_id);
