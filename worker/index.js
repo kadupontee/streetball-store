@@ -1,4 +1,4 @@
-import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates} from './fulfillment.js';
+import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply} from './fulfillment.js';
 import {supplierIdValid} from './supplier-mapping.js';
 /** Streetball Store - Cloudflare Worker + D1 + Asaas sandbox/production
  * Nunca armazene tokens ou chaves na pasta public/.
@@ -78,6 +78,29 @@ async function adminApi(request,env,ctx){
  if(!env.ADMIN_TOKEN||request.headers.get('authorization')!=='Bearer '+env.ADMIN_TOKEN)return clientError('Não autorizado.',401);
  if(!env.DB)return clientError('Banco não configurado.',503);
  const url=new URL(request.url);
+ // Laboratório de classificação: read-only, sem acesso aos pedidos, D1 ou WhatsApp.
+ if(url.pathname==='/api/admin/whatsapp-dry-run'&&request.method==='POST'){
+   if(Number(request.headers.get('content-length')||0)>1600)return clientError('Mensagem de teste muito grande.',413);
+   const body=await request.json().catch(()=>null);
+   if(!body||typeof body.text!=='string'||body.text.length>400||typeof body.linked!=='boolean')
+     return clientError('Informe texto fictício (até 400 caracteres) e vínculo simulado.',400);
+   const context=body.linked?'wamid.exemplo-somente-simulacao':'';
+   const match=classifyStockReply(body.text,context);
+   const kind=match?.kind||'unlinked_or_unrecognized';
+   const actions={
+     unavailable:'Consultar próximo fornecedor (simulação)',
+     ambiguous:'Consultar próximo fornecedor (simulação)',
+     available:'Aguardar confirmação do fornecedor; não avisar cliente ainda',
+     confirmar:'Confirmar apenas após validar pedido e detalhes enviados',
+     preparando:'Confirmar apenas após validar pedido e detalhes enviados',
+     detalhes:'Exibir detalhes somente após identificar o pedido',
+     unlinked_or_unrecognized:'Não associar a nenhum pedido; aguardar resposta vinculada ou timeout de 12 horas'
+   };
+   return json({simulation:true,sent:false,databaseModified:false,
+     replyKind:kind,linked:body.linked,correlation:match?.byContext?'contexto fictício':match?.orderShort?'ID curto presente':'não identificada',
+     nextAction:actions[kind]||'Conferência manual',
+     note:'Nenhum pedido real foi consultado, alterado ou encaminhado. Esta análise não valida assinatura nem entrega de webhook.'});
+ }
  if(url.pathname==='/api/admin/supplier-directory'&&request.method==='GET'){
    // A migração da prioridade é aditiva. Se ainda não foi aplicada,
    // liste os fornecedores existentes em vez de aparentar que foram apagados.
