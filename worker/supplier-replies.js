@@ -13,8 +13,8 @@ const commands={
  'preparando':'preparando','detalhes':'detalhes'
 };
 const clean=s=>s.replace(/[.!?\s]+$/g,'').trim();
-const negative=/^(?:nao|n|no|nope|nao tenho|nao temos|nao tem|sem estoque|esgotad[oa]|esgotou|indisponivel|em falta|esta em falta|fora de estoque|sem disponibilidade|out of stock|sold out|not available|not in stock|no stock|not now|sem essa|nao disponivel|没有|没货|无货)$/u;
-const positive=/^(?:sim|s|yes|yeah|yep|si|tenho|temos|tem|tem sim|temos sim|sim temos|tenho sim|disponivel|disponivel sim|temos disponivel|temos em estoque|tenho em estoque|em estoque|disponivel agora|in stock|available|yes available|have it|we have it|有货|有现货|可以)$/u;
+const negative=/^(?:nao+|n+|no|nope|nah|nao tenho|nao temos|nao tem|nao tem esse|nao temos esse modelo|nao tenho esse modelo|sem estoque(?: agora)?|esgotad[oa]|esgotou|indisponivel|em falta|esta em falta|fora de estoque|sem disponibilidade|out of stock|sold out|not available|not in stock|no stock|not now|sem essa|nao disponivel|没有|没货|没现货|无货)$/u;
+const positive=/^(?:s|ss|sim+|sim temos|sim tem|yes|yeah|yep|yes sure|yes we have|si|claro|com certeza|tenho|temos|tem|tem sim|temos sim|tenho sim|disponivel|disponivel sim|temos disponivel|temos em estoque|tenho em estoque|em estoque|disponivel agora|in stock|available|yes available|have it|we have it|we have stock|有货|有现货|可以)$/u;
 const ack=/^(?:ok|okay|okey|okk+|blz|beleza|certo|entendi|perfeito|pronto|recebido|obrigado|thanks|thank you|alright|roger|combinado|👍|👌|✅|好|好的)$/u;
 const question=/\?|\b(?:qual (?:e )?(?:o |a )?(?:tamanho|numero)|que tamanho|qual tamanho|precisa (?:de )?(?:um )?(?:patch|remendo)|tem (?:nome|numero)|com ou sem|qual o endereco|por favor envie|informe|me envie|what size|which size|do you need|please send|send me your|size\?|尺码|什么码)\b/iu;
 const quote=/^(?:[\d.,]+\s*(?:\+\s*[\d.,]+\s*)?(?:=\s*[\d.,]+\s*)?(?:\$|usd|r\$|dolares?|reais)?\s*|(?:usd|r\$|\$)\s*[\d.,]+)$/iu;
@@ -34,7 +34,7 @@ export function classifyStockReply(body,contextId=''){
   return result(commands[verb]||'ambiguous',command[2],false);
  }
  if(!contextId)return null; // "sim" livre nunca confirma estoque nem pedido.
- const txt=clean(raw);
+ const txt=clean(raw.replace(/[👍👌✅]+$/gu,'').trim()) || raw;
  // A mensagem da conversa da imagem é uma cotação, não aprovação de estoque.
  if(quote.test(txt)||/\b\d+(?:[.,]\d+)?\s*(?:\$|usd|reais?)\b/.test(txt))return result('quote',null,true);
  if(money.test(txt))return result('payment_or_personal_data',null,true);
