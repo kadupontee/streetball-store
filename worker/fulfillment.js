@@ -1,3 +1,5 @@
+import {classifyStockReply,classifySupplierMessage,supplierReplyAction} from './supplier-replies.js';
+export {classifyStockReply,classifySupplierMessage,supplierReplyAction} from './supplier-replies.js';
 /** Fluxo seguro de fulfillment: fotos, WhatsApp oficial, fallback de 12h e prazo total de 72h.
  * Sem credenciais/consentimento não envia mensagens. Pix para fornecedor exige aprovação humana.
  */
@@ -122,22 +124,6 @@ function getSupplier(env){
  // Os cinco fornecedores compartilham o catálogo. A prioridade segue a lista de contatos.
  return suppliers(env)[0]||null;
 }
-export function classifyStockReply(body,contextId=''){
- const raw=trim(body,400).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();
- const command=raw.match(/^(SEM[_ -]?ESTOQUE|INDISPONIVEL|ESGOTADO|DISPONIVEL|TEMOS|CONFIRMAR|PREPARANDO|DETALHES)\s+([A-F0-9]{8})$/);
- if(command){
-  const word=command[1].replace(/[_ -]/g,'');
-  return {kind:['SEMESTOQUE','INDISPONIVEL','ESGOTADO'].includes(word)?'unavailable':(['DISPONIVEL','TEMOS'].includes(word)?'available':word.toLowerCase()),orderShort:command[2].toLowerCase(),byContext:false};
- }
- // Respostas ambíguas só acionam fallback quando o WhatsApp vincula a resposta
- // à mensagem exata da consulta do pedido. Sem contexto, nenhuma ação é tomada.
- if(contextId){
-  if(/^(?:SEM ESTOQUE|NAO TENHO|NAO TEMOS|NAO TEM|ESGOTADO|ESGOTOU|INDISPONIVEL|ESTA EM FALTA)[.! ]*$/.test(raw))return {kind:'unavailable',orderShort:null,byContext:true};
-  if(/^(?:DISPONIVEL|TENHO EM ESTOQUE|TEMOS EM ESTOQUE|TEMOS DISPONIVEL|TEMOS|DISPONIVEL SIM)[.! ]*$/.test(raw))return {kind:'available',orderShort:null,byContext:true};
-  if(raw&&/^[\p{L}\p{N}\s.,!?;:()\/_-]{1,400}$/u.test(raw))return {kind:'ambiguous',orderShort:null,byContext:true};
- }
- return null;
-}
 function messageSummary(items){
  return trim(items.map(i=>trim(i.title,58)+' '+trim(i.size,12)+' x'+i.qty+(i.personalize?' (personalizado)':'')).join(' | '),330);
 }
@@ -245,7 +231,7 @@ async function advanceSupplier(env,order,from,state,responseText){
 export async function handleSupplierInbound(env,message,ctx){
  if(!env.DB||!message?.id||env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true')return;
  const from=normalizeWaPhone(message.from);
- const response=classifyStockReply(message.text?.body,message.context?.id);
+ const response=classifySupplierMessage(message);
  if(!from||!response)return;
  const duplicate=await env.DB.prepare("SELECT id FROM wa_message_events WHERE id=?").bind(message.id).first();
  if(duplicate)return;
@@ -257,10 +243,21 @@ export async function handleSupplierInbound(env,message,ctx){
  if(results.results?.length!==1)return;
  const order=results.results[0];
  if(order.status!=='paid_supplier_pending'||!['awaiting_reply','details_sent','overdue_24h'].includes(order.dispatch_state))return;
+ const stage=order.dispatch_state==='details_sent'?'details_sent':'awaiting_reply';
+ const action=supplierReplyAction(response.kind,stage);
  await env.DB.prepare("INSERT OR IGNORE INTO wa_message_events(id,order_id,received_at) VALUES(?,?,?)").bind(message.id,order.id,now()).run();
- if(response.kind==='unavailable'||response.kind==='ambiguous'){
-  const next=advanceSupplier(env,order,from,response.kind, message.text?.body||'');
+ if(action==='next_supplier'){
+  // Registrar apenas a classificação, sem guardar mensagens com CPF/contato do cliente.
+  const next=advanceSupplier(env,order,from,response.kind,response.kind);
   if(ctx?.waitUntil)ctx.waitUntil(next);else await next;
+  return;
+ }
+ if(action==='manual_review'){
+  // Preço, pergunta ou "ok" não são confirmações. Alertar sem perder o prazo de 12 horas.
+  await env.DB.prepare("UPDATE supplier_jobs SET status='supplier_attention',updated_at=? WHERE order_id=?")
+   .bind(now(),order.id).run();
+  await env.DB.prepare("UPDATE supplier_dispatch SET last_error=?,updated_at=? WHERE order_id=? AND supplier_phone=? AND state IN ('awaiting_reply','details_sent','overdue_24h')")
+   .bind('Resposta do fornecedor: '+response.kind,now(),order.id,from).run();
   return;
  }
  if(response.kind==='detalhes'){
@@ -271,7 +268,7 @@ export async function handleSupplierInbound(env,message,ctx){
   }
   return;
  }
- if(response.kind==='available'&&!order.details_sent_at){
+ if(action==='check_stock_details'&&!order.details_sent_at){
   try{
    await sendOrderDetails(env,order,{supplier_phone:from});
    await env.DB.prepare("UPDATE supplier_dispatch SET state='details_sent',responded_at=?,updated_at=? WHERE order_id=? AND state IN ('awaiting_reply','overdue_24h','details_sent')")
@@ -283,7 +280,7 @@ export async function handleSupplierInbound(env,message,ctx){
   }
   return;
  }
- if((response.kind==='preparando'||response.kind==='confirmar')&&order.details_sent_at){
+ if(action==='confirm_order'&&order.details_sent_at){
   const updated=await env.DB.prepare("UPDATE supplier_dispatch SET state='confirmed',responded_at=?,updated_at=? WHERE order_id=? AND state IN ('awaiting_reply','details_sent','overdue_24h')")
     .bind(now(),now(),order.id).run();
   if(!updated.meta?.changes)return;
