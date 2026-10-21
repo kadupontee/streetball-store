@@ -79,8 +79,15 @@ async function adminApi(request,env,ctx){
  if(!env.DB)return clientError('Banco não configurado.',503);
  const url=new URL(request.url);
  if(url.pathname==='/api/admin/supplier-directory'&&request.method==='GET'){
-   const suppliers=await env.DB.prepare('SELECT id,display_name FROM supplier_directory ORDER BY created_at,id').all();
-   return json({suppliers:suppliers.results||[]});
+   const suppliers=await env.DB.prepare(
+     'SELECT d.id,d.display_name, c.phone_e164,c.authorized FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id ORDER BY d.created_at,d.id'
+   ).all();
+   return json({suppliers:(suppliers.results||[]).map(s=>({
+     id:s.id,display_name:s.display_name,
+     phoneConfigured:!!s.phone_e164,
+     phoneEnding:s.phone_e164?String(s.phone_e164).slice(-4):'',
+     authorized:s.authorized===1
+   }))});
  }
  if(url.pathname==='/api/admin/supplier-directory'&&request.method==='POST'){
    if(Number(request.headers.get('content-length')||0)>2000)return clientError('Requisição muito grande.',413);
@@ -95,6 +102,21 @@ async function adminApi(request,env,ctx){
    const now=new Date().toISOString();
    await env.DB.prepare('INSERT INTO supplier_directory (id,display_name,created_at,updated_at) VALUES (?,?,?,?)').bind(id,displayName,now,now).run();
    return json({ok:true,id,displayName},201);
+ }
+ if(url.pathname==='/api/admin/supplier-contact'&&request.method==='POST'){
+   if(Number(request.headers.get('content-length')||0)>1200)return clientError('Requisição muito grande.',413);
+   const body=await request.json().catch(()=>null);
+   const id=String(body?.id||'').trim().toLowerCase();
+   const phone=String(body?.phone||'').replace(/\D/g,'');
+   if(!supplierIdValid(id)||!(/^[1-9]\d{7,14}$/.test(phone)))
+     return clientError('Informe ID e número de WhatsApp com DDI, de 8 a 15 dígitos.');
+   const exists=await env.DB.prepare('SELECT id FROM supplier_directory WHERE id=?').bind(id).first();
+   if(!exists)return clientError('Cadastre primeiro o nome do fornecedor.',404);
+   const authorized=body.authorized===true?1:0;
+   await env.DB.prepare(
+     'INSERT INTO supplier_contacts(supplier_id,phone_e164,authorized,updated_at) VALUES(?,?,?,?) ON CONFLICT(supplier_id) DO UPDATE SET phone_e164=excluded.phone_e164,authorized=excluded.authorized,updated_at=excluded.updated_at'
+   ).bind(id,phone,authorized,new Date().toISOString()).run();
+   return json({ok:true,id,phoneEnding:phone.slice(-4),phoneConfigured:true,authorized:authorized===1});
  }
  if(request.method==='GET'&&url.pathname==='/api/admin/supplier-preview'){
   const orderId=url.searchParams.get('orderId')||'';
