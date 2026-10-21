@@ -1,5 +1,5 @@
 import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder} from './fulfillment.js';
-import {resolveMappedItems,supplierIdValid,productIdValid} from './supplier-mapping.js';
+import {supplierIdValid} from './supplier-mapping.js';
 /** Streetball Store - Cloudflare Worker + D1 + Asaas sandbox/production
  * Nunca armazene tokens ou chaves na pasta public/.
  * IMPORTANTE: pagamento ao fornecedor NÃO é automatizado neste MVP.
@@ -22,7 +22,7 @@ function checkoutReady(env){
 function checkoutConfig(env){
  return json({enabled:checkoutReady(env),sandbox:env.ASAAS_SANDBOX==='true',shipping:checkoutReady(env)?Number(env.SHIPPING_FLAT_BRL):null,methods:['PIX','CREDIT_CARD'],supplierPaymentAutomated:false});
 }
-async function createOrder(req,env){if(!env.DB||!env.ASSETS)return clientError('Banco e catálogo não configurados.',503);if(!checkoutReady(env))return clientError('Checkout ainda não liberado: configure cobrança, frete e ambiente autorizado.',503);if(Number(req.headers.get('content-length')||0)>22000)return clientError('Requisição muito grande.',413);const body=await req.json().catch(()=>null);if(!body)return clientError('Requisição inválida.');const billingType=['PIX','CREDIT_CARD'].includes(body.paymentMethod)?body.paymentMethod:null;if(!billingType)return clientError('Escolha Pix ou cartão de crédito.');const c=body.customer||{};const name=safeText(c.name,110),email=safeText(c.email,180).toLowerCase(),phone=unaccent(c.phone),cpf=unaccent(c.cpf),zip=unaccent(c.zip),address=safeText(c.address,180),city=safeText(c.city,90),state=safeText(c.state,2).toUpperCase();if(name.length<3||!/^\S+@\S+\.\S+$/.test(email)||!(phone.length===10||phone.length===11)||!cpfValid(cpf)||zip.length!==8||!address||!city||!(/^[A-Z]{2}$/.test(state)))return clientError('Confira seus dados, CPF, telefone e endereço.');let cart;try{cart=validateItems(body.items,await catalogFor(req,env));cart.items=await resolveMappedItems(env,cart.items)}catch(e){return clientError(e.message)}const shipping=Number(env.SHIPPING_FLAT_BRL);if(!Number.isFinite(shipping)||shipping<0||shipping>500)return clientError('Configuração de entrega inválida.',503);const total=round(cart.subtotal+shipping);if(total<=0)return clientError('Valor de pedido inválido.');
+async function createOrder(req,env){if(!env.DB||!env.ASSETS)return clientError('Banco e catálogo não configurados.',503);if(!checkoutReady(env))return clientError('Checkout ainda não liberado: configure cobrança, frete e ambiente autorizado.',503);if(Number(req.headers.get('content-length')||0)>22000)return clientError('Requisição muito grande.',413);const body=await req.json().catch(()=>null);if(!body)return clientError('Requisição inválida.');const billingType=['PIX','CREDIT_CARD'].includes(body.paymentMethod)?body.paymentMethod:null;if(!billingType)return clientError('Escolha Pix ou cartão de crédito.');const c=body.customer||{};const name=safeText(c.name,110),email=safeText(c.email,180).toLowerCase(),phone=unaccent(c.phone),cpf=unaccent(c.cpf),zip=unaccent(c.zip),address=safeText(c.address,180),city=safeText(c.city,90),state=safeText(c.state,2).toUpperCase();if(name.length<3||!/^\S+@\S+\.\S+$/.test(email)||!(phone.length===10||phone.length===11)||!cpfValid(cpf)||zip.length!==8||!address||!city||!(/^[A-Z]{2}$/.test(state)))return clientError('Confira seus dados, CPF, telefone e endereço.');let cart;try{cart=validateItems(body.items,await catalogFor(req,env))}catch(e){return clientError(e.message)}const shipping=Number(env.SHIPPING_FLAT_BRL);if(!Number.isFinite(shipping)||shipping<0||shipping>500)return clientError('Configuração de entrega inválida.',503);const total=round(cart.subtotal+shipping);if(total<=0)return clientError('Valor de pedido inválido.');
 const requestKey=safeText(req.headers.get('Idempotency-Key'),60);
 if(!/^[a-f0-9-]{36}$/i.test(requestKey))return clientError('Identificador de checkout ausente. Atualize o site e tente novamente.',400);
 const canonical=JSON.stringify({customer:{name,email,phone,cpf,zip,address,city,state},items:cart.items,total,billingType});
@@ -79,7 +79,7 @@ async function adminApi(request,env,ctx){
  if(!env.DB)return clientError('Banco não configurado.',503);
  const url=new URL(request.url);
  if(url.pathname==='/api/admin/supplier-directory'&&request.method==='GET'){
-   const suppliers=await env.DB.prepare('SELECT id,display_name FROM supplier_directory ORDER BY display_name').all();
+   const suppliers=await env.DB.prepare('SELECT id,display_name FROM supplier_directory ORDER BY created_at,id').all();
    return json({suppliers:suppliers.results||[]});
  }
  if(url.pathname==='/api/admin/supplier-directory'&&request.method==='POST'){
@@ -96,48 +96,16 @@ async function adminApi(request,env,ctx){
    await env.DB.prepare('INSERT INTO supplier_directory (id,display_name,created_at,updated_at) VALUES (?,?,?,?)').bind(id,displayName,now,now).run();
    return json({ok:true,id,displayName},201);
  }
- if(url.pathname==='/api/admin/supplier-catalog'&&request.method==='GET'){
-   const query=String(url.searchParams.get('q')||'').trim().toLocaleLowerCase('pt-BR').slice(0,90);
-   const page=Math.max(1,Math.min(100000,Number.parseInt(url.searchParams.get('page')||'1',10)||1));
-   const catalog=await catalogFor(request,env);
-   if(!Array.isArray(catalog))return clientError('Catálogo inválido.',503);
-   const found=query?catalog.filter(p=>String(p.title||'').toLocaleLowerCase('pt-BR').includes(query)||String(p.id||'').toLowerCase().includes(query)||String(p.sourceUrl||'').toLowerCase().includes(query)):catalog;
-   const limit=25,items=found.slice((page-1)*limit,page*limit).map(p=>({id:p.id,title:p.title,sourceUrl:p.sourceUrl||'',image:p.image||''}));
-   const mapped=await resolveMappedItems(env,items);
-   return json({page,total:found.length,limit,items:mapped.map(x=>({id:x.id,title:x.title,sourceUrl:x.sourceUrl,image:x.image,supplierId:x.supplierId||''}))});
- }
- if(url.pathname==='/api/admin/supplier-assignment'&&request.method==='POST'){
-   if(Number(request.headers.get('content-length')||0)>6000)return clientError('Requisição muito grande.',413);
-   const body=await request.json().catch(()=>null);
-   const supplierId=String(body?.supplierId||'');
-   const ids=body?.productIds;
-   if(!Array.isArray(ids)||ids.length<1||ids.length>25||new Set(ids).size!==ids.length||!ids.every(productIdValid))return clientError('Envie de 1 a 25 IDs válidos e únicos.');
-   if(supplierId){
-     if(!supplierIdValid(supplierId))return clientError('Fornecedor inválido.');
-     const supplier=await env.DB.prepare('SELECT id FROM supplier_directory WHERE id=?').bind(supplierId).first();
-     if(!supplier)return clientError('Fornecedor não cadastrado.',404);
-   }
-   const catalog=await catalogFor(request,env);
-   const existing=new Set(catalog.map(p=>String(p.id)));
-   if(ids.some(id=>!existing.has(id)))return clientError('Produto inexistente no catálogo.',404);
-   const now=new Date().toISOString();
-   const statements=ids.map(id=>supplierId?
-     env.DB.prepare('INSERT INTO supplier_product_map (product_id,supplier_id,assigned_at) VALUES (?,?,?) ON CONFLICT(product_id) DO UPDATE SET supplier_id=excluded.supplier_id,assigned_at=excluded.assigned_at').bind(id,supplierId,now):
-     env.DB.prepare('DELETE FROM supplier_product_map WHERE product_id=?').bind(id));
-   await env.DB.batch(statements);
-   return json({ok:true,assigned:ids.length,supplierId:supplierId||null});
- }
  if(request.method==='GET'&&url.pathname==='/api/admin/supplier-preview'){
   const orderId=url.searchParams.get('orderId')||'';
   if(!/^[a-f0-9-]{36}$/i.test(orderId))return clientError('ID do pedido inválido.');
   const order=await env.DB.prepare('SELECT id,status,items_json FROM orders WHERE id=?').bind(orderId).first();
   if(!order)return clientError('Pedido não encontrado.',404);
-  const raw=JSON.parse(order.items_json||'[]');
-  const mapped=await resolveMappedItems(env,raw);
-  const preview=previewSupplierOrder(env,{...order,items_json:JSON.stringify(mapped)});
-  const supplierIds=[...new Set(mapped.map(i=>i.supplierId).filter(Boolean))];
-  const directory=supplierIds.length?await env.DB.prepare('SELECT id,display_name FROM supplier_directory WHERE id IN ('+supplierIds.map(()=>'?').join(',')+')').bind(...supplierIds).all():{results:[]};
-  return json({...preview,assignedSuppliers:directory.results||[],unassignedCount:mapped.filter(i=>!i.supplierId).length,multipleSuppliers:supplierIds.length>1});
+  const preview=previewSupplierOrder(env,order);
+  const directory=await env.DB.prepare('SELECT id,display_name FROM supplier_directory ORDER BY created_at,id').all();
+  const attempts=await env.DB.prepare('SELECT supplier_id,state,updated_at FROM supplier_attempts WHERE order_id=? ORDER BY created_at').bind(order.id).all();
+  const blocked=new Set((attempts.results||[]).filter(a=>a.state==='unavailable').map(a=>a.supplier_id));
+  return json({...preview,sharedCatalog:true,registeredSuppliers:directory.results||[],stockAttempts:attempts.results||[],nextSupplierId:preview.supplierCandidates.find(s=>!blocked.has(s.id))?.id||null});
  }
  if(request.method==='GET'&&url.pathname==='/api/admin/orders'){
   const data=await env.DB.prepare('SELECT o.id,o.created_at,o.status,o.name,o.email,o.phone,o.city,o.state,o.items_json,o.subtotal,o.shipping,o.total,j.status AS supplier_status,j.updated_at AS supplier_updated_at,d.supplier_id,d.state AS dispatch_state,d.sent_at AS sent_to_supplier_at,d.responded_at AS supplier_replied_at,d.last_error AS supplier_error,n.state AS buyer_notification_status FROM orders o LEFT JOIN supplier_jobs j ON j.order_id=o.id LEFT JOIN supplier_dispatch d ON d.order_id=o.id LEFT JOIN buyer_notifications n ON n.order_id=o.id ORDER BY o.created_at DESC LIMIT 75').all();
