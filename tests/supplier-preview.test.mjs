@@ -53,7 +53,7 @@ test('rota de prévia exige ADMIN_TOKEN',async()=>{
 
 test('rota autorizada apenas lê pedido e não envia mensagens',async()=>{
  const calls=[];
- const DB={prepare(sql){calls.push(sql);if(sql.startsWith('SELECT id,status,items_json FROM orders'))return {bind(value){assert.equal(value,id);return {first:async()=>order}}};return {bind(){return {all:async()=>({results:[]})}}}}};
+ const DB={prepare(sql){calls.push(sql);if(sql.startsWith('SELECT id,status,items_json FROM orders'))return {bind(value){assert.equal(value,id);return {first:async()=>order}}};return {bind(){return {all:async()=>({results:[]})}},all:async()=>({results:[]})}}};
  const request=new Request('https://loja.exemplo.com/api/admin/supplier-preview?orderId='+id,{
   headers:{authorization:'Bearer segredo-local'}
  });
@@ -62,9 +62,10 @@ test('rota autorizada apenas lê pedido e não envia mensagens',async()=>{
  const preview=await response.json();
  assert.equal(preview.status,'paid_supplier_pending');
  assert.equal(preview.readyForAutomaticSending,false);
- assert.equal(calls.length,2);
+ assert.equal(calls.length,3);
  assert.match(calls[0],/^SELECT id,status,items_json FROM orders/);
- assert.match(calls[1],/^SELECT product_id, supplier_id FROM supplier_product_map/);
+ assert.match(calls[1],/^SELECT id,display_name FROM supplier_directory/);
+ assert.match(calls[2],/^SELECT supplier_id,state,updated_at FROM supplier_attempts/);
 });
 
 test('painel administrativo inclui prévia com JavaScript válido',()=>{
