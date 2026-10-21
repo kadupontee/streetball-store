@@ -81,3 +81,11 @@ CREATE TABLE IF NOT EXISTS supplier_attempts (
  PRIMARY KEY(order_id,supplier_id)
 );
 CREATE INDEX IF NOT EXISTS idx_supplier_attempts_order_state ON supplier_attempts(order_id,state);
+
+-- Telefones de fornecedores ficam no D1 e nunca no catálogo público nem no GitHub.
+CREATE TABLE IF NOT EXISTS supplier_contacts (
+ supplier_id TEXT PRIMARY KEY REFERENCES supplier_directory(id),
+ phone_e164 TEXT NOT NULL,
+ authorized INTEGER NOT NULL DEFAULT 0,
+ updated_at TEXT NOT NULL
+);
