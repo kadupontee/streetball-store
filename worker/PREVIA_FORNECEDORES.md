@@ -28,9 +28,13 @@ npx wrangler deploy
 
 A migração é aditiva; preserva as tabelas existentes. Publique somente quando todos os testes passarem.
 
-Acesse `https://streetball-store.kpgmer.workers.dev/suppliers.html` e informe seu `ADMIN_TOKEN`. Cadastre os nomes reais e os IDs internos de até cinco fornecedores. **Números e credenciais não entram nessa tela**.
+Acesse `https://streetball-store.kpgmer.workers.dev/suppliers.html` e informe seu `ADMIN_TOKEN`. Cadastre os nomes reais, IDs internos e números de WhatsApp com DDI de até cinco fornecedores. Também é possível alterar o telefone de um cadastro já existente.
 
-Depois, quando a Meta aprovar sua conta, será possível configurar os cinco telefones e templates aprovados no segredo `SUPPLIERS_JSON` do Cloudflare. **A ordem dos objetos nesse segredo será a prioridade de consulta.** IDs precisam corresponder aos IDs administrativos.
+Os telefones ficam **apenas no Cloudflare D1** (`supplier_contacts`) e são exibidos no painel somente pelos últimos quatro dígitos. O campo **Autorizou consultas automáticas?** documenta consentimento; sem ele, o contato não entra na fila elegível de mensagens. Credenciais da Meta continuam em secrets, nunca no catálogo público.
+
+Depois do cadastro, os contatos autorizados do D1 passam a compor a fila de consultas **na ordem de cadastro**. A lista antiga `SUPPLIERS_JSON` serve apenas como fallback de compatibilidade quando não há fornecedores cadastrados no D1. Os campos de template continuam dependentes da aprovação da Meta e de configuração segura no Worker.
+
+Depois, quando a Meta aprovar sua conta, configure os modelos de mensagem aprovados no Worker, sem copiar tokens ou números para o código público. Os telefones já cadastrados no D1 não precisam ser repetidos no `SUPPLIERS_JSON`.
 
 Exemplo de estrutura (valores fictícios; não utilizar como números reais):
 
@@ -41,11 +45,11 @@ Exemplo de estrutura (valores fictícios; não utilizar como números reais):
 ]
 ```
 
-Use `npx wrangler secret put SUPPLIERS_JSON` com até cinco fornecedores reais autorizados; não publique esses contatos ou segredos no GitHub.
+O segredo `SUPPLIERS_JSON` é legado e não é necessário se os contatos do D1 estiverem cadastrados. Se usado por compatibilidade, nunca publique contatos ou segredos no GitHub.
 
 ## Prévia dos pedidos
 
-No painel `/admin.html`, clique em **PRÉVIA SEM ENVIO**. A prévia mostra a fila de fornecedores configurados, tentativas de consulta e verificações pendentes. Ela não envia mensagens nem realiza Pix.
+No painel `/admin.html`, clique em **PRÉVIA SEM ENVIO**. A prévia mostra a fila de fornecedores autorizados, apenas os quatro últimos dígitos dos contatos, tentativas de consulta e verificações pendentes. Ela não envia mensagens nem realiza Pix.
 
 ## Estado atual — NÃO ATIVAR ENVIOS
 
@@ -53,6 +57,7 @@ No painel `/admin.html`, clique em **PRÉVIA SEM ENVIO**. A prévia mostra a fil
 - `WA_AUTOMATION_ENABLED = "false"`
 - `PAYMENTS_PRODUCTION_ENABLED = "false"`
 - O código impede qualquer disparo automático pelo Sandbox, mesmo se uma variável de automação for alterada isoladamente.
+- O campo do telefone não envia nenhuma mensagem ao ser salvo e não modifica pedidos antigos.
 - Os pagamentos aos fornecedores continuam manuais, com conferência de destinatário e valor.
 - A Meta ainda está analisando o portfólio empresarial; é preciso resolver o erro `131031`, validar destinatários e templates, testar webhooks e só depois avaliar uma ativação gradual.
 
