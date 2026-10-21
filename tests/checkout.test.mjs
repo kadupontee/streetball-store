@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/index.js';
-import {routePaidOrder,monitorSupplierSLA,retryPendingRoutes} from '../worker/fulfillment.js';
+import {routePaidOrder,monitorSupplierSLA,retryPendingRoutes,normalizeWaPhone} from '../worker/fulfillment.js';
 import {readFileSync} from 'node:fs';
 
 test('checkout não é liberado sem os serviços configurados', async ()=>{
@@ -57,4 +57,10 @@ test('interface apresenta Pix e cartão com total de frete',()=>{
 test('código frontend tem sintaxe válida',()=>{
  const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
  assert.doesNotThrow(()=>new Function(app));
+});
+
+test('fornecedores no exterior podem ser contatados por WhatsApp',()=>{
+ assert.equal(normalizeWaPhone('+86 138 0013 8000'),'8613800138000');
+ assert.equal(normalizeWaPhone('+55 (11) 99999-9999'),'5511999999999');
+ assert.equal(normalizeWaPhone('000'),'');
 });
