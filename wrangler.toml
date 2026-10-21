@@ -18,9 +18,11 @@ crons = ["0 * * * *"]
 
 [vars]
 ASAAS_SANDBOX = "true"
-SALES_ENABLED = "false"
+SALES_ENABLED = "true"
 PAYMENTS_PRODUCTION_ENABLED = "false"
 WA_AUTOMATION_ENABLED = "false"
+# Valor TEMPORARIO apenas para simular cobranças no Sandbox. Nao habilitar producao com este frete.
+SHIPPING_FLAT_BRL = "0.00"
 # Configure o identificador de um fornecedor autorizado no SUPPLIERS_JSON:
 # DEFAULT_SUPPLIER_ID = "james"
 # STORE_PUBLIC_URL = "https://sua-loja.com.br"
