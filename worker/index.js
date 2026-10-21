@@ -79,9 +79,19 @@ async function adminApi(request,env,ctx){
  if(!env.DB)return clientError('Banco não configurado.',503);
  const url=new URL(request.url);
  if(url.pathname==='/api/admin/supplier-directory'&&request.method==='GET'){
-   const suppliers=await env.DB.prepare(
-     'SELECT d.id,d.display_name,c.phone_e164,c.authorized,p.rank FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id LEFT JOIN supplier_priority p ON p.supplier_id=d.id ORDER BY CASE WHEN p.rank IS NULL THEN 1 ELSE 0 END,p.rank,d.created_at,d.id'
-   ).all();
+   // A migração da prioridade é aditiva. Se ainda não foi aplicada,
+   // liste os fornecedores existentes em vez de aparentar que foram apagados.
+   let suppliers;
+   try{
+     suppliers=await env.DB.prepare(
+       'SELECT d.id,d.display_name,c.phone_e164,c.authorized,p.rank FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id LEFT JOIN supplier_priority p ON p.supplier_id=d.id ORDER BY CASE WHEN p.rank IS NULL THEN 1 ELSE 0 END,p.rank,d.created_at,d.id'
+     ).all();
+   }catch(error){
+     if(!/no such table:\s*supplier_priority/i.test(String(error?.message||'')))throw error;
+     suppliers=await env.DB.prepare(
+       'SELECT d.id,d.display_name,c.phone_e164,c.authorized,NULL AS rank FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id ORDER BY d.created_at,d.id'
+     ).all();
+   }
    return json({suppliers:(suppliers.results||[]).map(s=>({
      id:s.id,display_name:s.display_name,
      phoneConfigured:!!s.phone_e164,
@@ -141,7 +151,13 @@ async function adminApi(request,env,ctx){
   if(!order)return clientError('Pedido não encontrado.',404);
   const candidates=await loadSupplierCandidates(env);
   const preview=previewSupplierOrder(env,order,candidates);
-  const directory=await env.DB.prepare('SELECT d.id,d.display_name FROM supplier_directory d LEFT JOIN supplier_priority p ON p.supplier_id=d.id ORDER BY CASE WHEN p.rank IS NULL THEN 1 ELSE 0 END,p.rank,d.created_at,d.id').all();
+  let directory;
+  try{
+    directory=await env.DB.prepare('SELECT d.id,d.display_name FROM supplier_directory d LEFT JOIN supplier_priority p ON p.supplier_id=d.id ORDER BY CASE WHEN p.rank IS NULL THEN 1 ELSE 0 END,p.rank,d.created_at,d.id').all();
+  }catch(error){
+    if(!/no such table:\s*supplier_priority/i.test(String(error?.message||'')))throw error;
+    directory=await env.DB.prepare('SELECT id,display_name FROM supplier_directory ORDER BY created_at,id').all();
+  }
   const attempts=await env.DB.prepare('SELECT supplier_id,state,updated_at FROM supplier_attempts WHERE order_id=? ORDER BY created_at').bind(order.id).all();
   const blocked=new Set((attempts.results||[]).filter(a=>a.state==='unavailable').map(a=>a.supplier_id));
   return json({...preview,sharedCatalog:true,registeredSuppliers:directory.results||[],stockAttempts:attempts.results||[],nextSupplierId:preview.supplierCandidates.find(s=>!blocked.has(s.id))?.id||null});
