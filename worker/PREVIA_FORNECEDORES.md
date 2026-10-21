@@ -53,6 +53,17 @@ Exemplo de estrutura (valores fictícios; não utilizar como números reais):
 
 O segredo `SUPPLIERS_JSON` é legado e não é necessário se os contatos do D1 estiverem cadastrados. Se usado por compatibilidade, nunca publique contatos ou segredos no GitHub.
 
+## Testar a fila antes de liberar o WhatsApp
+
+Abra `/suppliers.html` e carregue os fornecedores com `ADMIN_TOKEN`. A seção **Simulador de consultas de estoque — SEM ENVIO** aparece abaixo das configurações.
+
+1. O simulador considera a ordem atual e apenas fornecedores com telefone e autorização.
+2. Escolha uma resposta fictícia para cada fornecedor: **sem estoque**, **disponível**, **não respondeu após 24h** ou **resposta ambígua**.
+3. Clique em **SIMULAR CONSULTAS SEM ENVIO** para conferir qual seria a próxima ação.
+4. Se o fornecedor afirmar disponibilidade, o resultado ainda requer confirmação antes de avisar o comprador. Se houver silêncio ou ambiguidade, exige revisão manual. Se todos recusarem, é preciso oferecer alternativa ou reembolso manualmente.
+
+Essa funcionalidade roda **inteiramente no navegador**: não consulta, não grava e não altera pedidos no D1; não dispara mensagens, pagamento ou testes reais contra Asaas ou Meta. É um ensaio lógico, não uma certificação da integração WhatsApp.
+
 ## Prévia dos pedidos
 
 No painel `/admin.html`, clique em **PRÉVIA SEM ENVIO**. A prévia mostra a fila de fornecedores autorizados, apenas os quatro últimos dígitos dos contatos, tentativas de consulta e verificações pendentes. Ela não envia mensagens nem realiza Pix.
