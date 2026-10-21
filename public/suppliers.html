@@ -50,12 +50,12 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <p class="note">Nesta etapa, o WhatsApp, os pagamentos reais e os pagamentos a fornecedores permanecem desativados.</p></section>
 <section class="panel" id="simulatorPanel" hidden>
 <h2>4. Simulador de consultas de estoque — SEM ENVIO</h2>
-<p>Teste sua ordem atual sem utilizar pedidos reais. Escolha uma resposta fictícia para cada fornecedor e veja como o sistema tomaria a decisão.</p>
+<p>Teste sua ordem atual sem utilizar pedidos reais. Escolha uma resposta fictícia por fornecedor. A cada 12 horas sem retorno, o próximo recebe a consulta, até o limite de três dias.</p>
 <label>Produto fictício para o teste <input id="simProduct" maxlength="120" value="Camisa de futebol, tamanho M, 1 unidade"></label>
 <div id="simVendors"><p class="note">Carregue os fornecedores para iniciar.</p></div>
 <p><button type="button" id="simulateStock" disabled>SIMULAR CONSULTAS SEM ENVIO</button></p>
 <pre id="simResult" aria-live="polite" style="white-space:pre-wrap;background:#f4f6f3;padding:13px;font:13px/1.6 ui-monospace,monospace;overflow-wrap:anywhere"></pre>
-<p class="note">Simulação somente no navegador. Não consulta nem grava o D1, não cria pedidos, não entra no Asaas e não envia WhatsApp. Um fornecedor sem número ou autorização é ignorado. Falta de resposta após 24 horas ou mensagem ambígua exige revisão manual — não significa falta de estoque.</p>
+<p class="note">Simulação somente no navegador. Não consulta nem grava o D1, não cria pedidos, não entra no Asaas e não envia WhatsApp. Cada fornecedor tem até 12 horas; silêncio e resposta ambígua levam ao próximo fornecedor. O prazo total é de 72 horas desde o início da busca. Sem confirmação até lá, revisão manual e pedido de desculpas ao cliente, por template aprovado e apenas com autorização.</p>
 </section>
 </main><script>
 'use strict';
@@ -94,23 +94,25 @@ function renderSuppliers(){
  */
 function simulateAvailability(stages){
  const steps=[];
+ let hours=0;
  for(const stage of stages){
+  if(hours>=72)break;
   if(stage.reply==='unavailable'){
    steps.push(stage.name+': SEM ESTOQUE — avançar ao próximo fornecedor');
    continue;
   }
   if(stage.reply==='available'){
    steps.push(stage.name+': DISPONÍVEL — solicitar detalhes e confirmação antes de avisar o comprador');
-   return {steps,outcome:'Disponibilidade informada por '+stage.name+'. Ainda falta confirmação do pedido pelo fornecedor.',status:'availability_reported'};
+   return {steps,outcome:'Disponibilidade informada por '+stage.name+'. A confirmação do pedido ainda é necessária.',status:'availability_reported',elapsedHours:hours};
   }
   if(stage.reply==='silence'){
-   steps.push(stage.name+': SEM RESPOSTA — sinalizar atraso e revisão manual');
-   return {steps,outcome:'Não avançar automaticamente: silêncio não comprova falta de estoque.',status:'manual_review'};
+   hours+=12;
+   steps.push(stage.name+': SEM RESPOSTA por 12 horas — consultar o próximo fornecedor');
+   continue;
   }
-  steps.push(stage.name+': RESPOSTA AMBÍGUA — revisão manual');
-  return {steps,outcome:'Mensagem não conclusiva. Verifique a resposta antes de decidir o próximo fornecedor.',status:'manual_review'};
+  steps.push(stage.name+': RESPOSTA AMBÍGUA — consultar o próximo fornecedor');
  }
- return {steps,outcome:'Todos os fornecedores consultados informaram falta de estoque. Revisão manual para alternativa ou reembolso.',status:'all_unavailable'};
+ return {steps,outcome:'Até 72 horas após o início da busca, nenhuma disponibilidade foi confirmada. Encaminhar para revisão manual e pedir desculpas ao cliente pelo atraso (somente mensagem autorizada).',status:'manual_review_72h',elapsedHours:72};
 }
 function renderSimulation(){
  $('simulatorPanel').hidden=false;
@@ -119,7 +121,7 @@ function renderSimulation(){
   '<select data-sim-id="'+esc(supplier.id)+'" style="display:block;width:100%;font:inherit;padding:9px;margin-top:5px;border:1px solid #bccabc;border-radius:5px">'+
   '<option value="unavailable">Respondeu: sem estoque</option>'+
   '<option value="available"'+(i===eligible.length-1?' selected':'')+'>Respondeu: disponível</option>'+
-  '<option value="silence">Não respondeu (24 horas)</option>'+
+  '<option value="silence">Não respondeu (12 horas)</option>'+
   '<option value="unclear">Resposta ambígua</option>'+
   '</select></label>').join('')||
   '<p class="note">Nenhum fornecedor com telefone e autorização cadastrados. Marque a autorização nos contatos para simular a fila.</p>';
