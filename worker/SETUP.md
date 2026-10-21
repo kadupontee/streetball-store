@@ -1,6 +1,6 @@
 # Streetball Store — Ativar cobrança e automação (20/10/2026)
 
-O código está preparado, **não está publicado em produção**. A loja do GitHub Pages continua sendo apenas vitrine. Para receber pedidos e pagamentos, é preciso publicar o **Cloudflare Worker** do repositório, vinculado ao banco **D1** e à conta **Asaas**. Não cole credenciais no GitHub ou no chat.
+O código já está publicado no Cloudflare em modo Sandbox; **vendas reais e automação WhatsApp continuam desativadas**. A loja do GitHub Pages continua sendo apenas vitrine. Para receber pedidos e pagamentos, é preciso publicar o **Cloudflare Worker** do repositório, vinculado ao banco **D1** e à conta **Asaas**. Não cole credenciais no GitHub ou no chat.
 
 ## O que já existe no código
 
@@ -11,7 +11,7 @@ O código está preparado, **não está publicado em produção**. A loja do Git
 5. Webhook Asaas com token secreto e deduplicação por evento; conferência de valor, ID e referência do pedido.
 6. Encaminhamento ao fornecedor **somente após PAYMENT_RECEIVED**. O evento PAYMENT_CONFIRMED isoladamente não libera o pedido.
 7. Integração WhatsApp Business Cloud API para até cinco fornecedores configurados. A primeira mensagem deve usar modelo (template) de **cabeçalho com foto aprovado** pelo Meta.
-8. Fornecedor pode responder **DETALHES ID** para receber os dados de envio e todas as fotos pelo WhatsApp, e **CONFIRMAR ID** para sinalizar preparação. O comprador recebe template de confirmação se o WhatsApp estiver configurado.
+8. Os cinco fornecedores compartilham o catálogo. Negativa explícita de estoque passa ao próximo contato. Apenas após disponibilidade confirmada são enviados os dados de envio, e **CONFIRMAR ID** marca preparação. O comprador só recebe atualização após essa confirmação.
 9. Verificação automática a cada hora: se o fornecedor não responder em 24 horas, o pedido vai para atraso e, se configurado, o administrador recebe alerta.
 10. Pagamento do **fornecedor** não é realizado automaticamente: links recebidos por conversa exigem aprovação do dono da loja. Também é necessário verificar disponibilidade e reembolsos.
 
@@ -29,7 +29,7 @@ Para criar as tabelas necessárias ao checkout no banco existente, execute:
 npx wrangler d1 execute streetball-db --remote --file=worker/schema.sql
 ```
 
-O mesmo `schema.sql` é seguro em uma base que já tem as tabelas anteriores; as três novas tabelas são criadas com `IF NOT EXISTS`.
+O mesmo `schema.sql` é aditivo e seguro em uma base que já possui tabelas anteriores: as novas tabelas são criadas com `IF NOT EXISTS`.
 
 Defina um domínio do Worker (ou `*.workers.dev`) capaz de atender tanto à loja quanto às rotas `/api/*`. **Não é possível finalizar compras pelo site estático do GitHub Pages**: ele continuará com botão de pagamento desativado.
 
@@ -58,57 +58,21 @@ SHIPPING_FLAT_BRL = "29.90"  # EXEMPLO; substitua pelo frete REAL definido para 
 
 **ATENÇÃO:** não use R$29,90 como valor real até apurar origem, destino, frete internacional, tributos e eventuais taxas. Se você não puder garantir entrega e tributos para todos os CEPs, implemente cotação por CEP antes de aceitar pagamentos. Para testar o fluxo, execute `npx wrangler deploy`, abra a URL do Worker e teste uma transação no sandbox. O site identifica quando o modo é teste.
 
-## Passo 3 — Configurar os fornecedores WhatsApp
+## Passo 3 — Configurar o catálogo compartilhado e os cinco fornecedores
 
-É necessário usar o WhatsApp Business Platform/Cloud API oficial. Conversas com fornecedores comuns pelo WhatsApp não fornecem API confiável para ler respostas ou efetuar pagamentos via interface. A Cloud API aceita números internacionais de fornecedores cadastrados, mas a conversa fora da janela de atendimento exige templates aprovados. Você precisará obter `WA_TOKEN`, `WA_PHONE_NUMBER_ID`, `WA_APP_SECRET` e `WA_VERIFY_TOKEN` da Meta, além de cadastrar os números autorizados dos fornecedores no segredo `SUPPLIERS_JSON`.
+A loja usa **um catálogo comum** e consulta fornecedores em sequência. Não é necessário `supplierId` por produto nem `DEFAULT_SUPPLIER_ID`.
 
-Exemplo de **formato**, NÃO de números reais: os cinco números são ilustrativos. Para fornecedores chineses use o código do país `86` e o telefone completo no padrão internacional E.164 (somente dígitos no JSON); para brasileiros use `55`.
+Cadastre os IDs e nomes dos cinco fornecedores em `/suppliers.html` após migrar o D1, conforme `worker/PREVIA_FORNECEDORES.md`.
 
-```json
-[
-  {"id":"james","phone":"86NUMEROCHINES1","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
-  {"id":"fornecedor2","phone":"86NUMEROCHINES2","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
-  {"id":"fornecedor3","phone":"86NUMEROCHINES3","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
-  {"id":"fornecedor4","phone":"86NUMEROCHINES4","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
-  {"id":"fornecedor5","phone":"86NUMEROCHINES5","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"}
-]
-```
+Quando a Meta aprovar o aplicativo e os testes estiverem liberados, cadastre `SUPPLIERS_JSON` como segredo com até cinco objetos `{id,phone,template,mediaTemplate}`. A **ordem dos objetos** define a ordem preferida das consultas; use números completos com DDI, e somente fornecedores que autorizaram receber os contatos.
 
-O JSON deve ser fornecido ao comando `npx wrangler secret put SUPPLIERS_JSON`, **sem publicá-lo**. Configure a variável `DEFAULT_SUPPLIER_ID = "james"` em `wrangler.toml` **somente se este for realmente o fornecedor do catálogo importado**. Caso os produtos pertençam a fornecedores diferentes, cadastre o campo `supplierId` em cada produto; pedidos mistos ficam para verificação manual, não são enviados ao fornecedor errado.
+A primeira mensagem requer template aprovado com cabeçalho de imagem e duas variáveis (ID curto do pedido e resumo dos itens). São suportadas respostas `SEM_ESTOQUE ID`, `DISPONIVEL ID`, `DETALHES ID` e `CONFIRMAR ID`. Respostas curtas como “não temos” também podem ser associadas quando o fornecedor responde diretamente à mensagem de consulta. Texto ambíguo ou sem contexto vai para revisão manual, não para conclusão automática.
 
-Templates aprovados na Meta:
-- `pedido_fornecedor_foto`: cabeçalho **IMAGE** dinâmico e **2 parâmetros de texto** no corpo (ID do pedido e resumo das peças). A foto do primeiro produto é usada no cabeçalho; outras fotos são enviadas quando o fornecedor responder `DETALHES <ID>`.
-- `pedido_em_preparacao`: corpo com **1 parâmetro** (ID do pedido), para notificar o comprador após o fornecedor confirmar.
-- `fornecedor_sem_resposta` (opcional): corpo com **1 parâmetro** (ID do pedido), para avisar o responsável após 24h sem resposta.
+O sistema avança ao próximo fornecedor quando há uma negativa inequívoca. Quando os cinco recusarem, o pedido fica para revisão; não existe reembolso ou pagamento automático ao fornecedor. Atrasos de 24h são sinalizados, mas **silêncio não equivale a falta de estoque**.
 
-Configure webhook Meta:
-- GET / POST: `https://SEU-DOMINIO/api/webhooks/whatsapp`.
-- Token de verificação: `WA_VERIFY_TOKEN`.
-- Validação HMAC obrigatória por `WA_APP_SECRET`; webhook só aceita respostas do número registrado no pedido.
+Webhook Meta: `GET/POST https://SEU-DOMINIO/api/webhooks/whatsapp`; cadastre `WA_VERIFY_TOKEN`, `WA_APP_SECRET`, `WA_TOKEN` e `WA_PHONE_NUMBER_ID` como segredos no Cloudflare e inscreva o campo `messages`. Não copie tokens para o código nem para o GitHub.
 
-Segredos e configurações:
-```bash
-npx wrangler secret put WA_TOKEN
-npx wrangler secret put WA_APP_SECRET
-npx wrangler secret put WA_VERIFY_TOKEN
-npx wrangler secret put WA_PHONE_NUMBER_ID
-npx wrangler secret put SUPPLIERS_JSON
-```
-
-Variáveis a configurar em `wrangler.toml` após aprovar os templates:
-```toml
-WA_AUTOMATION_ENABLED = "true"
-DEFAULT_SUPPLIER_ID = "james"
-STORE_PUBLIC_URL = "https://SEU-DOMINIO"
-SUPPLIER_WA_TEMPLATE = "pedido_fornecedor"
-SUPPLIER_WA_TEMPLATE_MEDIA = "pedido_fornecedor_foto"
-BUYER_WA_TEMPLATE = "pedido_em_preparacao"
-# Para alertas:
-# OWNER_WA_PHONE = "55DDDNUMERO"
-# OWNER_WA_TEMPLATE = "fornecedor_sem_resposta"
-```
-
-**Regras:** os destinatários precisam autorizar mensagens; templates devem estar aprovados pela Meta e os dados de envio só vão ao número de fornecedor configurado. A API não consegue forçar que o fornecedor responda.
+**Segurança:** enquanto `ASAAS_SANDBOX = "true"` ou `WA_AUTOMATION_ENABLED = "false"`, a automação **não envia mensagens**. Antes de qualquer liberação real, valide números, consentimento, templates, fotos, dados de entrega e políticas de devolução.
 
 ## Passo 4 — Publicar / checar
 
