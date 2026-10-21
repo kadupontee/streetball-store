@@ -31,7 +31,8 @@ function imageLink(raw,env){
  */
 export function previewSupplierOrder(env,order){
  const items=JSON.parse(order.items_json||'[]');
- const supplier=getSupplier(env,items);
+ const candidates=suppliers(env);
+ const supplier=candidates[0]||null;
  const firstPhoto=imageLink(items[0]?.image,env);
  const photoTemplate=env.SUPPLIER_WA_TEMPLATE_MEDIA||supplier?.mediaTemplate||'';
  const checks={
@@ -46,6 +47,8 @@ export function previewSupplierOrder(env,order){
  return {
    orderId:order.id,
    status:order.status,
+   sharedCatalog:true,
+   supplierCandidates:candidates.map((p,i)=>({id:p.id,priority:i+1,phoneEnding:p.phone.slice(-4)})),
    supplier:supplier?{id:supplier.id,phoneEnding:supplier.phone.slice(-4)}:null,
    firstPhotoUrl:firstPhoto||null,
    photoTemplate:photoTemplate||null,
@@ -58,11 +61,11 @@ export function previewSupplierOrder(env,order){
    checks,
    readyForAutomaticSending:checks.supplierConfigured&&checks.firstPhotoAvailable&&
      checks.photoTemplateConfigured&&checks.waTokenConfigured&&
-     checks.waPhoneIdConfigured&&!checks.whatsappAutomationDisabled
+     checks.waPhoneIdConfigured&&!checks.whatsappAutomationDisabled&&!checks.sandbox
  };
 }
 async function sendWa(env,to,message){
- if(env.WA_AUTOMATION_ENABLED!=='true'||!env.WA_TOKEN||!env.WA_PHONE_NUMBER_ID)throw Error('WhatsApp não habilitado ou sem credenciais');
+ if(env.ASAAS_SANDBOX==='true'||env.WA_AUTOMATION_ENABLED!=='true'||!env.WA_TOKEN||!env.WA_PHONE_NUMBER_ID)throw Error('WhatsApp não habilitado ou sem credenciais');
  if(!normalizeWaPhone(to))throw Error('Número WhatsApp inválido');
  const version=/^v\d+\.\d+$/.test(env.WA_GRAPH_VERSION||'')?env.WA_GRAPH_VERSION:'v22.0';
  const res=await fetch('https://graph.facebook.com/'+version+'/'+env.WA_PHONE_NUMBER_ID+'/messages',{
@@ -171,7 +174,7 @@ async function sendOrderDetails(env,order,dispatch){
  await env.DB.prepare("UPDATE supplier_dispatch SET details_sent_at=?,updated_at=? WHERE order_id=?").bind(now(),now(),order.id).run();
 }
 async function sendBuyerUpdate(env,order){
- if(!env.BUYER_WA_TEMPLATE||env.WA_AUTOMATION_ENABLED!=='true')return;
+ if(!env.BUYER_WA_TEMPLATE||env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true')return;
  await env.DB.prepare("INSERT OR IGNORE INTO buyer_notifications(order_id,state,created_at,updated_at) VALUES(?,?,?,?)").bind(order.id,'pending',now(),now()).run();
  const claim=await env.DB.prepare("UPDATE buyer_notifications SET state='sending',updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
  if(!claim.meta?.changes)return;
