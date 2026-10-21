@@ -213,11 +213,11 @@ async function adminApi(request,env,ctx){
     directory=await env.DB.prepare('SELECT id,display_name FROM supplier_directory ORDER BY created_at,id').all();
   }
   const attempts=await env.DB.prepare('SELECT supplier_id,state,updated_at FROM supplier_attempts WHERE order_id=? ORDER BY created_at').bind(order.id).all();
-  const blocked=new Set((attempts.results||[]).filter(a=>a.state==='unavailable').map(a=>a.supplier_id));
+  const blocked=new Set((attempts.results||[]).filter(a=>['unavailable','ambiguous','timed_out'].includes(a.state)).map(a=>a.supplier_id));
   return json({...preview,sharedCatalog:true,registeredSuppliers:directory.results||[],stockAttempts:attempts.results||[],nextSupplierId:preview.supplierCandidates.find(s=>!blocked.has(s.id))?.id||null});
  }
  if(request.method==='GET'&&url.pathname==='/api/admin/orders'){
-  const data=await env.DB.prepare('SELECT o.id,o.created_at,o.status,o.name,o.email,o.phone,o.city,o.state,o.items_json,o.subtotal,o.shipping,o.total,j.status AS supplier_status,j.updated_at AS supplier_updated_at,d.supplier_id,d.state AS dispatch_state,d.sent_at AS sent_to_supplier_at,d.responded_at AS supplier_replied_at,d.last_error AS supplier_error,n.state AS buyer_notification_status FROM orders o LEFT JOIN supplier_jobs j ON j.order_id=o.id LEFT JOIN supplier_dispatch d ON d.order_id=o.id LEFT JOIN buyer_notifications n ON n.order_id=o.id ORDER BY o.created_at DESC LIMIT 75').all();
+  const data=await env.DB.prepare('SELECT o.id,o.created_at,o.status,o.name,o.email,o.phone,o.city,o.state,o.items_json,o.subtotal,o.shipping,o.total,j.status AS supplier_status,j.updated_at AS supplier_updated_at,d.supplier_id,d.state AS dispatch_state,d.sent_at AS sent_to_supplier_at,d.responded_at AS supplier_replied_at,d.last_error AS supplier_error,d.created_at AS supplier_search_started_at,n.state AS buyer_notification_status,a.state AS delay_apology_status FROM orders o LEFT JOIN supplier_jobs j ON j.order_id=o.id LEFT JOIN supplier_dispatch d ON d.order_id=o.id LEFT JOIN buyer_notifications n ON n.order_id=o.id LEFT JOIN buyer_delay_notifications a ON a.order_id=o.id ORDER BY o.created_at DESC LIMIT 75').all();
   return json({orders:data.results||[]});
  }
  if(request.method==='POST'&&url.pathname==='/api/admin/supplier-status'){
