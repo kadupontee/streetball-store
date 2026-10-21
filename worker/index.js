@@ -1,4 +1,4 @@
-import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply} from './fulfillment.js';
+import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply,supplierReplyAction} from './fulfillment.js';
 import {supplierIdValid} from './supplier-mapping.js';
 /** Streetball Store - Cloudflare Worker + D1 + Asaas sandbox/production
  * Nunca armazene tokens ou chaves na pasta public/.
@@ -82,24 +82,26 @@ async function adminApi(request,env,ctx){
  if(url.pathname==='/api/admin/whatsapp-dry-run'&&request.method==='POST'){
    if(Number(request.headers.get('content-length')||0)>1600)return clientError('Mensagem de teste muito grande.',413);
    const body=await request.json().catch(()=>null);
-   if(!body||typeof body.text!=='string'||body.text.length>400||typeof body.linked!=='boolean')
-     return clientError('Informe texto fictício (até 400 caracteres) e vínculo simulado.',400);
+   if(!body||typeof body.text!=='string'||body.text.length>400||typeof body.linked!=='boolean'||
+      (body.stage!==undefined&&!['awaiting_reply','details_sent'].includes(body.stage)))
+     return clientError('Informe texto fictício (até 400 caracteres), vínculo e etapa válidos.',400);
+   const stage=body.stage||'awaiting_reply';
    const context=body.linked?'wamid.exemplo-somente-simulacao':'';
    const match=classifyStockReply(body.text,context);
    const kind=match?.kind||'unlinked_or_unrecognized';
+   const action=supplierReplyAction(kind,stage);
    const actions={
-     unavailable:'Consultar próximo fornecedor (simulação)',
-     ambiguous:'Consultar próximo fornecedor (simulação)',
-     available:'Aguardar confirmação do fornecedor; não avisar cliente ainda',
-     confirmar:'Confirmar apenas após validar pedido e detalhes enviados',
-     preparando:'Confirmar apenas após validar pedido e detalhes enviados',
-     detalhes:'Exibir detalhes somente após identificar o pedido',
-     unlinked_or_unrecognized:'Não associar a nenhum pedido; aguardar resposta vinculada ou timeout de 12 horas'
+     next_supplier:'Consultar próximo fornecedor (simulação)',
+     check_stock_details:'Informou disponibilidade; conferir modelo, tamanho e preço. Ainda NÃO confirmar pedido ou pagar',
+     confirm_order:'Confirmar preparação somente após comprovada aceitação do pedido',
+     manual_review:'Interação que exige interpretação ou atenção humana; não aceitar nem pagar automaticamente; após 12h sem resposta de estoque válida, consultar próximo',
+     no_change:'Sem confirmação válida nesta etapa; não alterar pedido. Aguardar resposta correlacionada ou timeout de 12h'
    };
    return json({simulation:true,sent:false,databaseModified:false,
-     replyKind:kind,linked:body.linked,correlation:match?.byContext?'contexto fictício':match?.orderShort?'ID curto presente':'não identificada',
-     nextAction:actions[kind]||'Conferência manual',
-     note:'Nenhum pedido real foi consultado, alterado ou encaminhado. Esta análise não valida assinatura nem entrega de webhook.'});
+     replyKind:kind,stage,replyAction:action,linked:body.linked,
+     correlation:match?.byContext?'contexto fictício':match?.orderShort?'ID curto presente':'não identificada',
+     nextAction:actions[action],
+     note:'Nenhum pedido real foi consultado, alterado ou encaminhado. A resposta depende da pergunta anterior e do estado do pedido.'});
  }
  if(url.pathname==='/api/admin/supplier-directory'&&request.method==='GET'){
    // A migração da prioridade é aditiva. Se ainda não foi aplicada,
