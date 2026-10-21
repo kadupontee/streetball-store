@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/index.js';
 import {previewSupplierOrder} from '../worker/fulfillment.js';
+import {readFileSync} from 'node:fs';
 
 const id='12345678-1234-4234-8234-123456789012';
 const order={
@@ -62,4 +63,13 @@ test('rota autorizada apenas lê pedido e não envia mensagens',async()=>{
  assert.equal(preview.readyForAutomaticSending,false);
  assert.equal(calls.length,1);
  assert.match(calls[0],/^SELECT id,status,items_json FROM orders/);
+});
+
+test('painel administrativo inclui prévia com JavaScript válido',()=>{
+ const html=readFileSync(new URL('../public/admin.html',import.meta.url),'utf8');
+ const match=html.match(/<script>([\s\S]*?)<\/script>/);
+ assert.ok(match);
+ assert.doesNotThrow(()=>new Function(match[1]));
+ assert.match(html,/data-preview=/);
+ assert.match(html,/PRÉVIA SEM ENVIO/);
 });
