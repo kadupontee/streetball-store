@@ -79,11 +79,23 @@ function sendTemplate(env,to,name,args,headerImage){
  if(headerImage)components.unshift({type:'header',parameters:[{type:'image',image:{link:headerImage}}]});
  return sendWa(env,to,{type:'template',template:{name,language:{code:'pt_BR'},components}});
 }
-function getSupplier(env,items){
- // Catálogo com múltiplas origens: nunca inventar fornecedor para item sem identificação.
- const desired=new Set(items.map(i=>trim(i.supplierId,40)));
- if(desired.size!==1||desired.has(''))return null;
- return suppliers(env).find(s=>s.id===[...desired][0])||null;
+function getSupplier(env){
+ // Os cinco fornecedores compartilham o catálogo. A prioridade segue a lista de contatos.
+ return suppliers(env)[0]||null;
+}
+export function classifyStockReply(body,contextId=''){
+ const raw=trim(body,400).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim();
+ const command=raw.match(/^(SEM[_ -]?ESTOQUE|INDISPONIVEL|ESGOTADO|DISPONIVEL|TEMOS|CONFIRMAR|PREPARANDO|DETALHES)\s+([A-F0-9]{8})$/);
+ if(command){
+  const word=command[1].replace(/[_ -]/g,'');
+  return {kind:['SEMESTOQUE','INDISPONIVEL','ESGOTADO'].includes(word)?'unavailable':(['DISPONIVEL','TEMOS'].includes(word)?'available':word.toLowerCase()),orderShort:command[2].toLowerCase(),byContext:false};
+ }
+ // Somente resposta diretamente vinculada à mensagem de consulta pode ser interpretada sem ID.
+ if(contextId){
+  if(/^(?:SEM ESTOQUE|NAO TENHO|NAO TEMOS|NAO TEM|ESGOTADO|ESGOTOU|INDISPONIVEL|ESTA EM FALTA)[.! ]*$/.test(raw))return {kind:'unavailable',orderShort:null,byContext:true};
+  if(/^(?:DISPONIVEL|TENHO EM ESTOQUE|TEMOS EM ESTOQUE|TEMOS DISPONIVEL|TEMOS|DISPONIVEL SIM)[.! ]*$/.test(raw))return {kind:'available',orderShort:null,byContext:true};
+ }
+ return null;
 }
 function messageSummary(items){
  return trim(items.map(i=>trim(i.title,58)+' '+trim(i.size,12)+' x'+i.qty+(i.personalize?' (personalizado)':'')).join(' | '),330);
@@ -93,37 +105,57 @@ export async function routePaidOrder(env,orderId){
  const order=await env.DB.prepare("SELECT id,status,items_json FROM orders WHERE id=?").bind(orderId).first();
  if(!order||order.status!=='paid_supplier_pending')return false;
  const items=JSON.parse(order.items_json||'[]');
- const supplier=getSupplier(env,items);
+ const candidates=suppliers(env);
+ const excluded=await env.DB.prepare("SELECT supplier_id FROM supplier_attempts WHERE order_id=? AND state='unavailable'").bind(order.id).all();
+ const exhausted=new Set((excluded.results||[]).map(x=>x.supplier_id));
+ const supplier=candidates.find(c=>!exhausted.has(c.id))||null;
  const firstPhoto=imageLink(items[0]?.image,env);
  const t=now();
- // Rastrear a preparação mesmo quando não for possível automatizar o WhatsApp.
  await env.DB.prepare("INSERT OR IGNORE INTO supplier_dispatch(order_id,supplier_id,supplier_phone,state,created_at,updated_at) VALUES(?,?,?,?,?,?)")
- .bind(order.id,supplier?.id||'',supplier?.phone||'','pending',t,t).run();
- if(!supplier||!env.STORE_PUBLIC_URL||!firstPhoto||env.WA_AUTOMATION_ENABLED!=='true'){
-   await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_configuration',updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
-   await env.DB.prepare("UPDATE supplier_jobs SET status='manual_review',updated_at=? WHERE order_id=? AND status='requires_supplier_routing'").bind(now(),order.id).run();
-   return false;
+ .bind(order.id,'','','pending',t,t).run();
+ if(!supplier){
+  const state=candidates.length?'all_unavailable':'needs_configuration';
+  await env.DB.prepare("UPDATE supplier_dispatch SET state=?,supplier_id='',supplier_phone='',updated_at=? WHERE order_id=? AND state IN ('pending','needs_configuration')")
+    .bind(state,now(),order.id).run();
+  await env.DB.prepare("UPDATE supplier_jobs SET status='manual_review',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
+  return false;
  }
- // O cabeçalho com foto exige template de mídia aprovado; sem ele, não fingir que a foto foi entregue.
  const photoTemplate=env.SUPPLIER_WA_TEMPLATE_MEDIA||supplier.mediaTemplate;
- if(!photoTemplate){
-   await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_configuration',last_error='Template com foto não configurado',updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
-   return false;
+ // Sandbox nunca envia automaticamente a fornecedores reais, mesmo se alguém ativar WA_AUTOMATION_ENABLED.
+ if(!env.STORE_PUBLIC_URL||!firstPhoto||!photoTemplate||
+    env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true'){
+  await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_configuration',supplier_id=?,supplier_phone=?,updated_at=? WHERE order_id=? AND state IN ('pending','needs_configuration')")
+    .bind(supplier.id,supplier.phone,now(),order.id).run();
+  await env.DB.prepare("UPDATE supplier_jobs SET status='manual_review',updated_at=? WHERE order_id=? AND status='requires_supplier_routing'").bind(now(),order.id).run();
+  return false;
  }
- await env.DB.prepare("UPDATE supplier_dispatch SET state='pending',supplier_id=?,supplier_phone=?,updated_at=?,last_error=NULL WHERE order_id=? AND state='needs_configuration'")
-   .bind(supplier.id,supplier.phone,now(),order.id).run();
- const lock=await env.DB.prepare("UPDATE supplier_dispatch SET state='sending',attempts=attempts+1,updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
+ const lock=await env.DB.prepare("UPDATE supplier_dispatch SET state='sending',supplier_id=?,supplier_phone=?,attempts=attempts+1,updated_at=?,last_error=NULL WHERE order_id=? AND state IN ('pending','needs_configuration')")
+  .bind(supplier.id,supplier.phone,now(),order.id).run();
  if(!lock.meta?.changes)return false;
  try{
-   const id=await sendTemplate(env,supplier.phone,photoTemplate,[order.id.slice(0,8),messageSummary(items)],firstPhoto);
-   await env.DB.prepare("UPDATE supplier_dispatch SET state='awaiting_reply',message_id=?,sent_at=?,updated_at=?,last_error=NULL WHERE order_id=?").bind(id,now(),now(),order.id).run();
-   await env.DB.prepare("UPDATE supplier_jobs SET status='supplier_contacted',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
-   return true;
+  const messageId=await sendTemplate(env,supplier.phone,photoTemplate,[order.id.slice(0,8),messageSummary(items)],firstPhoto);
+  await env.DB.prepare("INSERT INTO supplier_attempts(order_id,supplier_id,state,message_id,created_at,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(order_id,supplier_id) DO UPDATE SET state=excluded.state,message_id=excluded.message_id,updated_at=excluded.updated_at")
+   .bind(order.id,supplier.id,'awaiting_reply',messageId,now(),now()).run();
+  await env.DB.prepare("UPDATE supplier_dispatch SET state='awaiting_reply',message_id=?,sent_at=?,details_sent_at=NULL,responded_at=NULL,updated_at=? WHERE order_id=? AND state='sending'")
+   .bind(messageId,now(),now(),order.id).run();
+  await env.DB.prepare("UPDATE supplier_jobs SET status='supplier_contacted',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
+  return true;
  }catch(err){
-   // Em falha de rede, não reenviar automaticamente: uma mensagem anterior pode ter sido entregue.
-   await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_review',last_error=?,updated_at=? WHERE order_id=?").bind(trim(err?.message,250),now(),order.id).run();
-   await env.DB.prepare("UPDATE supplier_jobs SET status='manual_review',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
-   return false;
+  await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_review',last_error=?,updated_at=? WHERE order_id=?")
+   .bind(trim(err?.message,250),now(),order.id).run();
+  await env.DB.prepare("UPDATE supplier_jobs SET status='manual_review',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
+  return false;
+ }
+}
+async function sendStockDetails(env,order,to){
+ // Não compartilhar nome, endereço ou telefone do comprador antes da confirmação de estoque.
+ const items=JSON.parse(order.items_json||'[]');
+ const lines=items.map((it,i)=>(i+1)+'. '+trim(it.title,100)+' | '+trim(it.size,12)+' | '+it.qty+' un'+(it.personalize?' | personalizado':'')+(it.patch?' | patch':'')).join('\n');
+ await sendWa(env,to,{type:'text',text:{body:trim('Consulta de disponibilidade '+order.id.slice(0,8)+'\n'+lines,3900)}});
+ for(const it of items){
+  const photo=imageLink(it.image,env);
+  if(!photo)throw Error('Foto não disponível na consulta '+trim(it.id,35));
+  await sendWa(env,to,{type:'image',image:{link:photo,caption:trim(it.title,130)+' / '+trim(it.size,12)+' x'+it.qty}});
  }
 }
 async function sendOrderDetails(env,order,dispatch){
@@ -151,38 +183,64 @@ async function sendBuyerUpdate(env,order){
  }
 }
 export async function handleSupplierInbound(env,message,ctx){
- if(!env.DB||!message?.id)return;
- const from=normalizeWaPhone(message.from),text=trim(message.text?.body,400);
- const match=text.match(/^(DETALHES|PREPARANDO|CONFIRMAR)\s+([a-f0-9]{8})\s*$/i);
- if(!from||!match)return;
+ if(!env.DB||!message?.id||env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true')return;
+ const from=normalizeWaPhone(message.from);
+ const response=classifyStockReply(message.text?.body,message.context?.id);
+ if(!from||!response)return;
  const duplicate=await env.DB.prepare("SELECT id FROM wa_message_events WHERE id=?").bind(message.id).first();
  if(duplicate)return;
- const results=await env.DB.prepare("SELECT o.*,d.supplier_phone,d.state AS dispatch_state,d.details_sent_at FROM orders o JOIN supplier_dispatch d ON d.order_id=o.id WHERE d.supplier_phone=? AND o.id LIKE ? LIMIT 2").bind(from,match[2]+'%').all();
+ const query=response.byContext
+   ?"SELECT o.*,d.supplier_phone,d.supplier_id,d.state AS dispatch_state,d.details_sent_at FROM orders o JOIN supplier_dispatch d ON d.order_id=o.id WHERE d.supplier_phone=? AND d.message_id=? LIMIT 2"
+   :"SELECT o.*,d.supplier_phone,d.supplier_id,d.state AS dispatch_state,d.details_sent_at FROM orders o JOIN supplier_dispatch d ON d.order_id=o.id WHERE d.supplier_phone=? AND o.id LIKE ? LIMIT 2";
+ const arg=response.byContext?message.context.id:response.orderShort+'%';
+ const results=await env.DB.prepare(query).bind(from,arg).all();
  if(results.results?.length!==1)return;
- const order=results.results[0],op=match[1].toUpperCase();
+ const order=results.results[0];
+ if(order.status!=='paid_supplier_pending'||!['awaiting_reply','details_sent','overdue_24h'].includes(order.dispatch_state))return;
  await env.DB.prepare("INSERT OR IGNORE INTO wa_message_events(id,order_id,received_at) VALUES(?,?,?)").bind(message.id,order.id,now()).run();
- if(!['awaiting_reply','details_sent','confirmed','overdue_24h'].includes(order.dispatch_state))return;
- if(op==='DETALHES'&&!order.details_sent_at){
-   try{
-     await sendOrderDetails(env,order,{supplier_phone:from});
-     await env.DB.prepare("UPDATE supplier_dispatch SET state='details_sent',responded_at=?,updated_at=? WHERE order_id=?").bind(now(),now(),order.id).run();
-   }catch(err){
-     await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_review',last_error=?,updated_at=? WHERE order_id=?").bind(trim(err?.message,250),now(),order.id).run();
-   }
+ if(response.kind==='unavailable'){
+  const changed=await env.DB.prepare("UPDATE supplier_dispatch SET state='supplier_unavailable',responded_at=?,updated_at=?,last_error='Fornecedor informou sem estoque' WHERE order_id=? AND supplier_phone=? AND state IN ('awaiting_reply','details_sent','overdue_24h')")
+   .bind(now(),now(),order.id,from).run();
+  if(!changed.meta?.changes)return;
+  await env.DB.prepare("INSERT INTO supplier_attempts(order_id,supplier_id,state,last_response,created_at,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(order_id,supplier_id) DO UPDATE SET state='unavailable',last_response=excluded.last_response,updated_at=excluded.updated_at")
+   .bind(order.id,order.supplier_id,'unavailable',trim(message.text?.body,160),now(),now()).run();
+  await env.DB.prepare("UPDATE supplier_jobs SET status='requires_supplier_routing',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
+  await env.DB.prepare("UPDATE supplier_dispatch SET state='pending',supplier_id='',supplier_phone='',message_id=NULL,sent_at=NULL,responded_at=NULL,details_sent_at=NULL,updated_at=? WHERE order_id=? AND state='supplier_unavailable'")
+   .bind(now(),order.id).run();
+  const next=routePaidOrder(env,order.id);
+  if(ctx?.waitUntil)ctx.waitUntil(next);else await next;
+  return;
  }
- if((op==='PREPARANDO'||op==='CONFIRMAR')&&['awaiting_reply','details_sent','overdue_24h'].includes(order.dispatch_state)){
-   // Mesmo em pedidos de uma peça, o fornecedor só pode confirmar depois
-   // de receber endereço, variantes e fotos do pedido.
-   if(!order.details_sent_at){
-     await sendWa(env,from,{type:'text',text:{body:'Antes de confirmar, responda DETALHES '+order.id.slice(0,8)+' para receber a lista completa e as fotos.'}}).catch(()=>{});
-     return;
-   }
-   const update=await env.DB.prepare("UPDATE supplier_dispatch SET state='confirmed',responded_at=?,updated_at=? WHERE order_id=? AND state IN ('awaiting_reply','details_sent','overdue_24h')").bind(now(),now(),order.id).run();
-   if(!update.meta?.changes)return;
-   await env.DB.prepare("UPDATE supplier_jobs SET status='supplier_confirmed',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
-   await env.DB.prepare("UPDATE orders SET status='supplier_preparing',updated_at=? WHERE id=? AND status='paid_supplier_pending'").bind(now(),now(),order.id).run();
-   const send=sendBuyerUpdate(env,order);
-   if(ctx?.waitUntil)ctx.waitUntil(send);else await send;
+ if(response.kind==='detalhes'){
+  try{await sendStockDetails(env,order,from);}
+  catch(err){
+   await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_review',last_error=?,updated_at=? WHERE order_id=?")
+    .bind(trim(err?.message,250),now(),order.id).run();
+  }
+  return;
+ }
+ if(response.kind==='available'&&!order.details_sent_at){
+  try{
+   await sendOrderDetails(env,order,{supplier_phone:from});
+   await env.DB.prepare("UPDATE supplier_dispatch SET state='details_sent',responded_at=?,updated_at=? WHERE order_id=? AND state IN ('awaiting_reply','overdue_24h','details_sent')")
+    .bind(now(),now(),order.id).run();
+   await env.DB.prepare("UPDATE supplier_attempts SET state='available',updated_at=? WHERE order_id=? AND supplier_id=?").bind(now(),order.id,order.supplier_id).run();
+  }catch(err){
+   await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_review',last_error=?,updated_at=? WHERE order_id=?")
+    .bind(trim(err?.message,250),now(),order.id).run();
+  }
+  return;
+ }
+ if((response.kind==='preparando'||response.kind==='confirmar')&&order.details_sent_at){
+  const updated=await env.DB.prepare("UPDATE supplier_dispatch SET state='confirmed',responded_at=?,updated_at=? WHERE order_id=? AND state IN ('awaiting_reply','details_sent','overdue_24h')")
+    .bind(now(),now(),order.id).run();
+  if(!updated.meta?.changes)return;
+  await env.DB.prepare("UPDATE supplier_attempts SET state='confirmed',updated_at=? WHERE order_id=? AND supplier_id=?").bind(now(),order.id,order.supplier_id).run();
+  await env.DB.prepare("UPDATE supplier_jobs SET status='supplier_confirmed',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
+  await env.DB.prepare("UPDATE orders SET status='supplier_preparing',updated_at=? WHERE id=? AND status='paid_supplier_pending'")
+    .bind(now(),order.id).run();
+  const send=sendBuyerUpdate(env,order);
+  if(ctx?.waitUntil)ctx.waitUntil(send);else await send;
  }
 }
 export async function monitorSupplierSLA(env){
