@@ -1,129 +1,72 @@
-<!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow"><title>Streetball Store — Fornecedores</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Streetball Store — Fila de fornecedores</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font:14px system-ui,Arial,sans-serif;background:#f4f6f3;color:#19241c}
-header{background:#151b16;color:#fff;padding:23px 18px}header>div{max-width:1160px;margin:auto}
-h1{font-size:23px;margin:0}h2{font-size:18px;margin:0 0 10px}p{line-height:1.55}
-main{max-width:1160px;margin:25px auto;padding:0 16px 50px}
-.panel{background:#fff;padding:20px;margin:14px 0;border:1px solid #e0e5dc;border-radius:8px}
-.flex{display:flex;align-items:end;gap:12px;flex-wrap:wrap}.flex>*{flex:1;min-width:150px}
-label{display:block;font-weight:600;font-size:12px;line-height:1.6}
-input,select{font:inherit;border:1px solid #c6d1c5;border-radius:5px;padding:10px;background:#fff;width:100%;min-width:0}
-input[type=checkbox]{width:auto}
-button,.button{cursor:pointer;border:0;background:#1c3121;color:#fff;border-radius:5px;padding:10px 13px;font-weight:600;text-decoration:none;display:inline-block;font:inherit}
-button:disabled{opacity:.5;cursor:not-allowed}
-a{color:#23513c}.help{color:#586958;font-size:12px}.status{margin-top:12px;white-space:pre-wrap;font-size:13px}
-table{width:100%;border-collapse:collapse}.scroll{overflow-x:auto}th,td{padding:11px;text-align:left;border-bottom:1px solid #e7eae6;vertical-align:top;font-size:12px}
-th{background:#eff3ed}.product-title{font-weight:700}.source{display:block;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#617465;font-size:11px}
-.row-supplier{min-width:155px}.tag{padding:4px 8px;border-radius:4px;background:#f3e5df;white-space:nowrap}.ok{background:#e1f0e4}
-footer{font-size:12px;color:#566657;margin-top:15px}
-</style></head>
-<body><header><div><h1>STREETBALL / Fornecedores</h1><p>Identifique a origem de cada camisa. Nenhuma mensagem será enviada por esta tela.</p></div></header>
-<main>
-<p><a href="/admin.html">← Voltar ao painel de pedidos</a></p>
-<section class="panel">
-<h2>1. Acesso administrativo</h2>
-<div class="flex"><label>Senha administrativa (ADMIN_TOKEN)<input type="password" id="token" autocomplete="off" placeholder="Cole o ADMIN_TOKEN"></label>
-<div><button id="connect">CARREGAR FORNECEDORES</button></div></div>
-<p class="help">A senha permanece apenas nesta aba; não é salva no navegador nem na URL.</p>
-</section>
-<section class="panel">
-<h2>2. Cadastre até cinco fornecedores</h2>
-<p class="help">Use nomes de fornecedores verdadeiros; não informe números de WhatsApp nem chaves de API.</p>
-<div class="flex">
-<label>Nome do fornecedor<input id="supplierName" maxlength="75" placeholder="Ex.: nome comercial do fornecedor"></label>
-<label>ID interno (sem espaços)<input id="supplierId" maxlength="40" placeholder="Ex.: fornecedor_a"></label>
-<div><button id="addSupplier">CADASTRAR</button></div>
-</div>
-<div id="supplierList" class="status">Conecte o painel para carregar.</div>
-</section>
-<section class="panel">
-<h2>3. Identifique os produtos</h2>
-<p class="help">Pesquise pelo nome, ID ou link do álbum. Um clube ou uma foto não prova a origem da camisa: só atribua um fornecedor após conferir.</p>
-<div class="flex">
-<label>Pesquisar no catálogo<input id="search" placeholder="Ex.: Barcelona, YUP-1234, /albums/..."></label>
-<div><button id="searchButton">BUSCAR</button></div>
-</div>
-<p id="count" class="help">Nenhum produto carregado.</p>
-<div class="scroll"><table><thead><tr><th><input id="checkAll" type="checkbox" aria-label="Selecionar toda a página"></th><th>Produto e origem</th><th>Fornecedor identificado</th><th>Ação</th></tr></thead><tbody id="products"><tr><td colspan="4">Carregue o painel para pesquisar.</td></tr></tbody></table></div>
-<div class="flex" style="margin-top:14px">
-<label>Atribuir fornecedor aos produtos marcados
-<select id="bulkSupplier"><option value="">Remover atribuição</option></select></label>
-<div><button id="saveBulk">SALVAR SELECIONADOS (MÁX. 25)</button></div>
-</div>
-<div class="flex" style="margin-top:15px;align-items:center">
-<div><button id="prevPage">← ANTERIOR</button></div>
-<div id="pageLabel" style="text-align:center">Página 1</div>
-<div><button id="nextPage">PRÓXIMA →</button></div>
-</div>
-<p id="feedback" class="status" role="status" aria-live="polite"></p>
-</section>
-<footer>A atribuição fica salva no banco D1, separada dos arquivos do catálogo. Pedidos com itens de fornecedores diferentes ou sem identificação exigem revisão manual. WhatsApp e pagamentos aos fornecedores continuam desligados.</footer>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f3;color:#202e22;font:14px system-ui,Arial,sans-serif}
+header{background:#162119;color:#fff;padding:24px 20px}header h1{margin:0 0 6px;font-size:24px}header p{margin:0}
+main{max-width:900px;padding:20px;margin:auto}.panel{background:#fff;border:1px solid #dfe7dd;border-radius:8px;padding:22px;margin:17px 0}
+h2{font-size:18px;margin:0 0 10px}p,li{line-height:1.6}label{display:block;font-weight:600;font-size:13px;flex:1}
+input{font:inherit;border:1px solid #bccabc;border-radius:5px;padding:10px;display:block;width:100%;margin-top:5px}
+button{background:#203725;color:white;border:0;border-radius:5px;padding:11px 15px;cursor:pointer;font:inherit}
+form{display:flex;align-items:end;gap:10px;flex-wrap:wrap}form>*{min-width:190px}
+table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;border-bottom:1px solid #e4e9e3}th{background:#f2f5f1}
+.note{font-size:12px;color:#566657}.status{padding:9px 0;white-space:pre-wrap}a{color:#23533b}
+</style></head><body>
+<header><h1>STREETBALL / Fila de fornecedores</h1><p>Catálogo compartilhado. Consulta sequencial de disponibilidade, sem envios nesta fase.</p></header>
+<main><p><a href="/admin.html">← Voltar para os pedidos</a></p>
+<section class="panel"><h2>1. Acesso administrativo</h2><form id="loginForm">
+<label>ADMIN_TOKEN<input type="password" id="token" autocomplete="off" placeholder="Cole sua chave privada" required></label>
+<button type="submit">CARREGAR FORNECEDORES</button>
+</form><p class="note">A chave é utilizada apenas nesta aba e não é gravada no navegador.</p></section>
+<section class="panel"><h2>2. Cadastre os cinco fornecedores</h2>
+<p>Os produtos da loja não precisam ser associados a fornecedores individuais. Cadastre os cinco nomes na ordem de preferência para consultas futuras.</p>
+<form id="supplierForm">
+<label>Nome do fornecedor<input id="name" maxlength="75" placeholder="Ex.: James Jersey" required></label>
+<label>ID interno<input id="identifier" maxlength="40" placeholder="Ex.: james_jersey" required></label>
+<button type="submit">CADASTRAR</button>
+</form><table><thead><tr><th>Ordem de cadastro</th><th>Fornecedor</th><th>ID interno</th></tr></thead><tbody id="rows"><tr><td colspan="3">Carregue os fornecedores para começar.</td></tr></tbody></table>
+<p class="note">A ordem de contato automático será definida futuramente, após configurar os números autorizados na Cloud API. Ainda não coletamos telefones aqui.</p></section>
+<section class="panel"><h2>3. Fluxo planejado de estoque</h2>
+<ol>
+<li>O pedido pago entra na fila de consulta.</li>
+<li>O primeiro fornecedor recebe foto e resumo dos produtos, somente após habilitar a API oficial.</li>
+<li>Uma resposta inequívoca de estoque indisponível move o pedido ao próximo fornecedor.</li>
+<li>A disponibilidade deve ser confirmada antes do envio dos dados de entrega.</li>
+<li>Se todos recusarem, a loja sinaliza revisão manual para alternativa ou reembolso.</li>
+</ol>
+<p class="note">Nesta etapa, o WhatsApp, os pagamentos reais e os pagamentos a fornecedores permanecem desativados.</p></section>
+<p id="feedback" role="status" class="status"></p>
 </main><script>
 'use strict';
 const $=id=>document.getElementById(id);
-const escapeHtml=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-let vendors=[],records=[],page=1,total=0;
-function show(message){$('feedback').textContent=message;}
-async function api(endpoint,body){
- const auth=$('token').value.trim();
- if(!auth)throw Error('Informe o ADMIN_TOKEN antes de continuar.');
- const res=await fetch('/api/admin/'+endpoint,{
-  method:body?'POST':'GET',
-  headers:{authorization:'Bearer '+auth,...(body?{'content-type':'application/json'}:{})},
-  body:body?JSON.stringify(body):undefined,cache:'no-store'
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function api(path,body){
+ const value=$('token').value.trim();
+ if(!value)throw Error('Informe o ADMIN_TOKEN.');
+ const response=await fetch('/api/admin/'+path,{
+  method:body?'POST':'GET',cache:'no-store',
+  headers:{authorization:'Bearer '+value,...(body?{'content-type':'application/json'}:{})},
+  body:body?JSON.stringify(body):undefined
  });
- const data=await res.json().catch(()=>({}));
- if(!res.ok)throw Error(data.error||'Falha na consulta. HTTP '+res.status);
- return data;
+ const result=await response.json().catch(()=>({}));
+ if(!response.ok)throw Error(result.error||'Falha HTTP '+response.status);
+ return result;
 }
-function vendorOptions(value=''){
- return '<option value="">Não identificado</option>'+vendors.map(v=>'<option value="'+escapeHtml(v.id)+'"'+(v.id===value?' selected':'')+'>'+escapeHtml(v.display_name)+'</option>').join('');
+async function load(){
+ const data=await api('supplier-directory');
+ const suppliers=data.suppliers||[];
+ $('rows').innerHTML=suppliers.map((p,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(p.display_name)+'</td><td>'+esc(p.id)+'</td></tr>').join('')||
+ '<tr><td colspan="3">Nenhum fornecedor cadastrado.</td></tr>';
+ $('feedback').textContent=suppliers.length+' fornecedor(es) cadastrado(s). Nenhuma mensagem enviada.';
 }
-async function loadVendors(){
- const data=await api('supplier-directory');vendors=data.suppliers||[];
- $('supplierList').textContent=vendors.length?vendors.map(v=>v.display_name+' ['+v.id+']').join('  •  '):'Nenhum fornecedor cadastrado.';
- $('bulkSupplier').innerHTML='<option value="">Remover atribuição</option>'+vendors.map(v=>'<option value="'+escapeHtml(v.id)+'">'+escapeHtml(v.display_name)+'</option>').join('');
-}
-async function loadProducts(){
- const q=new URLSearchParams({page:String(page),q:$('search').value.trim()});
- const result=await api('supplier-catalog?'+q.toString());
- records=result.items||[];total=result.total||0;
- $('count').textContent='Resultados: '+total+' · exibindo '+records.length+' produtos nesta página.';
- $('pageLabel').textContent='Página '+page+' de '+Math.max(1,Math.ceil(total/25));
- $('prevPage').disabled=page<=1;$('nextPage').disabled=page*25>=total;
- $('checkAll').checked=false;
- $('products').innerHTML=records.map((p,i)=>'<tr>'+
-  '<td><input type="checkbox" data-check="'+i+'" aria-label="Selecionar produto"></td>'+
-  '<td><div class="product-title">'+escapeHtml(p.title)+'</div><div class="help">'+escapeHtml(p.id)+'</div>'+
-  (p.sourceUrl?'<a class="source" href="'+escapeHtml(p.sourceUrl)+'" target="_blank" rel="noopener noreferrer">Álbum de origem: '+escapeHtml(p.sourceUrl)+'</a>':'<span class="source">Álbum não informado</span>')+'</td>'+
-  '<td><span class="tag '+(p.supplierId?'ok':'')+'">'+(p.supplierId?'Identificado':'Pendente')+'</span><select class="row-supplier" data-supplier="'+i+'">'+vendorOptions(p.supplierId)+'</select></td>'+
-  '<td><button data-save="'+i+'">SALVAR</button></td></tr>').join('')||'<tr><td colspan="4">Nenhum resultado encontrado.</td></tr>';
-}
-$('connect').addEventListener('click',async()=>{try{await loadVendors();page=1;await loadProducts();show('Cadastro carregado. Nenhum envio realizado.')}catch(e){show(e.message)}});
-$('addSupplier').addEventListener('click',async()=>{
- const displayName=$('supplierName').value.trim();
- const id=$('supplierId').value.trim().toLowerCase();
- try{await api('supplier-directory',{id,displayName});$('supplierId').value='';$('supplierName').value='';await loadVendors();await loadProducts();show('Fornecedor cadastrado sem número de WhatsApp.')}catch(e){show(e.message)}
+$('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();try{await load()}catch(err){$('feedback').textContent=err.message}
 });
-$('searchButton').addEventListener('click',async()=>{page=1;try{await loadProducts();show('Busca concluída.')}catch(e){show(e.message)}});
-$('search').addEventListener('keydown',e=>{if(e.key==='Enter'){$('searchButton').click()}});
-$('prevPage').addEventListener('click',async()=>{if(page<=1)return;page--;try{await loadProducts()}catch(e){show(e.message)}});
-$('nextPage').addEventListener('click',async()=>{if(page*25>=total)return;page++;try{await loadProducts()}catch(e){show(e.message)}});
-$('checkAll').addEventListener('change',e=>document.querySelectorAll('[data-check]').forEach(c=>c.checked=e.target.checked));
-$('products').addEventListener('click',async e=>{
- const button=e.target.closest('[data-save]');if(!button)return;
- const i=Number(button.dataset.save),p=records[i];if(!p)return;
- const supplierId=document.querySelector('[data-supplier="'+i+'"]').value;
- try{await api('supplier-assignment',{productIds:[p.id],supplierId});await loadProducts();show('Atribuição salva para '+p.title+'. Nenhum WhatsApp enviado.')}catch(err){show(err.message)}
-});
-$('saveBulk').addEventListener('click',async()=>{
- const ids=[...document.querySelectorAll('[data-check]:checked')].map(el=>records[Number(el.dataset.check)]?.id).filter(Boolean);
- if(!ids.length){show('Marque ao menos um produto.');return}
- const supplierId=$('bulkSupplier').value;
- const supplierName=vendors.find(v=>v.id===supplierId)?.display_name||'Não identificado';
- if(!confirm('Atribuir '+ids.length+' produto(s) a '+supplierName+'? Confira antes de salvar.'))return;
- try{await api('supplier-assignment',{productIds:ids,supplierId});await loadProducts();show(ids.length+' produto(s) atualizados. Nenhum WhatsApp enviado.')}catch(err){show(err.message)}
+$('supplierForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ try{
+  await api('supplier-directory',{id:$('identifier').value.trim().toLowerCase(),displayName:$('name').value.trim()});
+  $('identifier').value='';$('name').value='';
+  await load();
+ }catch(err){$('feedback').textContent=err.message}
 });
 </script></body></html>
