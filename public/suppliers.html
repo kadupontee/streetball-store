@@ -59,7 +59,7 @@ async function load(){
  const data=await api('supplier-directory');
  orderedSuppliers=data.suppliers||[];
  renderSuppliers();
- $('feedback').textContent=suppliers.length+' fornecedor(es) cadastrado(s). Nenhuma mensagem enviada.';
+ $('feedback').textContent=orderedSuppliers.length+' fornecedor(es) cadastrado(s). Nenhuma mensagem enviada.';
 }
 function renderSuppliers(){
  const suppliers=orderedSuppliers;
