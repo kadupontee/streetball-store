@@ -80,13 +80,14 @@ async function adminApi(request,env,ctx){
  const url=new URL(request.url);
  if(url.pathname==='/api/admin/supplier-directory'&&request.method==='GET'){
    const suppliers=await env.DB.prepare(
-     'SELECT d.id,d.display_name, c.phone_e164,c.authorized FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id ORDER BY d.created_at,d.id'
+     'SELECT d.id,d.display_name,c.phone_e164,c.authorized,p.rank FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id LEFT JOIN supplier_priority p ON p.supplier_id=d.id ORDER BY CASE WHEN p.rank IS NULL THEN 1 ELSE 0 END,p.rank,d.created_at,d.id'
    ).all();
    return json({suppliers:(suppliers.results||[]).map(s=>({
      id:s.id,display_name:s.display_name,
      phoneConfigured:!!s.phone_e164,
      phoneEnding:s.phone_e164?String(s.phone_e164).slice(-4):'',
-     authorized:s.authorized===1
+     authorized:s.authorized===1,
+     priority:s.rank??null
    }))});
  }
  if(url.pathname==='/api/admin/supplier-directory'&&request.method==='POST'){
@@ -102,6 +103,21 @@ async function adminApi(request,env,ctx){
    const now=new Date().toISOString();
    await env.DB.prepare('INSERT INTO supplier_directory (id,display_name,created_at,updated_at) VALUES (?,?,?,?)').bind(id,displayName,now,now).run();
    return json({ok:true,id,displayName},201);
+ }
+ if(url.pathname==='/api/admin/supplier-priority'&&request.method==='POST'){
+   if(Number(request.headers.get('content-length')||0)>1200)return clientError('Requisição muito grande.',413);
+   const body=await request.json().catch(()=>null);
+   const ids=body?.ids;
+   if(!Array.isArray(ids)||ids.length<1||ids.length>5||ids.some(id=>!supplierIdValid(id))||new Set(ids).size!==ids.length)
+     return clientError('Lista de prioridade inválida.');
+   const current=await env.DB.prepare('SELECT id FROM supplier_directory ORDER BY created_at,id').all();
+   const existing=(current.results||[]).map(x=>x.id);
+   if(existing.length!==ids.length||existing.some(id=>!ids.includes(id)))return clientError('A lista deve incluir exatamente os fornecedores cadastrados.',409);
+   const now=new Date().toISOString();
+   await env.DB.batch(ids.map((id,i)=>env.DB.prepare(
+     'INSERT INTO supplier_priority(supplier_id,rank,updated_at) VALUES(?,?,?) ON CONFLICT(supplier_id) DO UPDATE SET rank=excluded.rank,updated_at=excluded.updated_at'
+   ).bind(id,i+1,now)));
+   return json({ok:true,ids});
  }
  if(url.pathname==='/api/admin/supplier-contact'&&request.method==='POST'){
    if(Number(request.headers.get('content-length')||0)>1200)return clientError('Requisição muito grande.',413);
@@ -125,7 +141,7 @@ async function adminApi(request,env,ctx){
   if(!order)return clientError('Pedido não encontrado.',404);
   const candidates=await loadSupplierCandidates(env);
   const preview=previewSupplierOrder(env,order,candidates);
-  const directory=await env.DB.prepare('SELECT id,display_name FROM supplier_directory ORDER BY created_at,id').all();
+  const directory=await env.DB.prepare('SELECT d.id,d.display_name FROM supplier_directory d LEFT JOIN supplier_priority p ON p.supplier_id=d.id ORDER BY CASE WHEN p.rank IS NULL THEN 1 ELSE 0 END,p.rank,d.created_at,d.id').all();
   const attempts=await env.DB.prepare('SELECT supplier_id,state,updated_at FROM supplier_attempts WHERE order_id=? ORDER BY created_at').bind(order.id).all();
   const blocked=new Set((attempts.results||[]).filter(a=>a.state==='unavailable').map(a=>a.supplier_id));
   return json({...preview,sharedCatalog:true,registeredSuppliers:directory.results||[],stockAttempts:attempts.results||[],nextSupplierId:preview.supplierCandidates.find(s=>!blocked.has(s.id))?.id||null});
