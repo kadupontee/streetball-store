@@ -29,19 +29,22 @@ test('consulta o próximo fornecedor somente após negativa explícita',()=>{
  assert.doesNotMatch(result.steps.join(' '),/Quarto/);
 });
 
-test('silêncio de 24h e resposta ambígua não são tratados como falta de estoque',()=>{
+test('silêncio de 12h e resposta ambígua consultam o próximo fornecedor',()=>{
  for(const reply of ['silence','unclear']){
   const result=simulate([stage('Primeiro',reply),stage('Segundo','available')]);
-  assert.equal(result.status,'manual_review');
-  assert.equal(result.steps.length,1);
+  assert.equal(result.status,'availability_reported');
+  assert.equal(result.steps.length,2);
+  assert.match(result.outcome,/Segundo/);
+  assert.equal(result.elapsedHours,reply==='silence'?12:0);
  }
 });
 
-test('todos indisponíveis exigem revisão sem reembolso automático',()=>{
- const result=simulate([stage('A','unavailable'),stage('B','unavailable'),stage('C','unavailable')]);
- assert.equal(result.status,'all_unavailable');
+test('sem confirmação, prazo global é 72h e pedido vai para revisão com desculpas',()=>{
+ const result=simulate([stage('A','unavailable'),stage('B','silence'),stage('C','unclear')]);
+ assert.equal(result.status,'manual_review_72h');
+ assert.equal(result.elapsedHours,72);
  assert.equal(result.steps.length,3);
- assert.match(result.outcome,/Revisão manual/);
+ assert.match(result.outcome,/desculpas/);
 });
 
 test('simulador é exclusivo do navegador e não usa credenciais ou mensagens',()=>{
