@@ -25,7 +25,7 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <label>WhatsApp com DDI (opcional ao criar)<input id="phone" type="tel" inputmode="tel" autocomplete="off" placeholder="Ex.: +55 11 99999-9999" maxlength="30"></label>
 <label>Autorizou consultas automáticas?<input type="checkbox" id="authorized" style="display:inline;width:auto;vertical-align:middle"></label>
 <button type="submit">CADASTRAR</button>
-</form><table><thead><tr><th>Prioridade</th><th>Fornecedor</th><th>ID</th><th>WhatsApp</th><th>Contato</th><th>Ações</th></tr></thead><tbody id="rows"><tr><td colspan="5">Carregue os fornecedores para começar.</td></tr></tbody></table>
+</form><table><thead><tr><th>Prioridade</th><th>Fornecedor</th><th>ID</th><th>WhatsApp</th><th>Ações</th></tr></thead><tbody id="rows"><tr><td colspan="5">Carregue os fornecedores para começar.</td></tr></tbody></table>
 <section id="editPanel" class="panel" hidden aria-label="Editar fornecedor">
 <h2>Editar fornecedor</h2>
 <form id="editSupplierForm">
@@ -38,7 +38,7 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <p class="note">O ID interno não é editável para preservar vínculos e histórico de pedidos. Para alterar o WhatsApp, digite o número completo; se deixar vazio, o atual será mantido.</p>
 </section>
 <p><button type="button" id="savePriority" disabled>SALVAR ORDEM DE PREFERÊNCIA</button></p><p class="note">Use as setas ↑ e ↓ na coluna Prioridade para mudar a posição. Clique em SALVAR ORDEM para gravar a sequência no Cloudflare. A posição 1 será consultada primeiro quando a automação for autorizada.</p>
-<p class="note">O número completo não aparece novamente após salvar (somente os 4 últimos dígitos). Para corrigir, digite o novo número em “Atualizar contato”. Sem autorização, o número fica cadastrado, mas não é elegível para envio automatizado. A Cloud API ainda está desligada.</p></section>
+<p class="note">O telefone permanece oculto após salvar (somente os quatro últimos dígitos são mostrados). Use EDITAR para corrigir o nome, telefone ou autorização. EXCLUIR exige confirmação e não apaga o histórico de pedidos. A Cloud API continua desligada.</p></section>
 <section class="panel"><h2>3. Fluxo planejado de estoque</h2>
 <ol>
 <li>O pedido pago entra na fila de consulta.</li>
