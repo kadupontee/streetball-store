@@ -2,17 +2,27 @@
 
 ## Como funciona
 
-Todos os cinco fornecedores são candidatos a atender qualquer camisa do catálogo. **Não associe cada produto a um fornecedor.**
+Todos os cinco fornecedores compartilham o catálogo. O código usa a ordem de preferência salva no D1 e só considera fornecedores com contato e autorização registrados.
 
-1. Após o Asaas informar `PAYMENT_RECEIVED`, o pedido fica apto a uma consulta.
-2. O primeiro fornecedor da fila recebe foto e resumo do pedido por template WhatsApp aprovado.
-3. O fornecedor responde `SEM_ESTOQUE ID` se não tiver os modelos/tamanhos, ou responde à própria mensagem com “sem estoque” ou “não temos”.
-4. A negativa inequívoca é armazenada em `supplier_attempts`. O sistema passa ao próximo contato configurado.
-5. Quando responder `DISPONIVEL ID`, são enviados os detalhes necessários para preparar o pedido. Só após `CONFIRMAR ID` o cliente poderá receber confirmação de preparação.
-6. Se os cinco responderem sem estoque, o pedido fica em `all_unavailable` para revisão manual. Não é cancelado nem reembolsado automaticamente.
-7. Respostas ambíguas, sem referência a uma mensagem/pedido, não são interpretadas como negativa: exigem conferência.
+1. Após `PAYMENT_RECEIVED`, começa o prazo de **72 horas corridas** a partir da criação de `supplier_dispatch` (início da busca do pedido pago).
+2. A primeira consulta pede a disponibilidade do modelo e tamanho usando um template com foto, após liberação da Meta.
+3. **Sem resposta por 12 horas**, a execução programada (a cada hora) marca a tentativa como `timed_out` e consulta o próximo.
+4. **Resposta ambígua**, desde que associada inequivocamente ao pedido (por ID ou resposta direta à mensagem), marca `ambiguous` e consulta o próximo imediatamente. Respostas sem vínculo seguro não mudam pedidos; o timeout cuida da passagem depois.
+5. **Sem estoque declarado** marca `unavailable` e consulta o seguinte.
+6. **Disponibilidade declarada** interrompe a busca, mas o cliente só pode receber o aviso de preparação após confirmação do fornecedor. O pagamento ao fornecedor continua sujeito a validação manual.
+7. Se ninguém confirmar a preparação em até **72 horas**, o sistema marca `deadline_review` e `manual_review`. Mesmo se a fila se esgotar antes, o sistema mantém `waiting_deadline` até o término do prazo.
+8. Na revisão de 72 horas, o cliente deve receber desculpas pelo atraso. Envio automático só com consentimento opcional registrado no checkout, configuração correta do WhatsApp e template `BUYER_DELAY_WA_TEMPLATE` aprovado. Caso contrário, o painel marca `needs_manual_contact` e mostra um texto para atendimento humano.
+9. Nenhum silêncio ou resposta ambígua é interpretado como prova de falta de estoque. Tampouco se faz cancelamento ou reembolso sem revisão humana.
 
-O acompanhamento de 24 horas é um **alerta por ausência de resposta**, não uma declaração automática de falta de estoque.
+**Atenção:** o agendador roda de hora em hora. Um limite de 12 horas pode ser processado na execução seguinte, não necessariamente no segundo exato. O prazo de 72 horas é calculado desde a primeira abertura da busca e não é reiniciado ao trocar de fornecedor. Pedidos que já tiverem um fornecedor confirmado não entram na revisão de atraso.
+
+### Mensagem de desculpas para template do WhatsApp
+
+Use a seguinte redação como base para o template aprovado pela Meta, com uma variável de identificação do pedido:
+
+> Pedimos desculpas pela demora na confirmação de disponibilidade do pedido {{1}}. Nossa equipe está verificando as opções e entrará em contato com uma atualização. Agradecemos pela compreensão.
+
+Registre o nome real do template no segredo/configuração `BUYER_DELAY_WA_TEMPLATE`. **O texto no repositório não cria nem aprova o template sozinho.** O número de telefone do cliente só deve receber notificações quando houver autorização explícita. Pedidos anteriores à criação do opt-in requerem atendimento manual se não houver consentimento documentado.
 
 ## Cadastro na Streetball Store
 
@@ -58,9 +68,9 @@ O segredo `SUPPLIERS_JSON` é legado e não é necessário se os contatos do D1 
 Abra `/suppliers.html` e carregue os fornecedores com `ADMIN_TOKEN`. A seção **Simulador de consultas de estoque — SEM ENVIO** aparece abaixo das configurações.
 
 1. O simulador considera a ordem atual e apenas fornecedores com telefone e autorização.
-2. Escolha uma resposta fictícia para cada fornecedor: **sem estoque**, **disponível**, **não respondeu após 24h** ou **resposta ambígua**.
+2. Escolha uma resposta fictícia para cada fornecedor: **sem estoque**, **disponível**, **não respondeu após 12h** ou **resposta ambígua**.
 3. Clique em **SIMULAR CONSULTAS SEM ENVIO** para conferir qual seria a próxima ação.
-4. Se o fornecedor afirmar disponibilidade, o resultado ainda requer confirmação antes de avisar o comprador. Se houver silêncio ou ambiguidade, exige revisão manual. Se todos recusarem, é preciso oferecer alternativa ou reembolso manualmente.
+4. Se o fornecedor afirmar disponibilidade, ainda é necessária confirmação do pedido. Silêncio ou ambiguidade avançam ao próximo; sem confirmação após 72 horas, ocorre revisão manual e aviso de desculpas autorizado.
 
 Essa funcionalidade roda **inteiramente no navegador**: não consulta, não grava e não altera pedidos no D1; não dispara mensagens, pagamento ou testes reais contra Asaas ou Meta. É um ensaio lógico, não uma certificação da integração WhatsApp.
 
@@ -72,6 +82,7 @@ No painel `/admin.html`, clique em **PRÉVIA SEM ENVIO**. A prévia mostra a fil
 
 - `ASAAS_SANDBOX = "true"`
 - `WA_AUTOMATION_ENABLED = "false"`
+- A automação de 12h/72h não contata ninguém nem altera o fluxo dos pedidos enquanto o Sandbox ou o WhatsApp desativado estiverem em uso.
 - `PAYMENTS_PRODUCTION_ENABLED = "false"`
 - O código impede qualquer disparo automático pelo Sandbox, mesmo se uma variável de automação for alterada isoladamente.
 - O campo do telefone não envia nenhuma mensagem ao ser salvo e não modifica pedidos antigos.
