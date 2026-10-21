@@ -9,6 +9,7 @@ const order={
  id,
  status:'paid_supplier_pending',
  items_json:JSON.stringify([{
+   id:'YUP-123456',supplierId:'james',
    title:'Camisa do São Paulo 2026',size:'M',qty:1,
    patch:true,personalize:true,customName:'KADU',customNumber:'10',
    image:'/images/produto.jpg'
@@ -18,7 +19,7 @@ const order={
 test('prévia do fornecedor não habilita envio nem expõe dados do cliente',()=>{
  const env={
   ASAAS_SANDBOX:'true',WA_AUTOMATION_ENABLED:'false',
-  DEFAULT_SUPPLIER_ID:'james',STORE_PUBLIC_URL:'https://streetball-store.kpgmer.workers.dev',
+  STORE_PUBLIC_URL:'https://streetball-store.kpgmer.workers.dev',
   SUPPLIERS_JSON:JSON.stringify([{id:'james',phone:'8613800138000',template:'pedido_fornecedor',mediaTemplate:'pedido_fornecedor_foto'}]),
   WA_TOKEN:'token-ficticio',WA_PHONE_NUMBER_ID:'id-ficticio'
  };
