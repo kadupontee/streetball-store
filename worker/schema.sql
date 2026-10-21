@@ -89,3 +89,11 @@ CREATE TABLE IF NOT EXISTS supplier_contacts (
  authorized INTEGER NOT NULL DEFAULT 0,
  updated_at TEXT NOT NULL
 );
+
+-- Ordem de consulta (rank 1 = primeira opção); migração idempotente.
+CREATE TABLE IF NOT EXISTS supplier_priority (
+ supplier_id TEXT PRIMARY KEY REFERENCES supplier_directory(id),
+ rank INTEGER NOT NULL CHECK(rank BETWEEN 1 AND 5),
+ updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_supplier_priority_rank ON supplier_priority(rank);
