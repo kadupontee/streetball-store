@@ -36,4 +36,6 @@ SHIPPING_FLAT_BRL = "0.00"
 # WA_TOKEN, WA_APP_SECRET, WA_VERIFY_TOKEN, WA_PHONE_NUMBER_ID
 # SUPPLIERS_JSON (até 5 fornecedores), BUYER_WA_TEMPLATE,
 # SUPPLIER_WA_TEMPLATE_MEDIA, OWNER_WA_PHONE, OWNER_WA_TEMPLATE
+# BUYER_DELAY_WA_TEMPLATE: nome do template de desculpas aprovado pela Meta.
+# Prazo: 12h por fornecedor e 72h no total (constantes no backend).
 # Configuração e implantação: worker/SETUP.md
