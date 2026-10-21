@@ -26,6 +26,7 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <label>Autorizou consultas automáticas?<input type="checkbox" id="authorized" style="display:inline;width:auto;vertical-align:middle"></label>
 <button type="submit">CADASTRAR</button>
 </form><table><thead><tr><th>Prioridade</th><th>Fornecedor</th><th>ID</th><th>WhatsApp</th><th>Atualizar contato</th></tr></thead><tbody id="rows"><tr><td colspan="5">Carregue os fornecedores para começar.</td></tr></tbody></table>
+<p><button type="button" id="savePriority" disabled>SALVAR ORDEM DE PREFERÊNCIA</button></p><p class="note">Use as setas ↑ e ↓ na coluna Prioridade para mudar a posição. Clique em SALVAR ORDEM para gravar a sequência no Cloudflare. A posição 1 será consultada primeiro quando a automação for autorizada.</p>
 <p class="note">O número completo não aparece novamente após salvar (somente os 4 últimos dígitos). Para corrigir, digite o novo número em “Atualizar contato”. Sem autorização, o número fica cadastrado, mas não é elegível para envio automatizado. A Cloud API ainda está desligada.</p></section>
 <section class="panel"><h2>3. Fluxo planejado de estoque</h2>
 <ol>
@@ -41,6 +42,7 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 'use strict';
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let orderedSuppliers=[];
 async function api(path,body){
  const value=$('token').value.trim();
  if(!value)throw Error('Informe o ADMIN_TOKEN.');
@@ -55,11 +57,24 @@ async function api(path,body){
 }
 async function load(){
  const data=await api('supplier-directory');
- const suppliers=data.suppliers||[];
- $('rows').innerHTML=suppliers.map((p,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(p.display_name)+'</td><td>'+esc(p.id)+'</td><td>'+(p.phoneConfigured?'Cadastrado · final '+esc(p.phoneEnding):'Não cadastrado')+(p.authorized?' · autorizado':' · não autorizado')+'</td><td><input type="tel" autocomplete="off" inputmode="tel" data-contact="'+esc(p.id)+'" placeholder="+DDI + número" maxlength="30" aria-label="Novo número do fornecedor"><label class="note"><input type="checkbox" data-authorized="'+esc(p.id)+'"'+(p.authorized?' checked':'')+' style="display:inline;width:auto"> Autorizou consultas</label><button type="button" data-save="'+esc(p.id)+'">SALVAR NÚMERO</button></td></tr>').join('')||
- '<tr><td colspan="5">Nenhum fornecedor cadastrado.</td></tr>';
+ orderedSuppliers=data.suppliers||[];
+ renderSuppliers();
  $('feedback').textContent=suppliers.length+' fornecedor(es) cadastrado(s). Nenhuma mensagem enviada.';
 }
+function renderSuppliers(){
+ const suppliers=orderedSuppliers;
+ $('rows').innerHTML=suppliers.map((p,i)=>'<tr><td>'+(i+1)+'º <button type="button" data-move="'+esc(p.id)+'" data-direction="-1"'+(i===0?' disabled':'')+' aria-label="Subir fornecedor">↑</button> <button type="button" data-move="'+esc(p.id)+'" data-direction="1"'+(i===suppliers.length-1?' disabled':'')+' aria-label="Descer fornecedor">↓</button></td><td>'+esc(p.display_name)+'</td><td>'+esc(p.id)+'</td><td>'+(p.phoneConfigured?'Cadastrado · final '+esc(p.phoneEnding):'Não cadastrado')+(p.authorized?' · autorizado':' · não autorizado')+'</td><td><input type="tel" autocomplete="off" inputmode="tel" data-contact="'+esc(p.id)+'" placeholder="+DDI + número" maxlength="30" aria-label="Novo número do fornecedor"><label class="note"><input type="checkbox" data-authorized="'+esc(p.id)+'"'+(p.authorized?' checked':'')+' style="display:inline;width:auto"> Autorizou consultas</label><button type="button" data-save="'+esc(p.id)+'">SALVAR NÚMERO</button></td></tr>').join('')||
+ '<tr><td colspan="5">Nenhum fornecedor cadastrado.</td></tr>';
+ $('savePriority').disabled=suppliers.length<2;
+}
+$('savePriority').addEventListener('click',async()=>{
+ try{
+  const ids=orderedSuppliers.map(s=>s.id);
+  await api('supplier-priority',{ids});
+  await load();
+  $('feedback').textContent='Nova ordem de fornecedores salva no banco D1. Nenhuma mensagem enviada.';
+ }catch(err){$('feedback').textContent=err.message}
+});
 $('loginForm').addEventListener('submit',async e=>{
  e.preventDefault();try{await load()}catch(err){$('feedback').textContent=err.message}
 });
@@ -75,6 +90,17 @@ $('supplierForm').addEventListener('submit',async e=>{
  }catch(err){$('feedback').textContent=err.message}
 });
 $('rows').addEventListener('click',async event=>{
+ const move=event.target.closest('[data-move]');
+ if(move){
+  const index=orderedSuppliers.findIndex(x=>x.id===move.dataset.move);
+  const destination=index+Number(move.dataset.direction);
+  if(index>=0&&destination>=0&&destination<orderedSuppliers.length){
+   [orderedSuppliers[index],orderedSuppliers[destination]]=[orderedSuppliers[destination],orderedSuppliers[index]];
+   renderSuppliers();
+   $('feedback').textContent='Ordem alterada nesta tela. Clique em SALVAR ORDEM DE PREFERÊNCIA para gravar.';
+  }
+  return;
+ }
  const button=event.target.closest('[data-save]');if(!button)return;
  const id=button.dataset.save;
  const phone=document.querySelector('[data-contact="'+id+'"]')?.value.trim()||'';
