@@ -64,10 +64,15 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <label style="min-width:280px;flex:2">Mensagem fictícia recebida
 <input id="waLabText" maxlength="400" value="não temos" placeholder="Ex.: não temos" required></label>
 <label style="min-width:230px"><input type="checkbox" id="waLabLinked" checked style="display:inline;width:auto;vertical-align:middle"> Respondeu diretamente à consulta? (vínculo fictício)</label>
+<label style="min-width:200px">Etapa do atendimento
+<select id="waLabStage" style="display:block;width:100%;padding:9px;margin-top:5px">
+<option value="awaiting_reply">Perguntamos se tem a camisa</option>
+<option value="details_sent">Dados do pedido já enviados</option>
+</select></label>
 <button type="submit">ANALISAR SEM ENVIO</button>
 </form>
 <pre id="waLabResult" aria-live="polite" style="white-space:pre-wrap;background:#f4f6f3;padding:13px;font:13px/1.6 ui-monospace,monospace;overflow-wrap:anywhere">Aguardando mensagem fictícia.</pre>
-<p class="note">Experimente “não temos”, “temos em estoque”, “talvez semana que vem” ou “SEM_ESTOQUE 1234abcd”. Sem vínculo seguro, uma resposta livre não pode identificar um pedido real. Nenhum número de telefone, endereço ou token deve ser digitado aqui.</p>
+<p class="note">Experimente “sim”, “não”, “ok”, “15+4=19$”, “qual o tamanho?”, “precisa de remendo?”, “perfeito, aguarde alguns dias”, “temos em estoque” ou “SEM_ESTOQUE 1234abcd”. Sem vínculo seguro, uma resposta livre não pode identificar um pedido real. Nenhum número de telefone, endereço ou token deve ser digitado aqui.</p>
 </section>
 </main><script>
 'use strict';
@@ -162,11 +167,13 @@ $('waLabForm').addEventListener('submit',async event=>{
  try{
   const result=await api('whatsapp-dry-run',{
    text:$('waLabText').value,
-   linked:$('waLabLinked').checked
+   linked:$('waLabLinked').checked,
+   stage:$('waLabStage').value
   });
   $('waLabResult').textContent=[
    'Modo: SIMULAÇÃO SEM ENVIO',
    'Classificação: '+result.replyKind,
+   'Etapa: '+result.stage,
    'Vínculo: '+result.correlation,
    'Próximo passo: '+result.nextAction,
    '',
