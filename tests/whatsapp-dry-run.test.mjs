@@ -31,7 +31,7 @@ test('resposta com contexto fictício classifica falta de estoque sem DB',async(
 test('texto solto sem contexto ou ID não identifica pedidos',async()=>{
  const r=await submit('não temos',false);
  assert.equal(r.result.replyKind,'unlinked_or_unrecognized');
- assert.match(r.result.nextAction,/timeout de 12 horas/);
+ assert.match(r.result.nextAction,/timeout de 12h/);
 });
 
 test('resposta ambígua vinculada avança; disponibilidade aguarda confirmação',async()=>{
@@ -39,7 +39,7 @@ test('resposta ambígua vinculada avança; disponibilidade aguarda confirmação
  assert.equal(doubtful.result.replyKind,'ambiguous');
  const available=await submit('temos em estoque',true);
  assert.equal(available.result.replyKind,'available');
- assert.match(available.result.nextAction,/Aguardar confirmação/);
+ assert.match(available.result.nextAction,/conferir modelo, tamanho e preço/);
 });
 
 test('ID curto explícito é reconhecido sem contexto',async()=>{
