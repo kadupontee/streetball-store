@@ -48,6 +48,15 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <li>Se todos recusarem, a loja sinaliza revisão manual para alternativa ou reembolso.</li>
 </ol>
 <p class="note">Nesta etapa, o WhatsApp, os pagamentos reais e os pagamentos a fornecedores permanecem desativados.</p></section>
+<section class="panel" id="simulatorPanel" hidden>
+<h2>4. Simulador de consultas de estoque — SEM ENVIO</h2>
+<p>Teste sua ordem atual sem utilizar pedidos reais. Escolha uma resposta fictícia para cada fornecedor e veja como o sistema tomaria a decisão.</p>
+<label>Produto fictício para o teste <input id="simProduct" maxlength="120" value="Camisa de futebol, tamanho M, 1 unidade"></label>
+<div id="simVendors"><p class="note">Carregue os fornecedores para iniciar.</p></div>
+<p><button type="button" id="simulateStock" disabled>SIMULAR CONSULTAS SEM ENVIO</button></p>
+<pre id="simResult" aria-live="polite" style="white-space:pre-wrap;background:#f4f6f3;padding:13px;font:13px/1.6 ui-monospace,monospace;overflow-wrap:anywhere"></pre>
+<p class="note">Simulação somente no navegador. Não consulta nem grava o D1, não cria pedidos, não entra no Asaas e não envia WhatsApp. Um fornecedor sem número ou autorização é ignorado. Falta de resposta após 24 horas ou mensagem ambígua exige revisão manual — não significa falta de estoque.</p>
+</section>
 </main><script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -70,6 +79,7 @@ async function load(){
  if(!Array.isArray(data.suppliers))throw Error('Resposta inválida do servidor. Nenhum dado foi alterado.');
  orderedSuppliers=data.suppliers;
  renderSuppliers();
+ renderSimulation();
  $('feedback').textContent=orderedSuppliers.length+' fornecedor(es) cadastrado(s). Nenhuma mensagem enviada.';
 }
 function renderSuppliers(){
@@ -78,6 +88,60 @@ function renderSuppliers(){
  '<tr><td colspan="5">Nenhum fornecedor cadastrado.</td></tr>';
  $('savePriority').disabled=suppliers.length<2;
 }
+/**
+ * Retorna apenas decisões fictícias. Nenhum acesso a rede, D1 ou pedidos reais.
+ * Silêncio e mensagem ambígua exigem revisão, não autorizam outra tentativa.
+ */
+function simulateAvailability(stages){
+ const steps=[];
+ for(const stage of stages){
+  if(stage.reply==='unavailable'){
+   steps.push(stage.name+': SEM ESTOQUE — avançar ao próximo fornecedor');
+   continue;
+  }
+  if(stage.reply==='available'){
+   steps.push(stage.name+': DISPONÍVEL — solicitar detalhes e confirmação antes de avisar o comprador');
+   return {steps,outcome:'Disponibilidade informada por '+stage.name+'. Ainda falta confirmação do pedido pelo fornecedor.',status:'availability_reported'};
+  }
+  if(stage.reply==='silence'){
+   steps.push(stage.name+': SEM RESPOSTA — sinalizar atraso e revisão manual');
+   return {steps,outcome:'Não avançar automaticamente: silêncio não comprova falta de estoque.',status:'manual_review'};
+  }
+  steps.push(stage.name+': RESPOSTA AMBÍGUA — revisão manual');
+  return {steps,outcome:'Mensagem não conclusiva. Verifique a resposta antes de decidir o próximo fornecedor.',status:'manual_review'};
+ }
+ return {steps,outcome:'Todos os fornecedores consultados informaram falta de estoque. Revisão manual para alternativa ou reembolso.',status:'all_unavailable'};
+}
+function renderSimulation(){
+ $('simulatorPanel').hidden=false;
+ const eligible=orderedSuppliers.filter(s=>s.phoneConfigured&&s.authorized);
+ $('simVendors').innerHTML=eligible.map((supplier,i)=>'<label style="margin:12px 0">'+(i+1)+'º '+esc(supplier.display_name)+
+  '<select data-sim-id="'+esc(supplier.id)+'" style="display:block;width:100%;font:inherit;padding:9px;margin-top:5px;border:1px solid #bccabc;border-radius:5px">'+
+  '<option value="unavailable">Respondeu: sem estoque</option>'+
+  '<option value="available"'+(i===eligible.length-1?' selected':'')+'>Respondeu: disponível</option>'+
+  '<option value="silence">Não respondeu (24 horas)</option>'+
+  '<option value="unclear">Resposta ambígua</option>'+
+  '</select></label>').join('')||
+  '<p class="note">Nenhum fornecedor com telefone e autorização cadastrados. Marque a autorização nos contatos para simular a fila.</p>';
+ $('simulateStock').disabled=eligible.length===0;
+ $('simResult').textContent='';
+}
+$('simulateStock').addEventListener('click',()=>{
+ const stages=orderedSuppliers.filter(s=>s.phoneConfigured&&s.authorized).map(s=>({
+  name:s.display_name,reply:document.querySelector('[data-sim-id="'+s.id+'"]')?.value||'unclear'
+ }));
+ if(!stages.length){$('simResult').textContent='Sem fornecedores elegíveis.';return}
+ const result=simulateAvailability(stages);
+ $('simResult').textContent=[
+  'SIMULAÇÃO — '+($('simProduct').value.trim()||'Produto fictício'),
+  '',
+  ...result.steps.map((step,i)=>(i+1)+'. '+step),
+  '',
+  'RESULTADO: '+result.outcome,
+  '',
+  'Nenhuma mensagem enviada. Nenhum pedido real alterado.'
+ ].join('\n');
+});
 $('cancelEdit').addEventListener('click',()=>{
  $('editPanel').hidden=true;$('editSupplierForm').reset();$('editId').value='';
 });
@@ -126,6 +190,7 @@ $('rows').addEventListener('click',async event=>{
   if(index>=0&&destination>=0&&destination<orderedSuppliers.length){
    [orderedSuppliers[index],orderedSuppliers[destination]]=[orderedSuppliers[destination],orderedSuppliers[index]];
    renderSuppliers();
+   renderSimulation();
    $('feedback').textContent='Ordem alterada nesta tela. Clique em SALVAR ORDEM DE PREFERÊNCIA para gravar.';
   }
   return;
