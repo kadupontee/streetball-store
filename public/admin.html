@@ -14,7 +14,7 @@ document.addEventListener('click',async e=>{
   const conditions=[
     ['Conta Asaas Sandbox',c.sandbox],
     ['Envio automático desligado',c.whatsappAutomationDisabled],
-    ['Fornecedor identificado',c.supplierConfigured],
+    ['Contato WhatsApp do fornecedor configurado',c.supplierConfigured],
     ['Foto inicial disponível',c.firstPhotoAvailable],
     ['Modelo de mensagem com foto configurado',c.photoTemplateConfigured],
     ['Token WhatsApp configurado',c.waTokenConfigured],
@@ -23,7 +23,10 @@ document.addEventListener('click',async e=>{
   $('previewResult').textContent=[
    'Pedido: '+p.orderId.slice(0,8),
    'Status: '+p.status,
-   'Fornecedor: '+(p.supplier?p.supplier.id+' (telefone final '+p.supplier.phoneEnding+')':'não configurado'),
+   'Fornecedor do WhatsApp: '+(p.supplier?p.supplier.id+' (telefone final '+p.supplier.phoneEnding+')':'não configurado'),
+   'Origem no catálogo: '+(p.assignedSuppliers?.length?p.assignedSuppliers.map(x=>x.display_name+' ['+x.id+']').join(', '):'ainda não identificada'),
+   'Itens sem fornecedor identificado: '+Number(p.unassignedCount||0),
+   'Pedido com fornecedores diferentes: '+(p.multipleSuppliers?'sim — revisão manual obrigatória':'não'),
    '',
    'Mensagem inicial (apenas prévia):',
    p.messageSummary||'(sem produtos)',
