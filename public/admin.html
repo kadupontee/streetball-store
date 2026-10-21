@@ -1,9 +1,48 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Streetball — Operações</title><style>
 *{box-sizing:border-box}body{background:#f5f6f2;font:13px Arial,sans-serif;color:#1b231b;margin:0}header{background:#151b16;color:#fff;padding:24px}main{max-width:1150px;margin:34px auto;padding:0 20px}h1{margin:0;font-size:24px;letter-spacing:-.5px}header p{color:#aabbac;font-size:12px}button{cursor:pointer;background:#182519;color:#fff;border:0;padding:10px 13px}input,select{padding:10px;border:1px solid #ccd4c8;background:#fff;border-radius:3px}table{width:100%;border-collapse:collapse;background:#fff}th,td{text-align:left;padding:13px;border-bottom:1px solid #e9ede7;vertical-align:top;font-size:11px}th{background:#e9eee5;color:#354434;text-transform:uppercase;letter-spacing:.08em}.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:22px}.tools input{flex:1;min-width:210px}.pill{padding:5px 9px;display:inline-block;background:#eef2e9;font-size:10px;font-weight:bold}.warn{background:#f8e9d9;color:#8c5520}.message{color:#5d6d5d;font-size:11px}.table-wrap{overflow-x:auto}.small{font-size:10px;color:#6b7768;line-height:1.6}select{width:170px;max-width:100%}
-</style></head><body><header><h1>STREETBALL / Operações</h1><p>Consulta de pedidos pagos, contato com fornecedor, confirmação e pendências. Uso restrito à administração.</p></header><main><div class="tools"><input id="token" placeholder="Cole o ADMIN_TOKEN de produção" type="password" autocomplete="off"><button id="load">CARREGAR PEDIDOS</button><span class="message" id="feedback"></span></div><div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Fornecedor / Ação</th></tr></thead><tbody id="rows"><tr><td colspan="6">Informe sua chave administrativa para consultar os pedidos.</td></tr></tbody></table></div><p class="small">Nenhum pagamento ao fornecedor acontece aqui automaticamente. Revise disponibilidade, autorização da imagem, link de cobrança e Pix antes de efetivar qualquer transferência. O histórico de cobrança do Asaas é a fonte de verdade do pagamento do cliente.</p></main><script>
+.preview-box{background:#fff;padding:20px;margin-top:18px;border:1px solid #d7dfd3}.preview-box pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 ui-monospace,monospace}.preview-box h2{margin:0 0 12px;font-size:17px}</style></head><body><header><h1>STREETBALL / Operações</h1><p>Consulta de pedidos pagos, contato com fornecedor, confirmação e pendências. Uso restrito à administração.</p></header><main><div class="tools"><input id="token" placeholder="Cole o ADMIN_TOKEN de produção" type="password" autocomplete="off"><button id="load">CARREGAR PEDIDOS</button><span class="message" id="feedback"></span></div><div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Fornecedor / Ação</th></tr></thead><tbody id="rows"><tr><td colspan="6">Informe sua chave administrativa para consultar os pedidos.</td></tr></tbody></table></div><section id="previewPanel" class="preview-box" hidden><h2>Prévia do fornecedor — nenhum envio será realizado</h2><pre id="previewResult"></pre></section><p class="small">Nenhum pagamento ao fornecedor acontece aqui automaticamente. Revise disponibilidade, autorização da imagem, link de cobrança e Pix antes de efetivar qualquer transferência. O histórico de cobrança do Asaas é a fonte de verdade do pagamento do cliente.</p></main><script>
 const $=id=>document.getElementById(id),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function api(path,body){const res=await fetch('/api/admin/'+path,{method:body?'POST':'GET',headers:{authorization:'Bearer '+$('token').value,...(body?{'content-type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const d=await res.json();if(!res.ok)throw Error(d.error||'Não autorizado.');return d;}
 $('load').addEventListener('click',load);
-async function load(){try{$('feedback').textContent='Buscando...';const data=await api('orders');$('rows').innerHTML=(data.orders||[]).map(o=>{let items=[];try{items=JSON.parse(o.items_json)}catch{}return `<tr><td><b>${esc(o.id.slice(0,8))}</b><div class="small">${esc(o.created_at)}</div></td><td>${esc(o.name)}<div class="small">${esc(o.city)}, ${esc(o.state)}</div><div class="small">${esc(o.phone)}</div></td><td>${items.map(i=>`<div>${esc(i.qty)}× ${esc(i.title)} (${esc(i.size)})${i.personalize?' — '+esc(i.customName)+' #'+esc(i.customNumber):''}</div>`).join('')}</td><td>R$ ${Number(o.total).toFixed(2).replace('.',',')}</td><td><span class="pill ${o.status==='paid_supplier_pending'?'':'warn'}">${esc(o.status)}</span></td><td><span class="pill">${esc(o.supplier_status||'—')}</span><div style="height:8px"></div><select data-status="${esc(o.id)}"><option value="">Atualizar status...</option>${['supplier_contacted','supplier_confirmed','supplier_payment_pending','supplier_paid','manual_review','overdue_24h'].map(x=>`<option value="${x}">${x}</option>`).join('')}</select></td></tr>`}).join('')||'<tr><td colspan="6">Nenhum pedido ainda.</td></tr>';$('feedback').textContent=`${data.orders?.length||0} pedidos consultados.`}catch(e){$('feedback').textContent=e.message;}}
+async function load(){try{$('feedback').textContent='Buscando...';const data=await api('orders');$('rows').innerHTML=(data.orders||[]).map(o=>{let items=[];try{items=JSON.parse(o.items_json)}catch{}return `<tr><td><b>${esc(o.id.slice(0,8))}</b><div class="small">${esc(o.created_at)}</div></td><td>${esc(o.name)}<div class="small">${esc(o.city)}, ${esc(o.state)}</div><div class="small">${esc(o.phone)}</div></td><td>${items.map(i=>`<div>${esc(i.qty)}× ${esc(i.title)} (${esc(i.size)})${i.personalize?' — '+esc(i.customName)+' #'+esc(i.customNumber):''}</div>`).join('')}</td><td>R$ ${Number(o.total).toFixed(2).replace('.',',')}</td><td><span class="pill ${o.status==='paid_supplier_pending'?'':'warn'}">${esc(o.status)}</span></td><td><span class="pill">${esc(o.supplier_status||'—')}</span><div style="height:8px"></div><select data-status="${esc(o.id)}"><option value="">Atualizar status...</option>${['supplier_contacted','supplier_confirmed','supplier_payment_pending','supplier_paid','manual_review','overdue_24h'].map(x=>`<option value="${x}">${x}</option>`).join('')}</select><div style="margin-top:8px"><button type="button" data-preview="${esc(o.id)}">PRÉVIA SEM ENVIO</button></div></td></tr>`}).join('')||'<tr><td colspan="6">Nenhum pedido ainda.</td></tr>';$('feedback').textContent=`${data.orders?.length||0} pedidos consultados.`}catch(e){$('feedback').textContent=e.message;}}
+document.addEventListener('click',async e=>{
+ const button=e.target.closest('[data-preview]');if(!button)return;
+ try{
+  $('feedback').textContent='Preparando prévia local...';
+  const p=await api('supplier-preview?orderId='+encodeURIComponent(button.dataset.preview));
+  const c=p.checks||{};
+  const conditions=[
+    ['Conta Asaas Sandbox',c.sandbox],
+    ['Envio automático desligado',c.whatsappAutomationDisabled],
+    ['Fornecedor identificado',c.supplierConfigured],
+    ['Foto inicial disponível',c.firstPhotoAvailable],
+    ['Modelo de mensagem com foto configurado',c.photoTemplateConfigured],
+    ['Token WhatsApp configurado',c.waTokenConfigured],
+    ['ID do número WhatsApp configurado',c.waPhoneIdConfigured]
+  ];
+  $('previewResult').textContent=[
+   'Pedido: '+p.orderId.slice(0,8),
+   'Status: '+p.status,
+   'Fornecedor: '+(p.supplier?p.supplier.id+' (telefone final '+p.supplier.phoneEnding+')':'não configurado'),
+   '',
+   'Mensagem inicial (apenas prévia):',
+   p.messageSummary||'(sem produtos)',
+   '',
+   'Itens e variantes:',
+   ...(p.items||[]).map(i=>'- '+i.qty+'x '+i.title+' | '+i.size+(i.patch?' | patch':'')+(i.personalize?' | '+i.customName+' #'+i.customNumber:'')),
+   '',
+   'Foto de cabeçalho: '+(p.firstPhotoUrl||'não disponível ou URL não aceita'),
+   'Modelo: '+(p.photoTemplate||'não configurado'),
+   '',
+   'Verificações:',
+   ...conditions.map(([name,ok])=>(ok?'OK — ':'PENDENTE — ')+name),
+   '',
+   'Nenhuma mensagem foi enviada. O Pix do fornecedor continua manual.'
+  ].join('\n');
+  $('previewPanel').hidden=false;
+  $('feedback').textContent='Prévia gerada sem envio.';
+  $('previewPanel').scrollIntoView({behavior:'smooth',block:'start'});
+ }catch(err){$('feedback').textContent=err.message;}
+});
 document.addEventListener('change',async e=>{const t=e.target;if(!t.dataset.status||!t.value)return;const orderId=t.dataset.status,status=t.value;if(!confirm('Atualizar pedido '+orderId.slice(0,8)+' para '+status+'?')){t.value='';return;}try{await api('supplier-status',{orderId,status});await load()}catch(err){$('feedback').textContent=err.message}});
 </script></body></html>
