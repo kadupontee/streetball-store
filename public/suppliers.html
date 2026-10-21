@@ -25,7 +25,18 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <label>WhatsApp com DDI (opcional ao criar)<input id="phone" type="tel" inputmode="tel" autocomplete="off" placeholder="Ex.: +55 11 99999-9999" maxlength="30"></label>
 <label>Autorizou consultas automáticas?<input type="checkbox" id="authorized" style="display:inline;width:auto;vertical-align:middle"></label>
 <button type="submit">CADASTRAR</button>
-</form><table><thead><tr><th>Prioridade</th><th>Fornecedor</th><th>ID</th><th>WhatsApp</th><th>Atualizar contato</th></tr></thead><tbody id="rows"><tr><td colspan="5">Carregue os fornecedores para começar.</td></tr></tbody></table>
+</form><table><thead><tr><th>Prioridade</th><th>Fornecedor</th><th>ID</th><th>WhatsApp</th><th>Contato</th><th>Ações</th></tr></thead><tbody id="rows"><tr><td colspan="5">Carregue os fornecedores para começar.</td></tr></tbody></table>
+<section id="editPanel" class="panel" hidden aria-label="Editar fornecedor">
+<h2>Editar fornecedor</h2>
+<form id="editSupplierForm">
+<input type="hidden" id="editId">
+<label>Nome do fornecedor<input id="editName" maxlength="75" required></label>
+<label>Novo WhatsApp com DDI<input id="editPhone" type="tel" autocomplete="off" placeholder="Deixe vazio para manter o número atual" maxlength="30"><span id="editPhoneHint" class="note"></span></label>
+<label>Autoriza consultas automáticas?<input type="checkbox" id="editAuthorized" style="display:inline;width:auto;vertical-align:middle"></label>
+<div><button type="submit">SALVAR ALTERAÇÕES</button> <button type="button" id="cancelEdit" style="background:#677467">CANCELAR</button></div>
+</form>
+<p class="note">O ID interno não é editável para preservar vínculos e histórico de pedidos. Para alterar o WhatsApp, digite o número completo; se deixar vazio, o atual será mantido.</p>
+</section>
 <p><button type="button" id="savePriority" disabled>SALVAR ORDEM DE PREFERÊNCIA</button></p><p class="note">Use as setas ↑ e ↓ na coluna Prioridade para mudar a posição. Clique em SALVAR ORDEM para gravar a sequência no Cloudflare. A posição 1 será consultada primeiro quando a automação for autorizada.</p>
 <p class="note">O número completo não aparece novamente após salvar (somente os 4 últimos dígitos). Para corrigir, digite o novo número em “Atualizar contato”. Sem autorização, o número fica cadastrado, mas não é elegível para envio automatizado. A Cloud API ainda está desligada.</p></section>
 <section class="panel"><h2>3. Fluxo planejado de estoque</h2>
@@ -63,10 +74,25 @@ async function load(){
 }
 function renderSuppliers(){
  const suppliers=orderedSuppliers;
- $('rows').innerHTML=suppliers.map((p,i)=>'<tr><td>'+(i+1)+'º <button type="button" data-move="'+esc(p.id)+'" data-direction="-1"'+(i===0?' disabled':'')+' aria-label="Subir fornecedor">↑</button> <button type="button" data-move="'+esc(p.id)+'" data-direction="1"'+(i===suppliers.length-1?' disabled':'')+' aria-label="Descer fornecedor">↓</button></td><td>'+esc(p.display_name)+'</td><td>'+esc(p.id)+'</td><td>'+(p.phoneConfigured?'Cadastrado · final '+esc(p.phoneEnding):'Não cadastrado')+(p.authorized?' · autorizado':' · não autorizado')+'</td><td><input type="tel" autocomplete="off" inputmode="tel" data-contact="'+esc(p.id)+'" placeholder="+DDI + número" maxlength="30" aria-label="Novo número do fornecedor"><label class="note"><input type="checkbox" data-authorized="'+esc(p.id)+'"'+(p.authorized?' checked':'')+' style="display:inline;width:auto"> Autorizou consultas</label><button type="button" data-save="'+esc(p.id)+'">SALVAR NÚMERO</button></td></tr>').join('')||
+ $('rows').innerHTML=suppliers.map((p,i)=>'<tr><td>'+(i+1)+'º <button type="button" data-move="'+esc(p.id)+'" data-direction="-1"'+(i===0?' disabled':'')+' aria-label="Subir fornecedor">↑</button> <button type="button" data-move="'+esc(p.id)+'" data-direction="1"'+(i===suppliers.length-1?' disabled':'')+' aria-label="Descer fornecedor">↓</button></td><td>'+esc(p.display_name)+'</td><td>'+esc(p.id)+'</td><td>'+(p.phoneConfigured?'Cadastrado · final '+esc(p.phoneEnding):'Não cadastrado')+(p.authorized?' · autorizado':' · não autorizado')+'</td><td><button type="button" data-edit="'+esc(p.id)+'">EDITAR</button> <button type="button" data-delete="'+esc(p.id)+'" style="background:#883d3d">EXCLUIR</button></td></tr>').join('')||
  '<tr><td colspan="5">Nenhum fornecedor cadastrado.</td></tr>';
  $('savePriority').disabled=suppliers.length<2;
 }
+$('cancelEdit').addEventListener('click',()=>{
+ $('editPanel').hidden=true;$('editSupplierForm').reset();$('editId').value='';
+});
+$('editSupplierForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ const id=$('editId').value;
+ if(!orderedSuppliers.some(s=>s.id===id)){$('feedback').textContent='Fornecedor não está mais na lista. Atualize a página.';return}
+ try{
+  await api('supplier-update',{id,displayName:$('editName').value.trim(),phone:$('editPhone').value.trim(),authorized:$('editAuthorized').checked});
+  $('editPanel').hidden=true;
+  $('editSupplierForm').reset();
+  await load();
+  $('feedback').textContent='Fornecedor editado. Nenhuma mensagem foi enviada.';
+ }catch(err){$('feedback').textContent=err.message}
+});
 $('savePriority').addEventListener('click',async()=>{
  try{
   const ids=orderedSuppliers.map(s=>s.id);
@@ -104,15 +130,34 @@ $('rows').addEventListener('click',async event=>{
   }
   return;
  }
- const button=event.target.closest('[data-save]');if(!button)return;
- const id=button.dataset.save;
- const phone=document.querySelector('[data-contact="'+id+'"]')?.value.trim()||'';
- const authorized=document.querySelector('[data-authorized="'+id+'"]')?.checked===true;
- if(!phone){$('feedback').textContent='Digite o número completo com DDI para alterar este contato.';return}
- try{
-  const answer=await api('supplier-contact',{id,phone,authorized});
-  await load();
-  $('feedback').textContent='WhatsApp salvo com segurança: final '+answer.phoneEnding+'. Nenhuma mensagem enviada.';
- }catch(err){$('feedback').textContent=err.message}
+ const edit=event.target.closest('[data-edit]');
+ if(edit){
+  const vendor=orderedSuppliers.find(s=>s.id===edit.dataset.edit);
+  if(!vendor)return;
+  $('editId').value=vendor.id;
+  $('editName').value=vendor.display_name;
+  $('editPhone').value='';
+  $('editPhoneHint').textContent=vendor.phoneConfigured?'Número atual termina em '+vendor.phoneEnding+'. Deixe vazio para manter.':'Nenhum número cadastrado.';
+  $('editAuthorized').checked=vendor.authorized;
+  $('editPanel').hidden=false;
+  $('editPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+  return;
+ }
+ const del=event.target.closest('[data-delete]');
+ if(del){
+  const vendor=orderedSuppliers.find(s=>s.id===del.dataset.delete);
+  if(!vendor)return;
+  if(!confirm('Excluir o fornecedor "'+vendor.display_name+'"? O telefone e sua configuração serão apagados, mas o histórico de pedidos será preservado.'))return;
+  const typed=prompt('Para confirmar a exclusão, digite exatamente o ID interno: '+vendor.id);
+  if(typed!==vendor.id){$('feedback').textContent='Exclusão cancelada: ID de confirmação diferente.';return}
+  try{
+   await api('supplier-delete',{id:vendor.id,confirmId:typed});
+   $('editPanel').hidden=true;
+   await load();
+   $('feedback').textContent='Fornecedor excluído do cadastro. Histórico de pedidos preservado.';
+  }catch(err){$('feedback').textContent=err.message}
+  return;
+ }
+
 });
 </script></body></html>
