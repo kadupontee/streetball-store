@@ -114,6 +114,60 @@ async function adminApi(request,env,ctx){
    await env.DB.prepare('INSERT INTO supplier_directory (id,display_name,created_at,updated_at) VALUES (?,?,?,?)').bind(id,displayName,now,now).run();
    return json({ok:true,id,displayName},201);
  }
+ if(url.pathname==='/api/admin/supplier-update'&&request.method==='POST'){
+   if(Number(request.headers.get('content-length')||0)>1500)return clientError('Requisição muito grande.',413);
+   const body=await request.json().catch(()=>null);
+   const id=String(body?.id||'').trim().toLowerCase();
+   const displayName=String(body?.displayName||'').trim();
+   const rawPhone=typeof body?.phone==='string'?body.phone.trim():'';
+   const phone=rawPhone.replace(/\D/g,'');
+   if(!supplierIdValid(id)||displayName.length<2||displayName.length>75)
+     return clientError('Nome ou identificador inválido.');
+   if(rawPhone&&!/^[1-9]\d{7,14}$/.test(phone))
+     return clientError('Informe um WhatsApp com DDI (8 a 15 dígitos) ou deixe o campo vazio para manter o atual.');
+   if(typeof body.authorized!=='boolean')return clientError('Informe se o fornecedor autorizou as consultas.');
+   const current=await env.DB.prepare(
+     'SELECT d.id,c.phone_e164 FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id WHERE d.id=?'
+   ).bind(id).first();
+   if(!current)return clientError('Fornecedor não encontrado. Atualize a página.',404);
+   if(body.authorized&&!phone&&!current.phone_e164)
+     return clientError('Cadastre um número antes de autorizar consultas.');
+   const t=new Date().toISOString(),actions=[
+     env.DB.prepare('UPDATE supplier_directory SET display_name=?,updated_at=? WHERE id=?').bind(displayName,t,id)
+   ];
+   if(rawPhone){
+     actions.push(env.DB.prepare(
+       'INSERT INTO supplier_contacts(supplier_id,phone_e164,authorized,updated_at) VALUES(?,?,?,?) ON CONFLICT(supplier_id) DO UPDATE SET phone_e164=excluded.phone_e164,authorized=excluded.authorized,updated_at=excluded.updated_at'
+     ).bind(id,phone,body.authorized?1:0,t));
+   }else if(current.phone_e164){
+     actions.push(env.DB.prepare('UPDATE supplier_contacts SET authorized=?,updated_at=? WHERE supplier_id=?')
+       .bind(body.authorized?1:0,t,id));
+   }
+   await env.DB.batch(actions);
+   return json({ok:true,id,displayName,phoneConfigured:!!(phone||current.phone_e164),
+     phoneEnding:String(phone||current.phone_e164||'').slice(-4),authorized:body.authorized});
+ }
+ if(url.pathname==='/api/admin/supplier-delete'&&request.method==='POST'){
+   if(Number(request.headers.get('content-length')||0)>900)return clientError('Requisição muito grande.',413);
+   const body=await request.json().catch(()=>null);
+   const id=String(body?.id||'').trim().toLowerCase();
+   if(!supplierIdValid(id)||body?.confirmId!==id)return clientError('Confirme o ID exato antes de excluir.');
+   const supplier=await env.DB.prepare('SELECT id,display_name FROM supplier_directory WHERE id=?').bind(id).first();
+   if(!supplier)return clientError('Fornecedor não encontrado. Atualize a página.',404);
+   const active=await env.DB.prepare(
+     "SELECT COUNT(*) AS total FROM supplier_dispatch d JOIN orders o ON o.id=d.order_id WHERE d.supplier_id=? AND d.state IN ('sending','awaiting_reply','details_sent','overdue_24h') AND o.status IN ('paid_supplier_pending','supplier_preparing')"
+   ).bind(id).first();
+   if(Number(active?.total||0)>0)
+     return clientError('Este fornecedor possui um pedido em andamento. Finalize ou revise o pedido antes de excluí-lo.',409);
+   // Exclua somente cadastro e vínculos de configuração. Pedidos, tentativas e histórico não são apagados.
+   await env.DB.batch([
+     env.DB.prepare('DELETE FROM supplier_product_map WHERE supplier_id=?').bind(id),
+     env.DB.prepare('DELETE FROM supplier_priority WHERE supplier_id=?').bind(id),
+     env.DB.prepare('DELETE FROM supplier_contacts WHERE supplier_id=?').bind(id),
+     env.DB.prepare('DELETE FROM supplier_directory WHERE id=?').bind(id)
+   ]);
+   return json({ok:true,deletedId:id});
+ }
  if(url.pathname==='/api/admin/supplier-priority'&&request.method==='POST'){
    if(Number(request.headers.get('content-length')||0)>1200)return clientError('Requisição muito grande.',413);
    const body=await request.json().catch(()=>null);
