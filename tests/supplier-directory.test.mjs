@@ -6,8 +6,8 @@ import {classifyStockReply,previewSupplierOrder,routePaidOrder} from '../worker/
 
 const token='token-de-teste';
 function mockDb(){
- const list=new Map();
- return {list,prepare(sql){
+ const list=new Map(),contacts=new Map();
+ return {list,contacts,prepare(sql){
   let args=[];
   const st={
    bind(...p){args=p;return st},
@@ -17,11 +17,13 @@ function mockDb(){
     return null;
    },
    async all(){
+    if(sql.startsWith('SELECT d.id,c.phone_e164,c.authorized FROM supplier_directory'))return {results:[...list].map(([id,display_name])=>({id,display_name,phone_e164:contacts.get(id)?.phone||null,authorized:contacts.get(id)?.authorized||0}))};
     if(sql.startsWith('SELECT id,display_name FROM supplier_directory'))return {results:[...list].map(([id,display_name])=>({id,display_name}))};
     return {results:[]};
    },
    async run(){
     if(sql.startsWith('INSERT INTO supplier_directory'))list.set(args[0],args[1]);
+    if(sql.startsWith('INSERT INTO supplier_contacts'))contacts.set(args[0],{phone:args[1],authorized:args[2]});
     return {meta:{changes:1}};
    }
   };return st;
@@ -108,4 +110,24 @@ test('resposta sem estoque seleciona o próximo fornecedor no Sandbox sem enviar
  assert.ok(draft);
  assert.equal(draft.args[0],'outro');
  assert.equal(draft.args[1],'8613800138001');
+});
+
+test('cadastro privado de telefone valida, mascara número e exige autenticação',async()=>{
+ const db=mockDb(),env={DB:db,ADMIN_TOKEN:token,ASAAS_SANDBOX:'true',WA_AUTOMATION_ENABLED:'false'};
+ await worker.fetch(admin('supplier-directory',{id:'china01',displayName:'Fornecedor China'}),env);
+ let res=await worker.fetch(new Request('https://loja.exemplo.com/api/admin/supplier-contact',{
+  method:'POST',headers:{'content-type':'application/json'},
+  body:JSON.stringify({id:'china01',phone:'+86 138 0013 8000',authorized:true})
+ }),env);
+ assert.equal(res.status,401);
+ res=await worker.fetch(admin('supplier-contact',{id:'china01',phone:'123',authorized:true}),env);
+ assert.equal(res.status,400);
+ res=await worker.fetch(admin('supplier-contact',{id:'china01',phone:'+86 138 0013 8000',authorized:true}),env);
+ assert.equal(res.status,200);
+ assert.equal(db.contacts.get('china01').phone,'8613800138000');
+ const payload=await (await worker.fetch(admin('supplier-directory'),env)).json();
+ assert.equal(payload.suppliers[0].phoneConfigured,true);
+ assert.equal(payload.suppliers[0].phoneEnding,'8000');
+ assert.equal(payload.suppliers[0].authorized,true);
+ assert.equal(JSON.stringify(payload).includes('8613800138000'),false);
 });
