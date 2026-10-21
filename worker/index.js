@@ -155,7 +155,7 @@ async function adminApi(request,env,ctx){
    const supplier=await env.DB.prepare('SELECT id,display_name FROM supplier_directory WHERE id=?').bind(id).first();
    if(!supplier)return clientError('Fornecedor não encontrado. Atualize a página.',404);
    const active=await env.DB.prepare(
-     "SELECT COUNT(*) AS total FROM supplier_dispatch d JOIN orders o ON o.id=d.order_id WHERE d.supplier_id=? AND d.state IN ('sending','awaiting_reply','details_sent','overdue_24h') AND o.status IN ('paid_supplier_pending','supplier_preparing')"
+     "SELECT COUNT(*) AS total FROM supplier_dispatch d JOIN orders o ON o.id=d.order_id WHERE d.supplier_id=? AND o.status IN ('paid_supplier_pending','supplier_preparing') AND d.state NOT IN ('supplier_unavailable','all_unavailable')"
    ).bind(id).first();
    if(Number(active?.total||0)>0)
      return clientError('Este fornecedor possui um pedido em andamento. Finalize ou revise o pedido antes de excluí-lo.',409);
