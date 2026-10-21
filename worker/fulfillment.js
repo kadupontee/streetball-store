@@ -25,6 +25,42 @@ function imageLink(raw,env){
  if(/^https:\/\/photo\.yupoo\.com\/james66jersey\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp)$/i.test(value))return value;
  return '';
 }
+/**
+ * Prévia administrativa de encaminhamento. Não gera mensagens, gravações ou chamadas de rede.
+ * Nenhum dado de endereço/CPF do comprador é incluído aqui.
+ */
+export function previewSupplierOrder(env,order){
+ const items=JSON.parse(order.items_json||'[]');
+ const supplier=getSupplier(env,items);
+ const firstPhoto=imageLink(items[0]?.image,env);
+ const photoTemplate=env.SUPPLIER_WA_TEMPLATE_MEDIA||supplier?.mediaTemplate||'';
+ const checks={
+   sandbox:env.ASAAS_SANDBOX==='true',
+   whatsappAutomationDisabled:env.WA_AUTOMATION_ENABLED!=='true',
+   supplierConfigured:!!supplier,
+   firstPhotoAvailable:!!firstPhoto,
+   photoTemplateConfigured:!!photoTemplate,
+   waTokenConfigured:!!env.WA_TOKEN,
+   waPhoneIdConfigured:!!env.WA_PHONE_NUMBER_ID
+ };
+ return {
+   orderId:order.id,
+   status:order.status,
+   supplier:supplier?{id:supplier.id,phoneEnding:supplier.phone.slice(-4)}:null,
+   firstPhotoUrl:firstPhoto||null,
+   photoTemplate:photoTemplate||null,
+   messageSummary:messageSummary(items),
+   items:items.map(it=>({
+     title:trim(it.title,100),size:trim(it.size,15),qty:Number(it.qty)||0,
+     patch:it.patch===true,personalize:it.personalize===true,
+     customName:trim(it.customName,14),customNumber:trim(it.customNumber,3)
+   })),
+   checks,
+   readyForAutomaticSending:checks.supplierConfigured&&checks.firstPhotoAvailable&&
+     checks.photoTemplateConfigured&&checks.waTokenConfigured&&
+     checks.waPhoneIdConfigured&&!checks.whatsappAutomationDisabled
+ };
+}
 async function sendWa(env,to,message){
  if(env.WA_AUTOMATION_ENABLED!=='true'||!env.WA_TOKEN||!env.WA_PHONE_NUMBER_ID)throw Error('WhatsApp não habilitado ou sem credenciais');
  if(!normalizeWaPhone(to))throw Error('Número WhatsApp inválido');
