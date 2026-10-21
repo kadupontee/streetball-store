@@ -68,8 +68,8 @@ test('identifica respostas com código e mensagens diretas contextualizadas',()=
  assert.deepEqual(classifyStockReply('não temos','wamid.exemplo'),{kind:'unavailable',orderShort:null,byContext:true});
  assert.deepEqual(classifyStockReply('Disponível a1b2c3d4'),{kind:'available',orderShort:'a1b2c3d4',byContext:false});
  assert.equal(classifyStockReply('não temos'),null);
- assert.equal(classifyStockReply('talvez, amanhã chegue', 'wamid.exemplo'),null);
- assert.equal(classifyStockReply('temos dois tamanhos, mas talvez falte um','wamid.exemplo'),null);
+ assert.deepEqual(classifyStockReply('talvez, amanhã chegue', 'wamid.exemplo'),{kind:'ambiguous',orderShort:null,byContext:true});
+ assert.deepEqual(classifyStockReply('temos dois tamanhos, mas talvez falte um','wamid.exemplo'),{kind:'ambiguous',orderShort:null,byContext:true});
 });
 test('catálogo compartilhado apresenta fornecedor prioritário mesmo com produtos de fontes distintas',()=>{
  const env={ASAAS_SANDBOX:'true',WA_AUTOMATION_ENABLED:'false',SUPPLIERS_JSON:JSON.stringify([
