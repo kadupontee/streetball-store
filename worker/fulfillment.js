@@ -215,6 +215,8 @@ async function sendOrderDetails(env,order,dispatch){
 }
 async function sendBuyerUpdate(env,order){
  if(!env.BUYER_WA_TEMPLATE||env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true')return;
+ const consent=await env.DB.prepare('SELECT order_id FROM buyer_message_optin WHERE order_id=?').bind(order.id).first();
+ if(!consent)return;
  await env.DB.prepare("INSERT OR IGNORE INTO buyer_notifications(order_id,state,created_at,updated_at) VALUES(?,?,?,?)").bind(order.id,'pending',now(),now()).run();
  const claim=await env.DB.prepare("UPDATE buyer_notifications SET state='sending',updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
  if(!claim.meta?.changes)return;
