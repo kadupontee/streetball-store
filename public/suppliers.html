@@ -16,7 +16,7 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <section class="panel"><h2>1. Acesso administrativo</h2><form id="loginForm">
 <label>ADMIN_TOKEN<input type="password" id="token" autocomplete="off" placeholder="Cole sua chave privada" required></label>
 <button type="submit">CARREGAR FORNECEDORES</button>
-</form><p class="note">A chave é utilizada apenas nesta aba e não é gravada no navegador.</p></section>
+</form><p class="note">A chave é utilizada apenas nesta aba e não é gravada no navegador.</p><p id="feedback" role="status" class="status" aria-live="polite"></p></section>
 <section class="panel"><h2>2. Cadastre os cinco fornecedores</h2>
 <p>Os produtos da loja não precisam ser associados a fornecedores individuais. Cadastre os cinco nomes e seus WhatsApps comerciais, com código do país (DDI), por exemplo +55 ou +86. Os números ficam no banco privado D1.</p>
 <form id="supplierForm">
@@ -37,7 +37,6 @@ table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;bor
 <li>Se todos recusarem, a loja sinaliza revisão manual para alternativa ou reembolso.</li>
 </ol>
 <p class="note">Nesta etapa, o WhatsApp, os pagamentos reais e os pagamentos a fornecedores permanecem desativados.</p></section>
-<p id="feedback" role="status" class="status"></p>
 </main><script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -57,7 +56,8 @@ async function api(path,body){
 }
 async function load(){
  const data=await api('supplier-directory');
- orderedSuppliers=data.suppliers||[];
+ if(!Array.isArray(data.suppliers))throw Error('Resposta inválida do servidor. Nenhum dado foi alterado.');
+ orderedSuppliers=data.suppliers;
  renderSuppliers();
  $('feedback').textContent=orderedSuppliers.length+' fornecedor(es) cadastrado(s). Nenhuma mensagem enviada.';
 }
@@ -76,7 +76,10 @@ $('savePriority').addEventListener('click',async()=>{
  }catch(err){$('feedback').textContent=err.message}
 });
 $('loginForm').addEventListener('submit',async e=>{
- e.preventDefault();try{await load()}catch(err){$('feedback').textContent=err.message}
+ e.preventDefault();try{await load()}catch(err){
+  $('rows').innerHTML='<tr><td colspan="5">Não foi possível consultar os fornecedores. Isso não significa que foram excluídos. Verifique a mensagem de erro acima.</td></tr>';
+  $('feedback').textContent='ERRO AO CARREGAR: '+err.message+' — Não recadastre antes de conferir o D1.';
+ }
 });
 $('supplierForm').addEventListener('submit',async e=>{
  e.preventDefault();
