@@ -1,4 +1,4 @@
 # Arquivos que não devem ser publicados como assets da Cloudflare.
-admin.html
+# admin.html deve ser publicado no Worker; dados de pedidos exigem ADMIN_TOKEN.
 catalog.js
 *.map
