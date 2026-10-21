@@ -30,6 +30,10 @@ A migração é aditiva; preserva as tabelas existentes. Publique somente quando
 
 Acesse `https://streetball-store.kpgmer.workers.dev/suppliers.html` e informe seu `ADMIN_TOKEN`. Cadastre os nomes reais, IDs internos e números de WhatsApp com DDI de até cinco fornecedores. Também é possível alterar o telefone de um cadastro já existente.
 
+**Editar ou excluir fornecedores:** no painel `/suppliers.html`, use **EDITAR** ao lado do contato para mudar o nome, o WhatsApp (com DDI) ou a autorização. Um campo de telefone vazio mantém o número salvo. O ID interno permanece estável para preservar referências.
+
+O botão **EXCLUIR** pede duas confirmações, incluindo digitar exatamente o ID do fornecedor. A operação elimina apenas o cadastro, o contato, a prioridade e os vínculos de produto antigos. **Pedidos, tentativas e histórico de compra não são excluídos.** A exclusão é bloqueada quando o fornecedor está associado a um pedido em andamento. Confirme antes de excluir: telefone e cadastro removidos não são restaurados automaticamente.
+
 **Alterar a ordem de preferência:** abra `/suppliers.html`, autentique com `ADMIN_TOKEN` e clique em **↑** ou **↓** ao lado de um fornecedor. Em seguida clique em **SALVAR ORDEM DE PREFERÊNCIA**. A ordem será armazenada na tabela `supplier_priority` do D1. O primeiro da lista será consultado antes dos demais, mas apenas fornecedores com WhatsApp cadastrado e autorização para consultas são elegíveis. Nenhuma mensagem é enviada ao mudar a prioridade.
 
 Os telefones ficam **apenas no Cloudflare D1** (`supplier_contacts`) e são exibidos no painel somente pelos últimos quatro dígitos. O campo **Autorizou consultas automáticas?** documenta consentimento; sem ele, o contato não entra na fila elegível de mensagens. Credenciais da Meta continuam em secrets, nunca no catálogo público.
