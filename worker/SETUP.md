@@ -61,17 +61,17 @@ SHIPPING_FLAT_BRL = "29.90"  # EXEMPLO; substitua pelo frete REAL definido para 
 
 ## Passo 3 — Configurar os fornecedores WhatsApp
 
-É necessário usar o WhatsApp Business Platform/Cloud API oficial. Conversas com fornecedores comuns pelo WhatsApp não fornecem API confiável para ler respostas ou efetuar pagamentos via interface. Você precisará obter `WA_TOKEN`, `WA_PHONE_NUMBER_ID`, `WA_APP_SECRET` e `WA_VERIFY_TOKEN` da Meta, além de cadastrar os números autorizados dos fornecedores no segredo `SUPPLIERS_JSON`.
+É necessário usar o WhatsApp Business Platform/Cloud API oficial. Conversas com fornecedores comuns pelo WhatsApp não fornecem API confiável para ler respostas ou efetuar pagamentos via interface. A Cloud API aceita números internacionais de fornecedores cadastrados, mas a conversa fora da janela de atendimento exige templates aprovados. Você precisará obter `WA_TOKEN`, `WA_PHONE_NUMBER_ID`, `WA_APP_SECRET` e `WA_VERIFY_TOKEN` da Meta, além de cadastrar os números autorizados dos fornecedores no segredo `SUPPLIERS_JSON`.
 
-Exemplo de **formato**, NÃO de números reais (substitua cada `5511...` pelo número verificado):
+Exemplo de **formato**, NÃO de números reais: os cinco números são ilustrativos. Para fornecedores chineses use o código do país `86` e o telefone completo no padrão internacional E.164 (somente dígitos no JSON); para brasileiros use `55`.
 
 ```json
 [
-  {"id":"james","phone":"55DDDNÚMERO1","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
-  {"id":"fornecedor2","phone":"55DDDNÚMERO2","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
-  {"id":"fornecedor3","phone":"55DDDNÚMERO3","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
-  {"id":"fornecedor4","phone":"55DDDNÚMERO4","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
-  {"id":"fornecedor5","phone":"55DDDNÚMERO5","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"}
+  {"id":"james","phone":"86NUMEROCHINES1","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
+  {"id":"fornecedor2","phone":"86NUMEROCHINES2","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
+  {"id":"fornecedor3","phone":"86NUMEROCHINES3","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
+  {"id":"fornecedor4","phone":"86NUMEROCHINES4","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"},
+  {"id":"fornecedor5","phone":"86NUMEROCHINES5","template":"pedido_fornecedor","mediaTemplate":"pedido_fornecedor_foto"}
 ]
 ```
 
