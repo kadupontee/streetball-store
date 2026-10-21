@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import worker from '../worker/index.js';
-import {classifyStockReply,previewSupplierOrder} from '../worker/fulfillment.js';
+import {classifyStockReply,previewSupplierOrder,routePaidOrder} from '../worker/fulfillment.js';
 
 const token='token-de-teste';
 function mockDb(){
@@ -81,4 +81,31 @@ test('catálogo compartilhado apresenta fornecedor prioritário mesmo com produt
  assert.equal(preview.supplierCandidates.length,2);
  assert.equal(preview.sharedCatalog,true);
  assert.equal(preview.readyForAutomaticSending,false);
+});
+
+test('resposta sem estoque seleciona o próximo fornecedor no Sandbox sem enviar mensagem',async()=>{
+ const log=[];
+ const order={id:'a1b2c3d4-1234-4234-8234-123456789012',status:'paid_supplier_pending',
+  items_json:JSON.stringify([{id:'YUP-123456',title:'Barcelona',size:'M',qty:1,image:'/images/foo.jpg'}])};
+ const DB={
+  prepare(sql){
+   let args=[];
+   const st={bind(...v){args=v;return st},
+    async first(){if(sql.startsWith('SELECT id,status,items_json FROM orders'))return order;return null},
+    async all(){if(sql.startsWith('SELECT supplier_id FROM supplier_attempts'))return {results:[{supplier_id:'james'}]};return {results:[]}},
+    async run(){log.push({sql,args});return {meta:{changes:1}}}};
+   return st;
+  }
+ };
+ const env={DB,ASAAS_SANDBOX:'true',WA_AUTOMATION_ENABLED:'false',STORE_PUBLIC_URL:'https://streetball-store.kpgmer.workers.dev',
+  SUPPLIERS_JSON:JSON.stringify([
+    {id:'james',phone:'8613800138000',template:'consulta_foto',mediaTemplate:'consulta_foto'},
+    {id:'outro',phone:'8613800138001',template:'consulta_foto',mediaTemplate:'consulta_foto'}
+  ])};
+ const routed=await routePaidOrder(env,order.id);
+ assert.equal(routed,false);
+ const draft=log.find(x=>x.sql.includes("UPDATE supplier_dispatch SET state='needs_configuration'"));
+ assert.ok(draft);
+ assert.equal(draft.args[0],'outro');
+ assert.equal(draft.args[1],'8613800138001');
 });
