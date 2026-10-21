@@ -1,5 +1,24 @@
 # Streetball Store — Prévia segura dos pedidos para fornecedores
 
+## Cadastro da origem de cada produto (cinco fornecedores)
+
+O catálogo da Streetball Store contém produtos de fornecedores diferentes. **Nome do clube, foto e link de álbum não bastam para inferir o vendedor correto.** As atribuições deverão ser conferidas pelo responsável antes de salvar.
+
+1. Atualize o código com `git pull`.
+2. Faça a migração no D1 existente com `npx wrangler d1 execute streetball-db --remote --file=worker/schema.sql`. O script usa `CREATE TABLE IF NOT EXISTS`, preservando pedidos e pagamentos já registrados.
+3. Execute `npm test` e publique apenas após aprovação dos testes: `npx wrangler deploy`.
+4. Acesse `https://streetball-store.kpgmer.workers.dev/suppliers.html` (ou use o link do painel administrativo) e informe seu `ADMIN_TOKEN`.
+5. Cadastre de um a cinco **nomes reais** e IDs estáveis, por exemplo `fornecedor_a`, `fornecedor_b` etc. Esses exemplos **não** são fornecedores cadastrados automaticamente.
+6. Pesquise produtos pelo nome, ID ou link do álbum. Confira com qual fornecedor cada produto realmente é fornecido.
+7. Selecione o fornecedor em cada linha e clique em **SALVAR**, ou marque até 25 produtos de origem comprovadamente igual e use o botão de lote. Você pode remover uma atribuição usando “Não identificado”.
+
+A tabela `supplier_product_map` guarda o vínculo por ID estável no D1, então novos imports e mudanças de imagem não apagam as atribuições. A loja acrescenta a atribuição aos **novos pedidos feitos após a publicação**. Pedidos anteriores também podem ser consultados na prévia administrativa a partir do mapa atual, mas não são encaminhados automaticamente.
+
+**Pedidos mistos:** se um carrinho tiver itens de fornecedores distintos ou sem identificação, a automação não pode eleger um único fornecedor e fica pendente de revisão humana. O projeto não divide pedidos entre múltiplos fornecedores nesta versão.
+
+**Somente cadastro:** telefones, tokens, templates aprovados, envios de WhatsApp e Pix ao fornecedor não são configurados por esta tela. O envio continua desativado com `WA_AUTOMATION_ENABLED = "false"`.
+
+
 Este recurso permite conferir o **texto, as variantes e a primeira foto** antes de conectar a API do WhatsApp.
 
 ## Estado atual (modo de testes)
