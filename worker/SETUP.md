@@ -1,6 +1,6 @@
 # Streetball Store — Ativar cobrança e automação (20/10/2026)
 
-O código já está publicado no Cloudflare em modo Sandbox; **vendas reais e automação WhatsApp continuam desativadas**. A loja do GitHub Pages continua sendo apenas vitrine. Para receber pedidos e pagamentos, é preciso publicar o **Cloudflare Worker** do repositório, vinculado ao banco **D1** e à conta **Asaas**. Não cole credenciais no GitHub ou no chat.
+O código já está publicado no Cloudflare em modo Sandbox; **vendas reais e automação WhatsApp continuam desativadas**. A notificação de desculpas exige consentimento opcional do comprador no checkout e template aprovado pela Meta. A loja do GitHub Pages continua sendo apenas vitrine. Para receber pedidos e pagamentos, é preciso publicar o **Cloudflare Worker** do repositório, vinculado ao banco **D1** e à conta **Asaas**. Não cole credenciais no GitHub ou no chat.
 
 ## O que já existe no código
 
@@ -12,7 +12,7 @@ O código já está publicado no Cloudflare em modo Sandbox; **vendas reais e au
 6. Encaminhamento ao fornecedor **somente após PAYMENT_RECEIVED**. O evento PAYMENT_CONFIRMED isoladamente não libera o pedido.
 7. Integração WhatsApp Business Cloud API para até cinco fornecedores configurados. A primeira mensagem deve usar modelo (template) de **cabeçalho com foto aprovado** pelo Meta.
 8. Os cinco fornecedores compartilham o catálogo. Negativa explícita de estoque passa ao próximo contato. Apenas após disponibilidade confirmada são enviados os dados de envio, e **CONFIRMAR ID** marca preparação. O comprador só recebe atualização após essa confirmação.
-9. Verificação automática a cada hora: se o fornecedor não responder em 24 horas, o pedido vai para atraso e, se configurado, o administrador recebe alerta.
+9. Verificação automática a cada hora: se o fornecedor não responder em **12 horas**, o pedido vai ao próximo; respostas ambíguas vinculadas ao pedido também avançam. Após **72 horas corridas** sem confirmação, vai à revisão manual e prepara aviso de desculpas ao cliente.
 10. Pagamento do **fornecedor** não é realizado automaticamente: links recebidos por conversa exigem aprovação do dono da loja. Também é necessário verificar disponibilidade e reembolsos.
 
 ## Passo 1 — Criar Worker e banco de dados
@@ -68,7 +68,7 @@ Quando a Meta aprovar o aplicativo e os testes estiverem liberados, cadastre `SU
 
 A primeira mensagem requer template aprovado com cabeçalho de imagem e duas variáveis (ID curto do pedido e resumo dos itens). São suportadas respostas `SEM_ESTOQUE ID`, `DISPONIVEL ID`, `DETALHES ID` e `CONFIRMAR ID`. Respostas curtas como “não temos” também podem ser associadas quando o fornecedor responde diretamente à mensagem de consulta. Texto ambíguo ou sem contexto vai para revisão manual, não para conclusão automática.
 
-O sistema avança ao próximo fornecedor quando há uma negativa inequívoca. Quando os cinco recusarem, o pedido fica para revisão; não existe reembolso ou pagamento automático ao fornecedor. Atrasos de 24h são sinalizados, mas **silêncio não equivale a falta de estoque**.
+O sistema avança ao próximo fornecedor quando há negativa, resposta ambígua vinculada ao pedido ou **12 horas de silêncio**. Todos podem ser consultados durante a janela de **72 horas** a partir do primeiro contato. Se nenhum fornecedor confirmar, após 72 horas o pedido vai para revisão manual. **Silêncio não equivale a falta de estoque.** O cliente recebe uma mensagem de desculpas somente com opt-in explícito e template `BUYER_DELAY_WA_TEMPLATE` aprovado; sem isso, o painel indica contato manual. Não existe reembolso nem pagamento automático ao fornecedor.
 
 Webhook Meta: `GET/POST https://SEU-DOMINIO/api/webhooks/whatsapp`; cadastre `WA_VERIFY_TOKEN`, `WA_APP_SECRET`, `WA_TOKEN` e `WA_PHONE_NUMBER_ID` como segredos no Cloudflare e inscreva o campo `messages`. Não copie tokens para o código nem para o GitHub.
 
