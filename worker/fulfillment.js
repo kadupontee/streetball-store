@@ -2,6 +2,7 @@
  * Sem credenciais/consentimento não envia mensagens. Pix para fornecedor exige aprovação humana.
  */
 const digits=v=>String(v||'').replace(/\D/g,'');
+export const normalizeWaPhone=v=>{const p=digits(v);return /^[1-9]\d{7,14}$/.test(p)?p:'';};
 const now=()=>new Date().toISOString();
 const jsonBody=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store'}});
 const trim=(s,n=350)=>String(s??'').trim().slice(0,n);
@@ -9,7 +10,7 @@ function suppliers(env){
  let list=[];
  try{list=JSON.parse(env.SUPPLIERS_JSON||'[]')}catch{return []}
  if(!Array.isArray(list))return [];
- return list.slice(0,5).filter(p=>p&&/^[a-z0-9_-]{2,40}$/i.test(p.id)&&/^55\d{10,11}$/.test(digits(p.phone||''))&&/^[a-z0-9_]{2,100}$/i.test(p.template||env.SUPPLIER_WA_TEMPLATE||'')).map(p=>({...p,phone:digits(p.phone),template:p.template||env.SUPPLIER_WA_TEMPLATE}));
+ return list.slice(0,5).filter(p=>p&&/^[a-z0-9_-]{2,40}$/i.test(p.id)&&!!normalizeWaPhone(p.phone)&&/^[a-z0-9_]{2,100}$/i.test(p.template||env.SUPPLIER_WA_TEMPLATE||'')).map(p=>({...p,phone:digits(p.phone),template:p.template||env.SUPPLIER_WA_TEMPLATE}));
 }
 function phoneBR(raw){
  let p=digits(raw);
@@ -26,11 +27,11 @@ function imageLink(raw,env){
 }
 async function sendWa(env,to,message){
  if(env.WA_AUTOMATION_ENABLED!=='true'||!env.WA_TOKEN||!env.WA_PHONE_NUMBER_ID)throw Error('WhatsApp não habilitado ou sem credenciais');
- if(!phoneBR(to))throw Error('Número WhatsApp inválido');
+ if(!normalizeWaPhone(to))throw Error('Número WhatsApp inválido');
  const version=/^v\d+\.\d+$/.test(env.WA_GRAPH_VERSION||'')?env.WA_GRAPH_VERSION:'v22.0';
  const res=await fetch('https://graph.facebook.com/'+version+'/'+env.WA_PHONE_NUMBER_ID+'/messages',{
    method:'POST',headers:{'authorization':'Bearer '+env.WA_TOKEN,'content-type':'application/json'},
-   body:JSON.stringify({messaging_product:'whatsapp',to:phoneBR(to),...message})
+   body:JSON.stringify({messaging_product:'whatsapp',to:normalizeWaPhone(to),...message})
  });
  const body=await res.json().catch(()=>({}));
  if(!res.ok||!body.messages?.[0]?.id)throw Error('WhatsApp API HTTP '+res.status+': '+trim(body.error?.message||'falha de envio',100));
@@ -114,7 +115,7 @@ async function sendBuyerUpdate(env,order){
 }
 export async function handleSupplierInbound(env,message,ctx){
  if(!env.DB||!message?.id)return;
- const from=phoneBR(message.from),text=trim(message.text?.body,400);
+ const from=normalizeWaPhone(message.from),text=trim(message.text?.body,400);
  const match=text.match(/^(DETALHES|PREPARANDO|CONFIRMAR)\s+([a-f0-9]{8})\s*$/i);
  if(!from||!match)return;
  const duplicate=await env.DB.prepare("SELECT id FROM wa_message_events WHERE id=?").bind(message.id).first();
