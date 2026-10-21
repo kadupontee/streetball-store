@@ -67,3 +67,17 @@ CREATE TABLE IF NOT EXISTS supplier_product_map (
   FOREIGN KEY (supplier_id) REFERENCES supplier_directory(id)
 );
 CREATE INDEX IF NOT EXISTS idx_supplier_product_supplier ON supplier_product_map(supplier_id);
+
+-- Histórico de tentativas de compra no catálogo compartilhado.
+-- Nunca registra dados sensíveis, pagamentos ou mensagens completas do comprador.
+CREATE TABLE IF NOT EXISTS supplier_attempts (
+ order_id TEXT NOT NULL REFERENCES orders(id),
+ supplier_id TEXT NOT NULL,
+ state TEXT NOT NULL,
+ message_id TEXT,
+ last_response TEXT,
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL,
+ PRIMARY KEY(order_id,supplier_id)
+);
+CREATE INDEX IF NOT EXISTS idx_supplier_attempts_order_state ON supplier_attempts(order_id,state);
