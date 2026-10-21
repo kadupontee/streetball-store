@@ -65,7 +65,7 @@ test('rota autorizada apenas lê pedido e não envia mensagens',async()=>{
  assert.equal(calls.length,4);
  assert.match(calls[0],/^SELECT id,status,items_json FROM orders/);
  assert.match(calls[1],/^SELECT d.id,c.phone_e164,c.authorized FROM supplier_directory/);
- assert.match(calls[2],/^SELECT id,display_name FROM supplier_directory/);
+ assert.match(calls[2],/^SELECT d.id,d.display_name FROM supplier_directory/);
  assert.match(calls[3],/^SELECT supplier_id,state,updated_at FROM supplier_attempts/);
 });
 
