@@ -20,9 +20,17 @@ function suppliers(env){
 export async function loadSupplierCandidates(env){
  if(env.DB){
   try{
-   const data=await env.DB.prepare(
-     'SELECT d.id,c.phone_e164,c.authorized FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id LEFT JOIN supplier_priority p ON p.supplier_id=d.id ORDER BY CASE WHEN p.rank IS NULL THEN 1 ELSE 0 END,p.rank,d.created_at,d.id'
-   ).all();
+   let data;
+   try{
+     data=await env.DB.prepare(
+       'SELECT d.id,c.phone_e164,c.authorized FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id LEFT JOIN supplier_priority p ON p.supplier_id=d.id ORDER BY CASE WHEN p.rank IS NULL THEN 1 ELSE 0 END,p.rank,d.created_at,d.id'
+     ).all();
+   }catch(error){
+     if(!/no such table:\s*supplier_priority/i.test(String(error?.message||'')))throw error;
+     data=await env.DB.prepare(
+       'SELECT d.id,c.phone_e164,c.authorized FROM supplier_directory d LEFT JOIN supplier_contacts c ON c.supplier_id=d.id ORDER BY d.created_at,d.id'
+     ).all();
+   }
    const rows=data.results||[];
    if(rows.length)return rows.filter(r=>r.authorized===1&&normalizeWaPhone(r.phone_e164)).map(r=>({
      id:r.id,phone:normalizeWaPhone(r.phone_e164),
