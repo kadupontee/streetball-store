@@ -1,4 +1,4 @@
-import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes} from './fulfillment.js';
+import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder} from './fulfillment.js';
 /** Streetball Store - Cloudflare Worker + D1 + Asaas sandbox/production
  * Nunca armazene tokens ou chaves na pasta public/.
  * IMPORTANTE: pagamento ao fornecedor NÃO é automatizado neste MVP.
@@ -77,6 +77,13 @@ async function adminApi(request,env,ctx){
  if(!env.ADMIN_TOKEN||request.headers.get('authorization')!=='Bearer '+env.ADMIN_TOKEN)return clientError('Não autorizado.',401);
  if(!env.DB)return clientError('Banco não configurado.',503);
  const url=new URL(request.url);
+ if(request.method==='GET'&&url.pathname==='/api/admin/supplier-preview'){
+  const orderId=url.searchParams.get('orderId')||'';
+  if(!/^[a-f0-9-]{36}$/i.test(orderId))return clientError('ID do pedido inválido.');
+  const order=await env.DB.prepare('SELECT id,status,items_json FROM orders WHERE id=?').bind(orderId).first();
+  if(!order)return clientError('Pedido não encontrado.',404);
+  return json(previewSupplierOrder(env,order));
+ }
  if(request.method==='GET'&&url.pathname==='/api/admin/orders'){
   const data=await env.DB.prepare('SELECT o.id,o.created_at,o.status,o.name,o.email,o.phone,o.city,o.state,o.items_json,o.subtotal,o.shipping,o.total,j.status AS supplier_status,j.updated_at AS supplier_updated_at,d.supplier_id,d.state AS dispatch_state,d.sent_at AS sent_to_supplier_at,d.responded_at AS supplier_replied_at,d.last_error AS supplier_error,n.state AS buyer_notification_status FROM orders o LEFT JOIN supplier_jobs j ON j.order_id=o.id LEFT JOIN supplier_dispatch d ON d.order_id=o.id LEFT JOIN buyer_notifications n ON n.order_id=o.id ORDER BY o.created_at DESC LIMIT 75').all();
   return json({orders:data.results||[]});
