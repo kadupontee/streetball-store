@@ -17,7 +17,7 @@ function mockDb(){
     return null;
    },
    async all(){
-    if(sql.startsWith('SELECT d.id,c.phone_e164,c.authorized FROM supplier_directory'))return {results:[...list].map(([id,display_name])=>({id,display_name,phone_e164:contacts.get(id)?.phone||null,authorized:contacts.get(id)?.authorized||0}))};
+    if(sql.includes('FROM supplier_directory d LEFT JOIN supplier_contacts'))return {results:[...list].map(([id,display_name])=>({id,display_name,phone_e164:contacts.get(id)?.phone||null,authorized:contacts.get(id)?.authorized||0}))};
     if(sql.startsWith('SELECT id,display_name FROM supplier_directory'))return {results:[...list].map(([id,display_name])=>({id,display_name}))};
     return {results:[]};
    },
