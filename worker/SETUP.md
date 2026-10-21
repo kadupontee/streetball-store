@@ -17,17 +17,16 @@ O código está preparado, **não está publicado em produção**. A loja do Git
 
 ## Passo 1 — Criar Worker e banco de dados
 
-Abra a pasta do repositório no seu computador, com Node e Cloudflare Wrangler instalados:
+O banco D1 `streetball-db` **já foi criado** e seu `database_id` já está configurado no `wrangler.toml`. **Não crie outro banco.** Abra a pasta deste repositório no seu computador, com Node.js instalado, e autentique o Wrangler:
 
 ```bash
 npx wrangler login
-npx wrangler d1 create streetball-orders
 ```
 
-Copie o `database_id` exibido e substitua `INSIRA-ID-DO-SEU-BANCO-D1` em `wrangler.toml`. Depois execute:
+Para criar as tabelas necessárias ao checkout no banco existente, execute:
 
 ```bash
-npx wrangler d1 execute streetball-orders --remote --file=worker/schema.sql
+npx wrangler d1 execute streetball-db --remote --file=worker/schema.sql
 ```
 
 O mesmo `schema.sql` é seguro em uma base que já tem as tabelas anteriores; as três novas tabelas são criadas com `IF NOT EXISTS`.
