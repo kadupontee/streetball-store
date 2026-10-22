@@ -87,7 +87,7 @@ test('catálogo compartilhado apresenta fornecedor prioritário mesmo com produt
 
 test('resposta sem estoque seleciona o próximo fornecedor no Sandbox sem enviar mensagem',async()=>{
  const log=[];
- const order={id:'a1b2c3d4-1234-4234-8234-123456789012',status:'paid_supplier_pending',
+ const order={id:'a1b2c3d4-1234-4234-8234-123456789012',status:'paid_supplier_pending',city:'São Paulo',state:'SP',
   items_json:JSON.stringify([{id:'YUP-123456',title:'Barcelona',size:'M',qty:1,image:'/images/foo.jpg'}])};
  const DB={
   prepare(sql){
