@@ -1,10 +1,9 @@
 {
-  "checkedAt": "2026-10-21T13:15:23.824008+00:00",
+  "checkedAt": "2026-10-22T13:12:40.258791+00:00",
   "catalogProducts": 10936,
   "missingAnyUsableSource": 51,
   "supplierAlbumsInCatalog": 10890,
-  "localFilesValidated": 10877,
-  "remoteLinkNotValidatedInBrowser": 8,
+  "localFilesValidated": 10885,
   "supplierAlbumsIndexed": 10959,
   "withSource": 10885,
   "missingIds": [
@@ -60,15 +59,6 @@
     "YUP-222814760",
     "YUP-222810623"
   ],
-  "remoteExamples": [
-    "YUP-234980326",
-    "YUP-234979545",
-    "YUP-234978814",
-    "YUP-234952949",
-    "YUP-234948555",
-    "YUP-234865400",
-    "YUP-234852815",
-    "YUP-234443768"
-  ],
+  "remoteExamples": [],
   "method": "Local: arquivo existente e assinatura JPEG/PNG/WebP. Remoto: URL valida, sem teste de acesso do navegador. Fotos do fornecedor so sao validadas ao baixar e conferir o arquivo."
 }
