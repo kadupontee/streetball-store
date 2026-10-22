@@ -2,28 +2,62 @@
 
 O WhatsApp está desligado enquanto a verificação da Meta está pendente. Este documento descreve a implementação no código e os testes futuros. Não há mensagens reais disparadas.
 
-## Consulta automática de estoque
+## Consulta automática de estoque — mensagem mínima solicitada
 
-- A confirmação `PAYMENT_RECEIVED` do Asaas inicia a consulta, quando o ambiente real estiver autorizado.
-- O template `SUPPLIER_WA_TEMPLATE_MEDIA` utiliza **imagem de cabeçalho** com a foto do primeiro produto, uma variável com o ID curto do pedido e uma variável com o resumo do produto.
-- O resumo inclui **modelo, tamanho, quantidade, patch e personalização**.
-- Para pedidos com menos de três unidades, informa que conhecemos a condição promocional de frete grátis em pedidos a partir de três peças, mas que **queremos somente a quantidade comprada** e pedimos o valor correspondente de frete. Para três ou mais unidades, pede confirmação da elegibilidade ao frete grátis.
-- **Nunca acrescentar camisas automaticamente para atingir frete grátis.** A condição pode variar por fornecedor e precisa ser confirmada.
-- O template de imagem precisa estar aprovado pela Meta e a imagem precisa ser uma URL HTTPS válida e acessível; sem imagem válida, o Worker não envia a consulta e sinaliza revisão.
+A consulta inicial é composta **somente pela foto da camisa no cabeçalho do template e pelo texto abaixo**, sem saudação, número do pedido ou perguntas extras. Os campos são calculados a partir do pedido real.
 
-**Limite atual:** o cabeçalho do template usa somente a primeira foto do pedido. A apresentação de múltiplas fotos na consulta inicial de pedidos com vários modelos ainda requer uma solução aprovada pela Meta. Não presumir que todos os produtos já serão identificados visualmente em um pedido com várias camisas.
+Exemplo fictício de uma camisa:
 
-### Rascunho do template do fornecedor
+```text
+Produto: Camisa Real Madrid Third 2016/2017 — Roxa (Retrô)
 
-Nome sugerido: `streetball_consulta_estoque`. Idioma sugerido: `pt_BR` (confirmar idioma preferido dos fornecedores).
+Detalhes:
 
-Cabeçalho: imagem do produto.
+* Foto do produto: enviada em anexo
+* Tamanho: P (S)
+* Quantidade: 1 unidade
+* Personalização: Não
+* Patch: Não
+* Entrega: São Paulo, Brasil
 
-Corpo:
+Sei que vocês oferecem frete grátis para pedidos de 3 peças ou mais, mas gostaria de comprar apenas 1 unidade mesmo, pagando o frete correspondente.
+```
 
-> Streetball Store — consulta do pedido {{1}}. Produto e condições: {{2}}. Confirme se o modelo e tamanho estão em estoque. Responda DISPONIVEL {{1}} ou SEM_ESTOQUE {{1}}.
+A função `supplierPhotoRequest` está em `worker/supplier-order-format.js` e produz texto de prévia e os sete parâmetros do template:
 
-O próprio Worker prepara as variáveis `{{1}}` e `{{2}}`. O código não cadastra nem aprova esse template automaticamente na Meta.
+1. Título do produto, 2. tamanho, 3. quantidade, 4. personalização, 5. patch, 6. cidade de entrega + `Brasil`, 7. quantidade repetida na frase do frete.
+
+O template da Meta para pedidos com **1 ou 2 peças** (`SUPPLIER_WA_TEMPLATE_MEDIA`) deverá ter **imagem no cabeçalho** e o corpo exato:
+
+```text
+Produto: {{1}}
+
+Detalhes:
+
+* Foto do produto: enviada em anexo
+* Tamanho: {{2}}
+* Quantidade: {{3}}
+* Personalização: {{4}}
+* Patch: {{5}}
+* Entrega: {{6}}
+
+Sei que vocês oferecem frete grátis para pedidos de 3 peças ou mais, mas gostaria de comprar apenas {{7}} mesmo, pagando o frete correspondente.
+```
+
+Para **3 ou mais peças do mesmo modelo**, outro template (`SUPPLIER_WA_TEMPLATE_MEDIA_BULK`) usa o mesmo cabeçalho e as mesmas sete variáveis, mas a última frase é:
+
+```text
+Sei que vocês oferecem frete grátis para pedidos de 3 peças ou mais e gostaria de comprar exatamente {{7}}, mantendo essa quantidade.
+```
+
+**Observações importantes:**
+- Os templates ainda **não foram cadastrados nem aprovados pela Meta**. A aprovação pode exigir ajustes na redação. Não habilitar envios até os nomes e corpos aprovados corresponderem ao código.
+- Antes de ligar a integração, configurar `SUPPLIER_TEMPLATE_FORMAT="minimal_v1"` e os nomes dos templates aprovados apenas depois de testá-los. Enquanto isso, `WA_AUTOMATION_ENABLED="false"`, `ASAAS_SANDBOX="true"`.
+- A foto real precisa estar acessível por HTTPS, na URL autorizada do catálogo. Nada é enviado quando falta foto.
+- **Pedidos com mais de um modelo** ficam em revisão manual: não enviaremos a foto de uma única camisa como se ela representasse todo o pedido. Precisamos de suporte a múltiplas fotos antes de automatizá-los.
+- Respostas curtas `sim`/`não` continuam exigindo correlação com a mensagem original via `context.id` ou identificação explícita segura. Não incluímos código do pedido no texto visível para respeitar o formato solicitado, mas internamente preservamos o vínculo pelo ID de mensagem.
+- A promoção de frete grátis é informação relatada pelo fornecedor, não desconto garantido universalmente; a quantidade do comprador nunca é ampliada automaticamente.
+- Não compartilhar nome, CPF, telefone ou endereço completo na consulta inicial.
 
 ## Entender as respostas dos fornecedores
 
