@@ -152,3 +152,134 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
  z-index:3;font:600 11px/1.3 'DM Sans',Arial,sans-serif;color:#fff;text-shadow:0 2px 9px #111b;pointer-events:none
 }
 .editorial-fixed-tile.needs-label .category-photo{filter:brightness(.55)}
+
+/* === Streetball Mobile Editorial V2: preserve os 9 recortes licenciados ===
+   Fotos retrô nítidas, carrossel independente do texto e cards inteiros no celular. */
+@media (max-width:890px){
+ .hero{overflow:hidden}
+ .hero::before{opacity:.5}
+ .hero-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto;
+  height:auto;
+  min-height:0;
+  gap:0;
+  padding-top:0;
+  padding-bottom:24px
+ }
+ .hero-copy{
+  position:relative;
+  z-index:2;
+  padding:34px 0 16px;
+  max-width:100%
+ }
+ .hero h1{
+  font-size:clamp(76px,13vw,115px);
+  line-height:.83;
+  max-width:100%;
+  margin:18px 0 21px
+ }
+ .hero-copy>p{max-width:100%;font-size:12px;line-height:1.55}
+ .hero-buttons{margin-top:20px}
+ .hero-slider-controls{margin-top:16px}
+ .hero-art{
+  position:relative;
+  display:block;
+  inset:auto;
+  top:auto;left:auto;right:auto;bottom:auto;
+  opacity:1;
+  width:100%;
+  height:clamp(300px,55vw,455px);
+  min-height:300px;
+  max-width:none;
+  margin:4px auto 0;
+  transform:none;
+  overflow:visible
+ }
+ .hero-brush{left:34%;top:4%;width:130px;height:240px;opacity:.42}
+ .hero-notes{z-index:5;right:1%;bottom:0;font-size:11px}
+ .editorial-frame{box-shadow:0 12px 21px #16162433;opacity:1}
+ .editorial-frame.main{
+  width:44%;height:82%;left:28%;top:8%;z-index:4;transform:rotate(3deg)
+ }
+ .editorial-frame.left{
+  width:26%;height:62%;left:3%;top:6%;z-index:2;transform:rotate(-6deg)
+ }
+ .editorial-frame.right{
+  width:25%;height:62%;right:2%;top:6%;z-index:2;transform:rotate(7deg)
+ }
+ .editorial-frame.low{
+  width:28%;height:44%;right:0;bottom:1%;z-index:5;transform:rotate(-5deg)
+ }
+ .editorial-frame.low-left{
+  width:27%;height:42%;left:0;bottom:0;z-index:3;transform:rotate(5deg)
+ }
+ .category-grid{gap:15px}
+ .category-tile.editorial-fixed-tile{
+  min-height:0;
+  aspect-ratio:1.38 / 1;
+  border-radius:6px
+ }
+ .category-tile.editorial-fixed-tile .category-photo{
+  object-fit:cover;
+  object-position:center;
+  filter:none
+ }
+ .category-tile.editorial-fixed-tile.needs-label .category-photo{filter:brightness(.55)}
+}
+@media (max-width:600px){
+ .hero-layout{padding-bottom:17px}
+ .hero-copy{padding:30px 0 9px}
+ .hero .eyebrow{font-size:9px;letter-spacing:.16em}
+ .hero h1{
+  font-size:clamp(72px,17vw,96px);
+  letter-spacing:-.055em;
+  line-height:.82;
+  margin:14px 0 18px
+ }
+ .hero-copy>p{font-size:10px;max-width:310px;line-height:1.55}
+ .hero-buttons{gap:9px;margin-top:16px}
+ .hero-buttons .btn-ghost,.hero-buttons .btn-accent{
+  padding:12px 14px;min-height:44px;font-size:10px
+ }
+ .hero-slider-controls{margin-top:15px}
+ .hero-art{
+  opacity:1;
+  left:auto;right:auto;top:auto;
+  width:100%;height:clamp(290px,92vw,380px);
+  min-height:290px
+ }
+ .hero-brush{left:29%;width:90px;height:220px}
+ .hero-notes{font-size:9px;right:0;bottom:0}
+ .editorial-frame{padding:5px 5px 15px}
+ .editorial-frame::after{font-size:5px;bottom:5px;left:6px;letter-spacing:0}
+ .editorial-frame.main{width:49%;height:79%;left:25%;top:6%;z-index:4}
+ .editorial-frame.left{width:28%;height:61%;left:1%;top:9%}
+ .editorial-frame.right{width:28%;height:60%;right:0;top:3%}
+ .editorial-frame.low{width:32%;height:43%;right:0;bottom:0}
+ .editorial-frame.low-left{width:30%;height:37%;left:0;bottom:0}
+ .service-grid .service-item{min-height:83px;padding:12px 6px}
+ .category-section{padding-top:45px;padding-bottom:52px}
+ .category-section .section-head h2{font-size:clamp(38px,10vw,54px)}
+ .category-grid{grid-template-columns:minmax(0,1fr);gap:13px}
+ .category-tile.editorial-fixed-tile{
+  width:100%;
+  min-height:0;
+  aspect-ratio:1.39 / 1;
+  padding:0;
+  border-radius:6px
+ }
+ .category-tile.editorial-fixed-tile .category-photo{
+  object-fit:cover;object-position:50% 50%;
+ }
+}
+@media (max-width:360px){
+ .hero h1{font-size:clamp(63px,18vw,74px)}
+ .hero-art{min-height:270px;height:285px}
+ .hero-notes{font-size:8px}
+}
+@media (prefers-reduced-motion:reduce){
+ .editorial-hero-scene{transition:none}
+ .editorial-fixed-tile .category-photo{transition:none}
+}
