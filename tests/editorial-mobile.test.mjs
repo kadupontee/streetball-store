@@ -27,6 +27,6 @@ test('desktop e celular usam as nove fotos aprovadas, com navegação do carross
   assert.ok(app.includes('/images/editorial/'+img),img);
  }
  assert.match(html,/id="heroSliderControls"/);
- assert.match(html,/20261022-mobile-v2/);
+ assert.match(html,/20261022-mobile-v3/);
  assert.doesNotThrow(()=>new Function(app));
 });
