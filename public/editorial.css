@@ -67,7 +67,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .service-grid .service-item{display:flex;align-items:center;gap:20px;padding:22px 30px;color:#101018;min-width:0;position:relative}
 .service-grid .service-item:not(:last-child):after{content:'';width:1px;height:55%;right:0;top:22%;position:absolute;background:#393d7460}
 .service-grid .service-item b{font:800 53px/1 'Barlow Condensed',Impact,sans-serif;color:#111;margin:0}
-.service-item .service-icon{font-size:26px;flex:none}
+.service-item .service-icon{font-size:26px;flex:none;width:32px;height:32px;display:block}.service-item .service-icon svg{width:32px;height:32px;display:block}
 .service-item strong{font-size:12px;line-height:1.4;letter-spacing:.05em;display:block}
 .service-item small{font-size:11px;font-weight:500;line-height:1.45;display:block;margin-top:8px;letter-spacing:0;color:#202241}
 .service-item a{text-decoration:none;border-bottom:1px solid #202241;padding-bottom:1px}
