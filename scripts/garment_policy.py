@@ -1,7 +1,7 @@
 """Política conservadora de jaquetas e camisas de manga longa da Streetball Store.
 
-Custo USD: jaqueta 30, manga longa 15, manga longa retrô 19.
-Preços sugeridos BRL: 379,90 / 189,90 / 229,90 respectivamente.
+Custo USD: jaqueta 30, manga longa 15, manga longa retrô 19; custo de casaco não informado.
+Preços BRL: jaqueta 379,90, casaco e blusa 189,90, manga longa retrô 229,90.
 Não infere pixel de imagens: exige foto cadastrada na migração e classificações
 claras por título/álbum; registros ambíguos ficam no relatório de revisão.
 """
@@ -11,17 +11,18 @@ import re
 import unicodedata
 from datetime import date
 
-PRICES_BRL = {"jacket":379.90,"long":189.90,"retro_long":229.90}
+PRICES_BRL = {"jacket":379.90,"coat":189.90,"long":189.90,"retro_long":229.90}
 COSTS_USD = {"jacket":30,"long":15,"retro_long":19}
 # Tipos e preços antigos do importador que podem ser corrigidos automaticamente.
 LEGACY_PRICES = {159.90,189.90,199.90,229.90,209.90,219.90,299.90}
 JACKET = re.compile(
-    r"\b(?:jackets?|jaquetas?|casacos?|wind\s*breakers?|windbreakers?|"
+    r"\b(?:jackets?|jaquetas?|wind\s*breakers?|windbreakers?|"
     r"track\s*jackets?|shell\s*jackets?|softshell|"
     r"full\s*[- ]?zip(?:per)?|half\s*[- ]?zip(?:per)?|"
     r"quarter\s*[- ]?zip(?:per)?|1/2\s*[- ]?zip|1/4\s*[- ]?zip|"
     r"anoraks?|parkas?|corta\s*vento)\b",re.I
 )
+COAT = re.compile(r"\b(?:coats?|casacos?)\b",re.I)
 LONG = re.compile(
     r"\b(?:long\s*[- ]?sleeves?|long\s*[- ]?sleeved|longsleeves?|"
     r"mangas?\s*longas?)\b",re.I
@@ -71,12 +72,15 @@ def garment_decision(product, *, require_photo=False):
         return None,"sem nome"
     if kind in NO_GARMENT or re.search(r"\b(?:kids?|children|infantil|baby)\b",title):
         return None,"produto infantil ou acessorio"
+    is_coat=bool(COAT.search(title))
     is_jacket=bool(JACKET.search(title))
     is_set=bool(SET.search(title)) or (
-        is_jacket and bool(re.search(r"\b(?:pants?|calcas?|trousers?|joggers?|bottoms?)\b",title))
+        (is_jacket or is_coat) and bool(re.search(r"\b(?:pants?|calcas?|trousers?|joggers?|bottoms?)\b",title))
     )
-    if is_jacket and is_set:
-        return None,"conjunto com jaqueta: preco nao confirmado para conjunto"
+    if (is_jacket or is_coat) and is_set:
+        return None,"conjunto com jaqueta ou casaco: preco de conjunto nao confirmado"
+    if is_coat:
+        return "coat","casaco identificado no titulo: mesmo preco de blusa"
     if is_jacket:
         return "jacket","jaqueta, moletom ou corta-vento identificado no titulo"
     if SHORT.search(title):
@@ -101,12 +105,12 @@ def apply_garment_pricing(product, *, require_photo=False):
     old_kind=item.get("kind")
     if not item.get("kindLocked"):
         item["kind"]=target
-    if target=="jacket" and not item.get("categoryLocked"):
+    if target in ("jacket","coat") and not item.get("categoryLocked"):
         item["category"]="treino"
     if not item.get("priceLocked"):
         try: old_price=float(item.get("price") or 0)
         except (TypeError,ValueError):old_price=0
-        if old_price==0 or any(abs(old_price-old)<0.01 for old in LEGACY_PRICES):
+        if old_price==0 or any(abs(old_price-old)<0.01 for old in LEGACY_PRICES) or (target=="coat" and abs(old_price-379.90)<0.01):
             item["price"]=PRICES_BRL[target]
     if item.get("kind")!=old_kind or item.get("price")!=product.get("price"):
         item["garmentClassification"]="title_and_image_link"
