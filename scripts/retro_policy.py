@@ -69,7 +69,7 @@ def apply_retro_policy(product, today=None):
     """Altera apenas cópia do produto, preserva IDs, variantes e preços bloqueados."""
     item = dict(product)
     # Jaquetas antigas não são camisas retrô e mantêm sua categoria de vestuário.
-    if str(item.get('kind') or '').lower() == 'jacket':
+    if str(item.get('kind') or '').lower() in ('jacket','coat'):
         return item
     title = str(item.get('supplierTitle') or item.get('title') or '')
     if not is_older_than_five_seasons(title, today):
