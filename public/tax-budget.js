@@ -4,12 +4,13 @@ export function estimatedImportTaxes(goodsUsd,freightUsd,insuranceUsd,icmsRate,{
  const rate=Number(icmsRate);
  if(amounts.some(n=>!Number.isFinite(n)||n<0||n>3000)||!Number.isFinite(rate)||rate<0||rate>=1)
   throw Error('Valores de importação ou ICMS inválidos.');
- const customsValueUsd=amounts.reduce((a,b)=>a+b,0);
- const importDutyUsd=prcEligible
+ const round=n=>Math.round((n+Number.EPSILON)*100)/100;
+ const customsValueUsd=round(amounts.reduce((a,b)=>a+b,0));
+ const importDutyUsd=round(prcEligible
   ? (customsValueUsd<=50?0:Math.max(0,customsValueUsd*.6-30))
-  : customsValueUsd*.6;
- const icmsUsd=(customsValueUsd+importDutyUsd)*rate/(1-rate);
- return {customsValueUsd,importDutyUsd,icmsUsd,landedUsd:customsValueUsd+importDutyUsd+icmsUsd};
+  : customsValueUsd*.6);
+ const icmsUsd=round((customsValueUsd+importDutyUsd)*rate/(1-rate));
+ return {customsValueUsd,importDutyUsd,icmsUsd,landedUsd:round(customsValueUsd+importDutyUsd+icmsUsd)};
 }
 /** Minimum sell price for target fraction of sale revenue kept as contribution margin. */
 export function quoteTaxesIncluded({goodsUsd,freightUsd,insuranceUsd=0,icmsRate=.2,
