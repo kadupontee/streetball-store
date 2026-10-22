@@ -8,7 +8,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from catalog_utils import PRICES
+from catalog_utils import PRICES, classify, normalize_product
 from pricing_report import produce_report
 
 DATA = Path(__file__).with_name("costs.json")
@@ -38,6 +38,16 @@ class SupplierCostTests(unittest.TestCase):
             self.assertEqual(entries["shorts"]["custo_produto_mais_frete_BRL"], "70.00")
             self.assertEqual(entries["shorts_player"]["preco_venda_referencia_BRL"], "143.90")
             self.assertEqual(entries["shorts_player"]["margem_bruta_parcial_percentual"], "44.40")
+
+    def test_player_shorts_category_and_existing_prices(self):
+        self.assertEqual(classify("Sao Paulo Player Shorts 26-27"), ("acessorios", "shorts_player"))
+        self.assertEqual(classify("Calção jogador Brasil 2026"), ("acessorios", "shorts_player"))
+        self.assertEqual(classify("Calção comum Brasil 2026"), ("acessorios", "shorts"))
+        old = normalize_product({"id": "TEST-PLAYER-SHORTS", "title": "Sao Paulo Player Shorts", "kind": "shorts", "price": 119.90})
+        self.assertEqual(old["kind"], "shorts_player")
+        self.assertEqual(old["price"], 143.90)
+        locked = normalize_product({"id": "TEST-LOCKED-SHORTS", "title": "Sao Paulo Player Shorts", "kind": "shorts", "price": 119.90, "priceLocked": True})
+        self.assertEqual(locked["price"], 119.90)
 
     def test_without_exchange_rate_does_not_guess_margin(self):
         with TemporaryDirectory() as directory:
