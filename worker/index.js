@@ -233,7 +233,7 @@ async function adminApi(request,env,ctx){
  if(request.method==='GET'&&url.pathname==='/api/admin/supplier-preview'){
   const orderId=url.searchParams.get('orderId')||'';
   if(!/^[a-f0-9-]{36}$/i.test(orderId))return clientError('ID do pedido inválido.');
-  const order=await env.DB.prepare('SELECT id,status,items_json FROM orders WHERE id=?').bind(orderId).first();
+  const order=await env.DB.prepare('SELECT id,status,items_json,city,state FROM orders WHERE id=?').bind(orderId).first();
   if(!order)return clientError('Pedido não encontrado.',404);
   const candidates=await loadSupplierCandidates(env);
   const preview=previewSupplierOrder(env,order,candidates);
