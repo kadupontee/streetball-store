@@ -1,4 +1,5 @@
 import {classifyStockReply,classifySupplierMessage,supplierReplyAction} from './supplier-replies.js';
+import {supplierPhotoRequest} from './supplier-order-format.js';
 export {classifyStockReply,classifySupplierMessage,supplierReplyAction} from './supplier-replies.js';
 /** Fluxo seguro de fulfillment: fotos, WhatsApp oficial, fallback de 12h e prazo total de 72h.
  * Sem credenciais/consentimento não envia mensagens. Pix para fornecedor exige aprovação humana.
@@ -72,12 +73,17 @@ export function previewSupplierOrder(env,order,candidateOverride=null){
  const candidates=candidateOverride||suppliers(env);
  const supplier=candidates[0]||null;
  const firstPhoto=imageLink(items[0]?.image,env);
- const photoTemplate=env.SUPPLIER_WA_TEMPLATE_MEDIA||supplier?.mediaTemplate||'';
+ const photoRequest=supplierPhotoRequest(order);
+ const photoTemplate=photoRequest?.variant==='three_or_more'
+   ?env.SUPPLIER_WA_TEMPLATE_MEDIA_BULK||''
+   :env.SUPPLIER_WA_TEMPLATE_MEDIA||supplier?.mediaTemplate||'';
  const checks={
    sandbox:env.ASAAS_SANDBOX==='true',
    whatsappAutomationDisabled:env.WA_AUTOMATION_ENABLED!=='true',
    supplierConfigured:!!supplier,
    firstPhotoAvailable:!!firstPhoto,
+   supportedSingleProductOrder:!!photoRequest,
+   minimalTemplateFormatConfigured:env.SUPPLIER_TEMPLATE_FORMAT==='minimal_v1',
    photoTemplateConfigured:!!photoTemplate,
    waTokenConfigured:!!env.WA_TOKEN,
    waPhoneIdConfigured:!!env.WA_PHONE_NUMBER_ID
@@ -90,6 +96,8 @@ export function previewSupplierOrder(env,order,candidateOverride=null){
    supplier:supplier?{id:supplier.id,phoneEnding:supplier.phone.slice(-4)}:null,
    firstPhotoUrl:firstPhoto||null,
    photoTemplate:photoTemplate||null,
+   supplierMessage:photoRequest?.text||null,
+   supplierMessageVariant:photoRequest?.variant||null,
    messageSummary:messageSummary(items),
    items:items.map(it=>({
      title:trim(it.title,100),size:trim(it.size,15),qty:Number(it.qty)||0,
@@ -98,6 +106,7 @@ export function previewSupplierOrder(env,order,candidateOverride=null){
    })),
    checks,
    readyForAutomaticSending:checks.supplierConfigured&&checks.firstPhotoAvailable&&
+     checks.supportedSingleProductOrder&&checks.minimalTemplateFormatConfigured&&
      checks.photoTemplateConfigured&&checks.waTokenConfigured&&
      checks.waPhoneIdConfigured&&!checks.whatsappAutomationDisabled&&!checks.sandbox
  };
@@ -143,7 +152,7 @@ export function messageSummary(items){
 }
 export async function routePaidOrder(env,orderId){
  if(!env.DB)return false;
- const order=await env.DB.prepare("SELECT id,status,items_json FROM orders WHERE id=?").bind(orderId).first();
+ const order=await env.DB.prepare("SELECT id,status,items_json,city,state FROM orders WHERE id=?").bind(orderId).first();
  if(!order||order.status!=='paid_supplier_pending')return false;
  const items=JSON.parse(order.items_json||'[]');
  const candidates=await loadSupplierCandidates(env);
@@ -163,7 +172,18 @@ export async function routePaidOrder(env,orderId){
   await env.DB.prepare("UPDATE supplier_jobs SET status=?,updated_at=? WHERE order_id=?").bind(candidates.length?'awaiting_stock_deadline':'manual_review',now(),order.id).run();
   return false;
  }
- const photoTemplate=env.SUPPLIER_WA_TEMPLATE_MEDIA||supplier.mediaTemplate;
+ const photoRequest=supplierPhotoRequest(order);
+ const photoTemplate=photoRequest?.variant==='three_or_more'
+  ?env.SUPPLIER_WA_TEMPLATE_MEDIA_BULK||''
+  :env.SUPPLIER_WA_TEMPLATE_MEDIA||supplier.mediaTemplate;
+ // Uma única foto representa um único modelo. Pedidos com vários modelos vão à conferência.
+ // Só aceitar o novo template com 7 variáveis após a Meta aprová-lo.
+ if(!photoRequest||env.SUPPLIER_TEMPLATE_FORMAT!=='minimal_v1'){
+  await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_review',last_error=?,updated_at=? WHERE order_id=? AND state IN ('pending','needs_configuration')")
+   .bind(!photoRequest?'Pedido com vários modelos ou endereço incompleto: preparar consulta visual sem perder itens':'Novo modelo de WhatsApp ainda não validado na Meta',now(),order.id).run();
+  await env.DB.prepare("UPDATE supplier_jobs SET status='manual_review',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
+  return false;
+ }
  // Sandbox nunca envia automaticamente a fornecedores reais, mesmo se alguém ativar WA_AUTOMATION_ENABLED.
  if(!env.STORE_PUBLIC_URL||!firstPhoto||!photoTemplate||
     env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true'){
@@ -176,7 +196,7 @@ export async function routePaidOrder(env,orderId){
   .bind(supplier.id,supplier.phone,now(),order.id).run();
  if(!lock.meta?.changes)return false;
  try{
-  const messageId=await sendTemplate(env,supplier.phone,photoTemplate,[order.id.slice(0,8),messageSummary(items)],firstPhoto);
+  const messageId=await sendTemplate(env,supplier.phone,photoTemplate,photoRequest.args,firstPhoto);
   await env.DB.prepare("INSERT INTO supplier_attempts(order_id,supplier_id,state,message_id,created_at,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(order_id,supplier_id) DO UPDATE SET state=excluded.state,message_id=excluded.message_id,updated_at=excluded.updated_at")
    .bind(order.id,supplier.id,'awaiting_reply',messageId,now(),now()).run();
   await env.DB.prepare("UPDATE supplier_dispatch SET state='awaiting_reply',message_id=?,sent_at=?,details_sent_at=NULL,responded_at=NULL,updated_at=? WHERE order_id=? AND state='sending'")
