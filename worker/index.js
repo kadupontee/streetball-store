@@ -1,5 +1,7 @@
 import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply,supplierReplyAction} from './fulfillment.js';
 import {supplierIdValid} from './supplier-mapping.js';
+import {STAGES,safeTrackingCode,formatProgress} from './order-progress.js';
+import {customerTrackingLink,verifyTrackingKey} from './order-tracking-access.js';
 /** Streetball Store - Cloudflare Worker + D1 + Asaas sandbox/production
  * Nunca armazene tokens ou chaves na pasta public/.
  * IMPORTANTE: pagamento ao fornecedor NÃO é automatizado neste MVP.
@@ -34,11 +36,11 @@ if(!attempt.meta?.changes){
  const prior=await env.DB.prepare('SELECT request_key,payload_hash,order_id FROM checkout_attempts WHERE request_key=?').bind(requestKey).first();
  if(!prior||prior.payload_hash!==hash)return clientError('Essa tentativa de checkout já está vinculada a outros dados. Atualize o checkout.',409);
  const saved=await env.DB.prepare('SELECT id,status,total,shipping,payment_url FROM orders WHERE id=?').bind(prior.order_id).first();
- if(saved?.payment_url&&saved.status==='awaiting_payment')return json({orderId:saved.id,paymentUrl:saved.payment_url,total:saved.total,shipping:saved.shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',reused:true});
+ if(saved?.payment_url&&saved.status==='awaiting_payment')return json({orderId:saved.id,paymentUrl:saved.payment_url,total:saved.total,shipping:saved.shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',reused:true,trackingUrl:await customerTrackingLink(env,saved.id)});
  return clientError('Sua cobrança ainda está em processamento ou precisa ser conferida. Consulte o pedido antes de tentar outra compra.',409);
 }
 await env.DB.prepare('INSERT INTO orders(id,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id,now,now,'awaiting_payment',name,email,phone,cpf,zip,address,city,state,JSON.stringify(cart.items),cart.subtotal,shipping,total).run();if(whatsappOptIn)await env.DB.prepare('INSERT OR IGNORE INTO buyer_message_optin(order_id,consented_at) VALUES(?,?)').bind(id,now).run();
-try{const customer=await asaas('/customers',env,{name,email,cpfCnpj:cpf,mobilePhone:phone,postalCode:zip,addressNumber:(address.match(/\b\d{1,5}\b/)||[])[0]||'S/N',externalReference:id,notificationDisabled:true});const due=new Date(Date.now()+48*3600*1000).toISOString().slice(0,10);const charge=await asaas('/payments',env,{customer:customer.id,billingType,value:total,dueDate:due,description:`Streetball Store pedido ${id.slice(0,8)}`,externalReference:id});if(!charge.id||!charge.invoiceUrl)throw Error('Cobrança não retornou link seguro.');await env.DB.prepare('UPDATE orders SET payment_id=?,payment_url=?,updated_at=? WHERE id=?').bind(charge.id,charge.invoiceUrl,new Date().toISOString(),id).run();return json({orderId:id,paymentUrl:charge.invoiceUrl,total,subtotal:cart.subtotal,shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true'});}catch(e){await env.DB.prepare('UPDATE orders SET status=?,updated_at=? WHERE id=?').bind('payment_setup_failed',new Date().toISOString(),id).run();return clientError('Não foi possível gerar a cobrança. Tente novamente mais tarde.',502)}}
+try{const customer=await asaas('/customers',env,{name,email,cpfCnpj:cpf,mobilePhone:phone,postalCode:zip,addressNumber:(address.match(/\b\d{1,5}\b/)||[])[0]||'S/N',externalReference:id,notificationDisabled:true});const due=new Date(Date.now()+48*3600*1000).toISOString().slice(0,10);const charge=await asaas('/payments',env,{customer:customer.id,billingType,value:total,dueDate:due,description:`Streetball Store pedido ${id.slice(0,8)}`,externalReference:id});if(!charge.id||!charge.invoiceUrl)throw Error('Cobrança não retornou link seguro.');await env.DB.prepare('UPDATE orders SET payment_id=?,payment_url=?,updated_at=? WHERE id=?').bind(charge.id,charge.invoiceUrl,new Date().toISOString(),id).run();return json({orderId:id,paymentUrl:charge.invoiceUrl,total,subtotal:cart.subtotal,shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',trackingUrl:await customerTrackingLink(env,id)});}catch(e){await env.DB.prepare('UPDATE orders SET status=?,updated_at=? WHERE id=?').bind('payment_setup_failed',new Date().toISOString(),id).run();return clientError('Não foi possível gerar a cobrança. Tente novamente mais tarde.',502)}}
 async function paymentWebhook(req,env,ctx){
  if(!env.ASAAS_WEBHOOK_TOKEN||req.headers.get('asaas-access-token')!==env.ASAAS_WEBHOOK_TOKEN)return clientError('Não autorizado.',401);
  if(!env.DB)return clientError('Banco não disponível.',503);
@@ -241,6 +243,47 @@ async function adminApi(request,env,ctx){
   const blocked=new Set((attempts.results||[]).filter(a=>['unavailable','ambiguous','timed_out'].includes(a.state)).map(a=>a.supplier_id));
   return json({...preview,sharedCatalog:true,registeredSuppliers:directory.results||[],stockAttempts:attempts.results||[],nextSupplierId:preview.supplierCandidates.find(s=>!blocked.has(s.id))?.id||null});
  }
+ if(request.method==='GET'&&url.pathname==='/api/admin/order-progress'){
+   const orderId=url.searchParams.get('orderId')||'';
+   if(!/^[a-f0-9-]{36}$/i.test(orderId))return clientError('Pedido inválido.');
+   const order=await env.DB.prepare('SELECT id,status FROM orders WHERE id=?').bind(orderId).first();
+   if(!order)return clientError('Pedido não encontrado.',404);
+   const meta=await env.DB.prepare('SELECT carrier,tracking_code FROM order_tracking_meta WHERE order_id=?').bind(orderId).first();
+   const result=await env.DB.prepare('SELECT stage,evidence_source,created_at FROM order_tracking_events WHERE order_id=? ORDER BY created_at DESC LIMIT 50').bind(orderId).all();
+   return json({orderId,status:order.status,trackingUrl:await customerTrackingLink(env,orderId),
+     ...formatProgress(order,meta,result.results||[]),adminEvents:result.results||[]});
+ }
+ if(request.method==='POST'&&url.pathname==='/api/admin/order-progress'){
+   if(Number(request.headers.get('content-length')||0)>2000)return clientError('Requisição muito grande.',413);
+   const body=await request.json().catch(()=>null);
+   const id=String(body?.orderId||'');
+   const stage=String(body?.stage||'');
+   const code=String(body?.trackingCode||'').trim();
+   const carrier=String(body?.carrier||'').trim();
+   if(!/^[a-f0-9-]{36}$/i.test(id)||!Object.hasOwn(STAGES,stage)||
+      !safeTrackingCode(code)||!['correios','courier','unknown'].includes(carrier)||
+      body?.verified!==true||!['supplier','courier','correios','admin_document'].includes(body?.source))
+     return clientError('Forneça estado, transportadora, fonte verificada e confirmação de evidência.');
+   if(stage==='tax_payment_due'&&carrier!=='correios'&&carrier!=='courier')
+     return clientError('Informe a transportadora que confirmou a cobrança.');
+   const order=await env.DB.prepare('SELECT id,status FROM orders WHERE id=?').bind(id).first();
+   if(!order)return clientError('Pedido não encontrado.',404);
+   if(!['paid_supplier_pending','supplier_preparing'].includes(order.status))
+     return clientError('Somente pedidos pagos e ativos podem receber eventos de transporte.',409);
+   if(['shipped','international_transit','arrived_brazil','customs_inspection','tax_payment_due','customs_released','out_for_delivery','delivered'].includes(stage)&&!code)
+     return clientError('O rastreamento verificado é obrigatório para etapas de transporte.',400);
+   const latest=await env.DB.prepare('SELECT stage FROM order_tracking_events WHERE order_id=? ORDER BY created_at DESC LIMIT 1').bind(id).first();
+   if(latest?.stage===stage)return clientError('Esse já é o status mais recente do pedido.',409);
+   const t=new Date().toISOString();
+   await env.DB.batch([
+     env.DB.prepare('INSERT INTO order_tracking_events(id,order_id,stage,evidence_source,created_at) VALUES(?,?,?,?,?)')
+       .bind(crypto.randomUUID(),id,stage,body.source,t),
+     env.DB.prepare('INSERT INTO order_tracking_meta(order_id,carrier,tracking_code,updated_at) VALUES(?,?,?,?) ON CONFLICT(order_id) DO UPDATE SET carrier=excluded.carrier,tracking_code=CASE WHEN excluded.tracking_code<>\'\' THEN excluded.tracking_code ELSE order_tracking_meta.tracking_code END,updated_at=excluded.updated_at')
+       .bind(id,carrier,code,t)
+   ]);
+   return json({ok:true,stage,label:STAGES[stage],trackingUrl:await customerTrackingLink(env,id),
+     notification:'Nenhuma mensagem automática enviada. Compartilhe o link com o cliente quando autorizado.'});
+ }
  if(request.method==='GET'&&url.pathname==='/api/admin/orders'){
   const data=await env.DB.prepare('SELECT o.id,o.created_at,o.status,o.name,o.email,o.phone,o.city,o.state,o.items_json,o.subtotal,o.shipping,o.total,j.status AS supplier_status,j.updated_at AS supplier_updated_at,d.supplier_id,d.state AS dispatch_state,d.sent_at AS sent_to_supplier_at,d.responded_at AS supplier_replied_at,d.last_error AS supplier_error,d.created_at AS supplier_search_started_at,n.state AS buyer_notification_status,a.state AS delay_apology_status FROM orders o LEFT JOIN supplier_jobs j ON j.order_id=o.id LEFT JOIN supplier_dispatch d ON d.order_id=o.id LEFT JOIN buyer_notifications n ON n.order_id=o.id LEFT JOIN buyer_delay_notifications a ON a.order_id=o.id ORDER BY o.created_at DESC LIMIT 75').all();
   return json({orders:data.results||[]});
@@ -273,6 +316,17 @@ async function whatsappInbound(req,env,ctx){
 }
 export default {async fetch(request,env,ctx){const url=new URL(request.url);if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors});try{
  if(url.pathname.startsWith('/api/admin/'))return await adminApi(request,env,ctx);
+ if(url.pathname==='/api/track'&&request.method==='POST'){
+   if(Number(request.headers.get('content-length')||0)>1100)return clientError('Solicitação muito grande.',413);
+   const body=await request.json().catch(()=>null);
+   const id=String(body?.orderId||'');
+   if(!await verifyTrackingKey(env.TRACKING_LINK_SECRET,id,body?.access))return clientError('Acesso inválido.',403);
+   const order=await env.DB.prepare('SELECT id,status FROM orders WHERE id=?').bind(id).first();
+   if(!order)return clientError('Pedido não encontrado.',404);
+   const meta=await env.DB.prepare('SELECT carrier,tracking_code FROM order_tracking_meta WHERE order_id=?').bind(id).first();
+   const updates=await env.DB.prepare('SELECT stage,evidence_source,created_at FROM order_tracking_events WHERE order_id=? ORDER BY created_at DESC LIMIT 50').bind(id).all();
+   return json(formatProgress(order,meta,updates.results||[]));
+ }
  if(url.pathname==='/api/checkout/config'&&request.method==='GET')return checkoutConfig(env);
  if(url.pathname==='/api/orders'&&request.method==='POST')return await createOrder(request,env);
  if(url.pathname==='/api/webhooks/asaas'&&request.method==='POST')return await paymentWebhook(request,env,ctx);
