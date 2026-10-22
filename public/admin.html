@@ -1,10 +1,37 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Streetball — Operações</title><style>
 *{box-sizing:border-box}body{background:#f5f6f2;font:13px Arial,sans-serif;color:#1b231b;margin:0}header{background:#151b16;color:#fff;padding:24px}main{max-width:1150px;margin:34px auto;padding:0 20px}h1{margin:0;font-size:24px;letter-spacing:-.5px}header p{color:#aabbac;font-size:12px}button{cursor:pointer;background:#182519;color:#fff;border:0;padding:10px 13px}input,select{padding:10px;border:1px solid #ccd4c8;background:#fff;border-radius:3px}table{width:100%;border-collapse:collapse;background:#fff}th,td{text-align:left;padding:13px;border-bottom:1px solid #e9ede7;vertical-align:top;font-size:11px}th{background:#e9eee5;color:#354434;text-transform:uppercase;letter-spacing:.08em}.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:22px}.tools input{flex:1;min-width:210px}.pill{padding:5px 9px;display:inline-block;background:#eef2e9;font-size:10px;font-weight:bold}.warn{background:#f8e9d9;color:#8c5520}.message{color:#5d6d5d;font-size:11px}.table-wrap{overflow-x:auto}.small{font-size:10px;color:#6b7768;line-height:1.6}select{width:170px;max-width:100%}
-.preview-box{background:#fff;padding:20px;margin-top:18px;border:1px solid #d7dfd3}.preview-box pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 ui-monospace,monospace}.preview-box h2{margin:0 0 12px;font-size:17px}</style></head><body><header><h1>STREETBALL / Operações</h1><p>Consulta de pedidos pagos, contato com fornecedor, confirmação e pendências. Uso restrito à administração.</p></header><main><p><a href="/suppliers.html" style="display:inline-block;background:#182519;color:#fff;padding:11px 15px;margin-bottom:16px;text-decoration:none">CADASTRAR FORNECEDORES E DEFINIR PRIORIDADE →</a></p><div class="tools"><input id="token" placeholder="Cole o ADMIN_TOKEN de produção" type="password" autocomplete="off"><button id="load">CARREGAR PEDIDOS</button><span class="message" id="feedback"></span></div><div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Fornecedor / Ação</th></tr></thead><tbody id="rows"><tr><td colspan="6">Informe sua chave administrativa para consultar os pedidos.</td></tr></tbody></table></div><section class="preview-box"><h2>Mensagem de desculpas por atraso (revisão manual)</h2><p>Quando o prazo de 72 horas terminar sem confirmação, o pedido será marcado para revisão. Se houver consentimento do cliente, credenciais válidas e template aprovado, o aviso poderá ser enviado automaticamente. Caso contrário, use este texto para contato manual:</p><pre>Pedimos desculpas pela demora na confirmação de disponibilidade do seu pedido. Nossa equipe está verificando as opções e entrará em contato com uma atualização. Agradecemos pela compreensão.</pre><p class="small">Não informe que a camisa está sendo preparada antes de um fornecedor confirmar.</p></section><section id="previewPanel" class="preview-box" hidden><h2>Prévia do fornecedor — nenhum envio será realizado</h2><pre id="previewResult"></pre></section><p class="small">Nenhum pagamento ao fornecedor acontece aqui automaticamente. Revise disponibilidade, autorização da imagem, link de cobrança e Pix antes de efetivar qualquer transferência. O histórico de cobrança do Asaas é a fonte de verdade do pagamento do cliente.</p></main><script>
+.preview-box{background:#fff;padding:20px;margin-top:18px;border:1px solid #d7dfd3}.preview-box pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 ui-monospace,monospace}.preview-box h2{margin:0 0 12px;font-size:17px}</style></head><body><header><h1>STREETBALL / Operações</h1><p>Consulta de pedidos pagos, contato com fornecedor, confirmação e pendências. Uso restrito à administração.</p></header><main><p><a href="/suppliers.html" style="display:inline-block;background:#182519;color:#fff;padding:11px 15px;margin-bottom:16px;text-decoration:none">CADASTRAR FORNECEDORES E DEFINIR PRIORIDADE →</a></p><div class="tools"><input id="token" placeholder="Cole o ADMIN_TOKEN de produção" type="password" autocomplete="off"><button id="load">CARREGAR PEDIDOS</button><span class="message" id="feedback"></span></div><div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Fornecedor / Ação</th></tr></thead><tbody id="rows"><tr><td colspan="6">Informe sua chave administrativa para consultar os pedidos.</td></tr></tbody></table></div><section class="preview-box"><h2>Mensagem de desculpas por atraso (revisão manual)</h2><p>Quando o prazo de 72 horas terminar sem confirmação, o pedido será marcado para revisão. Se houver consentimento do cliente, credenciais válidas e template aprovado, o aviso poderá ser enviado automaticamente. Caso contrário, use este texto para contato manual:</p><pre>Pedimos desculpas pela demora na confirmação de disponibilidade do seu pedido. Nossa equipe está verificando as opções e entrará em contato com uma atualização. Agradecemos pela compreensão.</pre><p class="small">Não informe que a camisa está sendo preparada antes de um fornecedor confirmar.</p></section><section id="trackingPanel" class="preview-box" hidden>
+<h2>Andamento e tributos (eventos verificados)</h2>
+<p class="small">Registre somente informações confirmadas pelo fornecedor ou pela transportadora. Não altere a etapa do pedido com base apenas em suposições.</p>
+<form id="trackingForm">
+<input type="hidden" id="trackingOrderId">
+<label>Etapa <select id="trackingStage" required>
+<option value="supplier_search">Consultando fornecedores</option>
+<option value="supplier_preparing">Preparando pedido</option>
+<option value="shipped">Postado pelo fornecedor</option>
+<option value="international_transit">Em transporte internacional</option>
+<option value="arrived_brazil">Chegou ao Brasil</option>
+<option value="customs_inspection">Em fiscalização aduaneira</option>
+<option value="tax_payment_due">Pagamento de tributos solicitado</option>
+<option value="customs_released">Liberado na alfândega</option>
+<option value="out_for_delivery">Saiu para entrega</option>
+<option value="delivered">Entregue</option>
+<option value="exception">Ocorrência</option>
+</select></label>
+<label>Transportadora <select id="trackingCarrier" required><option value="unknown">Não identificada</option><option value="correios">Correios</option><option value="courier">Transportadora privada</option></select></label>
+<label>Código de rastreamento <input id="trackingCode" placeholder="Código informado pelo fornecedor" maxlength="40"></label>
+<label>Fonte da confirmação <select id="trackingSource" required><option value="supplier">Fornecedor</option><option value="correios">Consulta no site oficial dos Correios</option><option value="courier">Transportadora</option><option value="admin_document">Documento conferido</option></select></label>
+<p><label><input id="trackingVerified" type="checkbox" required> Confirmei a etapa na fonte indicada. Não é uma estimativa.</label></p>
+<button type="submit">REGISTRAR ETAPA VERIFICADA</button>
+</form>
+<h3>Histórico</h3><pre id="trackingHistory" style="white-space:pre-wrap"></pre>
+<p id="trackingLinkArea" class="small"></p>
+<p id="trackingNote" class="small"></p>
+</section><section id="previewPanel" class="preview-box" hidden><h2>Prévia do fornecedor — nenhum envio será realizado</h2><pre id="previewResult"></pre></section><p class="small">Nenhum pagamento ao fornecedor acontece aqui automaticamente. Revise disponibilidade, autorização da imagem, link de cobrança e Pix antes de efetivar qualquer transferência. O histórico de cobrança do Asaas é a fonte de verdade do pagamento do cliente.</p></main><script>
 const $=id=>document.getElementById(id),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function api(path,body){const res=await fetch('/api/admin/'+path,{method:body?'POST':'GET',headers:{authorization:'Bearer '+$('token').value,...(body?{'content-type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const d=await res.json();if(!res.ok)throw Error(d.error||'Não autorizado.');return d;}
 $('load').addEventListener('click',load);
-async function load(){try{$('feedback').textContent='Buscando...';const data=await api('orders');$('rows').innerHTML=(data.orders||[]).map(o=>{let items=[];try{items=JSON.parse(o.items_json)}catch{}return `<tr><td><b>${esc(o.id.slice(0,8))}</b><div class="small">${esc(o.created_at)}</div></td><td>${esc(o.name)}<div class="small">${esc(o.city)}, ${esc(o.state)}</div><div class="small">${esc(o.phone)}</div></td><td>${items.map(i=>`<div>${esc(i.qty)}× ${esc(i.title)} (${esc(i.size)})${i.personalize?' — '+esc(i.customName)+' #'+esc(i.customNumber):''}</div>`).join('')}</td><td>R$ ${Number(o.total).toFixed(2).replace('.',',')}</td><td><span class="pill ${o.status==='paid_supplier_pending'?'':'warn'}">${esc(o.status)}</span></td><td><span class="pill">${esc(o.supplier_status||'—')}</span><div class="small">Busca de fornecedores: até 72 horas</div><div class="small">Aviso de atraso: ${esc(o.delay_apology_status||'não necessário ou pendente')}</div><div style="height:8px"></div><select data-status="${esc(o.id)}"><option value="">Atualizar status...</option>${['supplier_contacted','supplier_confirmed','supplier_payment_pending','supplier_paid','manual_review','overdue_24h'].map(x=>`<option value="${x}">${x}</option>`).join('')}</select><div style="margin-top:8px"><button type="button" data-preview="${esc(o.id)}">PRÉVIA SEM ENVIO</button></div></td></tr>`}).join('')||'<tr><td colspan="6">Nenhum pedido ainda.</td></tr>';$('feedback').textContent=`${data.orders?.length||0} pedidos consultados.`}catch(e){$('feedback').textContent=e.message;}}
+async function load(){try{$('feedback').textContent='Buscando...';const data=await api('orders');$('rows').innerHTML=(data.orders||[]).map(o=>{let items=[];try{items=JSON.parse(o.items_json)}catch{}return `<tr><td><b>${esc(o.id.slice(0,8))}</b><div class="small">${esc(o.created_at)}</div></td><td>${esc(o.name)}<div class="small">${esc(o.city)}, ${esc(o.state)}</div><div class="small">${esc(o.phone)}</div></td><td>${items.map(i=>`<div>${esc(i.qty)}× ${esc(i.title)} (${esc(i.size)})${i.personalize?' — '+esc(i.customName)+' #'+esc(i.customNumber):''}</div>`).join('')}</td><td>R$ ${Number(o.total).toFixed(2).replace('.',',')}</td><td><span class="pill ${o.status==='paid_supplier_pending'?'':'warn'}">${esc(o.status)}</span></td><td><span class="pill">${esc(o.supplier_status||'—')}</span><div class="small">Busca de fornecedores: até 72 horas</div><div class="small">Aviso de atraso: ${esc(o.delay_apology_status||'não necessário ou pendente')}</div><div style="height:8px"></div><select data-status="${esc(o.id)}"><option value="">Atualizar status...</option>${['supplier_contacted','supplier_confirmed','supplier_payment_pending','supplier_paid','manual_review','overdue_24h'].map(x=>`<option value="${x}">${x}</option>`).join('')}</select><div style="margin-top:8px"><button type="button" data-preview="${esc(o.id)}">PRÉVIA SEM ENVIO</button> <button type="button" data-progress="${esc(o.id)}">ACOMPANHAMENTO</button></div></td></tr>`}).join('')||'<tr><td colspan="6">Nenhum pedido ainda.</td></tr>';$('feedback').textContent=`${data.orders?.length||0} pedidos consultados.`}catch(e){$('feedback').textContent=e.message;}}
 document.addEventListener('click',async e=>{
  const button=e.target.closest('[data-preview]');if(!button)return;
  try{
@@ -48,6 +75,45 @@ document.addEventListener('click',async e=>{
   $('feedback').textContent='Prévia gerada sem envio.';
   $('previewPanel').scrollIntoView({behavior:'smooth',block:'start'});
  }catch(err){$('feedback').textContent=err.message;}
+});
+document.addEventListener('click',async e=>{
+ const btn=e.target.closest('[data-progress]');if(!btn)return;
+ $('trackingOrderId').value=btn.dataset.progress;
+ $('trackingPanel').hidden=false;
+ await refreshTracking();
+ $('trackingPanel').scrollIntoView({behavior:'smooth',block:'start'});
+});
+async function refreshTracking(){
+ const id=$('trackingOrderId').value;
+ try{
+  const p=await api('order-progress?orderId='+encodeURIComponent(id));
+  const items=p.adminEvents||[];
+  $('trackingHistory').textContent=items.length?items.map(e=>new Date(e.created_at).toLocaleString('pt-BR')+' • '+e.stage+' ('+e.evidence_source+')').join('\n'):'Nenhum evento verificado ainda.';
+  $('trackingCode').value=p.trackingCode||'';
+  $('trackingCarrier').value=p.carrier||'unknown';
+  const area=$('trackingLinkArea');
+  area.replaceChildren();
+  if(p.trackingUrl){
+   const link=document.createElement('a');link.href=p.trackingUrl;link.textContent='Abrir link privado do cliente';link.target='_blank';link.rel='noopener noreferrer';
+   const copy=document.createElement('button');copy.type='button';copy.textContent='COPIAR LINK PARA O CLIENTE';
+   copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(p.trackingUrl);$('trackingNote').textContent='Link copiado. Envie manualmente ao cliente autorizado.'}catch{$('trackingNote').textContent='Não foi possível copiar; abra o link.'}});
+   area.append(link,' ',copy);
+  }else area.textContent='Link privado desativado. Configure o segredo TRACKING_LINK_SECRET no Cloudflare.';
+ }catch(err){$('trackingNote').textContent='Erro ao consultar andamento: '+err.message}
+}
+$('trackingForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const id=$('trackingOrderId').value;
+ if(!id)return;
+ if(!confirm('Você conferiu essa etapa em uma fonte legítima? Ela será visível ao cliente.'))return;
+ try{
+  await api('order-progress',{orderId:id,stage:$('trackingStage').value,
+   carrier:$('trackingCarrier').value,trackingCode:$('trackingCode').value.trim(),
+   source:$('trackingSource').value,verified:$('trackingVerified').checked});
+  $('trackingVerified').checked=false;
+  $('trackingNote').textContent='Etapa registrada. Nenhuma mensagem automática enviada.';
+  await refreshTracking();
+ }catch(err){$('trackingNote').textContent=err.message}
 });
 document.addEventListener('change',async e=>{const t=e.target;if(!t.dataset.status||!t.value)return;const orderId=t.dataset.status,status=t.value;if(!confirm('Atualizar pedido '+orderId.slice(0,8)+' para '+status+'?')){t.value='';return;}try{await api('supplier-status',{orderId,status});await load()}catch(err){$('feedback').textContent=err.message}});
 </script></body></html>
