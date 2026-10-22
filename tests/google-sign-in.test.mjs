@@ -34,7 +34,7 @@ test('Google JWT checks real signature, audience, issuer, verified email, nonce 
  await assert.rejects(()=>verifyGoogleIdToken(token.replace(/.$/,token.at(-1)==='A'?'B':'A'),clientId,nonce,options),/signature|Invalid/);
  await assert.rejects(()=>verifyGoogleIdToken(token,clientId+'x',nonce,options),/configured|nonce/);
  for(const claims of [{email_verified:false},{iss:'https://fake-google.com'},{aud:'another-app'},{exp:10},{sub:'123'},{nbf:Math.floor(Date.now()/1000)+1000}]){
-  await assert.rejects(()=>verifyGoogleIdToken(await signGoogleToken(claims),clientId,nonce,options));
+  await assert.rejects(async()=>verifyGoogleIdToken(await signGoogleToken(claims),clientId,nonce,options));
  }
 });
 test('Google config hidden until real client ID set and nonce cookie is secure',async()=>{
