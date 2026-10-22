@@ -165,3 +165,12 @@ CREATE TABLE IF NOT EXISTS customer_login_attempts (
  attempts INTEGER NOT NULL DEFAULT 0,
  window_started_at TEXT NOT NULL
 );
+
+-- Identificador Google (sub) verificado criptograficamente; nunca vincular por e-mail sozinho.
+CREATE TABLE IF NOT EXISTS customer_google_identities (
+ google_sub TEXT PRIMARY KEY,
+ customer_id TEXT NOT NULL UNIQUE REFERENCES customer_accounts(id),
+ email_at_link TEXT NOT NULL,
+ linked_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_customer_google_identities_account ON customer_google_identities(customer_id);
