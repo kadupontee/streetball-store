@@ -326,12 +326,18 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);if(r
  // Rotas de conta explícitas: evitam 404 da camada de assets em navegadores mobile.
  if(request.method==='GET'&&['/conta','/criar-conta','/pedidos'].includes(url.pathname)){
   const fragment=url.pathname==='/criar-conta'?'#criar-conta':url.pathname==='/pedidos'?'#pedidos':'';
-  return Response.redirect(new URL('/account.html'+fragment,url),302);
+  const redirect=Response.redirect(new URL('/account.html'+fragment,url),302);
+  redirect.headers.set('cache-control','no-store');
+  return redirect;
  }
  if(request.method==='GET'&&url.pathname==='/account.html'){
   if(!env.ASSETS)return new Response('Página de cadastro temporariamente indisponível.',{status:503,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
   const asset=await env.ASSETS.fetch(request);
-  if(asset.ok&&(asset.headers.get('content-type')||'').includes('text/html'))return asset;
+  if(asset.ok&&(asset.headers.get('content-type')||'').includes('text/html')){
+   const page=new Response(asset.body,asset);
+   page.headers.set('cache-control','no-store');
+   return page;
+  }
   return new Response('Página de cadastro não incluída nesta publicação. Atualize a Streetball Store.',{status:503,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
  }
  if(request.method==='GET'&&url.pathname==='/api/health/account'){
