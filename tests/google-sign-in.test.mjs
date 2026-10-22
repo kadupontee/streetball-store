@@ -141,6 +141,37 @@ test('Google-only account gets a private session; existing email cannot be silen
   assert.equal(otherDB.identities.size,0);
  }finally{globalThis.fetch=old;}
 });
+test('cliente com senha pode conectar sua própria Conta Google e depois entrar por ela',async()=>{
+ if(!key)await setupKeys();
+ const previousFetch=globalThis.fetch;
+ globalThis.fetch=async()=>new Response(JSON.stringify(jwks),{status:200,headers:{'content-type':'application/json'}});
+ try{
+  const DB=mockDb(),env={DB,GOOGLE_CLIENT_ID:clientId};
+  const registration=await worker.fetch(req('/api/account/register','POST',{
+   displayName:'Cliente Retro',email,password:'senha-exclusiva-de-teste-2026'
+  }),env);
+  assert.equal(registration.status,200);
+  const privateCookie=registration.headers.get('set-cookie').split(';')[0];
+  const issued=await worker.fetch(req('/api/account/google/nonce'),env);
+  const {nonce:issuedNonce}=await issued.json();
+  const nonceCookie=issued.headers.get('set-cookie').split(';')[0];
+  const credential=await signGoogleToken({nonce:issuedNonce});
+  const linked=await worker.fetch(req('/api/account/google/connect','POST',
+    {credential},privateCookie+'; '+nonceCookie),env);
+  assert.equal(linked.status,200);
+  assert.equal((await linked.json()).connected,true);
+  assert.equal(DB.accounts.size,1);
+  assert.equal(DB.identities.size,1);
+  const fresh=await worker.fetch(req('/api/account/google/nonce'),env);
+  const {nonce:freshNonce}=await fresh.json();
+  const freshCookie=fresh.headers.get('set-cookie').split(';')[0];
+  const signed=await worker.fetch(req('/api/account/google/login','POST',
+    {credential:await signGoogleToken({nonce:freshNonce})},freshCookie),env);
+  assert.equal(signed.status,200);
+  assert.equal((await signed.json()).user.email,email);
+  assert.equal(DB.accounts.size,1);
+ }finally{globalThis.fetch=previousFetch;}
+});
 test('cards show full authorized square art and CTA icons no longer use emoji arrows',()=>{
  const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
  const css=readFileSync(new URL('../public/editorial.css',import.meta.url),'utf8');
