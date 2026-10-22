@@ -4,12 +4,13 @@ import json, re, unicodedata
 from pathlib import Path
 from urllib.parse import urlparse
 from retro_policy import apply_retro_policy, is_older_than_five_seasons
+from garment_policy import garment_decision, apply_garment_pricing, PRICES_BRL
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / 'public' / 'catalog.json'
 CATALOG_JS = ROOT / 'public' / 'catalog.js'
 CATEGORIES = {'brasileirao','europa','selecoes','retro','infantil','feminino','nba','treino','acessorios','outras'}
 PRICES = {'fan':159.90,'female':159.90,'kids':179.90,'retro':199.90,'retro_long':229.90,'long':189.90,
-          'player_adidas':209.90,'player_puma':219.90,'player_nike':229.90,'nba':219.90,'shorts':119.90,'shorts_player':143.90,'socks':59.90,'set':299.90}
+          'player_adidas':209.90,'player_puma':219.90,'player_nike':229.90,'nba':219.90,'shorts':119.90,'shorts_player':143.90,'socks':59.90,'jacket':379.90,'set':299.90}
 KINDS = set(PRICES)
 BRAZIL = ('sao paulo','corinthians','palmeiras','flamengo','gremio','internacional','santos','vasco', 'botafogo','fluminense','bahia','fortaleza','remo','paysandu','cruzeiro','atletico mineiro','bragantino','ceara','sport recife','vitoria','nautico','athletico','paranaense','santa cruz','chapecoense','guarani','figueirense','goias','avai','corinthian')
 EUROPE = ('real madrid','barcelona','manchester','arsenal','chelsea','liverpool','tottenham','juventus','milan','napoli','paris','psg','bayern','dortmund','benfica','porto','sporting','braga','valencia','betis','sevilla','ajax','lyon','marseille','villarreal','roma','aston villa','leicester','newcastle','leeds','frankfurt','wolfsburg','st pauli','bremen','hannover')
@@ -48,6 +49,8 @@ def is_player_shorts(title, kind=''):
 
 def classify(title, category_hint=''):
     s = normalized(f'{title} {category_hint}')
+    garment,_ = garment_decision({'title':title})
+    if garment == 'jacket': return 'treino','jacket'
     if re.search(r'\b(retro|vintage|classic)\b',s) or is_older_than_five_seasons(title): cat = 'retro'
     elif any(x in s for x in ('kids','children','infantil','baby','youth','16-28','16~28','16-30')): cat = 'infantil'
     elif any(x in s for x in ('women','woman','feminina','feminino')): cat = 'feminino'
@@ -68,6 +71,8 @@ def classify(title, category_hint=''):
     elif any(x in s for x in ('player','jogador','match jersey','player version','players edition')):
         kind = 'player_nike' if 'nike' in s else 'player_puma' if 'puma' in s or 'new balance' in s else 'player_adidas'
     else: kind = 'fan'
+    if garment in ('long','retro_long') and cat not in ('nba','infantil','feminino'):
+        kind=garment
     return cat,kind
 
 def is_yupoo_album_url(u):
@@ -117,19 +122,19 @@ def normalize_product(raw):
     if isinstance(price,str):price=price.replace('R$','').strip().replace('.','').replace(',','.') if ',' in price else price
     price=float(price)
     if not 1<=price<=100000:raise ValueError('Preço fora do intervalo permitido')
-    return apply_retro_policy({**raw,'id':product_id,'title':title,'category':cat,'kind':kind,'price':round(price,2),
+    return apply_garment_pricing(apply_retro_policy({**raw,'id':product_id,'title':title,'category':cat,'kind':kind,'price':round(price,2),
        'image':images[0] if images else '', 'images':images,'imageOrigin':('upload_local' if images[0].startswith('/images/') else 'fornecedor_yupoo') if images else 'ilustracao_svg',
        'source': 'import_yupoo_publico' if source else str(raw.get('source') or 'manual'), 'sourceUrl':source,
        'sizes':sz[:25], 'primary':str(raw.get('primary') or '#ededed'), 'accent':str(raw.get('accent') or '#2e3936'),
        'description':str(raw.get('description') or 'Modelo sob encomenda. Disponibilidade e grade sujeitos à confirmação do fornecedor.')[:450],
-       'badge':str(raw.get('badge') or '')[:60]})
+       'badge':str(raw.get('badge') or '')[:60]}),require_photo=True)
 
 def read_catalog():
     try:return json.loads(CATALOG.read_text(encoding='utf-8'))
     except (OSError,ValueError):return []
 
 def save_catalog(products):
-    products=[apply_retro_policy(p) for p in products if not is_nba_product(p)]
+    products=[apply_garment_pricing(apply_retro_policy(p),require_photo=True) for p in products if not is_nba_product(p)]
     CATALOG.parent.mkdir(parents=True,exist_ok=True)
     content=json.dumps(products,ensure_ascii=False,indent=2)
     path=CATALOG.with_suffix('.json.tmp')
