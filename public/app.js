@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 const $=id=>document.getElementById(id);
-const CATS=[['todos','Todos'],['brasileirao','Brasileirão'],['europa','Europa'],['selecoes','Seleções'],['retro','Retrô'],['player','Jogador'],['infantil','Infantil'],['feminino','Feminino'],['treino','Treino'],['acessorios','Acessórios'],['outras','Outros produtos']];
+const CATS=[['todos','Todos'],['brasileirao','Brasileirão'],['europa','Europa'],['selecoes','Seleções'],['retro','Retrô'],['personalizadas','Personalizadas'],['player','Jogador'],['infantil','Infantil'],['feminino','Feminino'],['treino','Treino'],['acessorios','Acessórios'],['outras','Outros produtos']];
 const TILES=[['brasileirao','BRASILEIRÃO','Clubes nacionais','#fcfcfc','#cf292c'],['europa','EUROPA','Grandes ligas','#152f6f','#cf3b4f'],['selecoes','SELEÇÕES','Futebol mundial','#ead039','#136849'],['retro','RETRÔ','Lendas eternas','#17549d','#f8e4c6'],['player','JOGADOR','Versão de campo','#eee','#1b2b4a'],['infantil','INFANTIL','Pequenos craques','#c42c3c','#1b1d1c']];
 
 // Subcategorias da Série A 2026 (lista oficial da CBF).
@@ -98,7 +98,7 @@ document.addEventListener('error', e=>{
  const holder=img.closest('.product-asset');
  if(holder){holder.classList.add('missing-photo');holder.innerHTML='<span class="product-no-photo">FOTO TEMPORARIAMENTE INDISPONÍVEL</span>';}
 },true);
-const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):p.category===c)||(c==='player'&&String(p.kind).startsWith('player_'));
+const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):p.category===c)||(c==='player'&&String(p.kind).startsWith('player_'))||(c==='personalizadas'&&!['acessorios','treino'].includes(p.category)&&!['socks','shorts'].includes(p.kind));
 function filtered(){
  let ps=catalog.filter(p=>hasVerifiedPhoto(p)&&matchCategory(p,state.category));
  if(state.category==='brasileirao'&&state.club!=='todos'){
@@ -170,21 +170,39 @@ function catalogRender(){
  $('activeFilters').innerHTML=CATS.map(([id,label])=>`<button class="filter-tag ${id===state.category?'active':''}" data-category="${id}">${label}</button>`).join('');
  document.querySelectorAll('[data-category]').forEach(b=>b.classList.toggle('active',b.dataset.category===state.category));
 }
-function categoryLabel(p){const labels={brasileirao:'Clubes Brasileiros',europa:'Clubes Europeus',selecoes:'Seleções',retro:'Coleção Retrô',outras:'Outros produtos',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios'};return labels[p.category]||p.category;}
-function editorialImages(){
- // Não percorrer milhares de álbuns repetidamente no carrossel:
- // priorizar as fotos retrô autorizadas e limitar a galeria a 40 produtos distintos.
- const retro=[],regular=[],seen=new Set();
- for(const p of catalog){
-  if(!hasVerifiedPhoto(p)||seen.has(p.id))continue;
-  seen.add(p.id);
-  const title=String(p.title)+' '+String(p.supplierTitle||'');
-  const isRetro=p.category==='retro'||/retr[oô]|vintage|classic|19[7-9][0-9]|20(?:0[0-9]|1[0-7])/i.test(title);
-  if(isRetro&&retro.length<40)retro.push(p);
-  else if(!isRetro&&regular.length<40)regular.push(p);
-  if(retro.length>=40&&regular.length>=40)break;
- }
- return (retro.length>=20?retro:[...retro,...regular]).slice(0,40);
+function categoryLabel(p){const labels={personalizadas:'Camisas Personalizadas',brasileirao:'Clubes Brasileiros',europa:'Clubes Europeus',selecoes:'Seleções',retro:'Coleção Retrô',outras:'Outros produtos',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios'};return labels[p.category]||p.category;}
+// Editorial aprovada: 9 recortes FIXOS, separados do catálogo dinâmico.
+// Estes caminhos correspondem ao pacote public/images/editorial/ enviado ao proprietário.
+const EDITORIAL_ASSETS={
+ maradona:'/images/editorial/hero-maradona.png',
+ ronaldo:'/images/editorial/hero-ronaldo-inter.png',
+ juventus:'/images/editorial/hero-juventus-pb.png',
+ united:'/images/editorial/hero-manchester-united.png',
+ rack:'/images/editorial/hero-arara-camisas.png',
+ retro:'/images/editorial/card-retro.png',
+ atuais:'/images/editorial/card-atuais.png',
+ personalizadas:'/images/editorial/card-personalizadas.png',
+ colecoes:'/images/editorial/card-todas-colecoes.png'
+};
+const EDITORIAL_HERO_SETS=[
+ ['ronaldo','maradona','juventus','united','rack'],
+ ['maradona','united','rack','ronaldo','juventus'],
+ ['united','ronaldo','maradona','rack','juventus'],
+ ['rack','juventus','united','maradona','ronaldo']
+];
+const EDITORIAL_ALT={
+ maradona:'Camisa retrô da Argentina',
+ ronaldo:'Camisa retrô da Inter de Milão, Ronaldo',
+ juventus:'Futebol clássico em preto e branco',
+ united:'Camisa clássica do Manchester United',
+ rack:'Coleção de camisas de futebol'
+};
+function editorialFallback(j){
+ // Enquanto os arquivos binários não forem instalados, não mostrar imagens quebradas.
+ const retro=catalog.filter(p=>hasVerifiedPhoto(p)&&(p.category==='retro'||/retr[oô]|vintage|classic/i.test(p.title)));
+ const other=retro.length?retro:catalog.filter(hasVerifiedPhoto).slice(0,12);
+ const p=other[j%other.length];
+ return p?localImageURL(photoSources(p)[0]):'';
 }
 let heroActive=0,heroTimer=null;
 function showHeroSlide(index){
@@ -196,43 +214,42 @@ function showHeroSlide(index){
 }
 function renderEditorialHero(){
  const target=$('editorialHeroScenes');if(!target)return;
- const photos=editorialImages();
  const variants=['main','left','right','low','low-left'];
- const placeholder=['#8b91d7','#c9c9d1','#7d8092','#a6a6b6','#b5b5cd'];
- target.innerHTML=Array.from({length:4},(_,scene)=>{
-  const frames=variants.map((cls,j)=>{
-   const p=photos.length?photos[(scene*5+j*3)%photos.length]:null;
-   const src=p?photoSources(p)[0]:null;
-   return '<div class="editorial-frame '+cls+'" style="background:'+placeholder[j]+'">'+
-    (src?'<img src="'+esc(localImageURL(src))+'" alt="'+esc(p.title)+'" decoding="async" loading="'+(scene===0?'eager':'lazy')+'" referrerpolicy="no-referrer">':'')+
-    '</div>';
-  }).join('');
-  return '<div class="editorial-hero-scene'+(scene===0?' active':'')+'" aria-hidden="'+(scene!==0)+'">'+frames+'</div>';
- }).join('');
+ const defaults=['#8b91d7','#c9c9d1','#7d8092','#a6a6b6','#b5b5cd'];
+ target.innerHTML=EDITORIAL_HERO_SETS.map((images,scene)=>
+  '<div class="editorial-hero-scene'+(scene===0?' active':'')+'" aria-hidden="'+(scene!==0)+'">'+
+  images.map((name,j)=>'<div class="editorial-frame '+variants[j]+'" style="background:'+defaults[j]+'">'+
+   '<img src="'+EDITORIAL_ASSETS[name]+'" alt="'+esc(EDITORIAL_ALT[name])+'" data-editorial-fallback="'+esc(editorialFallback(scene*5+j))+'" decoding="async" loading="'+(scene===0?'eager':'lazy')+'">'+
+   '</div>').join('')+
+  '</div>'
+ ).join('');
  showHeroSlide(heroActive);
  if(heroTimer)clearInterval(heroTimer);
  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   heroTimer=setInterval(()=>{if(!document.hidden)showHeroSlide(heroActive+1)},5600);
 }
 function categoryRender(){
- const photos=editorialImages(),used=new Set();
  const tiles=[
-  ['retro','RETRÔ','O passado que nunca sai de moda.'],
-  ['europa','EUROPA','Grandes clubes, histórias eternas.'],
-  ['player','JOGADOR','A camisa dos craques de hoje.'],
-  ['todos','TODAS AS COLEÇÕES','Encontre o próximo manto.']
+  ['retro','RETRÔ','O passado que nunca sai de moda.',EDITORIAL_ASSETS.retro],
+  ['europa','ATUAIS','Os lançamentos da temporada no seu estilo.',EDITORIAL_ASSETS.atuais],
+  ['personalizadas','PERSONALIZADAS','Deixe sua camisa com a sua identidade.',EDITORIAL_ASSETS.personalizadas],
+  ['todos','TODAS AS COLEÇÕES','Explore nosso catálogo completo.',EDITORIAL_ASSETS.colecoes]
  ];
- $('categoryGrid').innerHTML=tiles.map(([id,label,sub],i)=>{
-  const desired=photos.find(p=>!used.has(p.id)&&(id==='todos'||p.category===id||id==='player'&&String(p.kind).startsWith('player')));
-  const fallback=photos.find(p=>!used.has(p.id));
-  const p=desired||fallback;
-  if(p)used.add(p.id);
-  const url=p?photoSources(p)[0]:null;
-  return '<button class="category-tile" data-category="'+id+'" aria-label="Explorar '+esc(label)+'">'+
-   (url?'<img class="category-photo" src="'+esc(localImageURL(url))+'" alt="'+esc(p.title)+'" loading="lazy" referrerpolicy="no-referrer">':'')+
-   '<strong>'+label+'</strong><small>'+sub+'</small><span class="category-arrow" aria-hidden="true">↗</span></button>';
- }).join('');
+ $('categoryGrid').innerHTML=tiles.map(([id,label,sub,url],index)=>
+  '<button class="category-tile editorial-fixed-tile" data-category="'+id+'" aria-label="Explorar '+esc(label)+'">'+
+  '<img class="category-photo" src="'+url+'" alt="" data-editorial-fallback="'+esc(editorialFallback(index))+'" loading="lazy">'+
+  '<span class="editorial-tile-sr">'+esc(label)+' — '+esc(sub)+'</span></button>'
+ ).join('');
 }
+// Troca para uma foto do catálogo somente se faltar arquivo da identidade visual.
+document.addEventListener('error',event=>{
+ const image=event.target;
+ if(!(image instanceof HTMLImageElement)||!image.hasAttribute('data-editorial-fallback'))return;
+ const fallback=image.getAttribute('data-editorial-fallback');
+ image.removeAttribute('data-editorial-fallback');
+ if(fallback&&image.src!==fallback){image.src=fallback;return;}
+ image.hidden=true;
+},true);
 function selectCategory(cat){state.category=cat;state.club='todos';state.query='';$('globalSearch').value='';state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
 function openUI(kind){state.drawer=kind==='cart';state.checkout=kind==='checkout';$('cartDrawer').classList.toggle('open',state.drawer);$('checkoutModal').classList.toggle('open',state.checkout);$('productModal').classList.toggle('open',kind==='product');$('overlay').classList.toggle('visible',!!kind);document.body.classList.toggle('lock',!!kind);$('cartDrawer').setAttribute('aria-hidden',String(!state.drawer));}
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),3100);}
