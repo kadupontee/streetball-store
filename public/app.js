@@ -404,6 +404,7 @@ $('productModal').addEventListener('input',e=>{if(e.target.id==='customName')sta
 $('productModal').addEventListener('click',e=>{if(e.target.closest('#detailAdd'))addCart()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){openUI(null);document.querySelector('.desktop-nav').classList.remove('mobile-open');if($('accountDropdown')){$('accountDropdown').hidden=true;$('accountTrigger').setAttribute('aria-expanded','false')}}if(e.key==='/'&&document.activeElement?.tagName!=='INPUT'){e.preventDefault();$('globalSearch').closest('.search-box').classList.add('open');$('globalSearch').focus()}});
 $('year').textContent=new Date().getFullYear();
+catalog=prepareCatalog(catalog);
 renderEditorialHero();
 categoryRender();catalogRender();cartRender();
 
