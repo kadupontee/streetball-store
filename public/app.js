@@ -98,7 +98,7 @@ document.addEventListener('error', e=>{
  const holder=img.closest('.product-asset');
  if(holder){holder.classList.add('missing-photo');holder.innerHTML='<span class="product-no-photo">FOTO TEMPORARIAMENTE INDISPONÍVEL</span>';}
 },true);
-const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):p.category===c)||(c==='player'&&String(p.kind).startsWith('player_'))||(c==='personalizadas'&&!['acessorios','treino'].includes(p.category)&&!['socks','shorts'].includes(p.kind));
+const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):p.category===c)||(c==='infantil'&&p.kind==='kids')||(c==='feminino'&&p.kind==='female')||(c==='player'&&String(p.kind).startsWith('player_'))||(c==='personalizadas'&&!['acessorios','treino'].includes(p.category)&&!['socks','shorts'].includes(p.kind));
 function filtered(){
  let ps=catalog.filter(p=>hasVerifiedPhoto(p)&&matchCategory(p,state.category));
  if(state.category==='brasileirao'&&state.club!=='todos'){
@@ -146,6 +146,7 @@ function displayTitle(p){
  for(const [re,v] of types)if(re.test(t)){type=v;t=t.replace(new RegExp(re.source,'gi'),' ');break}
  const tags=[],patterns=[[/\bgoal\s*keeper\b|\bgoalkeeper\b|\bgk\b/i,'Goleiro'],[/\b2\s*away\b/i,'Segunda reserva'],[/\bthird\b|\b3rd\b/i,'Terceira'],[/\bfourth\b|\b4th\b/i,'Quarta'],[/\baway\b/i,'Reserva'],[/\bhome\b/i,'Titular'],[/\bretro\b|\bvintage\b|\bclassic\b/i,'Retrô'],[/\bspecial\s*edition\b/i,'Edição especial'],[/\banniversary\b/i,'Comemorativa'],[/\bpre\s*-?\s*match\b/i,'Pré-jogo'],[/\blong\s*-?\s*sleeves?\b/i,'Manga longa'],[/\bplayer\s*version\b|\bplayers?\s*edition\b|\bplayer\b/i,'Versão jogador'],[/\bfan\s*version\b|\bfan\b/i,'Versão torcedor'],[/\bchildren\b|\bchild\b|\bkids?\b|\byouth\b/i,'Infantil'],[/\bwomen\b|\bwoman\b|\bfemale\b/i,'Feminina']];
  for(const [re,v] of patterns)if(re.test(t)){tags.push(v);t=t.replace(new RegExp(re.source,'gi'),' ')}
+ if(p.category==='retro'||p.kind==='retro'||p.kind==='retro_long')tags.push('Retrô');
  if(kids)tags.push('Infantil');
  if(p.kind==='female')tags.push('Feminina');
  if(String(p.kind).startsWith('player_'))tags.push('Versão jogador');
@@ -155,7 +156,32 @@ function displayTitle(p){
  if(!t)t='Modelo '+String(p.id).replace('YUP-','');
  return (t+(season?' '+season:'')+' — '+type+(tags.length?' · '+[...new Set(tags)].join(' · '):'')).slice(0,170);
 }
-function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>{const clean={...p,supplierTitle:p.supplierTitle||p.title,title:displayTitle(p)};clean.brazilClub=findBrazilClub(clean);return clean;});}
+// Proteção visual: o catálogo exibido usa a mesma regra de preço do importador.
+function retroSeasonStart(title){
+ const text=String(title||'');
+ const now=new Date(), year=now.getFullYear(), limit=year-5-(now.getMonth()<7?1:0);
+ const expand=s=>s.length===4?+s:(+s<=year%100+2?2000+ +s:1900+ +s);
+ const seasons=/\b((?:19|20)\d{2}|\d{2})\s*[-/._]\s*((?:19|20)\d{2}|\d{2})\b/g;
+ let m;
+ while((m=seasons.exec(text))){const start=expand(m[1]);if(expand(m[2])===start+1&&start>=1950&&start<=year+2)return start<=limit;}
+ const single=/\b((?:19|20)\d{2})\b/g;
+ while((m=single.exec(text))){const y=+m[1];if(y>=1950&&y<=year+2)return y<=limit;}
+ return false;
+}
+function retroProduct(p){
+ const item={...p};
+ if(!retroSeasonStart(item.supplierTitle||item.title))return item;
+ if(!item.categoryLocked)item.category='retro';
+ const kind=String(item.kind||'fan').toLowerCase();
+ if(['fan','long','retro','retro_long','player_nike','player_adidas','player_puma'].includes(kind)){
+  const isLong=kind==='long'||kind==='retro_long'||/long\s*[- ]?sleeves?|manga\s*longa/i.test(item.supplierTitle||item.title);
+  if(!item.kindLocked)item.kind=isLong?'retro_long':'retro';
+  if(!item.priceLocked)item.price=Math.round(Math.max(Number(item.price)||0,isLong?229.90:199.90)*100)/100;
+ }
+ if(!item.badgeLocked&&['','NOVO','NEW'].includes(String(item.badge||'').toUpperCase()))item.badge='RETRÔ';
+ return item;
+}
+function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>{const clean=retroProduct({...p,supplierTitle:p.supplierTitle||p.title});clean.title=displayTitle(clean);if(!String(clean.id).startsWith('YUP-')&&clean.category==='retro'&&!/retr[oô]/i.test(clean.title))clean.title+=' · Retrô';clean.brazilClub=findBrazilClub(clean);return clean;});}
 
 function catalogRender(){
  const ps=filtered();const visible=ps.slice(0,state.limit);$('catalogSubtitle').textContent=state.favoritesOnly?'Modelos que você salvou.':state.query?`Resultados da busca por “${state.query}”.`:'Modelos com fotografias cadastradas no catálogo do fornecedor.';
