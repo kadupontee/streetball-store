@@ -327,6 +327,32 @@ function openCheckout(){
 async function submitOrder(e){e.preventDefault();const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length||!state.checkoutReady){status.textContent='Checkout ainda não habilitado.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;const whatsappOptIn=customer.whatsappOptIn==='on';delete customer.whatsappOptIn;const importTaxAcknowledged=customer.importTaxAcknowledged==='on';delete customer.importTaxAcknowledged;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={customer,whatsappOptIn,importTaxAcknowledged,paymentMethod:data.get('paymentMethod'),items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};const fingerprint=JSON.stringify(payload);if(state.checkoutPayload!==fingerprint){state.checkoutRequestKey=crypto.randomUUID();state.checkoutPayload=fingerprint;}btn.disabled=true;status.textContent='Verificando integração segura...';
  try{if(location.hostname.endsWith('.github.io'))throw new Error('Esta é uma vitrine de demonstração. O checkout exige a publicação do backend de pagamentos (Cloudflare/Asaas).');const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':state.checkoutRequestKey},body:JSON.stringify(payload)});const result=await res.json().catch(()=>null);if(!res.ok)throw new Error(result?.error||'Checkout indisponível. A loja ainda não está conectada a um provedor de pagamento.');if(!result?.paymentUrl||!/^https:\/\//.test(result.paymentUrl))throw new Error('A cobrança não retornou um endereço seguro.');if(typeof result.trackingUrl==='string'&&result.trackingUrl.startsWith(location.origin+'/track.html#')){try{localStorage.setItem('streetball_tracking_link',result.trackingUrl)}catch{}}
  status.textContent=result.sandbox?'Redirecionando ao ambiente de testes Asaas...':'Redirecionando para o pagamento seguro no Asaas...';window.location.assign(result.paymentUrl)}catch(err){status.textContent=err.message.includes('Failed to fetch')?'Prévia: conecte o backend e o Asaas antes de receber pedidos reais.':err.message;btn.disabled=false;}}
+// Links de cadastro aparecem apenas para visitantes, nunca para uma sessão autenticada.
+// A sessão pertence ao cookie HttpOnly do Worker; não inferir login do localStorage.
+let homepageSessionRequest=0;
+function setHomepageSignupVisibility(authenticated){
+ document.querySelectorAll('[data-guest-only]').forEach(link=>{
+  link.hidden=authenticated;
+  // O CSS da loja usa display:inline-flex em botões e pode sobrescrever [hidden].
+  link.style.display=authenticated?'none':'';
+ });
+}
+async function refreshHomepageSessionLinks(){
+ const request=++homepageSessionRequest;
+ try{
+  const response=await fetch('/api/account/me',{credentials:'same-origin',cache:'no-store'});
+  if(!response.ok)throw new Error('Sessão indisponível');
+  const session=await response.json();
+  if(request===homepageSessionRequest)setHomepageSignupVisibility(session?.authenticated===true);
+ }catch{
+  // Sem confirmação de sessão, mantém os links de cadastro para visitantes.
+  if(request===homepageSessionRequest)setHomepageSignupVisibility(false);
+ }
+}
+refreshHomepageSessionLinks();
+// Back/forward cache e volta de outra aba após login ou logout.
+window.addEventListener('pageshow',event=>{if(event.persisted)refreshHomepageSessionLinks()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshHomepageSessionLinks()});
 // Delegate events from cards, tabs and cart controls.
 document.addEventListener('click',e=>{const brClub=e.target.closest('[data-br-club]');if(brClub){selectBrazilClub(brClub.dataset.brClub);return}const cat=e.target.closest('[data-category]');if(cat){selectCategory(cat.dataset.category);return}const foot=e.target.closest('[data-footer-category]');if(foot){selectCategory(foot.dataset.footerCategory);return}const fav=e.target.closest('[data-fav]');if(fav){toggleFav(fav.dataset.fav);return}const photo=e.target.closest('[data-photo-index]');if(photo&&state.detail){const p=findProduct(state.detail),i=Number(photo.dataset.photoIndex),u=photoSources(p||{})[i];if(trustedPhoto(u)){const main=$('detailMainPhoto');main.innerHTML=imageHTML({...p,image:u});document.querySelectorAll('.detail-photo-btn').forEach(b=>b.classList.toggle('active',b===photo));}return}const product=e.target.closest('[data-open]')||e.target.closest('.product-card');if(product){detailOpen(product.dataset.open||product.dataset.id);return}const size=e.target.closest('[data-size]');if(size&&state.choice){state.choice.size=size.dataset.size;document.querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===state.choice.size));updateDetailPrice();return}const remove=e.target.closest('[data-remove]');if(remove){state.checkoutRequestKey=null;state.cart.splice(+remove.dataset.remove,1);cartRender();return}const qty=e.target.closest('[data-qty]');if(qty){state.checkoutRequestKey=null;const it=state.cart[+qty.dataset.qty];if(!it)return;it.qty+=+qty.dataset.dir;if(it.qty<=0)state.cart.splice(+qty.dataset.qty,1);cartRender();return}});
 $('globalSearch').addEventListener('input',e=>{state.query=e.target.value.trim();state.limit=PRODUCT_LIMIT;catalogRender();if(state.query)$('colecao').scrollIntoView({behavior:'smooth',block:'start'})});
