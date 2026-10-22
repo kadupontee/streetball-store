@@ -129,3 +129,10 @@ CREATE TABLE IF NOT EXISTS order_tracking_meta (
  tracking_code TEXT NOT NULL DEFAULT '',
  updated_at TEXT NOT NULL
 );
+
+-- Registro da informação tributária aceita no checkout, sem modificar pedidos históricos.
+CREATE TABLE IF NOT EXISTS order_import_disclosures (
+ order_id TEXT PRIMARY KEY REFERENCES orders(id),
+ accepted_at TEXT NOT NULL,
+ policy TEXT NOT NULL
+);
