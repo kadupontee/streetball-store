@@ -5,6 +5,7 @@ async function call(path,method='GET',data=null){
  if(data!==null){options.headers['content-type']='application/json';options.body=JSON.stringify(data);}
  const response=await fetch('/api/account/'+path,options);
  const json=await response.json().catch(()=>({}));
+ if(response.status===404)throw Error('Serviço de contas ainda não publicado. Atualize a página ou avise a Streetball Store.');
  if(!response.ok)throw Error(json.error||'Serviço de contas indisponível.');
  return json;
 }
