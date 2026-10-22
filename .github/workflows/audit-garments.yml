@@ -1,0 +1,29 @@
+name: Auditar tipos de roupas Streetball
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit_garments.py
+      - .github/workflows/audit-garments.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Classificar candidatos sem modificar catalogo
+        run: python scripts/audit_garments.py
+      - name: Guardar relatorio para revisao
+        run: |
+          git config user.name "streetball-audit[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/garment_audit_summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m "audit: resumir jaquetas e mangas longas do catalogo"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
