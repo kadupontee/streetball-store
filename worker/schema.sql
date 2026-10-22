@@ -113,3 +113,19 @@ CREATE TABLE IF NOT EXISTS buyer_delay_notifications (
  created_at TEXT NOT NULL,
  updated_at TEXT NOT NULL
 );
+
+-- Evidências confirmadas de rastreamento; não altera estado financeiro do pedido.
+CREATE TABLE IF NOT EXISTS order_tracking_events (
+ id TEXT PRIMARY KEY,
+ order_id TEXT NOT NULL REFERENCES orders(id),
+ stage TEXT NOT NULL,
+ evidence_source TEXT NOT NULL,
+ created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_order_tracking_events_order ON order_tracking_events(order_id,created_at);
+CREATE TABLE IF NOT EXISTS order_tracking_meta (
+ order_id TEXT PRIMARY KEY REFERENCES orders(id),
+ carrier TEXT NOT NULL DEFAULT '',
+ tracking_code TEXT NOT NULL DEFAULT '',
+ updated_at TEXT NOT NULL
+);
