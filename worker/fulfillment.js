@@ -124,8 +124,22 @@ function getSupplier(env){
  // Os cinco fornecedores compartilham o catálogo. A prioridade segue a lista de contatos.
  return suppliers(env)[0]||null;
 }
-function messageSummary(items){
- return trim(items.map(i=>trim(i.title,58)+' '+trim(i.size,12)+' x'+i.qty+(i.personalize?' (personalizado)':'')).join(' | '),330);
+export function messageSummary(items){
+ // Esta variável é enviada no corpo do template Meta junto à foto de cabeçalho.
+ // Preserve a quantidade comprada, mesmo quando frete grátis exigir mais peças.
+ const total=items.reduce((n,i)=>n+(Number(i.qty)||0),0);
+ const products=items.map(i=>{
+  const unit=trim(i.title,58)+' | tamanho '+trim(i.size,12)+' x'+i.qty+
+   (i.patch?' | com patch':' | sem patch')+
+   (i.personalize?' | personalizado: '+trim(i.customName,14)+' '+trim(i.customNumber,3):' | sem personalização');
+  return unit;
+ }).join(' ; ');
+ const note=total<3?
+  ' | Frete: sabemos da promoção de frete grátis a partir de 3 peças, mas queremos exatamente '+total+' peça(s), sem acrescentar itens. Informe o frete para esta quantidade.':
+  ' | Frete: sabemos da condição de frete grátis para 3+ peças; confirme se vale para este pedido. Manter exatamente '+total+' peça(s).';
+ // A nota de quantidade/frete deve sobreviver ao corte em pedidos longos.
+ const maxProductLength=Math.max(20,350-note.length);
+ return trim(products,maxProductLength)+note;
 }
 export async function routePaidOrder(env,orderId){
  if(!env.DB)return false;
