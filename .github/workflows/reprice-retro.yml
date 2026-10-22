@@ -1,0 +1,46 @@
+name: Corrigir temporadas retrô e preços do catálogo
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/retro_policy.py'
+      - 'scripts/reprice_retro_catalog.py'
+      - 'scripts/catalog_utils.py'
+      - 'scripts/test_retro_policy.py'
+      - '.github/workflows/reprice-retro.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: retro-catalog-migration
+  cancel-in-progress: false
+jobs:
+  retro-catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Conferir regra e regressões
+        run: python scripts/test_retro_policy.py
+      - name: Corrigir todos os itens antigos e gerar relatório
+        run: python scripts/reprice_retro_catalog.py
+      - name: Verificar resultado após a migração
+        run: python scripts/reprice_retro_catalog.py --check
+      - name: Versionar catálogo corrigido e auditoria
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- public/catalog.json public/catalog.js scripts/retro-migration-report.json
+          if git diff --cached --quiet; then
+            echo "Catálogo sem alterações pendentes."
+          else
+            git commit -m "catalog: corrigir temporadas antigas e preços retrô"
+            git push origin HEAD:main
+          fi
