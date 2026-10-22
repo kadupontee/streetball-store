@@ -22,11 +22,14 @@ Fontes oficiais:
 - Correios informam prazo geral de **20 dias corridos** desde a disponibilização da cobrança, não desde a saída da China e não desde o evento cadastrado no painel da loja.
 - O status `tax_payment_due` apenas informa a necessidade de verificar o canal oficial. O sistema **não gera Pix, não efetua pagamento, nem inventa prazo individual**.
 - Se o destinatário discordar da tributação, a revisão deve ser solicitada no ambiente oficial, antes da emissão do boleto ou pagamento, dentro do prazo aplicável.
-- Política escolhida pelo lojista: **Opção A — Streetball Store assume os tributos previstos no preço final.** O valor de venda deve incorporar II, ICMS, frete, seguro, eventual despacho, taxas de cobrança, tributos da própria loja, reserva contra imprevistos e margem. O simulador `/imports.html` inclui uma aba de custo/preço mínimo estimado em R$, sem reprecificar o catálogo.
-- Antes de oferecer ao cliente preço final sem cobranças adicionais, definir formalmente, com contador e despachante, como o pagamento da tributação será processado legalmente **quando a encomenda estiver no CPF do destinatário**. A plataforma Minhas Importações funciona em relação ao CPF/CNPJ do destinatário; não presumir que a Streetball Store pode acessar ou pagar qualquer encomenda sem procedimento documentado.
-- Na linha do tempo, `tax_payment_due` significa cobrança identificada e providências pela loja, nunca pagamento confirmado; `tax_payment_confirmed` exige comprovante verificado e registro manual no painel.
-- **Não ativar a produção** antes de aprovar precificação e operação fiscal. O backend exige `STORE_PAYS_IMPORT_TAXES=true`, `IMPORT_COSTS_APPROVED=true` e `IMPORT_COMPLIANCE_APPROVED=true` além dos controles anteriores; no `wrangler.toml` apenas a primeira opção está marcada.
-- Divulgar por escrito o modelo de preços, prazos de importação, canal de suporte, devoluções e solução para tributos inesperados.
+- Política escolhida pelo lojista: **Opção B — destinatário é responsável pelos eventuais tributos de importação (Imposto de Importação e ICMS) e Despacho Postal**. O valor pago na loja se refere aos produtos, serviços e frete contratado, mas **não inclui** tributos aduaneiros cobrados posteriormente.
+- O comprador deve reconhecer essa condição em campo próprio no checkout, separado do consentimento para WhatsApp. Para novos pedidos aceitos, `order_import_disclosures` registra o aceite e a versão `customer_pays_import_taxes_v1`. Pedidos antigos não são alterados.
+- A plataforma e o acompanhamento devem destacar que eventuais valores são pagos pelo destinatário apenas no `Minhas Importações`, aplicativo oficial dos Correios ou ambiente oficial da transportadora, com valores determinados pela fiscalização.
+- O prazo geral informado pelos Correios é de **20 dias corridos desde a disponibilização da cobrança**. O prazo real de cada objeto precisa ser verificado no ambiente oficial; o painel não deve criar uma data de vencimento sem evidência.
+- No painel, `tax_payment_due` significa cobrança oficial identificada; `tax_payment_confirmed` exige conferência de comprovante ou fonte oficial. A loja pode orientar e acompanhar o cliente, mas não faz Pix nem quita tributos.
+- `/imports.html` calcula separadamente custo e preço estimados da loja **sem** os tributos de importação, e uma estimativa adicional de tributos e Despacho Postal pagos pelo destinatário. Não faz precificação automática dos 11 mil produtos.
+- **Não liberar produção** antes de revisar com contador/assessoria a operação de venda e envio direto internacional e aprovar a divulgação dos encargos adicionais. O backend exige `CUSTOMER_PAYS_IMPORT_TAXES=true`, `IMPORT_TAX_DISCLOSURE_APPROVED=true` e `IMPORT_COMPLIANCE_APPROVED=true` além dos controles anteriores; as duas aprovações estão em `false` no `wrangler.toml`.
+- A escolha por repassar tributos não resolve por si só os requisitos da importação de mercadorias para revenda. Nas hipóteses de importação comercial, a Receita exige destinatário pessoa jurídica e documentação em nome do CNPJ; esclarecer o enquadramento do seu dropshipping antes de vender.
 
 Fonte: https://www.correios.com.br/receber/encomenda/internacional
 
@@ -63,7 +66,7 @@ Não compartilhe ou comite o backup nem o segredo. Se o comando para adicionar s
 Confirmar ao final:
 - `/admin.html` — registrar um marco de um pedido Sandbox com o checkbox de evidência.
 - `/track.html` — abrir pelo link privado gerado no painel, sem dados pessoais.
-- `/imports.html` — comparar com a calculadora da Receita e calcular o piso de preço com câmbio, taxas e reserva informados manualmente, sem assumir PRC.
+- `/imports.html` — comparar com a calculadora da Receita e separar preço da loja da tributação estimada do comprador, sem presumir PRC.
 - `WA_AUTOMATION_ENABLED = "false"`, `ASAAS_SANDBOX = "true"`, `PAYMENTS_PRODUCTION_ENABLED = "false"` continuam iguais.
 
 Não liberar pedidos reais sem solução tributária/contratual, orçamento de frete e logística, integridade do catálogo e validação dos meios de pagamento.
