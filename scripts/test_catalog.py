@@ -17,6 +17,15 @@ class CatalogTest(unittest.TestCase):
   self.assertEqual(classify('26-27 Sao Paulo away player')[0],'brasileirao')
   self.assertEqual(classify('1994 Brazil home jersey')[0],'retro')
   self.assertEqual(classify('NBA Golden State Warriors Curry')[0],'nba')
+  self.assertEqual(classify('Sao Paulo 26-27 Player Shorts'),('acessorios','shorts_player'))
+  self.assertEqual(classify('Calção jogador Brasil 2026'),('acessorios','shorts_player'))
+  self.assertEqual(classify('Calção comum Brasil 2026'),('acessorios','shorts'))
+ def test_player_shorts_legacy_price_and_manual_lock(self):
+  legacy=normalize_product({'id':'TEST-SHORTS-1','title':'Sao Paulo Player Shorts 2026','kind':'shorts','price':119.90})
+  self.assertEqual(legacy['kind'],'shorts_player')
+  self.assertEqual(legacy['price'],143.90)
+  locked=normalize_product({'id':'TEST-SHORTS-2','title':'Sao Paulo Player Shorts 2026','kind':'shorts','price':119.90,'priceLocked':True})
+  self.assertEqual(locked['price'],119.90)
  def test_album_stable_id_multiple_photos(self):
   p=normalize_product({'title':'Santos 26/27 Home','sourceUrl':'https://james66jersey.x.yupoo.com/albums/123456','images':['https://photo.yupoo.com/j/1.jpg','https://photo.yupoo.com/j/2.jpg']})
   self.assertEqual(p['id'],'YUP-123456');self.assertEqual(len(p['images']),2)
