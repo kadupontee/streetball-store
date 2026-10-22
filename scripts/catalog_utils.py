@@ -9,7 +9,7 @@ CATALOG = ROOT / 'public' / 'catalog.json'
 CATALOG_JS = ROOT / 'public' / 'catalog.js'
 CATEGORIES = {'brasileirao','europa','selecoes','retro','infantil','feminino','nba','treino','acessorios','outras'}
 PRICES = {'fan':159.90,'female':159.90,'kids':179.90,'retro':199.90,'retro_long':229.90,'long':189.90,
-          'player_adidas':209.90,'player_puma':219.90,'player_nike':229.90,'nba':219.90,'shorts':119.90,'socks':59.90,'set':299.90}
+          'player_adidas':209.90,'player_puma':219.90,'player_nike':229.90,'nba':219.90,'shorts':119.90,'shorts_player':143.90,'socks':59.90,'set':299.90}
 KINDS = set(PRICES)
 BRAZIL = ('sao paulo','corinthians','palmeiras','flamengo','gremio','internacional','santos','vasco', 'botafogo','fluminense','bahia','fortaleza','remo','paysandu','cruzeiro','atletico mineiro','bragantino','ceara','sport recife','vitoria','nautico','athletico','paranaense','santa cruz','chapecoense','guarani','figueirense','goias','avai','corinthian')
 EUROPE = ('real madrid','barcelona','manchester','arsenal','chelsea','liverpool','tottenham','juventus','milan','napoli','paris','psg','bayern','dortmund','benfica','porto','sporting','braga','valencia','betis','sevilla','ajax','lyon','marseille','villarreal','roma','aston villa','leicester','newcastle','leeds','frankfurt','wolfsburg','st pauli','bremen','hannover')
@@ -37,13 +37,22 @@ def is_nba_product(item):
     return any(term in title for term in NBA_TEAM_MARKERS)
 
 
+def is_player_shorts(title, kind=''):
+    """Identifica calção versão jogador sem confundir com camisa jogador."""
+    code=str(kind or '').lower()
+    if code=='shorts_player': return True
+    if code not in ('','shorts'): return False
+    s=normalized(title)
+    return bool(re.search(r'\b(shorts?|calcao|bermuda)\b',s) and re.search(r'\b(player|jogador|versao\s+jogador)\b',s))
+
+
 def classify(title, category_hint=''):
     s = normalized(f'{title} {category_hint}')
     if re.search(r'\b(retro|vintage|classic)\b',s) or is_older_than_five_seasons(title): cat = 'retro'
     elif any(x in s for x in ('kids','children','infantil','baby','youth','16-28','16~28','16-30')): cat = 'infantil'
     elif any(x in s for x in ('women','woman','feminina','feminino')): cat = 'feminino'
     elif any(x in s for x in ('basketball','nba','warriors','lakers','celtics')): cat = 'nba'
-    elif any(x in s for x in ('shorts','stocking','socks','meiao','meiao')): cat = 'acessorios'
+    elif re.search(r'\b(shorts?|calcao|bermuda|stockings?|socks?|meiao)\b',s): cat = 'acessorios'
     elif any(x in s for x in ('training','tracksuit','suit','windbreaker','polo','pre-match','trainning')): cat = 'treino'
     elif any(x in s for x in BRAZIL): cat = 'brasileirao'
     elif any(x in s for x in EUROPE): cat = 'europa'
@@ -52,7 +61,7 @@ def classify(title, category_hint=''):
     if cat == 'nba': kind = 'nba'
     elif cat == 'infantil': kind = 'kids'
     elif cat == 'feminino': kind = 'female'
-    elif cat == 'acessorios': kind = 'socks' if 'sock' in s or 'meiao' in s else 'shorts'
+    elif cat == 'acessorios': kind = 'socks' if 'sock' in s or 'meiao' in s else 'shorts_player' if is_player_shorts(title) else 'shorts'
     elif cat == 'treino': kind = 'set' if 'suit' in s or 'kit' in s else 'long'
     elif cat == 'retro': kind = 'retro_long' if any(x in s for x in ('long sleeve','long-sleeve','manga longa')) else 'retro'
     elif any(x in s for x in ('long-sleeve','long sleeve','manga longa')): kind = 'long'
@@ -85,6 +94,7 @@ def normalize_product(raw):
     kind = str(raw.get('kind') or kind0).strip().lower()
     if cat not in CATEGORIES:cat=cat0
     if kind not in KINDS:kind=kind0
+    if not raw.get('kindLocked') and is_player_shorts(title,kind):kind='shorts_player'
     if source:
         aid=re.search(r'/albums/(\d+)',source).group(1)
         product_id='YUP-'+aid
@@ -100,6 +110,10 @@ def normalize_product(raw):
     if isinstance(sz,str):sz=[s.strip() for s in re.split(r'[,;|]+',sz) if s.strip()]
     price=raw.get('price')
     if price is None or str(price).strip()=='':price=PRICES[kind]
+    # Catálogo legado importava calção jogador como calção comum (R$ 119,90).
+    # Preserve preços diferentes e itens bloqueados manualmente.
+    elif kind=='shorts_player' and not raw.get('priceLocked') and str(price).strip() in ('119.9','119.90','119,90'):
+        price=PRICES['shorts_player']
     if isinstance(price,str):price=price.replace('R$','').strip().replace('.','').replace(',','.') if ',' in price else price
     price=float(price)
     if not 1<=price<=100000:raise ValueError('Preço fora do intervalo permitido')
