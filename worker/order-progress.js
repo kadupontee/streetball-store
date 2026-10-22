@@ -26,7 +26,7 @@ export function formatProgress(order,meta,events){
   events:events.map(e=>({at:e.created_at,stage:e.stage,label:STAGES[e.stage]||'Atualização'})),
   payTaxesAtOfficialCorreios:events[0]?.stage==='tax_payment_due',
   importTaxesManagedByStore:true,
-  importTaxGuidance:events[0]?.stage==='tax_payment_due'?'A Streetball Store está verificando a cobrança de importação. Os custos previstos são responsabilidade da loja. Se o Correios solicitar ação em seu CPF, contate o atendimento para instruções e não pague cobranças de links suspeitos.':'A responsabilidade pelos tributos previstos será da Streetball Store, conforme as condições da compra.',
+  importTaxGuidance:events[0]?.stage==='tax_payment_due'?'A Streetball Store está verificando a cobrança de importação. Os custos previstos são responsabilidade da loja. Se os Correios solicitarem alguma providência vinculada ao documento do destinatário, contate o atendimento para instruções e não pague cobranças de links suspeitos.':'A responsabilidade pelos tributos previstos será da Streetball Store, conforme as condições da compra.',
   source:'Eventos informados pelo administrador após conferência, não rastreamento em tempo real.'
  };
 }
