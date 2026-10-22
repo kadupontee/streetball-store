@@ -20,12 +20,16 @@ class SupplierCostTests(unittest.TestCase):
         self.assertEqual(data["currency"], "USD")
         self.assertEqual(data["supplier_usd"]["shorts"], 10)
         self.assertEqual(data["supplier_usd"]["shorts_player"], 12)
+        self.assertEqual(data["supplier_usd"]["retro_long"], 19)
+        self.assertEqual(data["supplier_usd"]["jacket"], 30)
         self.assertEqual(data["shipping_usd"]["one_piece"], 4)
 
     def test_supplier_cost_and_retail_price_are_distinct(self):
         # A product's published BRL price must remain unchanged by this update.
         self.assertEqual(PRICES["shorts"], 119.90)
         self.assertEqual(PRICES["shorts_player"], 143.90)
+        self.assertEqual(PRICES["jacket"], 379.90)
+        self.assertEqual(PRICES["retro_long"], 229.90)
 
     def test_report_shows_both_costs_without_inventing_retail(self):
         with TemporaryDirectory() as directory:
