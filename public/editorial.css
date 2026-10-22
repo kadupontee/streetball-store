@@ -418,3 +418,76 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .brand-light .brand-logo-img{filter:invert(1)}
 @media(max-width:890px){.site-header .brand .brand-logo-img{width:158px}}
 @media(max-width:510px){.site-header .brand .brand-logo-img{width:128px}}
+
+
+/* Mobile Collections V6: preserve native aspect ratio and 100% of artwork on phones. */
+@media (max-width: 780px) {
+  #categoryGrid.category-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 15px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #categoryGrid .category-tile.editorial-fixed-tile {
+    display: block;
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    aspect-ratio: auto;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 8px;
+    line-height: 0;
+    background: #d6d6d8;
+    box-shadow: none;
+  }
+
+  #categoryGrid .category-tile.editorial-fixed-tile .category-photo {
+    display: block;
+    position: relative;
+    inset: auto;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    max-width: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+    padding: 0;
+    margin: 0;
+    object-fit: contain;
+    object-position: center;
+    background: transparent;
+    filter: none;
+    transform: none;
+  }
+
+  #categoryGrid .category-tile.editorial-fixed-tile:hover,
+  #categoryGrid .category-tile.editorial-fixed-tile:focus-visible {
+    transform: none;
+  }
+  #categoryGrid .category-tile.editorial-fixed-tile:hover .category-photo {
+    transform: none;
+  }
+  #categoryGrid .category-tile.editorial-fixed-tile::after {
+    display: none;
+  }
+  #categoryGrid .category-tile.editorial-fixed-tile .editorial-tile-sr {
+    line-height: normal;
+  }
+}
+@media (max-width: 390px) {
+  #categoryGrid.category-grid {gap: 12px}
+}
