@@ -1,0 +1,41 @@
+name: Atualizar precos de jaquetas e mangas longas
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/garment_policy.py
+      - scripts/reprice_garments.py
+      - scripts/test_garment_policy.py
+      - .github/workflows/reprice-garments.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: streetball-reprice-garments
+  cancel-in-progress: false
+jobs:
+  reprice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Testar classificação e custos sem alterar catálogo
+        run: |
+          python scripts/test_garment_policy.py
+          python scripts/test_supplier_costs.py
+          node --check public/app.js
+      - name: Migrar apenas produtos seguros com imagem
+        run: |
+          python scripts/reprice_garments.py
+          python scripts/reprice_garments.py --check
+      - name: Enviar catálogo de 10936 produtos com novas classificações
+        run: |
+          git config user.name "streetball-pricing[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/catalog.json public/catalog.js scripts/garment_migration_summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m "catalog: atualizar jaquetas US30 e mangas longas retro US19"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
