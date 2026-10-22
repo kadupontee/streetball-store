@@ -46,6 +46,17 @@ class GarmentPolicyTest(unittest.TestCase):
         b=apply_garment_pricing(a)
         self.assertEqual(a,b)
         self.assertEqual(a["price"],379.90)
+    def test_plain_hoodies_are_not_individual_jackets(self):
+        for name in ("Barcelona fleece hoodie","Huamian Embroidered Cardigan Hoodie White","Flamengo Jacket kits 815"):
+            item=product(name)
+            self.assertIsNone(garment_decision(item)[0],name)
+            self.assertEqual(apply_garment_pricing(item)["price"],159.90)
+    def test_zip_front_jacket_is_individual_jacket(self):
+        item=product("Manchester United Half-Zip Training Top")
+        self.assertEqual(garment_decision(item)[0],"jacket")
+    def test_old_retro_jacket_cost_overrides_jersey(self):
+        item=product("1998 Arsenal Retro Windbreaker Jacket",kind="retro",price=199.90)
+        self.assertEqual(apply_garment_pricing(item)["price"],379.90)
     def test_no_unrelated_products(self):
         p=product("Manchester City Home Jersey 2026",kind="fan")
         self.assertEqual(p,apply_garment_pricing(p))
