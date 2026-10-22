@@ -1,0 +1,58 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Planejamento de tributos — Streetball Store</title><meta name="robots" content="noindex,nofollow"><style>
+body{font:15px/1.5 system-ui,Arial,sans-serif;background:#f4f6f2;color:#1d2b22;margin:0}
+header{background:#17251c;color:white;padding:24px}header h1{margin:0;font-size:24px}main{max-width:860px;margin:25px auto;padding:0 18px}
+article{background:white;border:1px solid #dae5dc;border-radius:10px;padding:22px;margin:15px 0}
+h2{font-size:18px}label{display:block;font-weight:650;margin-bottom:12px}input,select{display:block;width:100%;padding:10px;font:inherit;margin-top:5px;box-sizing:border-box;border:1px solid #bdc9be;border-radius:5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}.muted{color:#617063;font-size:13px}table{width:100%;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #e9eee8}td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+a{color:#23583a}
+</style></head><body>
+<header><h1>STREETBALL STORE / Estimativa tributária</h1><p>Planejamento de importações — não gera cobrança</p></header>
+<main><p><a href="/admin.html">Voltar para operações</a></p>
+<article><h2>Antes de calcular</h2><p><strong>O regime padrão de fornecedores via WhatsApp é fora do Remessa Conforme até prova documental em contrário.</strong> A alíquota zero do imposto federal até US$ 50 só alcança compras elegíveis em sites efetivamente certificados, para pessoa física. O ICMS continua devido.</p>
+<p class="muted">Use valores reais de mercadoria, frete e seguro. Não use o preço de venda brasileiro como se fosse necessariamente o valor aduaneiro. Não subdeclare nem divida artificialmente pedidos para evitar imposto.</p></article>
+<article><h2>Simular o custo tributário (valores em US$)</h2>
+<div class="grid">
+<label>Produtos (US$)<input type="number" id="goods" min="0" step=".01" value="22"></label>
+<label>Frete (US$)<input type="number" id="freight" min="0" step=".01" value="4"></label>
+<label>Seguro (US$)<input type="number" id="insurance" min="0" step=".01" value="0"></label>
+<label>ICMS estadual<select id="icms"><option value=".17">17%</option><option value=".18">18%</option><option value=".19">19%</option><option value=".20">20%</option></select></label>
+</div>
+<label>Regime aplicável<select id="regime"><option value="regular">Fora do Remessa Conforme (padrão da loja atual)</option><option value="prc">Site comprovadamente certificado no Remessa Conforme; destinatário pessoa física</option></select></label>
+<table><tbody id="breakdown"></tbody></table>
+<p class="muted" id="notice"></p></article>
+<article><h2>Links e segurança</h2>
+<p><a href="https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/manuais/remessas-postal-e-expressa/preciso-pagar-impostos-nas-compras-internacionais/quais-sao-os-impostos-devidos" rel="noopener noreferrer" target="_blank">Regras oficiais — Receita Federal</a></p>
+<p><a href="https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/manuais/remessas-postal-e-expressa/calculadora-de-impostos-portal-aduana-e-comercio-exterior" rel="noopener noreferrer" target="_blank">Calculadora oficial da Receita Federal</a></p>
+<p><a href="https://www.correios.com.br/receber/encomenda/internacional" rel="noopener noreferrer" target="_blank">Correios — tributos e Minhas Importações</a></p>
+<p class="muted">Estimativa orientativa antes da declaração. O cálculo definitivo é realizado pelas autoridades com o câmbio aplicável e pode incluir tarifas/Despacho Postal. Nenhum dado sai deste navegador.</p></article></main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const usd=n=>'US$ '+n.toFixed(2);
+function estimate(value,freight,insurance,rate,prc){
+ const base=value+freight+insurance;
+ const ii=prc?(base<=50?0:Math.max(0,base*.6-30)):base*.6;
+ const icms=(base+ii)*rate/(1-rate);
+ return {base,ii,icms,total:base+ii+icms};
+}
+function render(){
+ const n=id=>Number($(id).value);
+ const nums=[n('goods'),n('freight'),n('insurance')];
+ const rate=n('icms'),prc=$('regime').value==='prc';
+ const area=$('breakdown'),notice=$('notice');
+ if(nums.some(n=>!Number.isFinite(n)||n<0||n>3000)||!Number.isFinite(rate)){
+  area.replaceChildren();notice.textContent='Preencha valores não negativos de até US$ 3.000 por campo.';return;
+ }
+ const out=estimate(...nums,rate,prc);
+ const fields=[['Valor aduaneiro (produto + frete + seguro)',out.base],
+  ['Imposto de Importação (II)',out.ii],['ICMS por dentro (estimativa)',out.icms],
+  ['Custo total estimado, sem despacho postal',out.total]];
+ area.replaceChildren(...fields.map(([name,value])=>{
+  const row=document.createElement('tr'),label=document.createElement('td'),val=document.createElement('td');
+  label.textContent=name;val.textContent=usd(value);row.append(label,val);return row;
+ }));
+ notice.textContent=prc?'Cenário somente para compra elegível em plataforma certificada. A Streetball Store não está sendo tratada como certificada.':'Cenário conservador para remessa fora do programa: Imposto de Importação de 60% desde o primeiro dólar, além do ICMS.';
+}
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',render));
+render();
+</script></body></html>
