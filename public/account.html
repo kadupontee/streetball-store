@@ -1,63 +1,151 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Acesse sua conta Streetball Store e acompanhe seus pedidos.">
-<meta name="theme-color" content="#828bd5"><title>Minha conta | Streetball Store</title>
-<link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/editorial.css">
-<style>
-.account-hero{padding:60px 0 36px;background:#d8d8db}.account-hero h1{font:900 clamp(54px,8vw,94px)/.9 'Barlow Condensed',Impact,sans-serif;margin:15px 0;color:#111}
-.account-hero p{color:#4c4c55;max-width:570px;line-height:1.65}.account-shell{display:grid;grid-template-columns:260px 1fr;gap:30px;padding-top:38px;padding-bottom:100px}
-.account-menu{background:#f2f2f5;border:1px solid #d9d9de;padding:20px;align-self:start}.account-menu strong{font-size:13px;letter-spacing:.08em}
-.account-menu a,.account-menu button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 5px;border:0;border-top:1px solid #d7d7dd;background:none;color:#151519;text-align:left;font-size:13px}
-.account-pane{background:#fff;border:1px solid #d9d9df;padding:28px;min-height:280px}
-.account-pane h2{font:800 37px 'Barlow Condensed',Impact,sans-serif;margin:0 0 12px}
-.auth-tabs{display:flex;gap:8px;margin:0 0 20px}.auth-tabs button{padding:12px 18px;border:1px solid #ccd0e0;background:#fff;color:#252637}.auth-tabs button[aria-selected="true"]{background:#818bd4;color:#0c0d18;border-color:#818bd4;font-weight:800}
-.auth-form{display:grid;gap:15px;max-width:430px}.auth-form[hidden],[hidden]{display:none!important}.auth-form label{font-size:13px;font-weight:700;display:grid;gap:7px}.auth-form input,.link-order-form input{border:1px solid #bfc0c9;padding:13px;width:100%;background:#fafafa;min-height:45px;border-radius:2px}.auth-form .btn-accent{width:fit-content;display:inline-flex;align-items:center;justify-content:center;gap:10px}
-.notice{padding:15px;background:#f3f2fc;border-left:3px solid #818bd4;line-height:1.6;font-size:13px}.muted{color:#666779}.order-entry{border:1px solid #dedee5;padding:18px;margin:13px 0;display:grid;gap:9px}.order-entry header{display:flex;justify-content:space-between;align-items:center;gap:15px}.order-entry h3{font-size:16px;margin:0}.order-entry small{color:#5a5b68}.order-entry a{color:#4e58b5;font-weight:700;text-decoration:underline;text-underline-offset:3px}.link-order-form{margin:22px 0 10px;display:grid;gap:12px;max-width:600px}.link-order-form label{font-size:13px;font-weight:700}
-.account-feedback{font-size:13px;line-height:1.6;min-height:24px;color:#454da0}
-@media(max-width:760px){.account-shell{grid-template-columns:1fr;padding-top:22px}.account-pane{padding:20px}.account-hero{padding:45px 0 25px}}
-.google-auth-box,.google-connect-box{margin:22px 0 8px;max-width:510px}
-.google-auth-separator{display:flex;align-items:center;gap:12px;color:#737488;font-weight:800;font-size:10px;letter-spacing:.09em;margin:18px 0}
-.google-auth-separator:before,.google-auth-separator:after{content:'';height:1px;flex:1;background:#d7d8e0}
-.google-button-slot{min-height:44px;max-width:360px;overflow:hidden}
-.google-auth-caption{font-size:12px;line-height:1.6;margin-top:11px}
-.google-connect-box{padding:18px;border:1px solid #d9dbea;background:#f7f7fb;margin-bottom:30px}
-.google-connect-box h3{font:800 19px 'Barlow Condensed',Impact,sans-serif;margin:0 0 6px}
-.google-connect-box>p{font-size:12px;line-height:1.6}
-.google-connect-box .google-button-slot{margin-top:15px}
-</style></head><body>
-<div class="announcement"><div class="container announce-inner"><span>STREETBALL STORE · FUTEBOL É IDENTIDADE</span><span class="announce-right">CAMISAS PARA TODAS AS GERAÇÕES</span></div></div>
-<header class="site-header"><div class="container header-main editorial-account-head">
-<a class="brand" href="/" aria-label="Voltar para Streetball Store"><span class="brand-word">STREETBALL<small>STORE</small></span><span class="brand-spark">✦</span></a>
-<nav class="account-header-nav" aria-label="Menu principal"><a href="/">Início</a><a href="/#colecao">Coleções</a><a href="/account.html#pedidos">Pedidos</a><a href="/account.html">Minha conta</a></nav>
-<a class="btn-outline" href="/">CONTINUAR COMPRANDO ↗</a>
-</div></header>
-<section class="account-hero"><div class="container"><span class="micro">SUA ÁREA STREETBALL</span><h1>MINHA CONTA<span style="color:#7b84ce">.</span></h1><p>Seus dados, suas compras e a história de cada camisa em um só lugar.</p></div></section>
-<main class="container account-shell">
-<aside class="account-menu"><strong>MINHA STREETBALL</strong><a href="/account.html">Minha conta <span>↗</span></a><a href="#pedidos" id="menuOrders">Meus pedidos <span>↗</span></a><a href="#vincular" id="menuClaim">Vincular pedido <span>↗</span></a><a href="#googleConnectBox" id="menuGoogle" hidden>Conectar Conta Google <span>→</span></a><a href="/track.html">Acompanhar pedido <span>↗</span></a><button id="logout" hidden type="button">Sair da conta <span>→</span></button></aside>
-<section>
-<div class="account-pane" id="authPane"><span class="micro">ACESSO SEGURO</span><h2>ENTRE OU CRIE SUA CONTA.</h2><p class="muted">Você pode comprar normalmente e depois vincular seu pedido utilizando o link privado de acompanhamento.</p>
-<div class="auth-tabs" role="tablist"><button id="loginTab" type="button" role="tab" aria-selected="true">Entrar</button><button id="registerTab" type="button" role="tab" aria-selected="false">Criar conta</button></div>
-<form id="loginForm" class="auth-form"><label>E-mail<input type="email" name="email" autocomplete="email" required maxlength="180"></label><label>Senha<input type="password" name="password" autocomplete="current-password" required minlength="12"></label><button type="submit" class="btn-accent">ENTRAR NA CONTA →</button></form>
-<form id="registerForm" class="auth-form" hidden><label>Nome completo<input type="text" name="displayName" autocomplete="name" minlength="2" maxlength="70" required></label><label>E-mail<input type="email" name="email" autocomplete="email" maxlength="180" required></label><label>Crie uma senha (mínimo 12 caracteres)<input type="password" name="password" autocomplete="new-password" minlength="12" maxlength="128" required></label><button type="submit" class="btn-accent">CRIAR MINHA CONTA <svg class="ui-arrow-up-right" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11"/></svg></button></form>
-<div class="google-auth-box" id="googleAuthBox" hidden>
-  <div class="google-auth-separator"><span>OU CONTINUE COM</span></div>
-  <div id="googleSignInButton" class="google-button-slot" aria-label="Entrar ou criar conta com Google"></div>
-  <p class="muted google-auth-caption">Use sua Conta do Google com segurança, sem precisar criar uma nova senha.</p>
-</div>
-</div>
-<div class="account-pane" id="profilePane" hidden><span class="micro">BEM-VINDO DE VOLTA</span><h2 id="accountGreeting">SUA CONTA.</h2><p class="muted" id="accountEmail"></p>
-<div class="google-connect-box" id="googleConnectBox" hidden>
-  <h3>CONEXÃO COM GOOGLE</h3>
-  <p class="muted">Conecte sua Conta do Google para entrar mais facilmente. Por segurança, use o mesmo e-mail cadastrado na Streetball Store.</p>
-  <div id="googleConnectButton" class="google-button-slot"></div>
-</div>
-<div id="pedidos"><h2>MEUS PEDIDOS</h2><div id="ordersList"><p class="muted">Carregando...</p></div></div>
-<div id="vincular"><h2>VINCULAR PEDIDO</h2><p class="muted">Já comprou antes de criar conta? Cole o link privado recebido no checkout ou salvo no navegador. Somente quem possui esse link pode vincular a compra.</p>
-<form id="claimForm" class="link-order-form"><label>Link de acompanhamento<input type="text" id="claimLink" placeholder="https://.../track.html#..." autocomplete="off" required></label><button type="submit" class="btn-accent">VINCULAR PEDIDO →</button></form>
-<button id="claimSaved" type="button" class="btn-outline" hidden>USAR PEDIDO SALVO NESTE NAVEGADOR</button></div>
-</div>
-<p class="account-feedback" role="status" aria-live="polite" id="accountMessage"></p>
-<div class="notice">A Streetball Store não solicita sua senha gov.br. Se houver tributação de importação, consulte somente os canais oficiais dos Correios ou da transportadora. O pagamento à loja não inclui esses tributos.</div>
-</section>
-</main><footer class="site-footer"><div class="container footer-bottom"><span>© STREETBALL STORE · FUTEBOL, CULTURA, IDENTIDADE.</span><a href="/">VOLTAR À LOJA ↑</a></div></footer>
-<script type="module" src="/account.js?v=mobile-register-20261022"></script>
-</body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#17171b">
+  <meta name="description" content="Entre, crie sua conta e acompanhe seus pedidos na Streetball Store.">
+  <title>Minha conta | Streetball Store</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=20261022-editorial">
+  <link rel="stylesheet" href="editorial.css?v=20261022-cards-square-v4">
+  <link rel="stylesheet" href="account-ui.css?v=20261022-mobile-redesign-1">
+  <script>
+    // GitHub Pages é apenas uma vitrine: login, cookies e D1 ficam no Worker.
+    // Preservar #criar-conta e #pedidos ao encaminhar o cliente ao site funcional.
+    if (location.hostname.endsWith('.github.io')) {
+      location.replace('https://streetball-store.kpgmer.workers.dev/account.html' + location.search + location.hash);
+    }
+  </script>
+</head>
+<body class="sb-account-page">
+  <div class="account-topline">
+    <div class="container">
+      <span>STREETBALL STORE · FUTEBOL É IDENTIDADE</span>
+      <span>SEU MANTO. SUA HISTÓRIA.</span>
+    </div>
+  </div>
+
+  <header class="sb-account-header">
+    <div class="container account-header-inner">
+      <a class="brand account-brand" href="./" aria-label="Streetball Store — voltar à loja">
+        <span class="brand-word">STREETBALL<small>STORE</small></span>
+      </a>
+      <nav class="account-header-nav" aria-label="Navegação principal">
+        <a href="./">Início</a>
+        <a href="./#colecao">Coleções</a>
+        <a href="account.html#pedidos">Pedidos</a>
+        <a href="account.html" aria-current="page">Minha conta</a>
+      </nav>
+      <a href="./" class="account-shop-link">CONTINUAR COMPRANDO</a>
+    </div>
+  </header>
+
+  <section class="account-intro" aria-labelledby="accountTitle">
+    <div class="container account-intro-inner">
+      <span class="account-kicker">ÁREA DO CLIENTE / STREETBALL STORE</span>
+      <h1 id="accountTitle">MINHA<br><em>CONTA.</em></h1>
+      <p>Seus dados, seus pedidos e a história de cada camisa em um só lugar.</p>
+    </div>
+  </section>
+
+  <main class="container account-layout">
+    <aside class="account-side-nav" aria-label="Menu da conta">
+      <div class="account-side-head">
+        <strong>MINHA STREETBALL</strong>
+        <small>ÁREA DO CLIENTE</small>
+      </div>
+      <nav class="account-side-links" aria-label="Opções da conta">
+        <a href="account.html" class="active">Minha conta</a>
+        <a href="#pedidos" id="menuOrders">Meus pedidos</a>
+        <a href="#vincular" id="menuClaim">Vincular pedido</a>
+        <a href="track.html">Acompanhar pedido</a>
+        <a href="#googleConnectBox" id="menuGoogle" hidden>Conectar Conta Google</a>
+        <button id="logout" type="button" hidden>Sair da conta</button>
+      </nav>
+    </aside>
+
+    <section class="account-main" aria-label="Acesso à conta e pedidos">
+      <div class="account-pane" id="authPane">
+        <span class="micro">ACESSO SEGURO</span>
+        <h2>ENTRE OU CRIE SUA CONTA.</h2>
+        <p class="intro-copy">Tenha seus pedidos organizados em um só lugar. Você também pode comprar sem cadastro e vincular seu pedido depois.</p>
+        <div class="auth-tabs" role="tablist" aria-label="Tipo de acesso">
+          <button id="loginTab" role="tab" type="button" aria-selected="true" aria-controls="loginForm">Entrar</button>
+          <button id="registerTab" role="tab" type="button" aria-selected="false" aria-controls="registerForm">Criar conta</button>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+          <label>E-mail
+            <input type="email" name="email" autocomplete="email" maxlength="180" placeholder="seuemail@exemplo.com" required>
+          </label>
+          <label>Senha
+            <input type="password" name="password" autocomplete="current-password" minlength="12" required>
+          </label>
+          <button type="submit" class="btn-accent">ENTRAR NA CONTA</button>
+        </form>
+
+        <form id="registerForm" class="auth-form" hidden>
+          <label>Nome completo
+            <input type="text" name="displayName" autocomplete="name" minlength="2" maxlength="70" placeholder="Seu nome completo" required>
+          </label>
+          <label>E-mail
+            <input type="email" name="email" autocomplete="email" maxlength="180" placeholder="seuemail@exemplo.com" required>
+          </label>
+          <label>Crie uma senha (mínimo 12 caracteres)
+            <input type="password" name="password" autocomplete="new-password" minlength="12" maxlength="128" required>
+          </label>
+          <button type="submit" class="btn-accent">CRIAR MINHA CONTA</button>
+        </form>
+
+        <div class="google-auth-box" id="googleAuthBox" hidden>
+          <div class="google-auth-separator"><span>OU CONTINUE COM</span></div>
+          <div id="googleSignInButton" class="google-button-slot" aria-label="Entrar ou criar conta com Google"></div>
+          <p class="muted google-auth-caption">Use sua Conta do Google com segurança, sem criar uma nova senha.</p>
+        </div>
+      </div>
+
+      <div class="account-pane" id="profilePane" hidden>
+        <span class="micro">BEM-VINDO DE VOLTA</span>
+        <h2 id="accountGreeting">SUA CONTA.</h2>
+        <p class="muted" id="accountEmail"></p>
+        <div class="google-connect-box" id="googleConnectBox" hidden>
+          <h3>CONEXÃO COM GOOGLE</h3>
+          <p class="muted">Conecte sua Conta do Google para entrar com mais facilidade. Por segurança, utilize o mesmo e-mail cadastrado na Streetball Store.</p>
+          <div id="googleConnectButton" class="google-button-slot"></div>
+        </div>
+        <div class="account-profile-section" id="pedidos">
+          <h2>MEUS PEDIDOS</h2>
+          <div id="ordersList"><p class="muted">Carregando pedidos...</p></div>
+        </div>
+        <div class="account-profile-section" id="vincular">
+          <h2>VINCULAR PEDIDO</h2>
+          <p class="muted">Já comprou antes de criar conta? Cole o link privado recebido no checkout ou salvo no navegador. Somente quem possui esse link pode vincular a compra.</p>
+          <form id="claimForm" class="link-order-form">
+            <label>Link de acompanhamento
+              <input type="text" id="claimLink" placeholder="Cole seu link de acompanhamento" autocomplete="off" required>
+            </label>
+            <button type="submit" class="btn-accent">VINCULAR PEDIDO</button>
+          </form>
+          <button id="claimSaved" type="button" hidden>USAR PEDIDO SALVO NESTE NAVEGADOR</button>
+        </div>
+      </div>
+      <p class="account-feedback" role="status" aria-live="polite" id="accountMessage"></p>
+      <div class="account-notice">
+        <div>
+          <strong>SEGURANÇA E TRANSPARÊNCIA</strong>
+          <p>A Streetball Store não solicita sua senha gov.br. Tributos de importação, quando cobrados, são pagos somente nos canais oficiais dos Correios ou da transportadora e não estão incluídos no pagamento à loja.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="account-footer">
+    <div class="container account-footer-inner">
+      <span>© STREETBALL STORE · FUTEBOL, CULTURA, IDENTIDADE.</span>
+      <a href="./">VOLTAR À LOJA</a>
+    </div>
+  </footer>
+  <script type="module" src="account.js?v=mobile-ui-20261022"></script>
+</body>
+</html>
