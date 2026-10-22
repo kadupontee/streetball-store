@@ -163,7 +163,7 @@ function catalogRender(){
  const club=BR_CLUBS.find(([id])=>id===state.club);
  $('catalogSubtitle').textContent=state.club==='todos'?'Escolha seu clube e explore as camisas dos times brasileiros.':state.club==='outros'?'Modelos dos demais clubes brasileiros.':club?'Camisas, versões de jogador, retrôs e modelos infantis do '+club[1]+'.':'Escolha seu clube.';
  }
- $('productsGrid').innerHTML=visible.map(p=>`<article class="product-card" data-id="${esc(p.id)}"><div class="product-image"><span class="label-chip ${p.badge==='NOVO'||p.badge==='COPA 2026'?'highlight':''}">${esc(p.badge||'STREETBALL')}</span><button class="fav-btn ${state.favorites.includes(p.id)?'active':''}" data-fav="${esc(p.id)}" aria-label="Adicionar aos favoritos"><svg viewBox="0 0 24 24"><path d="M20 4c-2.3-2-5.3-1.2-8 1.6C9.3 2.8 6.4 2 4 4c-3.1 3-2.2 7.2 0 9.4L12 21l8-7.6c2.2-2.2 3.1-6.4 0-9.4Z"/></svg></button>${imageHTML(p)}<button class="quick-btn" data-open="${esc(p.id)}">ESCOLHER OPÇÕES ↗</button></div><div class="product-meta"><div class="product-label">${esc(categoryLabel(p))}</div><h3 class="product-title">${esc(p.title)}</h3><div class="product-price"><small>A partir de</small>${money(p.price)}</div><div class="product-price-note">Tamanhos e personalização disponíveis</div></div></article>`).join('')||'<div class="empty-cart">'+esc(state.category==='brasileirao'&&state.club!=='todos'&&state.club!=='outros'?'Ainda não temos modelos com foto cadastrada para '+(BR_CLUBS.find(([id])=>id===state.club)?.[1]||'este clube')+'.':'Nenhum modelo encontrado. Experimente outra pesquisa ou categoria.')+'</div>';
+ $('productsGrid').innerHTML=visible.map(p=>`<article class="product-card" data-id="${esc(p.id)}"><div class="product-image"><span class="label-chip ${p.badge==='NOVO'||p.badge==='COPA 2026'?'highlight':''}">${esc(p.badge||'STREETBALL')}</span><button class="fav-btn ${state.favorites.includes(p.id)?'active':''}" data-fav="${esc(p.id)}" aria-label="Adicionar aos favoritos"><svg viewBox="0 0 24 24"><path d="M20 4c-2.3-2-5.3-1.2-8 1.6C9.3 2.8 6.4 2 4 4c-3.1 3-2.2 7.2 0 9.4L12 21l8-7.6c2.2-2.2 3.1-6.4 0-9.4Z"/></svg></button>${imageHTML(p)}<button class="quick-btn" data-open="${esc(p.id)}" aria-label="Escolher opções de ${esc(p.title)}"><span>ESCOLHER OPÇÕES</span><svg class="quick-btn-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M8 5h11v11"/></svg></button></div><div class="product-meta"><div class="product-label">${esc(categoryLabel(p))}</div><h3 class="product-title">${esc(p.title)}</h3><div class="product-price"><small>A partir de</small>${money(p.price)}</div><div class="product-price-note">Tamanhos e personalização disponíveis</div></div></article>`).join('')||'<div class="empty-cart">'+esc(state.category==='brasileirao'&&state.club!=='todos'&&state.club!=='outros'?'Ainda não temos modelos com foto cadastrada para '+(BR_CLUBS.find(([id])=>id===state.club)?.[1]||'este clube')+'.':'Nenhum modelo encontrado. Experimente outra pesquisa ou categoria.')+'</div>';
  $('catalogTotal').textContent=`Exibindo ${visible.length} de ${ps.length} modelos · ${catalog.filter(hasVerifiedPhoto).length} produtos com foto cadastrada`;
  $('loadMore').classList.toggle('hide',visible.length>=ps.length);
  renderBrazilClubNavigation();
@@ -197,22 +197,8 @@ const EDITORIAL_ALT={
  united:'Camisa clássica do Manchester United',
  rack:'Coleção de camisas de futebol'
 };
-let editorialBackupCatalog=null,editorialBackupPhotos=[];
-function editorialFallback(j){
- // Calcular backup uma única vez por versão do catálogo (que pode ter 11 mil itens).
- if(editorialBackupCatalog!==catalog){
-  editorialBackupCatalog=catalog;
-  const retro=[],other=[];
-  for(const p of catalog){
-   if(!hasVerifiedPhoto(p))continue;
-   if(p.category==='retro'||/retr[oô]|vintage|classic/i.test(p.title)){if(retro.length<20)retro.push(p)}
-   else if(other.length<20)other.push(p);
-   if(retro.length>=20&&other.length>=20)break;
-  }
-  editorialBackupPhotos=(retro.length?retro:other).map(p=>localImageURL(photoSources(p)[0]));
- }
- return editorialBackupPhotos.length?editorialBackupPhotos[j%editorialBackupPhotos.length]:'';
-}
+// Banner editorial sempre usa as nove imagens aprovadas, em desktop e mobile.
+// Não substituir por fotos aleatórias do catálogo em nenhum dispositivo.
 let heroActive=0,heroTimer=null;
 function showHeroSlide(index){
  const slides=[...document.querySelectorAll('.editorial-hero-scene')];
@@ -228,7 +214,7 @@ function renderEditorialHero(){
  target.innerHTML=EDITORIAL_HERO_SETS.map((images,scene)=>
   '<div class="editorial-hero-scene'+(scene===0?' active':'')+'" aria-hidden="'+(scene!==0)+'">'+
   images.map((name,j)=>'<div class="editorial-frame '+variants[j]+'" style="background:'+defaults[j]+'">'+
-   '<img src="'+EDITORIAL_ASSETS[name]+'" alt="'+esc(EDITORIAL_ALT[name])+'" data-editorial-fallback="'+esc(editorialFallback(scene*5+j))+'" decoding="async" loading="'+(scene===0?'eager':'lazy')+'">'+
+   '<img src="'+EDITORIAL_ASSETS[name]+'" alt="'+esc(EDITORIAL_ALT[name])+'" decoding="async" loading="'+(scene===0?'eager':'lazy')+'">'+
    '</div>').join('')+
   '</div>'
  ).join('');
@@ -246,20 +232,18 @@ function categoryRender(){
  ];
  $('categoryGrid').innerHTML=tiles.map(([id,label,sub,url],index)=>
   '<button class="category-tile editorial-fixed-tile" data-category="'+id+'" data-editorial-label="'+esc(label)+'" data-editorial-sub="'+esc(sub)+'" aria-label="Explorar '+esc(label)+'">'+
-  '<img class="category-photo" src="'+url+'" alt="" data-editorial-fallback="'+esc(editorialFallback(index))+'" loading="lazy">'+
+  '<img class="category-photo" src="'+url+'" alt="" loading="lazy" decoding="async">'+
   '<span class="editorial-tile-sr">'+esc(label)+' — '+esc(sub)+'</span></button>'
  ).join('');
 }
-// Troca para uma foto do catálogo somente se faltar arquivo da identidade visual.
+// Se um arquivo fixo não estiver disponível, mostrar aviso, nunca outra camisa.
 document.addEventListener('error',event=>{
- const image=event.target;
- if(!(image instanceof HTMLImageElement)||!image.hasAttribute('data-editorial-fallback'))return;
- const fallback=image.getAttribute('data-editorial-fallback');
- image.removeAttribute('data-editorial-fallback');
- const tile=image.closest('.editorial-fixed-tile');
- if(tile)tile.classList.add('needs-label');
- if(fallback&&image.src!==fallback){image.src=fallback;return;}
- image.hidden=true;
+ const img=event.target;
+ if(!(img instanceof HTMLImageElement)||img.dataset.editorialHandled==='true')return;
+ if(!(img.closest('.editorial-frame')||img.closest('.editorial-fixed-tile')))return;
+ img.dataset.editorialHandled='true';img.hidden=true;
+ const tile=img.closest('.editorial-fixed-tile');if(tile)tile.classList.add('needs-label');
+ const frame=img.closest('.editorial-frame');if(frame){frame.classList.add('image-unavailable');frame.setAttribute('aria-label','Foto temporariamente indisponível');}
 },true);
 function selectCategory(cat){state.category=cat;state.club='todos';state.query='';$('globalSearch').value='';state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
 function openUI(kind){state.drawer=kind==='cart';state.checkout=kind==='checkout';$('cartDrawer').classList.toggle('open',state.drawer);$('checkoutModal').classList.toggle('open',state.checkout);$('productModal').classList.toggle('open',kind==='product');$('overlay').classList.toggle('visible',!!kind);document.body.classList.toggle('lock',!!kind);$('cartDrawer').setAttribute('aria-hidden',String(!state.drawer));}
