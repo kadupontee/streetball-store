@@ -47,7 +47,7 @@ const clearCookie=()=>COOKIE+'=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age
 const googleNonceCookie=value=>GOOGLE_NONCE_COOKIE+'='+value+'; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600';
 const expireGoogleNonce=()=>GOOGLE_NONCE_COOKIE+'=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0';
 const extractGoogleNonce=req=>{
- const m=(req.headers.get('cookie')||'').match(/(?:^|;\\s*)__Host-streetball_google_nonce=([a-f0-9]{64})(?:;|$)/);
+ const m=(req.headers.get('cookie')||'').match(/(?:^|;\s*)__Host-streetball_google_nonce=([a-f0-9]{64})(?:;|$)/);
  return m?.[1]||null;
 };
 const googleConfigured=env=>googleClientIdValid(env.GOOGLE_CLIENT_ID);
@@ -56,7 +56,7 @@ async function googleUser(req,env){
  if(!body||!expectedNonce||typeof body.credential!=='string')
   return {error:safeError('Solicitação Google expirada. Atualize a página e tente novamente.',401)};
  try{return {identity:await verifyGoogleIdToken(body.credential,env.GOOGLE_CLIENT_ID,expectedNonce)}}
- catch{return {error:safeError('Não foi possível verificar o login do Google. Reabra a página e tente novamente.',401)}
+ catch{return {error:safeError('Não foi possível verificar o login do Google. Reabra a página e tente novamente.',401)}}
 }
 function clearGoogleNonceFromResponse(response){
  response.headers.append('set-cookie',expireGoogleNonce());
