@@ -73,7 +73,7 @@ for(const [formId,action] of [['registerForm','register'],['loginForm','login']]
  });
 }
 $('logout').addEventListener('click',async()=>{
- try{await call('logout','POST',{});showLoggedOut();msg('Você saiu da sua conta.')}catch(err){msg(err.message)}
+ try{await call('logout','POST',{});showLoggedOut();msg('Você saiu da sua conta.');if(googleReady)await initGoogle()}catch(err){msg(err.message)}
 });
 function parseTrackingLink(value){
  try{
