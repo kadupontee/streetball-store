@@ -377,3 +377,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
  .category-grid .category-tile.editorial-fixed-tile .category-photo{object-fit:contain;object-position:center}
  .ui-arrow-up-right{width:14px;height:14px}
 }
+
+/* Logo oficial Streetball Store: mesmo arquivo SVG em todo o site. */
+.brand .brand-logo-img{display:block;width:197px;max-width:100%;height:auto;aspect-ratio:480/136;object-fit:contain}
+.brand-light .brand-logo-img{filter:invert(1)}
+@media(max-width:890px){.site-header .brand .brand-logo-img{width:158px}}
+@media(max-width:510px){.site-header .brand .brand-logo-img{width:128px}}
