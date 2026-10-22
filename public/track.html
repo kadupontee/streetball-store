@@ -1,0 +1,55 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Acompanhe seu pedido — Streetball Store</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f5f1;color:#18241c;font:15px/1.6 system-ui,Arial,sans-serif}
+header{background:#17251c;color:white;padding:24px}header h1{margin:0;font-size:26px}header p{margin:4px 0 0;color:#c6d2c6}
+main{max-width:760px;margin:24px auto;padding:0 18px}.panel{background:white;border-radius:9px;border:1px solid #dce5da;padding:23px;margin-bottom:15px}
+h2{font-size:18px;margin:0 0 10px}.muted{color:#5d6d5e}.status{font-weight:700}
+ol{padding-left:22px}li{padding:8px 0}a{color:#245e3f}button{background:#244531;color:white;border:0;padding:12px 16px;border-radius:5px;cursor:pointer}
+</style>
+</head><body>
+<header><h1>STREETBALL STORE</h1><p>Acompanhe as etapas confirmadas do seu pedido</p></header>
+<main><div class="panel" id="status"><p class="muted">Carregando seu acompanhamento...</p></div>
+<section class="panel" id="timeline" hidden><h2>Histórico de atualizações</h2><ol id="events"></ol></section>
+<section class="panel"><h2>Rastreamento oficial e tributação</h2>
+<p>Os eventos são informados pela loja após conferência. Para acompanhar as atualizações oficiais de transporte e eventuais cobranças alfandegárias, utilize somente os canais dos Correios.</p>
+<p><a href="https://rastreamento.correios.com.br/app/index.php" target="_blank" rel="noopener noreferrer">Rastreamento oficial dos Correios</a></p>
+<p><a href="https://www.correios.com.br/receber/encomenda/internacional" target="_blank" rel="noopener noreferrer">Orientações oficiais sobre Minhas Importações, tributos e liberação</a></p>
+<p class="muted">Se houver imposto a pagar, confira os dados no ambiente oficial Minhas Importações ou no aplicativo dos Correios. A Streetball Store não solicita Pix de tributos por links enviados em mensagens.</p>
+</section>
+</main><script>
+'use strict';
+const root=document.getElementById('status');
+const events=document.getElementById('events');
+const panel=document.getElementById('timeline');
+function tag(name,value){const e=document.createElement(name);e.textContent=String(value??'');return e}
+async function init(){
+ const m=location.hash.slice(1).match(/^([a-f0-9-]{36})\.([a-f0-9]{64})$/i);
+ if(!m){
+  const old=localStorage.getItem('streetball_tracking_link');
+  if(old&&old.startsWith(location.origin+'/track.html#')){
+   const btn=tag('button','Abrir acompanhamento salvo neste navegador');
+   btn.addEventListener('click',()=>location.assign(old));
+   root.replaceChildren(tag('p','Use o link de acompanhamento recebido após o checkout.'),btn);
+  }else root.replaceChildren(tag('p','Para visualizar seu pedido, abra o link privado fornecido pela Streetball Store.'));
+  return;
+ }
+ try{
+  const response=await fetch('/api/track',{method:'POST',headers:{'content-type':'application/json'},
+   body:JSON.stringify({orderId:m[1],access:m[2]}),cache:'no-store'});
+  if(!response.ok)throw Error('Não foi possível consultar esse link. Confira se está completo.');
+  const d=await response.json();
+  root.replaceChildren(tag('h2','Pedido '+d.orderId),tag('p','Pagamento / operação: '+d.paymentState),
+   tag('p','Transportadora: '+(d.carrier||'A confirmar')),
+   tag('p','Código de rastreamento: '+(d.trackingCode||'Ainda não informado')),
+   tag('p',d.payTaxesAtOfficialCorreios?'Atenção: foi registrada uma solicitação de pagamento de tributos. Consulte somente o canal oficial dos Correios.':'Nenhuma solicitação de tributos foi registrada pela loja nesta etapa.'));
+  panel.hidden=false;
+  events.replaceChildren(...(d.events?.length?d.events.map(ev=>tag('li',ev.label+' — '+new Date(ev.at).toLocaleString('pt-BR'))):
+   [tag('li','Acompanhamento iniciado. A loja publicará atualizações quando confirmadas.')]));
+ }catch(e){root.replaceChildren(tag('p',e.message))}
+}
+init();
+</script></body></html>
