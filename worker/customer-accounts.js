@@ -2,7 +2,9 @@
  * Existing purchases can only be linked with a buyer-held private tracking token.
  */
 import {verifyTrackingKey,customerTrackingLink} from './order-tracking-access.js';
+import {verifyGoogleIdToken,googleClientIdValid} from './google-identity.js';
 const COOKIE='__Host-streetball_session';
+const GOOGLE_NONCE_COOKIE='__Host-streetball_google_nonce';
 const result=(body,status=200,headers={})=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...headers}});
 const safeError=(reason,status=400)=>result({error:reason},status);
 const encoder=new TextEncoder();
@@ -41,6 +43,25 @@ export async function getCustomerSession(req,env){
 }
 const liveCookie=token=>COOKIE+'='+token+'; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800';
 const clearCookie=()=>COOKIE+'=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0';
+
+const googleNonceCookie=value=>GOOGLE_NONCE_COOKIE+'='+value+'; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=600';
+const expireGoogleNonce=()=>GOOGLE_NONCE_COOKIE+'=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0';
+const extractGoogleNonce=req=>{
+ const m=(req.headers.get('cookie')||'').match(/(?:^|;\\s*)__Host-streetball_google_nonce=([a-f0-9]{64})(?:;|$)/);
+ return m?.[1]||null;
+};
+const googleConfigured=env=>googleClientIdValid(env.GOOGLE_CLIENT_ID);
+async function googleUser(req,env){
+ const body=await parseBody(req),expectedNonce=extractGoogleNonce(req);
+ if(!body||!expectedNonce||typeof body.credential!=='string')
+  return {error:safeError('Solicitação Google expirada. Atualize a página e tente novamente.',401)};
+ try{return {identity:await verifyGoogleIdToken(body.credential,env.GOOGLE_CLIENT_ID,expectedNonce)}}
+ catch{return {error:safeError('Não foi possível verificar o login do Google. Reabra a página e tente novamente.',401)}
+}
+function clearGoogleNonceFromResponse(response){
+ response.headers.append('set-cookie',expireGoogleNonce());
+ return response;
+}
 async function newSession(env,account){
  const token=makeRandom(),hash=await sha(token),issued=new Date(),expires=new Date(issued.getTime()+7*86400000);
  await env.DB.prepare('INSERT INTO customer_sessions(token_sha256,customer_id,created_at,expires_at) VALUES(?,?,?,?)').bind(hash,account.id,issued.toISOString(),expires.toISOString()).run();
@@ -54,10 +75,56 @@ const incrementAttempts=async(env,email)=>{
 export async function handleAccountRoute(req,env){
  if(!env.DB)return safeError('Cadastro de contas indisponível no momento.',503);
  const path=new URL(req.url).pathname,method=req.method;
- const allowed=['/api/account/register','/api/account/login','/api/account/logout','/api/account/me','/api/account/orders','/api/account/claim'];
+ const allowed=['/api/account/register','/api/account/login','/api/account/logout','/api/account/me','/api/account/orders','/api/account/claim','/api/account/google/config','/api/account/google/nonce','/api/account/google/login','/api/account/google/connect'];
  if(!allowed.includes(path))return safeError('Endpoint não encontrado.',404);
  if(method!=='GET'&&method!=='POST')return safeError('Método inválido.',405);
  if(method==='POST'&&!csrfOk(req))return safeError('Origem de solicitação inválida.',403);
+
+ if(path==='/api/account/google/config'&&method==='GET'){
+  return result({enabled:googleConfigured(env),...(googleConfigured(env)?{clientId:env.GOOGLE_CLIENT_ID}:{})});
+ }
+ if(path==='/api/account/google/nonce'&&method==='GET'){
+  if(!googleConfigured(env))return safeError('Login com Google ainda não está configurado.',503);
+  const nonce=makeRandom();
+  return result({nonce},200,{'set-cookie':googleNonceCookie(nonce)});
+ }
+ if((path==='/api/account/google/login'||path==='/api/account/google/connect')&&method==='POST'){
+  if(!googleConfigured(env))return safeError('Login com Google ainda não está configurado.',503);
+  const verified=await googleUser(req,env);
+  if(verified.error)return verified.error;
+  const identity=verified.identity;
+  const record=await env.DB.prepare('SELECT g.customer_id,a.id,a.email,a.display_name FROM customer_google_identities g JOIN customer_accounts a ON a.id=g.customer_id WHERE g.google_sub=?').bind(identity.sub).first();
+  if(path==='/api/account/google/connect'){
+   const user=await getCustomerSession(req,env);
+   if(!user)return safeError('Entre com a senha para conectar sua conta ao Google.',401);
+   if(user.email!==identity.email)return safeError('Para conectar o Google, escolha uma conta com o mesmo e-mail do cadastro Streetball.',409);
+   if(record&&record.customer_id!==user.customer_id)return safeError('Esta conta Google já está associada a outro cadastro.',409);
+   if(!record){
+    const linked=await env.DB.prepare('SELECT google_sub FROM customer_google_identities WHERE customer_id=?').bind(user.customer_id).first();
+    if(linked)return safeError('Esta conta Streetball já possui outra conta Google vinculada.',409);
+    try{await env.DB.prepare('INSERT INTO customer_google_identities(google_sub,customer_id,email_at_link,linked_at) VALUES(?,?,?,?)').bind(identity.sub,user.customer_id,identity.email,new Date().toISOString()).run()}
+    catch{return safeError('Não foi possível conectar a conta Google. Tente novamente.',409)}
+   }
+   return clearGoogleNonceFromResponse(result({ok:true,connected:true}));
+  }
+  if(record){
+   if(record.email!==identity.email)return safeError('A conta Google mudou de e-mail. Contate o suporte para conferir o cadastro.',409);
+   return clearGoogleNonceFromResponse(await newSession(env,{id:record.customer_id,display_name:record.display_name,email:record.email}));
+  }
+  const existing=await env.DB.prepare('SELECT id FROM customer_accounts WHERE email=?').bind(identity.email).first();
+  if(existing)return safeError('Já existe cadastro com esse e-mail. Entre com sua senha e use Conectar Google na sua conta.',409);
+  const account={id:crypto.randomUUID(),email:identity.email,display_name:identity.name.length>=2?identity.name:'Cliente Streetball'};
+  const created=new Date().toISOString();
+  try{
+   // Senha aleatória não utilizável: este cadastro entra exclusivamente pelo Google.
+   const salt=makeRandom(),disabledPasswordHash=makeRandom();
+   await env.DB.batch([
+    env.DB.prepare('INSERT INTO customer_accounts(id,email,display_name,password_salt,password_hash,created_at) VALUES(?,?,?,?,?,?)').bind(account.id,account.email,account.display_name,salt,disabledPasswordHash,created),
+    env.DB.prepare('INSERT INTO customer_google_identities(google_sub,customer_id,email_at_link,linked_at) VALUES(?,?,?,?)').bind(identity.sub,account.id,identity.email,created)
+   ]);
+  }catch{return safeError('Não foi possível criar a conta Google. Tente novamente.',409)}
+  return clearGoogleNonceFromResponse(await newSession(env,account));
+ }
  if(path==='/api/account/me'&&method==='GET'){
   const user=await getCustomerSession(req,env);
   return user?result({authenticated:true,user:{displayName:user.display_name,email:user.email}}):result({authenticated:false});
