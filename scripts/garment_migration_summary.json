@@ -1,7 +1,7 @@
 {
   "total_products": 10936,
   "classifiable_with_photo": {
-    "long": 293,
+    "long": 297,
     "jacket": 155,
     "retro_long": 78
   },
@@ -81,13 +81,6 @@
       "reason": "manga nao identificavel com seguranca",
       "image": "/images/yupoo/258349011.webp",
       "old_price": 189.9
-    },
-    {
-      "id": "YUP-258348707",
-      "title": "Huamian Embroidered Cardigan Hoodie White S~2XL",
-      "reason": "manga nao identificavel com seguranca",
-      "image": "/images/yupoo/258348707.webp",
-      "old_price": 379.9
     },
     {
       "id": "YUP-258315979",
@@ -181,13 +174,6 @@
       "old_price": 189.9
     },
     {
-      "id": "YUP-254513835",
-      "title": "Flamengo Jacket kits 815",
-      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
-      "image": "/images/yupoo/254513835.webp",
-      "old_price": 379.9
-    },
-    {
       "id": "YUP-253873139",
       "title": "26-27 C Polo Special Edition S-2XL C罗",
       "reason": "manga nao identificavel com seguranca",
@@ -235,13 +221,6 @@
       "reason": "manga nao identificavel com seguranca",
       "image": "/images/yupoo/253729932.webp",
       "old_price": 189.9
-    },
-    {
-      "id": "YUP-253724017",
-      "title": "Barcelona black fleece hoodie",
-      "reason": "manga nao identificavel com seguranca",
-      "image": "/images/yupoo/253724017.webp",
-      "old_price": 379.9
     },
     {
       "id": "YUP-253367167",
@@ -321,27 +300,6 @@
       "old_price": 189.9
     },
     {
-      "id": "YUP-250930241",
-      "title": "Barcelona hoodie S-3XL",
-      "reason": "manga nao identificavel com seguranca",
-      "image": "/images/yupoo/250930241.webp",
-      "old_price": 379.9
-    },
-    {
-      "id": "YUP-250929923",
-      "title": "26.27 Argentina hoodie s-3xl",
-      "reason": "manga nao identificavel com seguranca",
-      "image": "/images/yupoo/250929923.webp",
-      "old_price": 379.9
-    },
-    {
-      "id": "YUP-250929853",
-      "title": "26.27 Italy hoodie S-3XL",
-      "reason": "manga nao identificavel com seguranca",
-      "image": "/images/yupoo/250929853.webp",
-      "old_price": 379.9
-    },
-    {
       "id": "YUP-250581893",
       "title": "Barcelona training shirt S-4XL",
       "reason": "manga nao identificavel com seguranca",
@@ -396,13 +354,6 @@
       "reason": "manga nao identificavel com seguranca",
       "image": "/images/yupoo/248843825.webp",
       "old_price": 189.9
-    },
-    {
-      "id": "YUP-248512774",
-      "title": "Elche hoodie S-2XL",
-      "reason": "manga nao identificavel com seguranca",
-      "image": "/images/yupoo/248512774.webp",
-      "old_price": 379.9
     },
     {
       "id": "YUP-248192325",
@@ -858,8 +809,59 @@
       "reason": "manga nao identificavel com seguranca",
       "image": "/images/yupoo/241109748.webp",
       "old_price": 189.9
+    },
+    {
+      "id": "YUP-240185352",
+      "title": "Fan 2627 Jordan Brazil half-sleeve training jersey royal blue with yellow S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240185352.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240136180",
+      "title": "Inter Milan Training Jersey Player",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240136180.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240049985",
+      "title": "26-27 Inter Milan Pre-match training clothes",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240049985.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240034758",
+      "title": "26/27 Italy training jersey army green S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240034758.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240034592",
+      "title": "26/27 Brazil training jersey white S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240034592.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240033506",
+      "title": "Portugal training jersey white S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240033506.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-239878264",
+      "title": "26-27 Paris 4th Away Training Jersey White S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/239878264.webp",
+      "old_price": 189.9
     }
   ],
   "changed_examples": [],
-  "methodology": "Classificação conservadora por nomes de álbum e presença de foto vinculada. Nem toda foto foi inspecionada visualmente; conjuntos ambíguos não são reprecificados."
+  "methodology": "Classificação conservadora por nomes de álbum e presença de foto vinculada. Nem toda foto foi inspecionada visualmente; conjuntos ambíguos não são reprecificados.",
+  "reverted_false_jackets": 25,
+  "jacket_products_now": 155
 }
