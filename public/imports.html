@@ -61,7 +61,7 @@ function render(){
  const out=estimate(...nums,rate,prc);
  const fields=[['Valor aduaneiro (produto + frete + seguro)',out.base],
   ['Imposto de Importação (II)',out.ii],['ICMS por dentro (estimativa)',out.icms],
-  ['Custo total estimado, sem despacho postal',out.total]];
+  ['Valor aduaneiro + tributos previstos na importação, sem Despacho Postal',out.total]];
  area.replaceChildren(...fields.map(([name,value])=>{
   const row=document.createElement('tr'),label=document.createElement('td'),val=document.createElement('td');
   label.textContent=name;val.textContent=usd(value);row.append(label,val);return row;
