@@ -147,14 +147,14 @@ test('cards show full authorized square art and CTA icons no longer use emoji ar
  const account=readFileSync(new URL('../public/account.html',import.meta.url),'utf8');
  const accountJs=readFileSync(new URL('../public/account.js',import.meta.url),'utf8');
  assert.match(css,/Editorial cards V4/);
- assert.match(css,/aspect-ratio:1\\/1/);
+ assert.ok(css.includes('aspect-ratio:1/1'));
  assert.match(css,/object-fit:contain/);
  assert.match(html,/ui-arrow-up-right/);
- assert.doesNotMatch(html,/CRIAR CONTA <span>↗<\\/span>/);
- assert.doesNotMatch(html,/VER TODAS AS COLEÇÕES <span>↗<\\/span>/);
+ assert.equal(html.includes('CRIAR CONTA <span>↗</span>'),false);
+ assert.equal(html.includes('VER TODAS AS COLEÇÕES <span>↗</span>'),false);
  assert.match(account,/id="googleSignInButton"/);
  assert.match(account,/id="googleConnectButton"/);
- assert.match(accountJs,/accounts\\.id\\.initialize/);
+ assert.ok(accountJs.includes('accounts.id.initialize'));
  assert.doesNotThrow(()=>new Function(accountJs));
  assert.match(readFileSync(new URL('../worker/schema.sql',import.meta.url),'utf8'),/customer_google_identities/);
 });
