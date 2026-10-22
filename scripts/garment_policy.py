@@ -29,7 +29,7 @@ LONG = re.compile(
 )
 SHORT = re.compile(r"\b(?:short\s*[- ]?sleeves?|regata|vest\s*training|tank\s*top)\b",re.I)
 SET = re.compile(
-    r"\b(?:tracksuits?|jacket\s*sets?|jacket\s*kits?|windbreaker\s*sets?|"
+    r"\b(?:tracksuits?|jacket\s*sets?|jacket\s*kits?|coat\s*sets?|casaco\s*conjunto|windbreaker\s*sets?|"
     r"hoodie\s*sets?|training\s*suits?|conjuntos?|"
     r"jackets?\s*(?:and|\+)\s*pants?|suits?)\b",re.I
 )
