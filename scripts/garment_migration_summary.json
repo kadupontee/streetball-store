@@ -862,6 +862,6 @@
   ],
   "changed_examples": [],
   "methodology": "Classificação conservadora por nomes de álbum e presença de foto vinculada. Nem toda foto foi inspecionada visualmente; conjuntos ambíguos não são reprecificados.",
-  "reverted_false_jackets": 25,
+  "reverted_false_jackets": 0,
   "jacket_products_now": 155
 }
