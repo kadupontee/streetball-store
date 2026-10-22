@@ -171,7 +171,58 @@ function catalogRender(){
  document.querySelectorAll('[data-category]').forEach(b=>b.classList.toggle('active',b.dataset.category===state.category));
 }
 function categoryLabel(p){const labels={brasileirao:'Clubes Brasileiros',europa:'Clubes Europeus',selecoes:'Seleções',retro:'Coleção Retrô',outras:'Outros produtos',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios'};return labels[p.category]||p.category;}
-function categoryRender(){$('categoryGrid').innerHTML=TILES.map(([id,label,sub,c,a])=>`<button class="category-tile" data-category="${id}"><span class="category-shirt">${jersey({primary:c,accent:a,kind:'fan'})}</span><strong>${label}</strong><small>${sub}</small></button>`).join('');}
+function editorialImages(){
+ const valid=catalog.filter(hasVerifiedPhoto);
+ const retro=valid.filter(p=>p.category==='retro'||/retr[oô]|vintage|classic|19(?:[7-9]\\d)|20(?:0[0-9]|1[0-7])/i.test(String(p.title)+' '+String(p.supplierTitle||'')));
+ return (retro.length>=7?retro:[...retro,...valid.filter(p=>!retro.includes(p))]).filter((p,i,arr)=>arr.findIndex(x=>x.id===p.id)===i);
+}
+let heroActive=0,heroTimer=null;
+function showHeroSlide(index){
+ const slides=[...document.querySelectorAll('.editorial-hero-scene')];
+ if(!slides.length)return;
+ heroActive=((index%slides.length)+slides.length)%slides.length;
+ slides.forEach((slide,i)=>{slide.classList.toggle('active',i===heroActive);slide.setAttribute('aria-hidden',String(i!==heroActive))});
+ document.querySelectorAll('[data-hero-slide]').forEach(b=>b.setAttribute('aria-current',String(Number(b.dataset.heroSlide)===heroActive)));
+}
+function renderEditorialHero(){
+ const target=$('editorialHeroScenes');if(!target)return;
+ const photos=editorialImages();
+ const variants=['main','left','right','low','low-left'];
+ const placeholder=['#8b91d7','#c9c9d1','#7d8092','#a6a6b6','#b5b5cd'];
+ target.innerHTML=Array.from({length:4},(_,scene)=>{
+  const frames=variants.map((cls,j)=>{
+   const p=photos.length?photos[(scene*5+j*3)%photos.length]:null;
+   const src=p?photoSources(p)[0]:null;
+   return '<div class="editorial-frame '+cls+'" style="background:'+placeholder[j]+'">'+
+    (src?'<img src="'+esc(localImageURL(src))+'" alt="'+esc(p.title)+'" decoding="async" loading="'+(scene===0?'eager':'lazy')+'" referrerpolicy="no-referrer">':'')+
+    '</div>';
+  }).join('');
+  return '<div class="editorial-hero-scene'+(scene===0?' active':'')+'" aria-hidden="'+(scene!==0)+'">'+frames+'</div>';
+ }).join('');
+ showHeroSlide(heroActive);
+ if(heroTimer)clearInterval(heroTimer);
+ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  heroTimer=setInterval(()=>{if(!document.hidden)showHeroSlide(heroActive+1)},5600);
+}
+function categoryRender(){
+ const photos=editorialImages(),used=new Set();
+ const tiles=[
+  ['retro','RETRÔ','O passado que nunca sai de moda.'],
+  ['europa','EUROPA','Grandes clubes, histórias eternas.'],
+  ['player','JOGADOR','A camisa dos craques de hoje.'],
+  ['todos','TODAS AS COLEÇÕES','Encontre o próximo manto.']
+ ];
+ $('categoryGrid').innerHTML=tiles.map(([id,label,sub],i)=>{
+  const desired=photos.find(p=>!used.has(p.id)&&(id==='todos'||p.category===id||id==='player'&&String(p.kind).startsWith('player')));
+  const fallback=photos.find(p=>!used.has(p.id));
+  const p=desired||fallback;
+  if(p)used.add(p.id);
+  const url=p?photoSources(p)[0]:null;
+  return '<button class="category-tile" data-category="'+id+'" aria-label="Explorar '+esc(label)+'">'+
+   (url?'<img class="category-photo" src="'+esc(localImageURL(url))+'" alt="'+esc(p.title)+'" loading="lazy" referrerpolicy="no-referrer">':'')+
+   '<strong>'+label+'</strong><small>'+sub+'</small><span class="category-arrow" aria-hidden="true">↗</span></button>';
+ }).join('');
+}
 function selectCategory(cat){state.category=cat;state.club='todos';state.query='';$('globalSearch').value='';state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
 function openUI(kind){state.drawer=kind==='cart';state.checkout=kind==='checkout';$('cartDrawer').classList.toggle('open',state.drawer);$('checkoutModal').classList.toggle('open',state.checkout);$('productModal').classList.toggle('open',kind==='product');$('overlay').classList.toggle('visible',!!kind);document.body.classList.toggle('lock',!!kind);$('cartDrawer').setAttribute('aria-hidden',String(!state.drawer));}
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),3100);}
@@ -197,12 +248,25 @@ $('globalSearch').addEventListener('input',e=>{state.query=e.target.value.trim()
 $('sortSelect').addEventListener('change',e=>{state.sort=e.target.value;catalogRender()});
 $('loadMore').addEventListener('click',()=>{state.limit+=PRODUCT_LIMIT;catalogRender()});
 $('heroShop').addEventListener('click',()=>selectCategory('todos'));
-$('heroRetro').addEventListener('click',()=>selectCategory('retro'));
+document.querySelectorAll('[data-hero-slide]').forEach(button=>button.addEventListener('click',()=>showHeroSlide(Number(button.dataset.heroSlide))));
 $('storyRetro').addEventListener('click',()=>selectCategory('retro'));
 $('showAllCats').addEventListener('click',()=>selectCategory('todos'));
 $('menuToggle').addEventListener('click',()=>document.querySelector('.desktop-nav').classList.toggle('mobile-open'));
 $('mobileSearch').addEventListener('click',()=>{$('globalSearch').closest('.search-box').classList.toggle('open');$('globalSearch').focus()});
 $('favoriteTrigger').addEventListener('click',()=>{state.favoritesOnly=!state.favoritesOnly;state.category='todos';catalogRender();$('colecao').scrollIntoView({behavior:'smooth'})});
+const accountTrigger=$('accountTrigger'),accountDropdown=$('accountDropdown');
+if(accountTrigger&&accountDropdown){
+ accountTrigger.addEventListener('click',event=>{
+  event.stopPropagation();
+  accountDropdown.hidden=!accountDropdown.hidden;
+  accountTrigger.setAttribute('aria-expanded',String(!accountDropdown.hidden));
+ });
+ document.addEventListener('click',event=>{
+  if(!event.target.closest('.account-menu-wrap')){
+   accountDropdown.hidden=true;accountTrigger.setAttribute('aria-expanded','false');
+  }
+ });
+}
 $('cartTrigger').addEventListener('click',()=>openUI('cart'));
 $('closeCart').addEventListener('click',()=>openUI(null));
 $('closeProduct').addEventListener('click',()=>openUI(null));
@@ -215,9 +279,9 @@ $('dismissNotice').addEventListener('click',()=>{$('demoNotice').style.display='
 $('productModal').addEventListener('change',e=>{if(e.target.id==='optPersonalize'){state.choice.personalize=e.target.checked;$('personalizeFields').classList.toggle('hide',!e.target.checked);updateDetailPrice()}if(e.target.id==='optPatch'){state.choice.patch=e.target.checked;updateDetailPrice()}});
 $('productModal').addEventListener('input',e=>{if(e.target.id==='customName')state.choice.customName=e.target.value;if(e.target.id==='customNumber')state.choice.customNumber=e.target.value});
 $('productModal').addEventListener('click',e=>{if(e.target.closest('#detailAdd'))addCart()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){openUI(null);document.querySelector('.desktop-nav').classList.remove('mobile-open')}if(e.key==='/'&&document.activeElement?.tagName!=='INPUT'){e.preventDefault();$('globalSearch').closest('.search-box').classList.add('open');$('globalSearch').focus()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){openUI(null);document.querySelector('.desktop-nav').classList.remove('mobile-open');if($('accountDropdown')){$('accountDropdown').hidden=true;$('accountTrigger').setAttribute('aria-expanded','false')}}if(e.key==='/'&&document.activeElement?.tagName!=='INPUT'){e.preventDefault();$('globalSearch').closest('.search-box').classList.add('open');$('globalSearch').focus()}});
 $('year').textContent=new Date().getFullYear();
-$('heroJersey').innerHTML=jersey({primary:'#eeefee',accent:'#ce272e',kind:'fan'});
+renderEditorialHero();
 categoryRender();catalogRender();cartRender();
 
 function checkoutIndicator(){
@@ -249,5 +313,5 @@ async function loadCheckoutConfig(){
 
 loadCheckoutConfig();
 // If published with catalog.json generated by importer, use its full validated catalog.
-if(/^https?:$/.test(location.protocol)){fetch('catalog.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catálogo indisponível');return r.json()}).then(data=>{if(Array.isArray(data)&&data.length){catalog=prepareCatalog(data);state.cart=state.cart.filter(it=>findProduct(it.id));catalogRender();cartRender()}}).catch(err=>{$('catalogSubtitle').textContent='Falha ao carregar o catálogo. Atualize a página para tentar novamente.';console.error('Erro ao carregar catálogo:',err);});}
+if(/^https?:$/.test(location.protocol)){fetch('catalog.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catálogo indisponível');return r.json()}).then(data=>{if(Array.isArray(data)&&data.length){catalog=prepareCatalog(data);state.cart=state.cart.filter(it=>findProduct(it.id));renderEditorialHero();categoryRender();catalogRender();cartRender()}}).catch(err=>{$('catalogSubtitle').textContent='Falha ao carregar o catálogo. Atualize a página para tentar novamente.';console.error('Erro ao carregar catálogo:',err);});}
 })();
