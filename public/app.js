@@ -248,7 +248,7 @@ document.addEventListener('error',event=>{
  if(!(img instanceof HTMLImageElement))return;
  if(!(img.closest('.editorial-frame')||img.closest('.editorial-fixed-tile')))return;
  const path=img.dataset.editorialPath;
- if(!path||!/^(\\/images\\/editorial\\/)[a-z0-9-]+\\.png$/.test(path))return;
+ if(!path||!Object.values(EDITORIAL_ASSETS).includes(path))return;
  const source=img.dataset.editorialSource;
  if(source==='local'){
   img.dataset.editorialSource='github';
