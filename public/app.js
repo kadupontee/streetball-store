@@ -211,10 +211,13 @@ const EDITORIAL_ASSETS={
  colecoes:'/images/editorial/card-todas-colecoes.png'
 };
 // Mesmos PNGs, com URL nova para impedir cache negativo de 404 no navegador.
-const EDITORIAL_IMAGE_REVISION='20261022-new-cards-unified-v7';
+const EDITORIAL_IMAGE_REVISION='20261022-mobile-refresh-v8';
+// Pinamos os fallbacks ao commit que contém as 4 artes NOVAS; @main pode
+// permanecer cacheado em CDNs mesmo depois de um push.
+const EDITORIAL_ASSET_COMMIT='d27a00d6bcd45c27132f445b7e214f3bc934c61a';
 const editorialLocalSource=path=>path+'?v='+EDITORIAL_IMAGE_REVISION;
-const editorialGithubSource=path=>'https://raw.githubusercontent.com/kadupontee/streetball-store/main/public'+path;
-const editorialCdnSource=path=>'https://cdn.jsdelivr.net/gh/kadupontee/streetball-store@main/public'+path;
+const editorialGithubSource=path=>'https://raw.githubusercontent.com/kadupontee/streetball-store/'+EDITORIAL_ASSET_COMMIT+'/public'+path+'?v='+EDITORIAL_IMAGE_REVISION;
+const editorialCdnSource=path=>'https://cdn.jsdelivr.net/gh/kadupontee/streetball-store@'+EDITORIAL_ASSET_COMMIT+'/public'+path+'?v='+EDITORIAL_IMAGE_REVISION;
 const EDITORIAL_HERO_SETS=[
  ['ronaldo','maradona','juventus','united','rack'],
  ['maradona','united','rack','ronaldo','juventus'],
