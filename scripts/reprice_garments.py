@@ -19,7 +19,7 @@ ORIGINAL_CATALOG_REF="272cca3590a676fc3752b8e4d3bfde033b9a752f"
 def undo_ambiguous_jackets(products):
     needs=[p for p in products if p.get("garmentPriceSource")=="supplier_usd_garment_policy_20261022"
            and p.get("kind")=="jacket"
-           and garment_decision(p,require_photo=True)[0]!="jacket"]
+           and garment_decision(p,require_photo=True)[0] not in ("jacket","coat")]
     if not needs:return products,0
     baseline=json.loads(subprocess.check_output([
         "git","show",ORIGINAL_CATALOG_REF+":public/catalog.json"
@@ -82,6 +82,7 @@ def main():
     updated,report=migrate(products)
     report["reverted_false_jackets"]=reverted
     report["jacket_products_now"]=sum(1 for p in updated if p.get("kind")=="jacket")
+    report["coat_products_now"]=sum(1 for p in updated if p.get("kind")=="coat")
     print(json.dumps({k:v for k,v in report.items() if k not in ("review_examples","changed_examples")},ensure_ascii=False))
     if args.check:
         if report["changed_items"] or reverted:
