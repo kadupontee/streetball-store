@@ -34,7 +34,7 @@ test('desktop e celular usam as nove fotos aprovadas, com navegação do carross
   assert.ok(app.includes('/images/editorial/'+img),img);
  }
  assert.match(html,/id="heroSliderControls"/);
- assert.match(html,/20261022-category-native-v5/);
+ assert.match(html,/20261022-new-cards-unified-v7/);
  assert.doesNotThrow(()=>new Function(app));
 });
 
@@ -52,9 +52,9 @@ test('iPhone e Android exibem imagens completas, sem height fixo nem crop',()=>{
  assert.doesNotMatch(mobile,/object-fit:\s*cover/);
  for(const [name,width] of [['retro',240],['europa',252],['personalizadas',305],['todos',295]]){
   assert.ok(app.includes("['"+name+"'"),name);
-  assert.ok(app.includes("EDITORIAL_ASSETS."+(name==='europa'?'atuais':name==='todos'?'colecoes':name)+","+width+"]"),name+' dimensões');
+  assert.ok(app.includes("EDITORIAL_ASSETS."+(name==='europa'?'atuais':name==='todos'?'colecoes':name)+",960]"),name+' dimensões');
  }
- assert.match(app,/width="'\+imageWidth\+'" height="193"/);
- assert.match(html,/editorial\.css\?v=20261022-category-native-v5-mobile-v6/);
- assert.match(html,/app\.js\?v=20261022-mobile-v3-native-v6/);
+ assert.match(app,/width="'\+imageWidth\+'" height="557"/);
+ assert.match(html,/editorial\.css\?v=20261022-new-cards-unified-v7/);
+ assert.match(html,/app\.js\?v=20261022-new-cards-unified-v7/);
 });

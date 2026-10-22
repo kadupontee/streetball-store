@@ -497,3 +497,23 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 @media (max-width: 390px) {
   #categoryGrid.category-grid {gap: 12px}
 }
+
+
+/* Streetball unified collection cards V7: approved artwork, 960x557, 4 matching banners */
+.category-grid {grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.category-grid .category-tile.editorial-fixed-tile[data-category] {
+ --editorial-aspect:960 / 557;
+ aspect-ratio:960 / 557;
+ min-height:0;
+}
+.category-grid .category-tile.editorial-fixed-tile .category-photo {
+ object-fit:contain; object-position:center; transform:none;
+}
+@media (max-width:890px) and (min-width:781px){
+ #categoryGrid.category-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:780px){
+ #categoryGrid.category-grid {grid-template-columns:minmax(0,1fr);row-gap:14px}
+ #categoryGrid .category-tile.editorial-fixed-tile {aspect-ratio:auto;height:auto;min-height:0}
+ #categoryGrid .category-tile.editorial-fixed-tile .category-photo {width:100%;height:auto;aspect-ratio:auto;object-fit:contain;position:relative}
+}

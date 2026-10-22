@@ -25,7 +25,7 @@ test('botão Escolher opções usa uma seta SVG idêntica no desktop e no iPhone
  assert.match(css,/@media \(max-width:600px\)/);
 });
 test('o navegador é forçado a obter os arquivos atualizados',()=>{
- assert.match(html,/editorial\.css\?v=20261022-category-native-v5/);
- assert.match(html,/app\.js\?v=20261022-mobile-v3/);
+ assert.match(html,/editorial\.css\?v=20261022-new-cards-unified-v7/);
+ assert.match(html,/app\.js\?v=20261022-new-cards-unified-v7/);
  assert.doesNotThrow(()=>new Function(app));
 });

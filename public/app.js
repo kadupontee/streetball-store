@@ -211,7 +211,7 @@ const EDITORIAL_ASSETS={
  colecoes:'/images/editorial/card-todas-colecoes.png'
 };
 // Mesmos PNGs, com URL nova para impedir cache negativo de 404 no navegador.
-const EDITORIAL_IMAGE_REVISION='20261022-fixed-editorial-v4';
+const EDITORIAL_IMAGE_REVISION='20261022-new-cards-unified-v7';
 const editorialLocalSource=path=>path+'?v='+EDITORIAL_IMAGE_REVISION;
 const editorialGithubSource=path=>'https://raw.githubusercontent.com/kadupontee/streetball-store/main/public'+path;
 const editorialCdnSource=path=>'https://cdn.jsdelivr.net/gh/kadupontee/streetball-store@main/public'+path;
@@ -257,14 +257,14 @@ function renderEditorialHero(){
 function categoryRender(){
  // Cada PNG mantém suas dimensões nativas, inclusive antes do carregamento no celular.
  const tiles=[
-  ['retro','RETRÔ','O passado que nunca sai de moda.',EDITORIAL_ASSETS.retro,240],
-  ['europa','ATUAIS','Os lançamentos da temporada no seu estilo.',EDITORIAL_ASSETS.atuais,252],
-  ['personalizadas','PERSONALIZADAS','Deixe sua camisa com a sua identidade.',EDITORIAL_ASSETS.personalizadas,305],
-  ['todos','TODAS AS COLEÇÕES','Explore nosso catálogo completo.',EDITORIAL_ASSETS.colecoes,295]
+  ['retro','RETRÔ','O passado que nunca sai de moda.',EDITORIAL_ASSETS.retro,960],
+  ['europa','ATUAIS','Os lançamentos da temporada no seu estilo.',EDITORIAL_ASSETS.atuais,960],
+  ['personalizadas','PERSONALIZADAS','Deixe sua camisa com a sua identidade.',EDITORIAL_ASSETS.personalizadas,960],
+  ['todos','TODAS AS COLEÇÕES','Explore nosso catálogo completo.',EDITORIAL_ASSETS.colecoes,960]
  ];
  $('categoryGrid').innerHTML=tiles.map(([id,label,sub,url,imageWidth])=>
   '<button class="category-tile editorial-fixed-tile" data-category="'+id+'" data-editorial-label="'+esc(label)+'" data-editorial-sub="'+esc(sub)+'" aria-label="Explorar '+esc(label)+'">'+
-  '<img class="category-photo" src="'+editorialLocalSource(url)+'" width="'+imageWidth+'" height="193" data-editorial-path="'+url+'" data-editorial-source="local" alt="" loading="lazy" decoding="async">'+
+  '<img class="category-photo" src="'+editorialLocalSource(url)+'" width="'+imageWidth+'" height="557" data-editorial-path="'+url+'" data-editorial-source="local" alt="" loading="lazy" decoding="async">'+
   '<span class="editorial-tile-sr">'+esc(label)+' — '+esc(sub)+'</span></button>'
  ).join('');
 }

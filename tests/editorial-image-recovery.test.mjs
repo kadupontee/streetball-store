@@ -19,7 +19,7 @@ test('se imagem da Cloudflare falhar, tenta os mesmos PNGs originais via GitHub 
  assert.doesNotMatch(app,/editorialFallback|data-editorial-fallback/);
  assert.doesNotThrow(()=>new Function(app));
  for(const name of names)assert.ok(app.includes('/images/editorial/'+name),name);
- assert.match(html,/app\.js\?v=20261022-mobile-v3/);
+ assert.match(html,/app\.js\?v=20261022-new-cards-unified-v7/);
 });
 test('os nove PNGs publicados no GitHub existem e têm cabeçalho PNG válido',()=>{
  for(const filename of names){
