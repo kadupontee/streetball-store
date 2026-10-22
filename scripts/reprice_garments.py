@@ -5,12 +5,37 @@ python scripts/reprice_garments.py --check   # garante que atualização é idem
 """
 import argparse
 import json
+import subprocess
 from collections import Counter
 from pathlib import Path
 from garment_policy import garment_decision, apply_garment_pricing, COSTS_USD, PRICES_BRL
 from catalog_utils import read_catalog, save_catalog, CATALOG, CATALOG_JS
 
 OUT=Path(__file__).with_name("garment_migration_summary.json")
+# Catálogo imediatamente antes da primeira migração, para restauração segura
+# de falsos positivos (ex.: hoodie sem jaqueta e kit com peças múltiplas).
+ORIGINAL_CATALOG_REF="272cca3590a676fc3752b8e4d3bfde033b9a752f"
+
+def undo_ambiguous_jackets(products):
+    needs=[p for p in products if p.get("garmentPriceSource")=="supplier_usd_garment_policy_20261022"
+           and p.get("kind")=="jacket"
+           and garment_decision(p,require_photo=True)[0]!="jacket"]
+    if not needs:return products,0
+    baseline=json.loads(subprocess.check_output([
+        "git","show",ORIGINAL_CATALOG_REF+":public/catalog.json"
+    ],cwd=Path(__file__).resolve().parents[1]))
+    originals={p["id"]:p for p in baseline}
+    targets={p["id"] for p in needs}
+    reverted=0
+    result=[]
+    for p in products:
+        old=originals.get(p.get("id"))
+        if p.get("id") in targets and old and not p.get("priceLocked") and abs(float(p.get("price") or 0)-379.90)<0.01:
+            result.append(old)
+            reverted+=1
+        else:
+            result.append(p)
+    return result,reverted
 
 def migrate(products):
     revised=[]
@@ -53,10 +78,13 @@ def main():
     args=parser.parse_args()
     products=read_catalog()
     if not products: raise SystemExit("Catalogo vazio: migração abortada.")
+    products,reverted=undo_ambiguous_jackets(products)
     updated,report=migrate(products)
+    report["reverted_false_jackets"]=reverted
+    report["jacket_products_now"]=sum(1 for p in updated if p.get("kind")=="jacket")
     print(json.dumps({k:v for k,v in report.items() if k not in ("review_examples","changed_examples")},ensure_ascii=False))
     if args.check:
-        if report["changed_items"]:
+        if report["changed_items"] or reverted:
             raise SystemExit(f"ERR: {report['changed_items']} produtos ainda precisam ser sincronizados")
         print("OK: preço de jaquetas e mangas longas está sincronizado")
         return
