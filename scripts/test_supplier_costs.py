@@ -37,7 +37,7 @@ class SupplierCostTests(unittest.TestCase):
             self.assertEqual(entries["shorts_player"]["custo_produto_mais_frete_BRL"], "80.00")
             self.assertEqual(entries["shorts"]["custo_produto_mais_frete_BRL"], "70.00")
             self.assertEqual(entries["shorts_player"]["preco_venda_referencia_BRL"], "143.90")
-            self.assertEqual(entries["shorts_player"]["margem_bruta_parcial_percentual"], "44.4")
+            self.assertEqual(entries["shorts_player"]["margem_bruta_parcial_percentual"], "44.40")
 
     def test_without_exchange_rate_does_not_guess_margin(self):
         with TemporaryDirectory() as directory:
