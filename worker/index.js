@@ -17,7 +17,29 @@ const round=n=>Math.round((n+Number.EPSILON)*100)/100;
 const safeText=(s,len=100)=>String(s??'').trim().slice(0,len);
 const clientError=(message,status=400)=>json({error:message},status);
 function cpfValid(cpf){const s=unaccent(cpf);if(!/^\d{11}$/.test(s)||/^(\d)\1+$/.test(s))return false;for(let n=9;n<=10;n++){let sum=0;for(let i=0;i<n;i++)sum+=Number(s[i])*(n+1-i);let d=(sum*10)%11;if(d===10)d=0;if(d!==Number(s[n]))return false;}return true}
-async function catalogFor(request,env){let r=await env.ASSETS.fetch(new Request(new URL('/catalog.json',request.url)));if(!r.ok)throw Error('CATALOG_UNAVAILABLE');return r.json()}
+// Evita cobrar preço de camisa atual em temporadas antigas antes da migração física do JSON.
+function retroRepriceServer(product){
+ const p={...product}, title=String(p.supplierTitle||p.title||'');
+ const now=new Date(),y=now.getUTCFullYear(),limit=y-5-(now.getUTCMonth()<7?1:0);
+ const expand=x=>x.length===4?+x:(+x<=y%100+2?2000+ +x:1900+ +x);
+ let old=false,match;
+ const range=/\b((?:19|20)\d{2}|\d{2})\s*[-/._]\s*((?:19|20)\d{2}|\d{2})\b/g;
+ while((match=range.exec(title))){const first=expand(match[1]);if(expand(match[2])===first+1&&first>=1950&&first<=y+2){old=first<=limit;break}}
+ if(!match){
+  const one=/\b((?:19|20)\d{2})\b/g;
+  while((match=one.exec(title))){const first=+match[1];if(first>=1950&&first<=y+2){old=first<=limit;break}}
+ }
+ if(!old)return p;
+ if(!p.categoryLocked)p.category='retro';
+ const k=String(p.kind||'fan').toLowerCase();
+ if(['fan','long','retro','retro_long','player_nike','player_adidas','player_puma'].includes(k)){
+  const long=k==='long'||k==='retro_long'||/long\s*[- ]?sleeves?|manga\s*longa/i.test(title);
+  if(!p.kindLocked)p.kind=long?'retro_long':'retro';
+  if(!p.priceLocked)p.price=Math.round(Math.max(Number(p.price)||0,long?229.90:199.90)*100)/100;
+ }
+ return p;
+}
+async function catalogFor(request,env){const r=await env.ASSETS.fetch(new Request(new URL('/catalog.json',request.url)));if(!r.ok)throw Error('CATALOG_UNAVAILABLE');const products=await r.json();return products.map(retroRepriceServer)}
 const fail=(msg)=>{throw new Error(msg)};
 function validateItems(raw,products){if(!Array.isArray(raw)||!raw.length||raw.length>35)fail('Sua sacola precisa conter entre 1 e 35 itens.');let subtotal=0,count=0;const clean=[];for(const i of raw){const p=products.find(x=>x.id===i.id);if(!p)fail('Produto indisponível: '+safeText(i.id,30));if(!p.sizes.includes(i.size))fail('Tamanho inválido para '+safeText(p.title));const qty=Number(i.qty);if(!Number.isInteger(qty)||qty<1||qty>10)fail('Quantidade inválida.');const patch=i.patch===true,personalize=i.personalize===true;let customName=safeText(i.customName,14),customNumber=safeText(i.customNumber,3);if(!personalize){customName='';customNumber=''}if(personalize&&!customName&&!customNumber)fail('Personalização incompleta.');if(customName&&!/^[\p{L}0-9 .'-]+$/u.test(customName))fail('Nome de personalização inválido.');if(customNumber&&!/^\d{1,3}$/.test(customNumber))fail('Número de personalização inválido.');const sizeExtra=({XXL:5,'3XL':10,'4XL':15})[i.size]||0;const unit=round(Number(p.price)+sizeExtra+(patch?8:0)+(personalize?20:0));if(!(unit>=0&&unit<10000))fail('Preço inválido.');subtotal+=unit*qty;count+=qty;clean.push({id:p.id,title:p.title,qty,size:i.size,patch,personalize,customName,customNumber,unitPrice:unit,image:p.image||null,sourceUrl:p.sourceUrl||null,supplierId:safeText(p.supplierId||'',40)})}if(count>50)fail('Quantidade total excedida.');return {items:clean,subtotal:round(subtotal)}}
 async function asaas(endpoint,env,body){const api=env.ASAAS_SANDBOX==='true'?'https://api-sandbox.asaas.com/v3':'https://api.asaas.com/v3';const r=await fetch(api+endpoint,{method:'POST',headers:{'content-type':'application/json','access_token':env.ASAAS_API_KEY,'user-agent':'StreetballStore/1.0'},body:JSON.stringify(body)});const data=await r.json().catch(()=>({}));if(!r.ok)throw Error('Erro no provedor de pagamento: '+(data.errors?.[0]?.description||r.status));return data}
