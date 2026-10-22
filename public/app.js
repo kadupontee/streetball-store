@@ -255,15 +255,16 @@ function renderEditorialHero(){
   heroTimer=setInterval(()=>{if(!document.hidden)showHeroSlide(heroActive+1)},5600);
 }
 function categoryRender(){
+ // Cada PNG mantém suas dimensões nativas, inclusive antes do carregamento no celular.
  const tiles=[
-  ['retro','RETRÔ','O passado que nunca sai de moda.',EDITORIAL_ASSETS.retro],
-  ['europa','ATUAIS','Os lançamentos da temporada no seu estilo.',EDITORIAL_ASSETS.atuais],
-  ['personalizadas','PERSONALIZADAS','Deixe sua camisa com a sua identidade.',EDITORIAL_ASSETS.personalizadas],
-  ['todos','TODAS AS COLEÇÕES','Explore nosso catálogo completo.',EDITORIAL_ASSETS.colecoes]
+  ['retro','RETRÔ','O passado que nunca sai de moda.',EDITORIAL_ASSETS.retro,240],
+  ['europa','ATUAIS','Os lançamentos da temporada no seu estilo.',EDITORIAL_ASSETS.atuais,252],
+  ['personalizadas','PERSONALIZADAS','Deixe sua camisa com a sua identidade.',EDITORIAL_ASSETS.personalizadas,305],
+  ['todos','TODAS AS COLEÇÕES','Explore nosso catálogo completo.',EDITORIAL_ASSETS.colecoes,295]
  ];
- $('categoryGrid').innerHTML=tiles.map(([id,label,sub,url],index)=>
+ $('categoryGrid').innerHTML=tiles.map(([id,label,sub,url,imageWidth])=>
   '<button class="category-tile editorial-fixed-tile" data-category="'+id+'" data-editorial-label="'+esc(label)+'" data-editorial-sub="'+esc(sub)+'" aria-label="Explorar '+esc(label)+'">'+
-  '<img class="category-photo" src="'+editorialLocalSource(url)+'" data-editorial-path="'+url+'" data-editorial-source="local" alt="" loading="lazy" decoding="async">'+
+  '<img class="category-photo" src="'+editorialLocalSource(url)+'" width="'+imageWidth+'" height="193" data-editorial-path="'+url+'" data-editorial-source="local" alt="" loading="lazy" decoding="async">'+
   '<span class="editorial-tile-sr">'+esc(label)+' — '+esc(sub)+'</span></button>'
  ).join('');
 }
