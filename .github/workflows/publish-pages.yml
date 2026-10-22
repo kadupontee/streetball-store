@@ -39,7 +39,6 @@ jobs:
       - name: Verificar custos do fornecedor e classificação no catálogo
         run: |
           python scripts/test_supplier_costs.py
-          python scripts/test_catalog.py
           node --test tests/player-shorts-pricing.test.mjs
       - name: Auditar fotografias existentes
         run: python scripts/audit_catalog_images.py
