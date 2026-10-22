@@ -141,10 +141,10 @@ function displayTitle(p){
  let season='',m=t.match(/\b(20\d{2})\s*[-_/]\s*(\d{2})\b/);
  if(m)season=m[1]+'/'+m[2];else{m=t.match(/\b([0-9]{2})\s*[-_/]\s*(\d{2})\b/);if(m)season=(Number(m[1])>=80?'19':'20')+m[1]+'/'+m[2];}
  if(m&&season)t=t.replace(m[0],' ');
- let type=p.kind==='jacket'?'Jaqueta':'Camisa';
+ let type=p.kind==='jacket'?'Jaqueta':p.kind==='coat'?'Casaco':'Camisa';
  const types=[[/trench\s*coat|long\s*coat|winter\s*coat/i,'Casaco longo'],[/tracksuit|track\s*suit|training\s*suit/i,'Agasalho'],[/windbreaker|wind\s*breaker/i,'Jaqueta corta-vento'],[/\bpolo\b/i,'Camisa polo'],[/\bshorts?\b/i,'Calção'],[/\bsocks?\b|stockings?/i,'Meião'],[/\bpre\s*-?\s*match\s*kit/i,'Kit pré-jogo'],[/\btraining\s*(?:shirt|jersey)\b/i,'Camisa de treino'],[/\bhalf\s*pull\b/i,'Blusa de treino'],[/\bvest\b/i,'Regata'],[/\bcultural\s*shirt\b/i,'Camisa cultural'],[/\bkit\b|\bset\b/i,'Conjunto']];
- for(const [re,v] of types)if(re.test(t)){if(p.kind!=='jacket')type=v;t=t.replace(new RegExp(re.source,'gi'),' ');break}
- if(p.kind==='jacket')t=t.replace(/\b(?:jackets?|jaquetas?|casacos?|hoodies?|windbreakers?|softshell|cardigan)\b/gi,' ');
+ for(const [re,v] of types)if(re.test(t)){if(p.kind!=='jacket'&&p.kind!=='coat')type=v;t=t.replace(new RegExp(re.source,'gi'),' ');break}
+ if(p.kind==='jacket'||p.kind==='coat')t=t.replace(/\b(?:jackets?|jaquetas?|casacos?|coats?|hoodies?|windbreakers?|softshell|cardigan)\b/gi,' ');
  const tags=[],patterns=[[/\bgoal\s*keeper\b|\bgoalkeeper\b|\bgk\b/i,'Goleiro'],[/\b2\s*away\b/i,'Segunda reserva'],[/\bthird\b|\b3rd\b/i,'Terceira'],[/\bfourth\b|\b4th\b/i,'Quarta'],[/\baway\b/i,'Reserva'],[/\bhome\b/i,'Titular'],[/\bretro\b|\bvintage\b|\bclassic\b/i,'Retrô'],[/\bspecial\s*edition\b/i,'Edição especial'],[/\banniversary\b/i,'Comemorativa'],[/\bpre\s*-?\s*match\b/i,'Pré-jogo'],[/\blong\s*-?\s*sleeves?\b/i,'Manga longa'],[/\bplayer\s*version\b|\bplayers?\s*edition\b|\bplayer\b/i,'Versão jogador'],[/\bfan\s*version\b|\bfan\b/i,'Versão torcedor'],[/\bchildren\b|\bchild\b|\bkids?\b|\byouth\b/i,'Infantil'],[/\bwomen\b|\bwoman\b|\bfemale\b/i,'Feminina']];
  for(const [re,v] of patterns)if(re.test(t)){tags.push(v);t=t.replace(new RegExp(re.source,'gi'),' ')}
  if(p.category==='retro'||p.kind==='retro'||p.kind==='retro_long')tags.push('Retrô');
@@ -171,7 +171,7 @@ function retroSeasonStart(title){
 }
 function retroProduct(p){
  const item={...p};
- if(item.kind==='jacket')return item;
+ if(item.kind==='jacket'||item.kind==='coat')return item;
  if(!retroSeasonStart(item.supplierTitle||item.title))return item;
  if(!item.categoryLocked)item.category='retro';
  const kind=String(item.kind||'fan').toLowerCase();
