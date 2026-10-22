@@ -86,3 +86,20 @@ test('simulador de planejamento tem campos explícitos e frontend válido',()=>{
  assert.ok(js);
  assert.doesNotThrow(()=>new Function(js[1]));
 });
+
+test('checkout informa impostos fora do preço antes da compra e registra aceite em tabela própria',()=>{
+ const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
+ const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
+ const schema=readFileSync(new URL('../worker/schema.sql',import.meta.url),'utf8');
+ assert.match(html,/name="importTaxAcknowledged" required/);
+ assert.match(html,/NÃO estão incluídos/);
+ assert.match(html,/Minhas Importações|Correios/);
+ assert.match(app,/importTaxAcknowledged/);
+ assert.doesNotMatch(app,/intro\.textContent=/);
+ assert.match(schema,/CREATE TABLE IF NOT EXISTS order_import_disclosures/);
+ const wrangler=readFileSync(new URL('../wrangler.toml',import.meta.url),'utf8');
+ assert.match(wrangler,/CUSTOMER_PAYS_IMPORT_TAXES = "true"/);
+ assert.match(wrangler,/IMPORT_TAX_DISCLOSURE_APPROVED = "false"/);
+ assert.match(wrangler,/IMPORT_COMPLIANCE_APPROVED = "false"/);
+ assert.doesNotMatch(wrangler,/STORE_PAYS_IMPORT_TAXES = "true"/);
+});
