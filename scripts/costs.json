@@ -19,7 +19,8 @@
     "set": {
       "min": 22,
       "max": 45
-    }
+    },
+    "jacket": 30
   },
   "shipping_usd": {
     "one_piece": 4,
@@ -40,6 +41,15 @@
     "shorts_player": "Calção versão jogador: US$ 12 no fornecedor, separado do calção comum",
     "retail": "Custos são de compra em USD, não preços de venda em BRL. Não alterar automaticamente preços exibidos ao consumidor.",
     "shipping": "Valores de frete informados pelo fornecedor. Validar condições antes de cobranças reais.",
-    "exchange": "Cotação USD/BRL não foi fixada. Informá-la ao gerar simulações de margem."
+    "exchange": "Cotação USD/BRL não foi fixada. Informá-la ao gerar simulações de margem.",
+    "jacket": "Jaquetas e corta-ventos individuais: custo US$ 30. Conjuntos com calça não usam esse custo automaticamente.",
+    "retro_long": "Camisa retrô de manga longa: custo US$ 19; venda de referência R$ 229,90.",
+    "long": "Camisa atual de manga longa: custo US$ 15; venda de referência R$ 189,90.",
+    "classification": "Classificação conservadora por títulos/álbuns e existência de fotos, não confirmação visual de cada imagem. Casos ambíguos ficam pendentes de revisão."
+  },
+  "retail_brl_reference": {
+    "retro_long": 229.9,
+    "long": 189.9,
+    "jacket": 379.9
   }
 }
