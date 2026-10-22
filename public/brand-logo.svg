@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 136" role="img" aria-labelledby="brandTitle">
+<title id="brandTitle">Streetball Store</title>
+<g fill="#17171b">
+  <text x="12" y="87" font-family="Impact, 'Arial Narrow', 'Arial Black', sans-serif" font-size="94" font-weight="900" font-style="italic" textLength="385" lengthAdjust="spacingAndGlyphs">STREETBALL</text>
+  <text x="143" y="121" font-family="Impact, 'Arial Narrow', sans-serif" font-size="19" font-weight="800" letter-spacing="13">STORE</text>
+  <path d="M440 42 C446 57 450 61 465 67 C450 73 446 77 440 92 C434 77 430 73 415 67 C430 61 434 57 440 42Z"/>
+</g>
+</svg>
