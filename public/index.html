@@ -19,7 +19,7 @@
     <a class="active" href="#inicio">Início</a>
     <a href="#colecao">Coleções</a>
     <a href="account.html#pedidos">Pedidos</a>
-    <a href="account.html#criar-conta">Criar conta</a>
+    <a href="account.html#criar-conta" data-guest-only>Criar conta</a>
   </nav>
   <label class="search-box"><svg viewBox="0 0 24 24"><circle cx="10.7" cy="10.7" r="7"/><path d="m16 16 5 5"/></svg><input type="search" id="globalSearch" placeholder="Busque seu time, seleção ou coleção" autocomplete="off"><kbd>/</kbd></label>
   <div class="header-actions"><button class="icon-btn search-mobile" id="mobileSearch" aria-label="Buscar"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><button class="icon-btn heart-trigger" id="favoriteTrigger" title="Favoritos" aria-label="Ver favoritos"><svg viewBox="0 0 24 24"><path d="M20.8 4.8a5.5 5.5 0 0 0-7.8 0L12 5.9l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.4a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>
@@ -31,7 +31,7 @@
         <a href="account.html">Minha conta</a>
         <a href="account.html#pedidos">Meus pedidos</a>
         <a href="account.html#pedidos">Acompanhar pedido</a>
-        <a href="account.html#criar-conta">Criar conta</a>
+        <a href="account.html#criar-conta" data-guest-only>Criar conta</a>
       </nav>
     </div><button class="icon-btn cart-trigger" id="cartTrigger" title="Sacola" aria-label="Abrir sacola"><svg viewBox="0 0 24 24"><path d="M5 8h14l1 13H4L5 8ZM9 9V6a3 3 0 0 1 6 0v3"/></svg><span id="cartCount" class="cart-count">0</span></button></div>
 </div></header>
@@ -45,7 +45,7 @@
       <p>FUTEBOL, HISTÓRIA E ESTILO EM CADA CAMISA.</p>
       <div class="hero-buttons">
         <button id="heroShop" class="btn-accent" type="button">COMPRAR AGORA <span>→</span></button>
-        <a href="account.html#criar-conta" class="btn-ghost">CRIAR CONTA <svg class="ui-arrow-up-right" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M8 5h11v11"/></svg></a>
+        <a href="account.html#criar-conta" class="btn-ghost" data-guest-only>CRIAR CONTA <svg class="ui-arrow-up-right" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M8 5h11v11"/></svg></a>
       </div>
       <div class="hero-slider-controls" id="heroSliderControls" role="group" aria-label="Trocar fotos do futebol retrô">
         <button class="hero-dot" type="button" data-hero-slide="0" aria-label="Mostrar foto 1" aria-current="true"></button>
@@ -85,5 +85,5 @@
 <div class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalProductTitle"><button class="modal-close" id="closeProduct" aria-label="Fechar">×</button><div id="productModalInner"></div></div>
 <div class="checkout-modal" id="checkoutModal" role="dialog" aria-modal="true" aria-label="Finalizar pedido"><div class="checkout-head"><div><span class="micro">CHECKOUT</span><h3>Finalizar pedido</h3></div><button id="closeCheckout" aria-label="Fechar">×</button></div><form id="checkoutForm"><p id="checkoutIntro">Informe seus dados para gerar uma cobrança segura pela plataforma Asaas. Os produtos são enviados do exterior. O valor pago à Streetball Store NÃO inclui eventuais impostos de importação (Imposto de Importação e ICMS) nem Despacho Postal. Essas cobranças, se ocorrerem, são de responsabilidade do destinatário e devem ser pagas diretamente pelo canal oficial dos Correios ou da transportadora. <a href="https://www.correios.com.br/receber/encomenda/internacional" target="_blank" rel="noopener noreferrer">Entenda a importação</a>. Vendas reais ainda dependem de revisão fiscal e confirmação das condições comerciais.</p><div class="form-grid"><label>Nome completo<input name="name" type="text" required minlength="3" autocomplete="name"></label><label>WhatsApp<input name="phone" type="tel" placeholder="11999999999" minlength="10" required autocomplete="tel"></label><label>E-mail<input name="email" type="email" required autocomplete="email"></label><label>CPF (necessário para cobrança)<input name="cpf" inputmode="numeric" minlength="11" maxlength="14" placeholder="Somente números" required></label><label>CEP<input name="zip" inputmode="numeric" minlength="8" maxlength="9" required></label><label>Endereço (rua, número, complemento)<input name="address" required></label><label>Cidade<input name="city" required></label><label>UF<input name="state" required maxlength="2" placeholder="SP"></label></div><label class="checkout-method-label">Forma de pagamento<select name="paymentMethod" id="paymentMethod" required><option value="PIX">Pix</option><option value="CREDIT_CARD">Cartão de crédito</option></select></label><label class="consent-label"><input type="checkbox" name="consent" required> Aceito o uso dos dados para processar meu pedido.</label><label class="consent-label"><input type="checkbox" name="importTaxAcknowledged" required> Estou ciente de que este produto vem do exterior e que os impostos de importação, ICMS e eventual Despacho Postal NÃO estão incluídos no pagamento à Streetball Store. Se houver cobrança, serei responsável por pagá-la diretamente pelos canais oficiais dos Correios ou da transportadora para liberar a encomenda.</label><label class="consent-label"><input type="checkbox" name="whatsappOptIn"> Autorizo receber atualizações sobre meu pedido pelo WhatsApp, incluindo avisos de atraso (opcional).</label><div class="checkout-total"><span>Produtos</span><strong id="checkoutSubtotal">R$ 0,00</strong></div><div class="checkout-total"><span>Entrega</span><strong id="checkoutShipping">A calcular</strong></div><div class="checkout-total checkout-grand-total"><span>Total</span><strong id="checkoutGrandTotal">A calcular</strong></div><p class="checkout-note" id="checkoutNote">O total acima é o pagamento à Streetball Store e não inclui impostos de importação nem eventual Despacho Postal cobrados depois no Brasil. Se houver cobrança, o destinatário deverá pagá-la pelos canais oficiais.</p><button class="btn-accent full" type="submit" id="placeOrder">SOLICITAR PAGAMENTO SEGURO <span>→</span></button><p class="status" id="checkoutStatus" aria-live="polite"></p></form></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="app.js?v=20261022-mobile-refresh-v8" defer></script>
+<script src="app.js?v=20261022-session-aware-home-v9" defer></script>
 </body></html>
