@@ -481,8 +481,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   #categoryGrid .category-tile.editorial-fixed-tile:hover .category-photo {
     transform: none;
   }
-  #categoryGrid .category-tile.editorial-fixed-tile::after {
+  #categoryGrid .category-tile.editorial-fixed-tile:not(.needs-label)::after {
     display: none;
+  }
+  #categoryGrid .category-tile.editorial-fixed-tile .category-photo[hidden] {
+    display: none;
+  }
+  #categoryGrid .category-tile.editorial-fixed-tile.needs-label::after {
+    display: block;
   }
   #categoryGrid .category-tile.editorial-fixed-tile .editorial-tile-sr {
     line-height: normal;
