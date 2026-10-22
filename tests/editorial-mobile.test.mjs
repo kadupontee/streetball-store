@@ -37,3 +37,24 @@ test('desktop e celular usam as nove fotos aprovadas, com navegação do carross
  assert.match(html,/20261022-category-native-v5/);
  assert.doesNotThrow(()=>new Function(app));
 });
+
+
+test('iPhone e Android exibem imagens completas, sem height fixo nem crop',()=>{
+ const mobile=css.split('Mobile Collections V6:')[1];
+ assert.ok(mobile,'Falta o ajuste específico para celulares');
+ assert.match(mobile,/@media \(max-width: 780px\)/);
+ assert.match(mobile,/#categoryGrid\.category-grid/);
+ assert.match(mobile,/grid-template-columns:\s*minmax\(0, 1fr\)/);
+ assert.match(mobile,/height:\s*auto/);
+ assert.match(mobile,/aspect-ratio:\s*auto/);
+ assert.match(mobile,/object-fit:\s*contain/);
+ assert.match(mobile,/position:\s*relative/);
+ assert.doesNotMatch(mobile,/object-fit:\s*cover/);
+ for(const [name,width] of [['retro',240],['europa',252],['personalizadas',305],['todos',295]]){
+  assert.ok(app.includes("['"+name+"'"),name);
+  assert.ok(app.includes("EDITORIAL_ASSETS."+(name==='europa'?'atuais':name==='todos'?'colecoes':name)+","+width+"]"),name+' dimensões');
+ }
+ assert.match(app,/width="'\+imageWidth\+'" height="193"/);
+ assert.match(html,/editorial\.css\?v=20261022-category-native-v5-mobile-v6/);
+ assert.match(html,/app\.js\?v=20261022-mobile-v3-native-v6/);
+});
