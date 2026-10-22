@@ -1,0 +1,45 @@
+{
+  "currency": "USD",
+  "supplier_usd": {
+    "fan": 11,
+    "female": 11,
+    "kids": 13,
+    "retro": 16,
+    "retro_long": 19,
+    "long": 15,
+    "player_adidas": 16,
+    "player_puma": 17,
+    "player_nike": 18,
+    "shorts": 10,
+    "shorts_player": 12,
+    "socks": {
+      "min": 5,
+      "max": 7
+    },
+    "set": {
+      "min": 22,
+      "max": 45
+    }
+  },
+  "shipping_usd": {
+    "one_piece": 4,
+    "two_pieces": 3,
+    "three_or_more": 0
+  },
+  "additions_usd": {
+    "personalization": 3,
+    "patch": 1
+  },
+  "size_extra_usd": {
+    "XXL": 1,
+    "3XL": 2,
+    "4XL": 3
+  },
+  "notes": {
+    "shorts": "Calção comum: US$ 10 no fornecedor",
+    "shorts_player": "Calção versão jogador: US$ 12 no fornecedor, separado do calção comum",
+    "retail": "Custos são de compra em USD, não preços de venda em BRL. Não alterar automaticamente preços exibidos ao consumidor.",
+    "shipping": "Valores de frete informados pelo fornecedor. Validar condições antes de cobranças reais.",
+    "exchange": "Cotação USD/BRL não foi fixada. Informá-la ao gerar simulações de margem."
+  }
+}
