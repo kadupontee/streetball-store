@@ -14,6 +14,15 @@
 .notice{padding:15px;background:#f3f2fc;border-left:3px solid #818bd4;line-height:1.6;font-size:13px}.muted{color:#666779}.order-entry{border:1px solid #dedee5;padding:18px;margin:13px 0;display:grid;gap:9px}.order-entry header{display:flex;justify-content:space-between;align-items:center;gap:15px}.order-entry h3{font-size:16px;margin:0}.order-entry small{color:#5a5b68}.order-entry a{color:#4e58b5;font-weight:700;text-decoration:underline;text-underline-offset:3px}.link-order-form{margin:22px 0 10px;display:grid;gap:12px;max-width:600px}.link-order-form label{font-size:13px;font-weight:700}
 .account-feedback{font-size:13px;line-height:1.6;min-height:24px;color:#454da0}
 @media(max-width:760px){.account-shell{grid-template-columns:1fr;padding-top:22px}.account-pane{padding:20px}.account-hero{padding:45px 0 25px}}
+.google-auth-box,.google-connect-box{margin:22px 0 8px;max-width:510px}
+.google-auth-separator{display:flex;align-items:center;gap:12px;color:#737488;font-weight:800;font-size:10px;letter-spacing:.09em;margin:18px 0}
+.google-auth-separator:before,.google-auth-separator:after{content:'';height:1px;flex:1;background:#d7d8e0}
+.google-button-slot{min-height:44px;max-width:360px;overflow:hidden}
+.google-auth-caption{font-size:12px;line-height:1.6;margin-top:11px}
+.google-connect-box{padding:18px;border:1px solid #d9dbea;background:#f7f7fb;margin-bottom:30px}
+.google-connect-box h3{font:800 19px 'Barlow Condensed',Impact,sans-serif;margin:0 0 6px}
+.google-connect-box>p{font-size:12px;line-height:1.6}
+.google-connect-box .google-button-slot{margin-top:15px}
 </style></head><body>
 <div class="announcement"><div class="container announce-inner"><span>STREETBALL STORE · FUTEBOL É IDENTIDADE</span><span class="announce-right">CAMISAS PARA TODAS AS GERAÇÕES</span></div></div>
 <header class="site-header"><div class="container header-main editorial-account-head">
@@ -29,8 +38,18 @@
 <div class="auth-tabs" role="tablist"><button id="loginTab" type="button" role="tab" aria-selected="true">Entrar</button><button id="registerTab" type="button" role="tab" aria-selected="false">Criar conta</button></div>
 <form id="loginForm" class="auth-form"><label>E-mail<input type="email" name="email" autocomplete="email" required maxlength="180"></label><label>Senha<input type="password" name="password" autocomplete="current-password" required minlength="12"></label><button type="submit" class="btn-accent">ENTRAR NA CONTA →</button></form>
 <form id="registerForm" class="auth-form" hidden><label>Nome completo<input type="text" name="displayName" autocomplete="name" minlength="2" maxlength="70" required></label><label>E-mail<input type="email" name="email" autocomplete="email" maxlength="180" required></label><label>Crie uma senha (mínimo 12 caracteres)<input type="password" name="password" autocomplete="new-password" minlength="12" maxlength="128" required></label><button type="submit" class="btn-accent">CRIAR MINHA CONTA →</button></form>
+<div class="google-auth-box" id="googleAuthBox" hidden>
+  <div class="google-auth-separator"><span>OU CONTINUE COM</span></div>
+  <div id="googleSignInButton" class="google-button-slot" aria-label="Entrar ou criar conta com Google"></div>
+  <p class="muted google-auth-caption">Use sua Conta do Google com segurança, sem precisar criar uma nova senha.</p>
+</div>
 </div>
 <div class="account-pane" id="profilePane" hidden><span class="micro">BEM-VINDO DE VOLTA</span><h2 id="accountGreeting">SUA CONTA.</h2><p class="muted" id="accountEmail"></p>
+<div class="google-connect-box" id="googleConnectBox" hidden>
+  <h3>CONEXÃO COM GOOGLE</h3>
+  <p class="muted">Conecte sua Conta do Google para entrar mais facilmente. Por segurança, use o mesmo e-mail cadastrado na Streetball Store.</p>
+  <div id="googleConnectButton" class="google-button-slot"></div>
+</div>
 <div id="pedidos"><h2>MEUS PEDIDOS</h2><div id="ordersList"><p class="muted">Carregando...</p></div></div>
 <div id="vincular"><h2>VINCULAR PEDIDO</h2><p class="muted">Já comprou antes de criar conta? Cole o link privado recebido no checkout ou salvo no navegador. Somente quem possui esse link pode vincular a compra.</p>
 <form id="claimForm" class="link-order-form"><label>Link de acompanhamento<input type="text" id="claimLink" placeholder="https://.../track.html#..." autocomplete="off" required></label><button type="submit" class="btn-accent">VINCULAR PEDIDO →</button></form>
@@ -40,5 +59,5 @@
 <div class="notice">A Streetball Store não solicita sua senha gov.br. Se houver tributação de importação, consulte somente os canais oficiais dos Correios ou da transportadora. O pagamento à loja não inclui esses tributos.</div>
 </section>
 </main><footer class="site-footer"><div class="container footer-bottom"><span>© STREETBALL STORE · FUTEBOL, CULTURA, IDENTIDADE.</span><a href="/">VOLTAR À LOJA ↑</a></div></footer>
-<script type="module" src="/account.js"></script>
+<script type="module" src="/account.js?v=google-v1"></script>
 </body></html>
