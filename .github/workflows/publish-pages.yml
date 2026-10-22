@@ -36,6 +36,8 @@ jobs:
           python scripts/test_retro_policy.py
           python scripts/reprice_retro_catalog.py
           python scripts/reprice_retro_catalog.py --check
+      - name: Verificar custos do fornecedor
+        run: python scripts/test_supplier_costs.py
       - name: Auditar fotografias existentes
         run: python scripts/audit_catalog_images.py
       - name: Preparar apenas a vitrine publica
