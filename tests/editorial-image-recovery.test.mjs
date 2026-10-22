@@ -11,15 +11,16 @@ const names=['hero-maradona.png','hero-ronaldo-inter.png','hero-juventus-pb.png'
 
 test('se imagem da Cloudflare falhar, tenta os mesmos PNGs originais via GitHub e jsDelivr',()=>{
  assert.match(app,/editorialLocalSource/);
- assert.match(app,/raw\.githubusercontent\.com\/kadupontee\/streetball-store\/main\/public/);
- assert.match(app,/cdn\.jsdelivr\.net\/gh\/kadupontee\/streetball-store@main\/public/);
+ assert.match(app,/EDITORIAL_ASSET_COMMIT/);
+ assert.match(app,/raw\.githubusercontent\.com\/kadupontee\/streetball-store/);
+ assert.match(app,/cdn\.jsdelivr\.net\/gh\/kadupontee\/streetball-store/);
  assert.match(app,/img\.dataset\.editorialSource='github'/);
  assert.match(app,/img\.dataset\.editorialSource='cdn'/);
  assert.match(app,/Object\.values\(EDITORIAL_ASSETS\)\.includes\(path\)/);
  assert.doesNotMatch(app,/editorialFallback|data-editorial-fallback/);
  assert.doesNotThrow(()=>new Function(app));
  for(const name of names)assert.ok(app.includes('/images/editorial/'+name),name);
- assert.match(html,/app\.js\?v=20261022-new-cards-unified-v7/);
+ assert.match(html,/app\.js\?v=20261022-mobile-refresh-v8/);
 });
 test('os nove PNGs publicados no GitHub existem e têm cabeçalho PNG válido',()=>{
  for(const filename of names){
