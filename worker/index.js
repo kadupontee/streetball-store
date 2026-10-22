@@ -20,6 +20,7 @@ function cpfValid(cpf){const s=unaccent(cpf);if(!/^\d{11}$/.test(s)||/^(\d)\1+$/
 // Evita cobrar preço de camisa atual em temporadas antigas antes da migração física do JSON.
 function retroRepriceServer(product){
  const p={...product}, title=String(p.supplierTitle||p.title||'');
+ if(p.kind==='jacket')return p;
  const now=new Date(),y=now.getUTCFullYear(),limit=y-5-(now.getUTCMonth()<7?1:0);
  const expand=x=>x.length===4?+x:(+x<=y%100+2?2000+ +x:1900+ +x);
  let old=false,match;
