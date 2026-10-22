@@ -6,8 +6,8 @@ export const STAGES={
  international_transit:'Em transporte internacional',
  arrived_brazil:'Chegou ao Brasil',
  customs_inspection:'Em fiscalização aduaneira',
- tax_payment_due:'Tributos identificados — a Streetball Store acompanha o pagamento',
- tax_payment_confirmed:'Pagamento dos tributos confirmado pela loja',
+ tax_payment_due:'Tributos de importação pendentes — verificar cobrança oficial',
+ tax_payment_confirmed:'Pagamento dos tributos confirmado na fonte oficial',
  customs_released:'Liberado na alfândega',
  out_for_delivery:'Saiu para entrega',
  delivered:'Entregue',
@@ -25,8 +25,13 @@ export function formatProgress(order,meta,events){
   current:events[0]?.stage||null,
   events:events.map(e=>({at:e.created_at,stage:e.stage,label:STAGES[e.stage]||'Atualização'})),
   payTaxesAtOfficialCorreios:events[0]?.stage==='tax_payment_due',
-  importTaxesManagedByStore:true,
-  importTaxGuidance:events[0]?.stage==='tax_payment_due'?'A Streetball Store está verificando a cobrança de importação. Os custos previstos são responsabilidade da loja. Se os Correios solicitarem alguma providência vinculada ao documento do destinatário, contate o atendimento para instruções e não pague cobranças de links suspeitos.':'A responsabilidade pelos tributos previstos será da Streetball Store, conforme as condições da compra.',
+  importTaxesManagedByStore:false,
+  importTaxesPaidByRecipient:true,
+  importTaxGuidance:events[0]?.stage==='tax_payment_due'
+   ?'Foi identificada uma exigência de tributos ou Despacho Postal. O destinatário é responsável pelo pagamento diretamente no Minhas Importações ou aplicativo oficial dos Correios (ou no portal da transportadora). Consulte o aviso oficial: o prazo geral dos Correios é de 20 dias corridos desde a disponibilização da cobrança. Não pague por links recebidos em mensagens.'
+   :events[0]?.stage==='tax_payment_confirmed'
+   ?'Pagamento dos tributos registrado após conferência. Acompanhe a liberação e a entrega nos canais oficiais.'
+   :'O valor pago à Streetball Store não inclui eventuais tributos de importação, ICMS nem Despacho Postal. Se houver cobrança, o destinatário deverá pagar nos canais oficiais para liberar a encomenda.',
   source:'Eventos informados pelo administrador após conferência, não rastreamento em tempo real.'
  };
 }
