@@ -17,11 +17,11 @@ function switchTab(which){
 $('loginTab').addEventListener('click',()=>switchTab('login'));
 $('registerTab').addEventListener('click',()=>switchTab('register'));
 function showLoggedOut(){
- $('authPane').hidden=false;$('profilePane').hidden=true;$('logout').hidden=true;
+ $('authPane').hidden=false;$('profilePane').hidden=true;$('logout').hidden=true;$('menuGoogle').hidden=true;
  if(googleReady)renderGoogleButtons();
 }
 async function showLoggedIn(user){
- $('authPane').hidden=true;$('profilePane').hidden=false;$('logout').hidden=false;
+ $('authPane').hidden=true;$('profilePane').hidden=false;$('logout').hidden=false;$('menuGoogle').hidden=!googleReady;
  $('accountGreeting').textContent='OLÁ, '+user.displayName.split(' ')[0].toLocaleUpperCase('pt-BR')+'.';
  $('accountEmail').textContent=user.email;
  const saved=localStorage.getItem('streetball_tracking_link');
@@ -151,6 +151,7 @@ async function initGoogle(){
   googleReady=true;
   $('googleAuthBox').hidden=false;
   $('googleConnectBox').hidden=false;
+  $('menuGoogle').hidden=$('profilePane').hidden;
   renderGoogleButtons();
  }catch(error){msg('O login Google não está disponível. Use seu e-mail e senha por enquanto.');}
 }
