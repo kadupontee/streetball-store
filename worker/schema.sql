@@ -136,3 +136,32 @@ CREATE TABLE IF NOT EXISTS order_import_disclosures (
  accepted_at TEXT NOT NULL,
  policy TEXT NOT NULL
 );
+
+-- Contas separadas do cadastro Asaas. Senhas com PBKDF2+salt e sessões opacas.
+CREATE TABLE IF NOT EXISTS customer_accounts (
+ id TEXT PRIMARY KEY,
+ email TEXT NOT NULL UNIQUE,
+ display_name TEXT NOT NULL,
+ password_salt TEXT NOT NULL,
+ password_hash TEXT NOT NULL,
+ created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS customer_sessions (
+ token_sha256 TEXT PRIMARY KEY,
+ customer_id TEXT NOT NULL REFERENCES customer_accounts(id),
+ created_at TEXT NOT NULL,
+ expires_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_customer_sessions_owner ON customer_sessions(customer_id,expires_at);
+CREATE TABLE IF NOT EXISTS customer_order_links (
+ customer_id TEXT NOT NULL REFERENCES customer_accounts(id),
+ order_id TEXT NOT NULL REFERENCES orders(id),
+ linked_at TEXT NOT NULL,
+ PRIMARY KEY(customer_id,order_id)
+);
+CREATE INDEX IF NOT EXISTS idx_customer_order_links_owner ON customer_order_links(customer_id,linked_at);
+CREATE TABLE IF NOT EXISTS customer_login_attempts (
+ email TEXT PRIMARY KEY,
+ attempts INTEGER NOT NULL DEFAULT 0,
+ window_started_at TEXT NOT NULL
+);
