@@ -78,7 +78,7 @@ const photoSources=p=>[p.image,...(Array.isArray(p.images)?p.images:[]),p.source
 const hasVerifiedPhoto=p=>photoSources(p).length>0;
 function jersey(p,extra=''){
 const a=esc(p.primary||'#ededed'),b=esc(p.accent||'#304130'),id='i'+Math.random().toString(36).slice(2,9);
-const isNBA=p.kind==='nba',isShort=p.kind==='shorts',isSocks=p.kind==='socks';
+const isNBA=p.kind==='nba',isShort=p.kind==='shorts'||p.kind==='shorts_player',isSocks=p.kind==='socks';
 if(isSocks)return `<svg class="jersey-drawing ${extra}" viewBox="0 0 280 300" role="img" aria-label="Ilustração de meião"><g fill="${a}" stroke="${b}" stroke-width="2"><path d="M74 40h60v156q0 27-34 27H70v-28h32l-28-12Z"/><path d="M149 40h60v156q0 27-34 27h-30v-28h32l-28-12Z"/></g><path d="M73 71h61m15 0h61M73 81h61m15 0h61" stroke="${b}" stroke-width="8"/></svg>`;
 if(isShort)return `<svg class="jersey-drawing ${extra}" viewBox="0 0 280 300" role="img" aria-label="Ilustração de calção"><defs><filter id="${id}"><feDropShadow dx="0" dy="8" stdDeviation="6" flood-opacity=".15"/></filter></defs><path filter="url(#${id})" d="M64 87h150l12 118-74 15-12-68-12 68-74-15Z" fill="${a}" stroke="${b}" stroke-width="3"/><path d="M64 99h150" stroke="${b}" stroke-width="7"/></svg>`;
 return `<svg class="jersey-drawing ${extra}" viewBox="0 0 310 330" role="img" aria-label="Ilustração de produto; foto a confirmar"><defs><filter id="${id}" x="-20%" y="-20%" width="150%" height="170%"><feDropShadow dx="0" dy="11" stdDeviation="7" flood-opacity=".19"/></filter><linearGradient id="shine-${id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".28"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".19"/></linearGradient><clipPath id="shirt-${id}"><path d="M105 54q50 36 100 0l52 26 35 74-50 23-21-36v143H89V141l-21 36-50-23 35-74Z"/></clipPath></defs><path filter="url(#${id})" d="M105 54q50 36 100 0l52 26 35 74-50 23-21-36v143H89V141l-21 36-50-23 35-74Z" fill="${a}" stroke="${b}" stroke-opacity=".36" stroke-width="2"/><g clip-path="url(#shirt-${id})">${(isNBA?`<path d="M122 47h66v31q-33 18-66 0Z" fill="${b}"/>`:`<path d="M89 80h132v200H89Z" fill="${b}" opacity=".13"/><path d="M106 81h19v208h-19zm40 0h19v208h-19zm40 0h19v208h-19z" fill="${b}" opacity=".3"/>`)}<rect x="18" y="50" width="274" height="234" fill="url(#shine-${id})"/></g><path d="M125 65q30 26 60 0l-7 21q-23 15-46 0Z" fill="${b}"/><path d="M154 104v173" stroke="${b}" stroke-opacity=".17"/><circle cx="189" cy="119" r="10" fill="${b}" stroke="#fff" stroke-opacity=".6" stroke-width="2"/><path d="M115 115h24" stroke="${b}" stroke-width="7" stroke-linecap="round"/>${isNBA?`<text x="155" y="191" font-size="50" font-family="Arial" text-anchor="middle" font-weight="900" fill="${b}">30</text>`:''}</svg>`;
@@ -98,7 +98,7 @@ document.addEventListener('error', e=>{
  const holder=img.closest('.product-asset');
  if(holder){holder.classList.add('missing-photo');holder.innerHTML='<span class="product-no-photo">FOTO TEMPORARIAMENTE INDISPONÍVEL</span>';}
 },true);
-const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):p.category===c)||(c==='infantil'&&p.kind==='kids')||(c==='feminino'&&p.kind==='female')||(c==='player'&&String(p.kind).startsWith('player_'))||(c==='personalizadas'&&!['acessorios','treino'].includes(p.category)&&!['socks','shorts'].includes(p.kind));
+const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):p.category===c)||(c==='infantil'&&p.kind==='kids')||(c==='feminino'&&p.kind==='female')||(c==='player'&&(String(p.kind).startsWith('player_')||p.kind==='shorts_player'))||(c==='personalizadas'&&!['acessorios','treino'].includes(p.category)&&!['socks','shorts','shorts_player'].includes(p.kind));
 function filtered(){
  let ps=catalog.filter(p=>hasVerifiedPhoto(p)&&matchCategory(p,state.category));
  if(state.category==='brasileirao'&&state.club!=='todos'){
@@ -181,7 +181,19 @@ function retroProduct(p){
  if(!item.badgeLocked&&['','NOVO','NEW'].includes(String(item.badge||'').toUpperCase()))item.badge='RETRÔ';
  return item;
 }
-function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>{const clean=retroProduct({...p,supplierTitle:p.supplierTitle||p.title});clean.title=displayTitle(clean);if(!String(clean.id).startsWith('YUP-')&&clean.category==='retro'&&!/retr[oô]/i.test(clean.title))clean.title+=' · Retrô';clean.brazilClub=findBrazilClub(clean);return clean;});}
+// Calção versão jogador: custo US$12 contra US$10 do comum. Preço público
+// proporcional: R$143,90 (base comum R$119,90). Mantém preço manual travado.
+function playerShortsReprice(p){
+ const item={...p};
+ const title=String(item.supplierTitle||item.title||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ const kind=String(item.kind||'').toLowerCase();
+ const playerShorts=kind==='shorts_player'||(kind==='shorts'&&/\b(?:shorts?|calcao|bermuda)\b/.test(title)&&/\b(?:player|jogador|versao\s+jogador)\b/.test(title));
+ if(!playerShorts)return item;
+ if(!item.kindLocked)item.kind='shorts_player';
+ if(!item.priceLocked&&Math.abs(Number(item.price)-119.90)<0.005)item.price=143.90;
+ return item;
+}
+function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>{const clean=playerShortsReprice(retroProduct({...p,supplierTitle:p.supplierTitle||p.title}));clean.title=displayTitle(clean);if(!String(clean.id).startsWith('YUP-')&&clean.category==='retro'&&!/retr[oô]/i.test(clean.title))clean.title+=' · Retrô';clean.brazilClub=findBrazilClub(clean);return clean;});}
 
 function catalogRender(){
  const ps=filtered();const visible=ps.slice(0,state.limit);$('catalogSubtitle').textContent=state.favoritesOnly?'Modelos que você salvou.':state.query?`Resultados da busca por “${state.query}”.`:'Modelos com fotografias cadastradas no catálogo do fornecedor.';
