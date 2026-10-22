@@ -339,28 +339,52 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
  .quick-btn .quick-btn-arrow{width:13px;height:13px}
 }
 
-/* Editorial cards V4: recortes originais quadrados, sem cortar textos nem pessoas. */
+/* Cards editoriais V5: usar proporção NATIVA de cada PNG.
+   Antes todos os cards eram forçados a 1:1, embora as imagens tenham
+   240×193, 252×193, 305×193 e 295×193. Isso criava recortes e bordas
+   artificiais. O conteúdo (inclusive texto e seta gravados na arte)
+   agora fica 100% visível em desktop, tablet e celular. */
+.category-grid{
+ grid-template-columns:minmax(0,240fr) minmax(0,252fr) minmax(0,305fr) minmax(0,295fr);
+ align-items:start;
+ gap:14px;
+}
 .category-grid .category-tile.editorial-fixed-tile{
- aspect-ratio:1/1;
+ min-width:0;
  min-height:0;
  height:auto;
+ aspect-ratio:var(--editorial-aspect);
  padding:0;
+ margin:0;
+ display:block;
  overflow:hidden;
+ border:0;
+ border-radius:7px;
  background:#d6d6d8;
- border-radius:6px;
-}
-.category-grid .category-tile.editorial-fixed-tile .category-photo{
- position:absolute;
- inset:0;
- width:100%;
- height:100%;
- object-fit:contain;
- object-position:50% 50%;
- filter:none;
- background:#d6d6d8;
+ box-shadow:none;
  transform:none;
 }
-.category-grid .category-tile.editorial-fixed-tile:hover .category-photo{transform:scale(1.008)}
+.category-grid .category-tile.editorial-fixed-tile[data-category="retro"]{--editorial-aspect:240 / 193}
+.category-grid .category-tile.editorial-fixed-tile[data-category="europa"]{--editorial-aspect:252 / 193}
+.category-grid .category-tile.editorial-fixed-tile[data-category="personalizadas"]{--editorial-aspect:305 / 193}
+.category-grid .category-tile.editorial-fixed-tile[data-category="todos"]{--editorial-aspect:295 / 193}
+.category-grid .category-tile.editorial-fixed-tile .category-photo{
+ position:static;
+ display:block;
+ width:100%;
+ height:100%;
+ max-width:100%;
+ max-height:none;
+ padding:0;
+ margin:0;
+ object-fit:contain;
+ object-position:center;
+ filter:none;
+ background:transparent;
+ transform:none;
+}
+.category-grid .category-tile.editorial-fixed-tile:hover .category-photo{transform:none}
+.category-grid .category-tile.editorial-fixed-tile:hover{transform:translateY(-2px);box-shadow:0 7px 18px #17171b22}
 .ui-arrow-up-right{
  width:16px;height:16px;flex:none;display:inline-block;
  fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
@@ -368,14 +392,25 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 }
 .hero-buttons .btn-ghost,.section-head .text-link{display:inline-flex;align-items:center;justify-content:center;gap:12px}
 @media(max-width:890px){
- .category-grid .category-tile.editorial-fixed-tile{aspect-ratio:1/1;min-height:0;height:auto}
- .category-grid .category-tile.editorial-fixed-tile .category-photo{object-fit:contain;object-position:center}
+ .category-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:14px}
+ .category-grid .category-tile.editorial-fixed-tile{
+  min-height:0;
+  height:auto;
+  aspect-ratio:var(--editorial-aspect);
+ }
+ .category-grid .category-tile.editorial-fixed-tile .category-photo{object-fit:contain}
 }
 @media(max-width:600px){
- .category-grid{grid-template-columns:minmax(0,1fr);row-gap:14px}
- .category-grid .category-tile.editorial-fixed-tile{aspect-ratio:1/1;min-height:0;height:auto}
- .category-grid .category-tile.editorial-fixed-tile .category-photo{object-fit:contain;object-position:center}
+ .category-grid{grid-template-columns:minmax(0,1fr);row-gap:15px}
+ .category-grid .category-tile.editorial-fixed-tile{
+  min-height:0;height:auto;aspect-ratio:var(--editorial-aspect);
+ }
+ .category-grid .category-tile.editorial-fixed-tile .category-photo{object-fit:contain}
  .ui-arrow-up-right{width:14px;height:14px}
+}
+@media(prefers-reduced-motion:reduce){
+ .category-grid .category-tile.editorial-fixed-tile,
+ .category-grid .category-tile.editorial-fixed-tile .category-photo{transition:none}
 }
 
 /* Logo oficial Streetball Store: mesmo arquivo SVG em todo o site. */
