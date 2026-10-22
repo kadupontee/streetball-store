@@ -3,6 +3,9 @@ import {supplierIdValid} from './supplier-mapping.js';
 import {STAGES,safeTrackingCode,formatProgress} from './order-progress.js';
 import {customerTrackingLink,verifyTrackingKey} from './order-tracking-access.js';
 import {handleAccountRoute,linkAuthenticatedCheckout} from './customer-accounts.js';
+// O HTML do cadastro integra o bundle do Worker: funciona mesmo se o arquivo
+// não for encontrado no binding de assets durante a publicação.
+import accountPageHtml from '../public/account.html';
 /** Streetball Store - Cloudflare Worker + D1 + Asaas sandbox/production
  * Nunca armazene tokens ou chaves na pasta public/.
  * IMPORTANTE: pagamento ao fornecedor NÃO é automatizado neste MVP.
@@ -329,28 +332,30 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);if(r
   return new Response(null,{status:302,headers:{location:new URL('/account.html'+fragment,url).toString(),'cache-control':'no-store'}});
  }
  if(request.method==='GET'&&url.pathname==='/account.html'){
-  if(!env.ASSETS)return new Response('Página de cadastro temporariamente indisponível.',{status:503,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
-  const asset=await env.ASSETS.fetch(request);
-  if(asset.ok&&(asset.headers.get('content-type')||'').includes('text/html')){
-   const page=new Response(asset.body,asset);
-   page.headers.set('cache-control','no-store');
-   return page;
-  }
-  return new Response('Página de cadastro não incluída nesta publicação. Atualize a Streetball Store.',{status:503,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
+  // O HTML é importado na compilação e não depende de env.ASSETS.fetch().
+  // Mantém a página disponível mesmo quando há falha no manifesto de assets.
+  return new Response(accountPageHtml,{status:200,headers:{
+   'content-type':'text/html; charset=utf-8',
+   'cache-control':'no-store',
+   'x-content-type-options':'nosniff',
+   'x-streetball-account':'bundled-v1'
+  }});
  }
  if(request.method==='GET'&&url.pathname==='/api/health/account'){
-  const files=['/account.html','/account.js'];
+  const files=['/account.html','/account.js','/account-ui.css','/styles.css','/editorial.css'];
   const checks=await Promise.all(files.map(async pathname=>{
    try{
     if(!env.ASSETS)return {path:pathname,available:false,status:null};
     const response=await env.ASSETS.fetch(new Request(new URL(pathname,url),{method:'GET'}));
     const mime=response.headers.get('content-type')||'';
-    return {path:pathname,available:response.ok&&(pathname.endsWith('.html')?mime.includes('text/html'):mime.includes('javascript')),status:response.status};
+    const expected=pathname.endsWith('.html')?'text/html':pathname.endsWith('.js')?'javascript':'text/css';
+    return {path:pathname,available:response.ok&&mime.includes(expected),status:response.status};
    }catch{return {path:pathname,available:false,status:null}}
   }));
   let accountsDatabaseReady=false;
   try{if(env.DB)accountsDatabaseReady=!!(await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='customer_accounts'").first())}catch{}
-  return json({ok:checks.every(c=>c.available)&&accountsDatabaseReady,accountPageReady:checks[0].available,accountScriptReady:checks[1].available,accountsDatabaseReady,files:checks});
+  const supportAssetsReady=checks.slice(1).every(c=>c.available);
+  return json({ok:supportAssetsReady&&accountsDatabaseReady,accountPageReady:true,accountPageMode:'bundled-v1',accountHtmlAssetReady:checks[0].available,accountScriptReady:checks[1].available,accountStylesReady:checks.slice(2).every(c=>c.available),accountsDatabaseReady,files:checks});
  }
  if(url.pathname.startsWith('/api/admin/'))return await adminApi(request,env,ctx);
  if(url.pathname.startsWith('/api/account/'))return await handleAccountRoute(request,env);
