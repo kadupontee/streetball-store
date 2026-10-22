@@ -323,6 +323,31 @@ async function whatsappInbound(req,env,ctx){
  return json({ok:true});
 }
 export default {async fetch(request,env,ctx){const url=new URL(request.url);if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors});try{
+ // Rotas de conta explícitas: evitam 404 da camada de assets em navegadores mobile.
+ if(request.method==='GET'&&['/conta','/criar-conta','/pedidos'].includes(url.pathname)){
+  const fragment=url.pathname==='/criar-conta'?'#criar-conta':url.pathname==='/pedidos'?'#pedidos':'';
+  return Response.redirect(new URL('/account.html'+fragment,url),302);
+ }
+ if(request.method==='GET'&&url.pathname==='/account.html'){
+  if(!env.ASSETS)return new Response('Página de cadastro temporariamente indisponível.',{status:503,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
+  const asset=await env.ASSETS.fetch(request);
+  if(asset.ok&&(asset.headers.get('content-type')||'').includes('text/html'))return asset;
+  return new Response('Página de cadastro não incluída nesta publicação. Atualize a Streetball Store.',{status:503,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
+ }
+ if(request.method==='GET'&&url.pathname==='/api/health/account'){
+  const files=['/account.html','/account.js'];
+  const checks=await Promise.all(files.map(async pathname=>{
+   try{
+    if(!env.ASSETS)return {path:pathname,available:false,status:null};
+    const response=await env.ASSETS.fetch(new Request(new URL(pathname,url),{method:'GET'}));
+    const mime=response.headers.get('content-type')||'';
+    return {path:pathname,available:response.ok&&(pathname.endsWith('.html')?mime.includes('text/html'):mime.includes('javascript')),status:response.status};
+   }catch{return {path:pathname,available:false,status:null}}
+  }));
+  let accountsDatabaseReady=false;
+  try{if(env.DB)accountsDatabaseReady=!!(await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='customer_accounts'").first())}catch{}
+  return json({ok:checks.every(c=>c.available)&&accountsDatabaseReady,accountPageReady:checks[0].available,accountScriptReady:checks[1].available,accountsDatabaseReady,files:checks});
+ }
  if(url.pathname.startsWith('/api/admin/'))return await adminApi(request,env,ctx);
  if(url.pathname.startsWith('/api/account/'))return await handleAccountRoute(request,env);
  if(url.pathname==='/api/track'&&request.method==='POST'){
