@@ -184,6 +184,11 @@ const EDITORIAL_ASSETS={
  personalizadas:'/images/editorial/card-personalizadas.png',
  colecoes:'/images/editorial/card-todas-colecoes.png'
 };
+// Mesmos PNGs, com URL nova para impedir cache negativo de 404 no navegador.
+const EDITORIAL_IMAGE_REVISION='20261022-fixed-editorial-v4';
+const editorialLocalSource=path=>path+'?v='+EDITORIAL_IMAGE_REVISION;
+const editorialGithubSource=path=>'https://raw.githubusercontent.com/kadupontee/streetball-store/main/public'+path;
+const editorialCdnSource=path=>'https://cdn.jsdelivr.net/gh/kadupontee/streetball-store@main/public'+path;
 const EDITORIAL_HERO_SETS=[
  ['ronaldo','maradona','juventus','united','rack'],
  ['maradona','united','rack','ronaldo','juventus'],
@@ -214,7 +219,7 @@ function renderEditorialHero(){
  target.innerHTML=EDITORIAL_HERO_SETS.map((images,scene)=>
   '<div class="editorial-hero-scene'+(scene===0?' active':'')+'" aria-hidden="'+(scene!==0)+'">'+
   images.map((name,j)=>'<div class="editorial-frame '+variants[j]+'" style="background:'+defaults[j]+'">'+
-   '<img src="'+EDITORIAL_ASSETS[name]+'" alt="'+esc(EDITORIAL_ALT[name])+'" decoding="async" loading="'+(scene===0?'eager':'lazy')+'">'+
+   '<img src="'+editorialLocalSource(EDITORIAL_ASSETS[name])+'" data-editorial-path="'+EDITORIAL_ASSETS[name]+'" data-editorial-source="local" alt="'+esc(EDITORIAL_ALT[name])+'" decoding="async" loading="'+(scene===0?'eager':'lazy')+'">'+
    '</div>').join('')+
   '</div>'
  ).join('');
@@ -232,18 +237,35 @@ function categoryRender(){
  ];
  $('categoryGrid').innerHTML=tiles.map(([id,label,sub,url],index)=>
   '<button class="category-tile editorial-fixed-tile" data-category="'+id+'" data-editorial-label="'+esc(label)+'" data-editorial-sub="'+esc(sub)+'" aria-label="Explorar '+esc(label)+'">'+
-  '<img class="category-photo" src="'+url+'" alt="" loading="lazy" decoding="async">'+
+  '<img class="category-photo" src="'+editorialLocalSource(url)+'" data-editorial-path="'+url+'" data-editorial-source="local" alt="" loading="lazy" decoding="async">'+
   '<span class="editorial-tile-sr">'+esc(label)+' — '+esc(sub)+'</span></button>'
  ).join('');
 }
-// Se um arquivo fixo não estiver disponível, mostrar aviso, nunca outra camisa.
+// Se a Cloudflare não disponibilizar os assets após o deploy, usar os MESMOS
+// arquivos PNG sincronizados no GitHub; jamais substituir por produtos aleatórios.
 document.addEventListener('error',event=>{
  const img=event.target;
- if(!(img instanceof HTMLImageElement)||img.dataset.editorialHandled==='true')return;
+ if(!(img instanceof HTMLImageElement))return;
  if(!(img.closest('.editorial-frame')||img.closest('.editorial-fixed-tile')))return;
- img.dataset.editorialHandled='true';img.hidden=true;
- const tile=img.closest('.editorial-fixed-tile');if(tile)tile.classList.add('needs-label');
- const frame=img.closest('.editorial-frame');if(frame){frame.classList.add('image-unavailable');frame.setAttribute('aria-label','Foto temporariamente indisponível');}
+ const path=img.dataset.editorialPath;
+ if(!path||!/^(\\/images\\/editorial\\/)[a-z0-9-]+\\.png$/.test(path))return;
+ const source=img.dataset.editorialSource;
+ if(source==='local'){
+  img.dataset.editorialSource='github';
+  img.src=editorialGithubSource(path);
+  return;
+ }
+ if(source==='github'){
+  img.dataset.editorialSource='cdn';
+  img.src=editorialCdnSource(path);
+  return;
+ }
+ img.dataset.editorialSource='unavailable';
+ img.hidden=true;
+ const tile=img.closest('.editorial-fixed-tile');
+ if(tile)tile.classList.add('needs-label');
+ const frame=img.closest('.editorial-frame');
+ if(frame){frame.classList.add('image-unavailable');frame.setAttribute('aria-label','Foto temporariamente indisponível');}
 },true);
 function selectCategory(cat){state.category=cat;state.club='todos';state.query='';$('globalSearch').value='';state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
 function openUI(kind){state.drawer=kind==='cart';state.checkout=kind==='checkout';$('cartDrawer').classList.toggle('open',state.drawer);$('checkoutModal').classList.toggle('open',state.checkout);$('productModal').classList.toggle('open',kind==='product');$('overlay').classList.toggle('visible',!!kind);document.body.classList.toggle('lock',!!kind);$('cartDrawer').setAttribute('aria-hidden',String(!state.drawer));}
