@@ -39,7 +39,19 @@ function retroRepriceServer(product){
  }
  return p;
 }
-async function catalogFor(request,env){const r=await env.ASSETS.fetch(new Request(new URL('/catalog.json',request.url)));if(!r.ok)throw Error('CATALOG_UNAVAILABLE');const products=await r.json();return products.map(retroRepriceServer)}
+// Catálogos anteriores classificavam calção versão jogador como shorts comum.
+// Use a mesma regra da vitrine para garantir cobrança com o preço atualizado.
+function playerShortsRepriceServer(product){
+ const p={...product};
+ const title=String(p.supplierTitle||p.title||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ const kind=String(p.kind||'').toLowerCase();
+ const isPlayerShorts=kind==='shorts_player'||(kind==='shorts'&&/\b(?:shorts?|calcao|bermuda)\b/.test(title)&&/\b(?:player|jogador|versao\s+jogador)\b/.test(title));
+ if(!isPlayerShorts)return p;
+ if(!p.kindLocked)p.kind='shorts_player';
+ if(!p.priceLocked&&Math.abs(Number(p.price)-119.90)<0.005)p.price=143.90;
+ return p;
+}
+async function catalogFor(request,env){const r=await env.ASSETS.fetch(new Request(new URL('/catalog.json',request.url)));if(!r.ok)throw Error('CATALOG_UNAVAILABLE');const products=await r.json();return products.map(p=>playerShortsRepriceServer(retroRepriceServer(p)))}
 const fail=(msg)=>{throw new Error(msg)};
 function validateItems(raw,products){if(!Array.isArray(raw)||!raw.length||raw.length>35)fail('Sua sacola precisa conter entre 1 e 35 itens.');let subtotal=0,count=0;const clean=[];for(const i of raw){const p=products.find(x=>x.id===i.id);if(!p)fail('Produto indisponível: '+safeText(i.id,30));if(!p.sizes.includes(i.size))fail('Tamanho inválido para '+safeText(p.title));const qty=Number(i.qty);if(!Number.isInteger(qty)||qty<1||qty>10)fail('Quantidade inválida.');const patch=i.patch===true,personalize=i.personalize===true;let customName=safeText(i.customName,14),customNumber=safeText(i.customNumber,3);if(!personalize){customName='';customNumber=''}if(personalize&&!customName&&!customNumber)fail('Personalização incompleta.');if(customName&&!/^[\p{L}0-9 .'-]+$/u.test(customName))fail('Nome de personalização inválido.');if(customNumber&&!/^\d{1,3}$/.test(customNumber))fail('Número de personalização inválido.');const sizeExtra=({XXL:5,'3XL':10,'4XL':15})[i.size]||0;const unit=round(Number(p.price)+sizeExtra+(patch?8:0)+(personalize?20:0));if(!(unit>=0&&unit<10000))fail('Preço inválido.');subtotal+=unit*qty;count+=qty;clean.push({id:p.id,title:p.title,qty,size:i.size,patch,personalize,customName,customNumber,unitPrice:unit,image:p.image||null,sourceUrl:p.sourceUrl||null,supplierId:safeText(p.supplierId||'',40)})}if(count>50)fail('Quantidade total excedida.');return {items:clean,subtotal:round(subtotal)}}
 async function asaas(endpoint,env,body){const api=env.ASAAS_SANDBOX==='true'?'https://api-sandbox.asaas.com/v3':'https://api.asaas.com/v3';const r=await fetch(api+endpoint,{method:'POST',headers:{'content-type':'application/json','access_token':env.ASAAS_API_KEY,'user-agent':'StreetballStore/1.0'},body:JSON.stringify(body)});const data=await r.json().catch(()=>({}));if(!r.ok)throw Error('Erro no provedor de pagamento: '+(data.errors?.[0]?.description||r.status));return data}
