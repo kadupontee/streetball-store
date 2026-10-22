@@ -236,7 +236,7 @@ function categoryRender(){
   ['todos','TODAS AS COLEÇÕES','Explore nosso catálogo completo.',EDITORIAL_ASSETS.colecoes]
  ];
  $('categoryGrid').innerHTML=tiles.map(([id,label,sub,url],index)=>
-  '<button class="category-tile editorial-fixed-tile" data-category="'+id+'" aria-label="Explorar '+esc(label)+'">'+
+  '<button class="category-tile editorial-fixed-tile" data-category="'+id+'" data-editorial-label="'+esc(label)+'" data-editorial-sub="'+esc(sub)+'" aria-label="Explorar '+esc(label)+'">'+
   '<img class="category-photo" src="'+url+'" alt="" data-editorial-fallback="'+esc(editorialFallback(index))+'" loading="lazy">'+
   '<span class="editorial-tile-sr">'+esc(label)+' — '+esc(sub)+'</span></button>'
  ).join('');
@@ -247,6 +247,8 @@ document.addEventListener('error',event=>{
  if(!(image instanceof HTMLImageElement)||!image.hasAttribute('data-editorial-fallback'))return;
  const fallback=image.getAttribute('data-editorial-fallback');
  image.removeAttribute('data-editorial-fallback');
+ const tile=image.closest('.editorial-fixed-tile');
+ if(tile)tile.classList.add('needs-label');
  if(fallback&&image.src!==fallback){image.src=fallback;return;}
  image.hidden=true;
 },true);
