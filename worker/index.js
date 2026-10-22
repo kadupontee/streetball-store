@@ -270,11 +270,13 @@ async function adminApi(request,env,ctx){
      return clientError('Forneça estado, transportadora, fonte verificada e confirmação de evidência.');
    if(stage==='tax_payment_due'&&carrier!=='correios'&&carrier!=='courier')
      return clientError('Informe a transportadora que confirmou a cobrança.');
+   if(stage==='tax_payment_confirmed'&&!['correios','courier','admin_document'].includes(body?.source))
+     return clientError('Para confirmar tributos pagos, confira comprovante válido ou situação oficial dos Correios.',400);
    const order=await env.DB.prepare('SELECT id,status FROM orders WHERE id=?').bind(id).first();
    if(!order)return clientError('Pedido não encontrado.',404);
    if(!['paid_supplier_pending','supplier_preparing'].includes(order.status))
      return clientError('Somente pedidos pagos e ativos podem receber eventos de transporte.',409);
-   if(['shipped','international_transit','arrived_brazil','customs_inspection','tax_payment_due','customs_released','out_for_delivery','delivered'].includes(stage)&&!code)
+   if(['shipped','international_transit','arrived_brazil','customs_inspection','tax_payment_due','tax_payment_confirmed','customs_released','out_for_delivery','delivered'].includes(stage)&&!code)
      return clientError('O rastreamento verificado é obrigatório para etapas de transporte.',400);
    const latest=await env.DB.prepare('SELECT stage FROM order_tracking_events WHERE order_id=? ORDER BY created_at DESC LIMIT 1').bind(id).first();
    if(latest?.stage===stage)return clientError('Esse já é o status mais recente do pedido.',409);
