@@ -21,6 +21,16 @@ test('se imagem da Cloudflare falhar, tenta os mesmos PNGs originais via GitHub 
  for(const name of names)assert.ok(app.includes('/images/editorial/'+name),name);
  assert.match(html,/app\.js\?v=20261022-mobile-v3/);
 });
+test('os nove PNGs publicados no GitHub existem e têm cabeçalho PNG válido',()=>{
+ for(const filename of names){
+  const png=readFileSync(new URL('../public/images/editorial/'+filename,import.meta.url));
+  assert.ok(png.length>1024,filename+' está vazio');
+  assert.equal(png.subarray(0,8).toString('hex'),'89504e470d0a1a0a',filename+' não é PNG');
+  assert.equal(png.subarray(12,16).toString('ascii'),'IHDR',filename+' sem IHDR');
+  assert.ok(png.readUInt32BE(16)>30,filename+' largura inválida');
+  assert.ok(png.readUInt32BE(20)>30,filename+' altura inválida');
+ }
+});
 test('diagnóstico de mídia distingue imagem real de página HTML de erro',async()=>{
  const requests=[];
  const env={ASSETS:{fetch:async req=>{
