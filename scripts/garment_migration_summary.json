@@ -1,0 +1,1768 @@
+{
+  "total_products": 10936,
+  "classifiable_with_photo": {
+    "long": 293,
+    "jacket": 180,
+    "retro_long": 78
+  },
+  "changed_items": 180,
+  "changed_by_kind": {
+    "jacket": 180
+  },
+  "price_changes": 180,
+  "supplier_costs_usd": {
+    "jacket": 30,
+    "long": 15,
+    "retro_long": 19
+  },
+  "retail_brl": {
+    "jacket": 379.9,
+    "long": 189.9,
+    "retro_long": 229.9
+  },
+  "review_examples": [
+    {
+      "id": "SB-0030",
+      "title": "Manchester United 98/99 — Retrô Manga Longa",
+      "reason": "sem foto cadastrada",
+      "image": null,
+      "old_price": 229.9
+    },
+    {
+      "id": "SB-0044",
+      "title": "Camiseta de treino Brasil 2026",
+      "reason": "sem foto cadastrada",
+      "image": null,
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258349976",
+      "title": "Barcelona POLO S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258349976.jpg",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258349621",
+      "title": "Paris POLO",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258349621.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258349273",
+      "title": "Player 2627 Bayern training shirt grey S~3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258349273.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258349267",
+      "title": "Player 2627 Chelsea Pre-match Shirt S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258349267.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258349253",
+      "title": "Player 2627 Chelsea Pre-match Shirt S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258349253.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258349016",
+      "title": "Barcelona POLO S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258349016.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258349011",
+      "title": "27_28 Real Madrid training S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258349011.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258315979",
+      "title": "26-27 Seville Pre-match gear S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258315979.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258315896",
+      "title": "26-27 Seville Pre-match gear S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258315896.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-258315798",
+      "title": "26-27 Seville Pre-match gear S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/258315798.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-256141563",
+      "title": "26-27 Spain Polo shirt S-2xl",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/256141563.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-256141549",
+      "title": "Manchester United Flame God POLO Shirt Special Edition S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/256141549.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-255956224",
+      "title": "26-27 Bayern training jersey red blue S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/255956224.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-254973784",
+      "title": "26-27 Marseille Peacock Blue Short Sleeve Training Jersey S to 3XL",
+      "reason": "peca de manga curta, regata ou colete",
+      "image": "/images/yupoo/254973784.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-254973773",
+      "title": "26-27 Aston Villa Light Grey Short Sleeve Training Top S to 3XL",
+      "reason": "peca de manga curta, regata ou colete",
+      "image": "/images/yupoo/254973773.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-254973745",
+      "title": "25-26 Malaga White Vest Short Sleeve Training Jersey S to 3XL",
+      "reason": "peca de manga curta, regata ou colete",
+      "image": "/images/yupoo/254973745.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-254973054",
+      "title": "26-27 Barcelona Polo Special Edition S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/254973054.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-254514923",
+      "title": "England polo 迈锐",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/254514923.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-254514789",
+      "title": "Real Madrid polo 8号体育",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/254514789.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-254514493",
+      "title": "Manchester United polo 4xl 天朗",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/254514493.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-253873139",
+      "title": "26-27 C Polo Special Edition S-2XL C罗",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/253873139.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-253860091",
+      "title": "Real Madrid Jacket Set 10-18",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/253860091.webp",
+      "old_price": 159.9
+    },
+    {
+      "id": "YUP-253860017",
+      "title": "Real Madrid Jacket Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/253860017.webp",
+      "old_price": 159.9
+    },
+    {
+      "id": "YUP-253730228",
+      "title": "Manchester City training shirt S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/253730228.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-253730083",
+      "title": "Manchester City training shirt S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/253730083.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-253729954",
+      "title": "Boca POLO set S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/253729954.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-253729932",
+      "title": "Boca POLO set S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/253729932.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-253367167",
+      "title": "26-27 Boca White Jacket Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/253367167.webp",
+      "old_price": 159.9
+    },
+    {
+      "id": "YUP-253207376",
+      "title": "Player 2627Barcelona training shirt khaki S~3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/253207376.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-253059142",
+      "title": "Nottingham Forest polo S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/253059142.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-252737540",
+      "title": "Tenerife Pre-match Shirt S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/252737540.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-252508219",
+      "title": "Arsenal polo S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/252508219.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-252501423",
+      "title": "Chivas Pre-match Shirt S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/252501423.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-252037792",
+      "title": "26-27 Marseille training shirt blue S to 3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/252037792.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-252037770",
+      "title": "26-27 Marseille training shirt white S to 3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/252037770.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-252037744",
+      "title": "26-27RB Leipzig training shirt short sleeve S to 3XL",
+      "reason": "peca de manga curta, regata ou colete",
+      "image": "/images/yupoo/252037744.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-251574918",
+      "title": "26-27 Inter Milan training jersey S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/251574918.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-251088150",
+      "title": "26/27 Tiger pre-match jersey S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/251088150.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-250581893",
+      "title": "Barcelona training shirt S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/250581893.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-250565960",
+      "title": "player 2627 Chivas Training Shirt S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/250565960.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-250563129",
+      "title": "Barcelona Full Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/250563129.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-250242076",
+      "title": "Spain Training Jersey S-4XL 双星",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/250242076.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-250002465",
+      "title": "Flamengo training short-sleeved shirt S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/250002465.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-249224278",
+      "title": "Player 2627Barcelona Training Pants Set S~3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/249224278.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-249224006",
+      "title": "Player 2627Barcelona training shirt S~3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/249224006.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-248843825",
+      "title": "26-27 Benfica training uniform red S~4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/248843825.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-248192325",
+      "title": "26-27 Saudi Arabia dark green polo shirt S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/248192325.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-248096257",
+      "title": "26-27 Arsenal orange vest training top S-3XL",
+      "reason": "peca de manga curta, regata ou colete",
+      "image": "/images/yupoo/248096257.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-248096068",
+      "title": "26-27 Sevilla white tank top training shirt S-3XL",
+      "reason": "peca de manga curta, regata ou colete",
+      "image": "/images/yupoo/248096068.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247965382",
+      "title": "26-27 Colombia POLO S-3 XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/247965382.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247944521",
+      "title": "26-27 Minero training top purple tank top S to 4XL",
+      "reason": "peca de manga curta, regata ou colete",
+      "image": "/images/yupoo/247944521.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247832681",
+      "title": "26-27 Columbia light blue POLO shirt set S to 3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/247832681.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247832651",
+      "title": "26-27 Columbia white POLO shirt set S to 3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/247832651.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247832628",
+      "title": "26-27 Aston Villa light grey POLO shirt set S to 3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/247832628.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247823108",
+      "title": "Player 26/27 Colin Pre-match Training Jersey S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/247823108.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247823067",
+      "title": "Player 26/27 Colin Pre-match Training Jersey S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/247823067.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247432386",
+      "title": "Algeria Pink 2-Star Full Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/247432386.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247432190",
+      "title": "Real Madrid Deep Royal Blue Full Zip Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/247432190.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247431963",
+      "title": "Paris Sapphire 2-Star Full-Zip Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/247431963.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247431738",
+      "title": "Barca Red Full Zip Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/247431738.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247431505",
+      "title": "Bayern White Full-Zip Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/247431505.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247431309",
+      "title": "Bayern Gray Blue Full Zip Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/247431309.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247431130",
+      "title": "French Color Blue Full Zip Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/247431130.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247430987",
+      "title": "Real Madrid Dark Green Full Zip Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/247430987.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247430596",
+      "title": "Paris 2-Star Black Full-Zip Windbreaker Set S-2XL",
+      "reason": "conjunto com jaqueta: preco nao confirmado para conjunto",
+      "image": "/images/yupoo/247430596.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247420991",
+      "title": "Portugal training shirt black S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/247420991.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-247303696",
+      "title": "AC Milan training clothes S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/247303696.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-246954271",
+      "title": "26-27 Arsenal orange POLO shirt set S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/246954271.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-246938266",
+      "title": "26-27 Botafogo training shirt black sleeveless style S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/246938266.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-246517557",
+      "title": "Cadiz Training shirt S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/246517557.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-246402907",
+      "title": "Porto Pre-match Shirt S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/246402907.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-246293867",
+      "title": "Spain pre-match jersey S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/246293867.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-246140779",
+      "title": "Sunderland Training Shirt S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/246140779.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245964714",
+      "title": "Brazil training shirt black S—2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245964714.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245880456",
+      "title": "26-27 Netherlands training jersey orange S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245880456.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245828208",
+      "title": "spain polo shirt S~3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245828208.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245827915",
+      "title": "spain polo shirt S~3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245827915.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245827747",
+      "title": "spain polo shirt S~3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245827747.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245827609",
+      "title": "spain polo shirt S~3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245827609.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245827397",
+      "title": "spain polo shirt S~3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245827397.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245820955",
+      "title": "26-27 Brazil training jersey leopard head S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245820955.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245510226",
+      "title": "England Official Collaboration Pre-match Jersey S to 4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245510226.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245510074",
+      "title": "26-27 Arsenal Cyan Training Vest S to 3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245510074.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245509806",
+      "title": "26-27 Saudi Dark Green POLO Shirt Set S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245509806.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245509647",
+      "title": "26-27 Botafogo training shirt black S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245509647.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245376551",
+      "title": "Porto Pre-match Shirt S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245376551.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245346508",
+      "title": "Barcelona training shirt S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245346508.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245346499",
+      "title": "Barcelona training shirt S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245346499.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245345642",
+      "title": "player 26-27 Real Madrid pre-match jersey S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245345642.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245259476",
+      "title": "POLO Miami S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245259476.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-245156579",
+      "title": "Player 2627 Algeria Pre-match Jersey XS~2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/245156579.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-244882480",
+      "title": "Corinthians Pre-match Training Jersey S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/244882480.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-244882413",
+      "title": "player 2627 Corinthians Pre-match Training Jersey S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/244882413.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-244834881",
+      "title": "Real Madrid training shirt S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/244834881.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-244723808",
+      "title": "player 2627 Hearts Pre-match Jersey Red S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/244723808.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-244723793",
+      "title": "Hearts Pre-match Jersey Red S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/244723793.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-244723778",
+      "title": "2627Hearts Pre-match Shirt Orange S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/244723778.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-244723743",
+      "title": "player 2627Hearts Pre-match Shirt Orange S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/244723743.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-243350025",
+      "title": "26-27 LWP black short-sleeved training shirt S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/243350025.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-243349364",
+      "title": "26-27 Fenerbahce white POLO shirt S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/243349364.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-243143645",
+      "title": "Player 26/27 Brazil Training Jersey S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/243143645.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-243033813",
+      "title": "Brazil training shirt S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/243033813.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-242878253",
+      "title": "University of Chile Training Jersey Embroidered Edition.S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/242878253.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-242725621",
+      "title": "USA training wear S~4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/242725621.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-242366813",
+      "title": "2627Paris training gear players",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/242366813.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-242361700",
+      "title": "26-27 Fenerbahce Training Vest S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/242361700.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-242361548",
+      "title": "26-27 Fenerbahce training wear S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/242361548.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-241548414",
+      "title": "26/27Flamengo Polo Shirt Coffee Brown S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/241548414.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-241142669",
+      "title": "26-27Flamengo POLO shirt coffee brown S-4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/241142669.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-241110109",
+      "title": "26-27 Jamaica Pre-match Jersey home S--xxL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/241110109.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-241109748",
+      "title": "26-27 England Pre-match Training Wear S--4XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/241109748.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240185352",
+      "title": "Fan 2627 Jordan Brazil half-sleeve training jersey royal blue with yellow S-2XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240185352.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240136180",
+      "title": "Inter Milan Training Jersey Player",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240136180.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240049985",
+      "title": "26-27 Inter Milan Pre-match training clothes",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240049985.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240034758",
+      "title": "26/27 Italy training jersey army green S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240034758.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240034592",
+      "title": "26/27 Brazil training jersey white S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240034592.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-240033506",
+      "title": "Portugal training jersey white S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/240033506.webp",
+      "old_price": 189.9
+    },
+    {
+      "id": "YUP-239878264",
+      "title": "26-27 Paris 4th Away Training Jersey White S-3XL",
+      "reason": "manga nao identificavel com seguranca",
+      "image": "/images/yupoo/239878264.webp",
+      "old_price": 189.9
+    }
+  ],
+  "changed_examples": [
+    {
+      "id": "YUP-258349344",
+      "name": "Manchester United Black Half-Zip Top S-3XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/258349344.webp"
+    },
+    {
+      "id": "YUP-258349340",
+      "name": "Betis Half-Zip Training Top 10-18 S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/258349340.webp"
+    },
+    {
+      "id": "YUP-258349237",
+      "name": "Al Hilal Half-Zip Training Top S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/258349237.webp"
+    },
+    {
+      "id": "YUP-258348991",
+      "name": "Boca white half-zip top S to 3XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/258348991.webp"
+    },
+    {
+      "id": "YUP-258348731",
+      "name": "America× Adidas Hooded jacket long zipper",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/258348731.webp"
+    },
+    {
+      "id": "YUP-258348707",
+      "name": "Huamian Embroidered Cardigan Hoodie White S~2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/258348707.webp"
+    },
+    {
+      "id": "YUP-256141725",
+      "name": "Arsenal Royal Blue EQT Casual Windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/256141725.webp"
+    },
+    {
+      "id": "YUP-254973229",
+      "name": "Barcelona hooded windbreaker S-3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/254973229.webp"
+    },
+    {
+      "id": "YUP-254513835",
+      "name": "Flamengo Jacket kits 815",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/254513835.webp"
+    },
+    {
+      "id": "YUP-253874346",
+      "name": "spain Softshell Jacket S-3XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/253874346.webp"
+    },
+    {
+      "id": "YUP-253736790",
+      "name": "Lightweight Green German-Style Windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/253736790.webp"
+    },
+    {
+      "id": "YUP-253734882",
+      "name": "Real Madrid Black EQT Casual Training Windbreaker S~3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/253734882.webp"
+    },
+    {
+      "id": "YUP-253734817",
+      "name": "Real Madrid Casual Training Windbreaker S~3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/253734817.webp"
+    },
+    {
+      "id": "YUP-253732751",
+      "name": "Benfica Match Day Windbreaker Jacket S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/253732751.webp"
+    },
+    {
+      "id": "YUP-253724017",
+      "name": "Barcelona black fleece hoodie",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/253724017.webp"
+    },
+    {
+      "id": "YUP-253367452",
+      "name": "ARC'TERYX Alpha SV8 Hard Shell Jacket -S-2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/253367452.webp"
+    },
+    {
+      "id": "YUP-253216867",
+      "name": "The North Face TNF X DSM Collaboration 1992 15th Anniversary Limited Edition Down Jacket XS-2XL",
+      "kind_before": "retro",
+      "kind_after": "jacket",
+      "price_before": 199.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/253216867.webp"
+    },
+    {
+      "id": "YUP-253216710",
+      "name": "The North Face TNF X DSM Collaboration 1992 15th Anniversary Limited Edition Down Jacket XS-2XL",
+      "kind_before": "retro",
+      "kind_after": "jacket",
+      "price_before": 199.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/253216710.webp"
+    },
+    {
+      "id": "YUP-252878982",
+      "name": "Aston Villa Half-Zip Set (Sizes S–3XL)",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/252878982.webp"
+    },
+    {
+      "id": "YUP-252878537",
+      "name": "Ajax Royal Blue Half-Zip Set (Sizes S–3XL)",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/252878537.webp"
+    },
+    {
+      "id": "YUP-252646157",
+      "name": "Brazil Blue Side-Zip Single-Layer Windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/252646157.webp"
+    },
+    {
+      "id": "YUP-252479676",
+      "name": "Nike windbreaker M-4XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/252479676.webp"
+    },
+    {
+      "id": "YUP-252479459",
+      "name": "Jordan Flight Windbreaker M-4XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/252479459.webp"
+    },
+    {
+      "id": "YUP-251584182",
+      "name": "26-27 Paris Half-Zip Training Top Embroidery S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/251584182.webp"
+    },
+    {
+      "id": "YUP-251583914",
+      "name": "26-27 Chelsea Half-Zip Training Top Embroidered S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/251583914.webp"
+    },
+    {
+      "id": "YUP-251583870",
+      "name": "26-27 Chelsea Half-Zip Training Top Embroidered S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/251583870.webp"
+    },
+    {
+      "id": "YUP-251566936",
+      "name": "Spanish two-star windbreaker S-3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/251566936.webp"
+    },
+    {
+      "id": "YUP-251566178",
+      "name": "Portugal World Cup windbreaker white red S-3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/251566178.webp"
+    },
+    {
+      "id": "YUP-251565539",
+      "name": "French casual training windbreaker S to 3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/251565539.webp"
+    },
+    {
+      "id": "YUP-250930241",
+      "name": "Barcelona hoodie S-3XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/250930241.webp"
+    },
+    {
+      "id": "YUP-250929923",
+      "name": "26.27 Argentina hoodie s-3xl",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/250929923.webp"
+    },
+    {
+      "id": "YUP-250929853",
+      "name": "26.27 Italy hoodie S-3XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/250929853.webp"
+    },
+    {
+      "id": "YUP-248858437",
+      "name": "Brazil Co-branded Yellow and Green Windbreaker S-3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/248858437.webp"
+    },
+    {
+      "id": "YUP-248858393",
+      "name": "Portugal World Cup edition match kit windbreaker S-3XL",
+      "kind_before": "set",
+      "kind_after": "jacket",
+      "price_before": 299.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/248858393.webp"
+    },
+    {
+      "id": "YUP-248512774",
+      "name": "Elche hoodie S-2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/248512774.webp"
+    },
+    {
+      "id": "YUP-248313740",
+      "name": "Feyenoord Half Zipper Training Long Sleeve",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/248313740.webp"
+    },
+    {
+      "id": "YUP-248313692",
+      "name": "Feyenoord Half Zipper Training Long Sleeve",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/248313692.webp"
+    },
+    {
+      "id": "YUP-247829814",
+      "name": "Manchester United Black Half-Zip",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/247829814.webp"
+    },
+    {
+      "id": "YUP-247829255",
+      "name": "Player Version 26/27 Manchester United Red Half-Zip (S–3XL)",
+      "kind_before": "player_adidas",
+      "kind_after": "jacket",
+      "price_before": 209.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/247829255.webp"
+    },
+    {
+      "id": "YUP-247822376",
+      "name": "Barcelona Grey Windbreaker S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/247822376.webp"
+    },
+    {
+      "id": "YUP-247181198",
+      "name": "Marseille Half Zipper Training Long Sleeve",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/247181198.webp"
+    },
+    {
+      "id": "YUP-247180982",
+      "name": "Marseille Half Zipper Training Long Sleeve",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/247180982.webp"
+    },
+    {
+      "id": "YUP-245995091",
+      "name": "26-27 Barcelona half-zip training top S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/245995091.webp"
+    },
+    {
+      "id": "YUP-245729844",
+      "name": "Arsenal red waterproof training windbreaker S to 3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/245729844.webp"
+    },
+    {
+      "id": "YUP-245416466",
+      "name": "Real Madrid 26-27 Adult Half-Zip Set",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/245416466.webp"
+    },
+    {
+      "id": "YUP-245416262",
+      "name": "Brazil 26-27 Adult Half-Zip Set",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/245416262.webp"
+    },
+    {
+      "id": "YUP-245416167",
+      "name": "Brazil 26-27 Adult Half-Zip Set",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/245416167.webp"
+    },
+    {
+      "id": "YUP-245416090",
+      "name": "Brazil 26-27 Adult Half-Zip Set",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/245416090.webp"
+    },
+    {
+      "id": "YUP-245415638",
+      "name": "26-27 spain Adult Half-Zip Set",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/245415638.webp"
+    },
+    {
+      "id": "YUP-245157142",
+      "name": "Arsenal Classic Retro Windbreaker Jacket S-3XL",
+      "kind_before": "retro",
+      "kind_after": "jacket",
+      "price_before": 199.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/245157142.webp"
+    },
+    {
+      "id": "YUP-245156882",
+      "name": "Germany World Cup training windbreaker jacket S-3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/245156882.webp"
+    },
+    {
+      "id": "YUP-244244635",
+      "name": "Women's softshell jacket 风衣",
+      "kind_before": "female",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/244244635.webp"
+    },
+    {
+      "id": "YUP-244244512",
+      "name": "Women's softshell jacket",
+      "kind_before": "female",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/244244512.webp"
+    },
+    {
+      "id": "YUP-244244428",
+      "name": "Women's softshell jacket",
+      "kind_before": "female",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/244244428.webp"
+    },
+    {
+      "id": "YUP-243830687",
+      "name": "Brazil single-sided waterproof embroidered windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/243830687.webp"
+    },
+    {
+      "id": "YUP-243255531",
+      "name": "26-27 Portugal Jacket Training Top",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/243255531.webp"
+    },
+    {
+      "id": "YUP-243255321",
+      "name": "26-27 Portugal Green Jacket Training Top",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/243255321.webp"
+    },
+    {
+      "id": "YUP-243146268",
+      "name": "Argentina casual windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/243146268.webp"
+    },
+    {
+      "id": "YUP-243146158",
+      "name": "Argentina casual windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/243146158.webp"
+    },
+    {
+      "id": "YUP-243146114",
+      "name": "Argentina casual windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/243146114.webp"
+    },
+    {
+      "id": "YUP-242759076",
+      "name": "Mexican Silicone Double-Sided Windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/242759076.webp"
+    },
+    {
+      "id": "YUP-242758948",
+      "name": "Flamengo Silicone Double-Sided Windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/242758948.webp"
+    },
+    {
+      "id": "YUP-242243267",
+      "name": "Argentina World Cup style white casual windbreaker S-3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/242243267.webp"
+    },
+    {
+      "id": "YUP-240829720",
+      "name": "Brazil windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/240829720.webp"
+    },
+    {
+      "id": "YUP-240829672",
+      "name": "Brazil windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/240829672.webp"
+    },
+    {
+      "id": "YUP-240829352",
+      "name": "Brazil windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/240829352.webp"
+    },
+    {
+      "id": "YUP-240447611",
+      "name": "America training windbreaker jacket royal blue S-3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/240447611.webp"
+    },
+    {
+      "id": "YUP-240419007",
+      "name": "Kolo Retro Hoodie S-2XL",
+      "kind_before": "retro",
+      "kind_after": "jacket",
+      "price_before": 199.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/240419007.webp"
+    },
+    {
+      "id": "YUP-240416700",
+      "name": "Player 2627 Brazil Training Half-Zip Long Sleeve Set S~3XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/240416700.webp"
+    },
+    {
+      "id": "YUP-240135572",
+      "name": "26-27 Argentina jacket long, S - XXL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/240135572.webp"
+    },
+    {
+      "id": "YUP-240079261",
+      "name": "Real Madrid White Jacket",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/240079261.webp"
+    },
+    {
+      "id": "YUP-239920119",
+      "name": "Mexico Jacket (Original 1:1 Fabric) S-2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/239920119.webp"
+    },
+    {
+      "id": "YUP-239919586",
+      "name": "Mexico light green half-zip S-2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/239919586.webp"
+    },
+    {
+      "id": "YUP-239519683",
+      "name": "Manchester United Black Windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/239519683.webp"
+    },
+    {
+      "id": "YUP-239347372",
+      "name": "F1 McLaren Orange and Black Racing Jacket, S-3XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/239347372.webp"
+    },
+    {
+      "id": "YUP-238477720",
+      "name": "Brazil Flying Man Hooded Jacket S-2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/238477720.webp"
+    },
+    {
+      "id": "YUP-237370325",
+      "name": "26-27 Jordan Brazil Black with Yellow Half-Zip Training Top, S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/237370325.webp"
+    },
+    {
+      "id": "YUP-237370053",
+      "name": "26-27 Jordan Brazil Black with Yellow Half-Zip Training Top, S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/237370053.webp"
+    },
+    {
+      "id": "YUP-237369670",
+      "name": "Atletico Madrid Black Half-Zip Training Top, S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/237369670.webp"
+    },
+    {
+      "id": "YUP-237190272",
+      "name": "Brazil Black Hooded Jacket",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/237190272.webp"
+    },
+    {
+      "id": "YUP-237178718",
+      "name": "26-27 France Royal Blue Half-Zip Training Top S-2XL Fanatics",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/237178718.webp"
+    },
+    {
+      "id": "YUP-237177769",
+      "name": "26-27 Real Madrid White Half-Zip Training Top, S-2XL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/237177769.webp"
+    },
+    {
+      "id": "YUP-236452840",
+      "name": "Sprinter Brazil Hooded Jacket",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236452840.webp"
+    },
+    {
+      "id": "YUP-236452329",
+      "name": "Sprinter Brazil Black Hooded Jacket",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236452329.webp"
+    },
+    {
+      "id": "YUP-236341929",
+      "name": "25-26 England white jacket",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236341929.webp"
+    },
+    {
+      "id": "YUP-236304821",
+      "name": "Sprinter Brazil Hooded Jacket",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236304821.webp"
+    },
+    {
+      "id": "YUP-236299147",
+      "name": "Brazil Hooded Jacket",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236299147.webp"
+    },
+    {
+      "id": "YUP-236298705",
+      "name": "Brazil Black Hooded Jacket",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236298705.webp"
+    },
+    {
+      "id": "YUP-236221056",
+      "name": "Manchester United purple waterproof training windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236221056.webp"
+    },
+    {
+      "id": "YUP-236216208",
+      "name": "90-00 Florence Jacket",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236216208.webp"
+    },
+    {
+      "id": "YUP-236216074",
+      "name": "86-87 Florence Jacket",
+      "kind_before": "retro",
+      "kind_after": "jacket",
+      "price_before": 199.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236216074.webp"
+    },
+    {
+      "id": "YUP-236214193",
+      "name": "Argentina Home Windbreaker S-XXL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236214193.webp"
+    },
+    {
+      "id": "YUP-236214026",
+      "name": "25-26 Italy Home Windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/236214026.webp"
+    },
+    {
+      "id": "YUP-235447641",
+      "name": "Spani single-sided embroidered waterproof windbreaker",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/235447641.webp"
+    },
+    {
+      "id": "YUP-235443775",
+      "name": "Brazil 2026 Jordan Anthem Jacket Windbreaker S-XXL",
+      "kind_before": "long",
+      "kind_after": "jacket",
+      "price_before": 189.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/235443775.webp"
+    },
+    {
+      "id": "YUP-235315260",
+      "name": "Manchester United Half-Zip Jacket S-2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/235315260.webp"
+    },
+    {
+      "id": "YUP-235314990",
+      "name": "Roman Half-Zip Jacket S-2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/235314990.webp"
+    },
+    {
+      "id": "YUP-235314418",
+      "name": "Real Madrid Half-Zip Jacket S-2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/235314418.webp"
+    },
+    {
+      "id": "YUP-235313956",
+      "name": "Arsenal Half-Zip Jacket S-2XL",
+      "kind_before": "fan",
+      "kind_after": "jacket",
+      "price_before": 159.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/235313956.webp"
+    },
+    {
+      "id": "YUP-234952587",
+      "name": "World Cup France Match Jersey Light Green Hoodie, One Size S-3XL",
+      "kind_before": "player_adidas",
+      "kind_after": "jacket",
+      "price_before": 209.9,
+      "price_after": 379.9,
+      "image": "/images/yupoo/234952587.webp"
+    }
+  ],
+  "methodology": "Classificação conservadora por nomes de álbum e presença de foto vinculada. Nem toda foto foi inspecionada visualmente; conjuntos ambíguos não são reprecificados."
+}
