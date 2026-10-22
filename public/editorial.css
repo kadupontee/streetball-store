@@ -517,3 +517,40 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
  #categoryGrid .category-tile.editorial-fixed-tile {aspect-ratio:auto;height:auto;min-height:0}
  #categoryGrid .category-tile.editorial-fixed-tile .category-photo {width:100%;height:auto;aspect-ratio:auto;object-fit:contain;position:relative}
 }
+
+
+/* V8 mobile: 4 novos banners com ratio 960:557, sem redimensionamento forçado. */
+@media (max-width: 780px) {
+  #categoryGrid.category-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 14px;
+    width: 100%;
+    align-items: stretch;
+  }
+  #categoryGrid .category-tile.editorial-fixed-tile {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 960 / 557;
+    padding: 0;
+    line-height: 0;
+    overflow: hidden;
+  }
+  #categoryGrid .category-tile.editorial-fixed-tile .category-photo {
+    display: block;
+    position: static;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    max-width: 100%;
+    aspect-ratio: 960 / 557;
+    object-fit: contain;
+    object-position: center;
+    transform: none;
+  }
+  #categoryGrid .category-tile.editorial-fixed-tile .category-photo[hidden] {
+    display: none;
+  }
+}
