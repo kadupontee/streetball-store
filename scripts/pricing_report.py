@@ -27,10 +27,10 @@ def display_range(low, high):
     return f"{low:.2f}" if low == high else f"{low:.2f}–{high:.2f}"
 
 
-def produce_report(usd_brl=None):
+def produce_report(usd_brl=None, output=None):
     config = json.loads((DIR / "costs.json").read_text(encoding="utf-8"))
     delivery = float(config["shipping_usd"]["one_piece"])
-    output = DIR / "retail_unit_economics.csv"
+    output = pathlib.Path(output) if output is not None else DIR / "retail_unit_economics.csv"
     if usd_brl is not None and usd_brl <= 0:
         raise ValueError("Cotação USD/BRL precisa ser positiva.")
     with output.open("w", encoding="utf-8", newline="") as file:
