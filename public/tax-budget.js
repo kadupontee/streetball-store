@@ -40,3 +40,37 @@ export function quoteTaxesIncluded({goodsUsd,freightUsd,insuranceUsd=0,icmsRate=
  }
  return result;
 }
+
+/** Opção B: a loja NÃO recebe nem recolhe tributos aduaneiros do comprador.
+ * Projeção apenas informativa: o valor real é determinado pela autoridade.
+ */
+export function quoteCustomerPays({goodsUsd,freightUsd,insuranceUsd=0,icmsRate=.2,
+ usdToBrl,carrierFeesBrl=0,operationsBrl=0,riskRate=0,
+ paymentRate=0,salesTaxRate=0,targetMarginRate=0,prcEligible=false,salePriceBrl=null}){
+ const amounts=[goodsUsd,freightUsd,insuranceUsd,usdToBrl,carrierFeesBrl,operationsBrl].map(Number);
+ const ratios=[riskRate,paymentRate,salesTaxRate,targetMarginRate].map(Number);
+ if(amounts.some(x=>!Number.isFinite(x)||x<0||x>100000)||Number(usdToBrl)<=0||
+  ratios.some(x=>!Number.isFinite(x)||x<0||x>=1)||
+  ratios[1]+ratios[2]+ratios[3]>=1)
+  throw Error('Câmbio, despesas ou margens inválidas.');
+ const tax=estimatedImportTaxes(goodsUsd,freightUsd,insuranceUsd,icmsRate,{prcEligible});
+ const merchantSupplierCostBrl=tax.customsValueUsd*Number(usdToBrl);
+ const merchantReserveBrl=merchantSupplierCostBrl*Number(riskRate);
+ const merchantBaseCostBrl=merchantSupplierCostBrl+merchantReserveBrl+Number(operationsBrl);
+ const suggestedPriceBrl=merchantBaseCostBrl/(1-Number(paymentRate)-Number(salesTaxRate)-Number(targetMarginRate));
+ const recipientEstimatedTaxesBrl=(tax.importDutyUsd+tax.icmsUsd)*Number(usdToBrl);
+ const recipientEstimatedTotalFeesBrl=recipientEstimatedTaxesBrl+Number(carrierFeesBrl);
+ const result={merchantSupplierCostBrl,merchantReserveBrl,merchantBaseCostBrl,suggestedPriceBrl,
+  recipientEstimatedTaxesBrl,recipientEstimatedTotalFeesBrl,
+  merchantPaysCustomsTaxes:false,prcEligibleAssumed:prcEligible,
+  estimationOnly:true};
+ if(salePriceBrl!==null){
+  const sale=Number(salePriceBrl);
+  if(!Number.isFinite(sale)||sale<0||sale>100000)throw Error('Preço de venda inválido');
+  result.salePriceBrl=sale;
+  result.merchantContributionBrl=sale*(1-Number(paymentRate)-Number(salesTaxRate))-merchantBaseCostBrl;
+  result.recipientIllustrativeCombinedOutlayBrl=sale+recipientEstimatedTotalFeesBrl;
+  result.meetsMarginGoal=result.merchantContributionBrl>=sale*Number(targetMarginRate);
+ }
+ return result;
+}
