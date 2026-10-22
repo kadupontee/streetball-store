@@ -221,16 +221,15 @@ $('heroJersey').innerHTML=jersey({primary:'#eeefee',accent:'#ce272e',kind:'fan'}
 categoryRender();catalogRender();cartRender();
 
 function checkoutIndicator(){
- const info=$('checkoutAvailability'),banner=$('demoText'),note=$('checkoutNote'),intro=$('checkoutIntro');
+ const info=$('checkoutAvailability'),banner=$('demoText'),note=$('checkoutNote');
+ // NÃO sobrescreva checkoutIntro: contém divulgação tributária e link dos Correios.
  if(state.checkoutReady){
-   info.textContent=state.checkoutSandbox?'Pagamento em ambiente de testes: nenhuma cobrança real será feita.':'Pagamento seguro por Pix ou cartão. Valor de entrega incluído no total antes do pagamento.';
-   note.textContent=state.checkoutSandbox?'AMBIENTE DE TESTES. Valores, frete e tributos devem ser conferidos antes de ativar a produção.':'O total inclui o frete configurado. Verifique se ele cobre os custos obrigatórios e tributos antes de concluir.';
-   intro.textContent=state.checkoutSandbox?'Teste de cobrança Asaas: não utilize dados financeiros reais.':'Preencha seus dados. Você será direcionado à página segura de cobrança do Asaas.';
+   info.textContent=state.checkoutSandbox?'Pagamento em ambiente de testes: nenhuma cobrança real será feita.':'Pagamento seguro por Pix ou cartão. Tributos de importação NÃO incluídos.';
+   note.textContent=state.checkoutSandbox?'AMBIENTE DE TESTES: não há cobrança real. O cliente deverá assumir eventuais tributos de importação e Despacho Postal quando as vendas estiverem liberadas.':'O total pago à Streetball Store não inclui Imposto de Importação, ICMS nem eventual Despacho Postal. Se cobrados, são pagos pelo destinatário exclusivamente nos canais oficiais.';
    banner.textContent=state.checkoutSandbox?'LOJA EM TESTES · nenhum pagamento real será cobrado':'LOJA · pagamento seguro via Asaas';
  }else{
    info.textContent='Checkout não liberado. O pagamento será disponibilizado após a configuração e os testes do backend.';
-   note.textContent='Nenhuma cobrança será gerada nesta prévia.';
-   intro.textContent='A finalização dos pedidos ainda não está habilitada.';
+   note.textContent='Nenhuma cobrança será gerada nesta prévia. Eventuais tributos de importação e Despacho Postal serão de responsabilidade do destinatário quando as vendas reais estiverem liberadas.';
    banner.textContent='PRÉVIA · pagamentos ainda não habilitados';
  }
  cartRender();
