@@ -31,6 +31,11 @@ jobs:
           ref: main
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
+      - name: Corrigir temporadas retrô no catálogo exibido
+        run: |
+          python scripts/test_retro_policy.py
+          python scripts/reprice_retro_catalog.py
+          python scripts/reprice_retro_catalog.py --check
       - name: Auditar fotografias existentes
         run: python scripts/audit_catalog_images.py
       - name: Preparar apenas a vitrine publica
