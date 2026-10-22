@@ -7,7 +7,7 @@ import {readFileSync} from 'node:fs';
 const id='12345678-1234-4234-8234-123456789012';
 const order={
  id,
- status:'paid_supplier_pending',
+ status:'paid_supplier_pending',city:'São Paulo',state:'SP',
  items_json:JSON.stringify([{
    id:'YUP-123456',supplierId:'james',
    title:'Camisa do São Paulo 2026',size:'M',qty:1,
@@ -53,7 +53,7 @@ test('rota de prévia exige ADMIN_TOKEN',async()=>{
 
 test('rota autorizada apenas lê pedido e não envia mensagens',async()=>{
  const calls=[];
- const DB={prepare(sql){calls.push(sql);if(sql.startsWith('SELECT id,status,items_json FROM orders'))return {bind(value){assert.equal(value,id);return {first:async()=>order}}};return {bind(){return {all:async()=>({results:[]})}},all:async()=>({results:[]})}}};
+ const DB={prepare(sql){calls.push(sql);if(sql.startsWith('SELECT id,status,items_json,city,state FROM orders'))return {bind(value){assert.equal(value,id);return {first:async()=>order}}};return {bind(){return {all:async()=>({results:[]})}},all:async()=>({results:[]})}}};
  const request=new Request('https://loja.exemplo.com/api/admin/supplier-preview?orderId='+id,{
   headers:{authorization:'Bearer segredo-local'}
  });
@@ -63,7 +63,7 @@ test('rota autorizada apenas lê pedido e não envia mensagens',async()=>{
  assert.equal(preview.status,'paid_supplier_pending');
  assert.equal(preview.readyForAutomaticSending,false);
  assert.equal(calls.length,4);
- assert.match(calls[0],/^SELECT id,status,items_json FROM orders/);
+ assert.match(calls[0],/^SELECT id,status,items_json,city,state FROM orders/);
  assert.match(calls[1],/^SELECT d.id,c.phone_e164,c.authorized FROM supplier_directory/);
  assert.match(calls[2],/^SELECT d.id,d.display_name FROM supplier_directory/);
  assert.match(calls[3],/^SELECT supplier_id,state,updated_at FROM supplier_attempts/);
