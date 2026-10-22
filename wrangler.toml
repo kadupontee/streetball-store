@@ -20,10 +20,10 @@ crons = ["0 * * * *"]
 ASAAS_SANDBOX = "true"
 SALES_ENABLED = "true"
 PAYMENTS_PRODUCTION_ENABLED = "false"
-# Opção A: a Streetball Store planeja assumir os tributos de importação.
-# Esses dois controles só devem ser aprovados após contabilidade, documentos e precificação.
-STORE_PAYS_IMPORT_TAXES = "true"
-IMPORT_COSTS_APPROVED = "false"
+# Opção B: destinatário paga eventuais tributos de importação e Despacho Postal
+# nos canais oficiais. Manter produção BLOQUEADA até revisão fiscal e da informação ao comprador.
+CUSTOMER_PAYS_IMPORT_TAXES = "true"
+IMPORT_TAX_DISCLOSURE_APPROVED = "false"
 IMPORT_COMPLIANCE_APPROVED = "false"
 WA_AUTOMATION_ENABLED = "false"
 # Dominio HTTPS da vitrine usado somente para montar URLs publicas das fotos na previa.
