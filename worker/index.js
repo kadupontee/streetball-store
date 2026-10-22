@@ -341,6 +341,18 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);if(r
  if(url.pathname==='/api/webhooks/asaas'&&request.method==='POST')return await paymentWebhook(request,env,ctx);
  if(url.pathname==='/api/webhooks/whatsapp'&&request.method==='GET'){const q=url.searchParams;if(q.get('hub.mode')==='subscribe'&&q.get('hub.verify_token')===env.WA_VERIFY_TOKEN)return new Response(q.get('hub.challenge')||'');return clientError('Token inválido.',403)}
  if(url.pathname==='/api/webhooks/whatsapp'&&request.method==='POST')return whatsappInbound(request,env,ctx);
+ if(url.pathname==='/api/health/editorial'&&request.method==='GET'){
+  const names=['hero-maradona.png','hero-ronaldo-inter.png','hero-juventus-pb.png','hero-manchester-united.png','hero-arara-camisas.png','card-retro.png','card-atuais.png','card-personalizadas.png','card-todas-colecoes.png'];
+  if(!env.ASSETS)return json({ok:false,reason:'ASSETS unavailable',available:0,total:names.length});
+  const images=await Promise.all(names.map(async name=>{
+   try{
+    const asset=await env.ASSETS.fetch(new Request(new URL('/images/editorial/'+name,request.url).toString(),{method:'GET'}));
+    const mime=asset.headers.get('content-type')||'';
+    return {name,ok:asset.ok&&mime.startsWith('image/'),status:asset.status};
+   }catch{return {name,ok:false,status:null}}
+  }));
+  return json({ok:images.every(x=>x.ok),available:images.filter(x=>x.ok).length,total:images.length,images});
+ }
  if(url.pathname==='/api/health')return json({ok:true,service:'streetball-store',checkoutReady:checkoutReady(env),sandbox:env.ASAAS_SANDBOX==='true',supplierPaymentAutomated:false});
  if(url.pathname.startsWith('/api/'))return clientError('Endpoint não encontrado.',404);
  if(env.ASSETS)return env.ASSETS.fetch(request);return new Response('Assets não configurados.',{status:503});
