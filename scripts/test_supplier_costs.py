@@ -22,10 +22,10 @@ class SupplierCostTests(unittest.TestCase):
         self.assertEqual(data["supplier_usd"]["shorts_player"], 12)
         self.assertEqual(data["shipping_usd"]["one_piece"], 4)
 
-    def test_supplier_cost_is_not_a_retail_price(self):
+    def test_supplier_cost_and_retail_price_are_distinct(self):
         # A product's published BRL price must remain unchanged by this update.
         self.assertEqual(PRICES["shorts"], 119.90)
-        self.assertNotIn("shorts_player", PRICES)
+        self.assertEqual(PRICES["shorts_player"], 143.90)
 
     def test_report_shows_both_costs_without_inventing_retail(self):
         with TemporaryDirectory() as directory:
@@ -36,8 +36,8 @@ class SupplierCostTests(unittest.TestCase):
             self.assertEqual(entries["shorts_player"]["compra_USD"], "12.00")
             self.assertEqual(entries["shorts_player"]["custo_produto_mais_frete_BRL"], "80.00")
             self.assertEqual(entries["shorts"]["custo_produto_mais_frete_BRL"], "70.00")
-            self.assertEqual(entries["shorts_player"]["preco_venda_referencia_BRL"], "")
-            self.assertEqual(entries["shorts_player"]["margem_bruta_parcial_percentual"], "")
+            self.assertEqual(entries["shorts_player"]["preco_venda_referencia_BRL"], "143.90")
+            self.assertEqual(entries["shorts_player"]["margem_bruta_parcial_percentual"], "44.4")
 
     def test_without_exchange_rate_does_not_guess_margin(self):
         with TemporaryDirectory() as directory:
