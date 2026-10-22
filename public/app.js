@@ -197,12 +197,21 @@ const EDITORIAL_ALT={
  united:'Camisa clássica do Manchester United',
  rack:'Coleção de camisas de futebol'
 };
+let editorialBackupCatalog=null,editorialBackupPhotos=[];
 function editorialFallback(j){
- // Enquanto os arquivos binários não forem instalados, não mostrar imagens quebradas.
- const retro=catalog.filter(p=>hasVerifiedPhoto(p)&&(p.category==='retro'||/retr[oô]|vintage|classic/i.test(p.title)));
- const other=retro.length?retro:catalog.filter(hasVerifiedPhoto).slice(0,12);
- const p=other[j%other.length];
- return p?localImageURL(photoSources(p)[0]):'';
+ // Calcular backup uma única vez por versão do catálogo (que pode ter 11 mil itens).
+ if(editorialBackupCatalog!==catalog){
+  editorialBackupCatalog=catalog;
+  const retro=[],other=[];
+  for(const p of catalog){
+   if(!hasVerifiedPhoto(p))continue;
+   if(p.category==='retro'||/retr[oô]|vintage|classic/i.test(p.title)){if(retro.length<20)retro.push(p)}
+   else if(other.length<20)other.push(p);
+   if(retro.length>=20&&other.length>=20)break;
+  }
+  editorialBackupPhotos=(retro.length?retro:other).map(p=>localImageURL(photoSources(p)[0]));
+ }
+ return editorialBackupPhotos.length?editorialBackupPhotos[j%editorialBackupPhotos.length]:'';
 }
 let heroActive=0,heroTimer=null;
 function showHeroSlide(index){
