@@ -171,6 +171,7 @@ function retroSeasonStart(title){
 }
 function retroProduct(p){
  const item={...p};
+ if(item.kind==='jacket')return item;
  if(!retroSeasonStart(item.supplierTitle||item.title))return item;
  if(!item.categoryLocked)item.category='retro';
  const kind=String(item.kind||'fan').toLowerCase();
