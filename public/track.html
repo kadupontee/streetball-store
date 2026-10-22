@@ -18,7 +18,7 @@ ol{padding-left:22px}li{padding:8px 0}a{color:#245e3f}button{background:#244531;
 <p>Os eventos são informados pela loja após conferência. Para acompanhar as atualizações oficiais de transporte e eventuais cobranças alfandegárias, utilize somente os canais dos Correios.</p>
 <p><a href="https://rastreamento.correios.com.br/app/index.php" target="_blank" rel="noopener noreferrer">Rastreamento oficial dos Correios</a></p>
 <p><a href="https://www.correios.com.br/receber/encomenda/internacional" target="_blank" rel="noopener noreferrer">Orientações oficiais sobre Minhas Importações, tributos e liberação</a></p>
-<p class="muted">Se houver imposto a pagar, confira os dados no ambiente oficial Minhas Importações ou no aplicativo dos Correios. A Streetball Store não solicita Pix de tributos por links enviados em mensagens.</p>
+<p class="muted">A Streetball Store assumirá os tributos de importação previstos no preço final. Se aparecer uma exigência vinculada ao seu CPF/CNPJ, informe o atendimento da loja para receber orientação segura. Nunca compartilhe sua senha gov.br nem pague tributos por links recebidos de desconhecidos.</p>
 </section>
 </main><script>
 'use strict';
@@ -45,7 +45,7 @@ async function init(){
   root.replaceChildren(tag('h2','Pedido '+d.orderId),tag('p','Pagamento / operação: '+d.paymentState),
    tag('p','Transportadora: '+(d.carrier||'A confirmar')),
    tag('p','Código de rastreamento: '+(d.trackingCode||'Ainda não informado')),
-   tag('p',d.payTaxesAtOfficialCorreios?'Atenção: foi registrada uma solicitação de pagamento de tributos. Consulte somente o canal oficial dos Correios.':'Nenhuma solicitação de tributos foi registrada pela loja nesta etapa.'));
+   tag('p',d.importTaxGuidance||'As atualizações de tributos dependem de informações verificadas pela loja.'));
   panel.hidden=false;
   events.replaceChildren(...(d.events?.length?d.events.map(ev=>tag('li',ev.label+' — '+new Date(ev.at).toLocaleString('pt-BR'))):
    [tag('li','Acompanhamento iniciado. A loja publicará atualizações quando confirmadas.')]));
