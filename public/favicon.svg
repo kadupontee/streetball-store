@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#111514"/><path d="M32 5 54 17v29L32 59 10 46V17Z" fill="none" stroke="#c5ff41" stroke-width="3"/><circle cx="32" cy="30" r="15" fill="none" stroke="#fff" stroke-width="2"/><path d="m32 18 9 8-4 9h-11l-4-9Z" fill="none" stroke="#fff" stroke-width="2"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="faviconTitle">
+<title id="faviconTitle">Streetball Store</title>
+<rect width="64" height="64" rx="12" fill="#e4e4e8"/>
+<g fill="#17171b">
+  <text x="3" y="33" font-family="Impact, 'Arial Narrow', 'Arial Black', sans-serif" font-size="20" font-weight="900" font-style="italic" textLength="46" lengthAdjust="spacingAndGlyphs">STREETBALL</text>
+  <text x="13.2" y="43.5" font-family="Impact, 'Arial Narrow',sans-serif" font-size="6.9" font-weight="800" letter-spacing="3.3">STORE</text>
+  <path d="M55 18 C56.5 23 58.5 25 63 27 C58.5 29 56.5 31 55 36 C53.5 31 51.5 29 47 27 C51.5 25 53.5 23 55 18Z"/>
+</g>
+</svg>
