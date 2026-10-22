@@ -14,11 +14,18 @@ test('celular usa arte completa com opacidade 1 em vez de fundo apagado',()=>{
  assert.match(mobile,/@media \(max-width:600px\)/);
  assert.match(mobile,/\.hero-art\s*\{[^}]*opacity:1/s);
 });
-test('cards no celular ocupam toda largura mantendo imagens e texto original',()=>{
- const mobile=css.split('Streetball Mobile Editorial V2')[1];
- assert.match(mobile,/\.category-grid\s*\{grid-template-columns:minmax\(0,1fr\)/);
- assert.match(mobile,/\.category-tile\.editorial-fixed-tile\s*\{[^}]*aspect-ratio:1\.39/);
- assert.match(mobile,/\.category-tile\.editorial-fixed-tile \.category-photo\s*\{[^}]*object-fit:cover/s);
+test('os quatro cards exibem as imagens inteiras com a proporção original',()=>{
+ const cards=css.split('Cards editoriais V5:')[1];
+ assert.ok(cards,'Falta política atual dos recortes');
+ for(const [type,w] of [['retro',240],['europa',252],['personalizadas',305],['todos',295]]){
+  assert.ok(cards.includes('data-category="'+type+'"]{--editorial-aspect:'+w+' / 193}'),type);
+ }
+ assert.match(cards,/aspect-ratio:var\(--editorial-aspect\)/);
+ assert.match(cards,/position:static/);
+ assert.match(cards,/object-fit:contain/);
+ assert.doesNotMatch(cards,/object-fit:cover/);
+ assert.match(cards,/@media\(max-width:600px\)/);
+ assert.match(cards,/grid-template-columns:minmax\(0,1fr\)/);
 });
 test('desktop e celular usam as nove fotos aprovadas, com navegação do carrossel',()=>{
  for(const img of ['hero-maradona.png','hero-ronaldo-inter.png','hero-juventus-pb.png',
@@ -27,6 +34,6 @@ test('desktop e celular usam as nove fotos aprovadas, com navegação do carross
   assert.ok(app.includes('/images/editorial/'+img),img);
  }
  assert.match(html,/id="heroSliderControls"/);
- assert.match(html,/20261022-cards-square-v4/);
+ assert.match(html,/20261022-category-native-v5/);
  assert.doesNotThrow(()=>new Function(app));
 });
