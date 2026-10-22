@@ -20,6 +20,21 @@ a{color:#23583a}
 <label>Regime aplicável<select id="regime"><option value="regular">Fora do Remessa Conforme (padrão da loja atual)</option><option value="prc">Site comprovadamente certificado no Remessa Conforme; destinatário pessoa física</option></select></label>
 <table><tbody id="breakdown"></tbody></table>
 <p class="muted" id="notice"></p></article>
+<article><h2>Opção A — preço final com impostos pagos pela Streetball Store</h2>
+<p>Planeje o custo completo antes de liberar vendas. <strong>Esta ferramenta não muda os preços do catálogo, não cobra o cliente e não paga tributos.</strong> Preencha os valores reais do fornecedor e do seu negócio. O frete internacional do primeiro simulador já faz parte do valor aduaneiro.</p>
+<div class="grid">
+<label>Câmbio planejado (R$ por US$)<input type="number" id="budgetFx" min="0.01" step=".01" placeholder="Preencha uma cotação real" required></label>
+<label>Despacho postal e custos locais (R$)<input type="number" id="budgetPostal" min="0" step=".01" value="0"></label>
+<label>Operação por pedido (R$)<input type="number" id="budgetOps" min="0" step=".01" value="0"></label>
+<label>Reserva de imprevistos (%)<input type="number" id="budgetReserve" min="0" max="99" step=".5" value="10"></label>
+<label>Taxa de cobrança (Asaas etc.) (%)<input type="number" id="budgetPayment" min="0" max="99" step=".1" placeholder="Informe a taxa real" required></label>
+<label>Tributos sobre faturamento (%)<input type="number" id="budgetBusinessTax" min="0" max="99" step=".1" placeholder="Validar com contador" required></label>
+<label>Margem alvo sobre venda (%)<input type="number" id="budgetMargin" min="0" max="99" step=".5" placeholder="Ex.: 25" required></label>
+<label>Preço de venda planejado (R$)<input type="number" id="budgetSale" min="0" step=".01" placeholder="Opcional para verificar lucro"></label>
+</div>
+<table><tbody id="budgetRows"></tbody></table>
+<p class="muted" id="budgetNotice">Preencha câmbio, taxa de cobrança, tributos sobre faturamento e margem para estimar seu preço mínimo.</p>
+<p class="muted"><strong>Atenção:</strong> esse preço é uma projeção, não uma garantia de lucro. Frete final, classificação fiscal, documentos da importação, tributos aplicáveis à empresa, devoluções e valores cobrados pelos Correios precisam de validação. A reserva não garante que a loja conseguirá quitar tributos de encomendas vinculadas ao CPF do comprador.</p></article>
 <article><h2>Links e segurança</h2>
 <p><a href="https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/manuais/remessas-postal-e-expressa/preciso-pagar-impostos-nas-compras-internacionais/quais-sao-os-impostos-devidos" rel="noopener noreferrer" target="_blank">Regras oficiais — Receita Federal</a></p>
 <p><a href="https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/manuais/remessas-postal-e-expressa/calculadora-de-impostos-portal-aduana-e-comercio-exterior" rel="noopener noreferrer" target="_blank">Calculadora oficial da Receita Federal</a></p>
@@ -55,4 +70,6 @@ function render(){
 }
 document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',render));
 render();
-</script></body></html>
+</script>
+<script type="module" src="/tax-budget-ui.js"></script>
+</body></html>
