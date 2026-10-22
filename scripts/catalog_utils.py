@@ -3,6 +3,7 @@ from __future__ import annotations
 import json, re, unicodedata
 from pathlib import Path
 from urllib.parse import urlparse
+from retro_policy import apply_retro_policy, is_older_than_five_seasons
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / 'public' / 'catalog.json'
 CATALOG_JS = ROOT / 'public' / 'catalog.js'
@@ -38,7 +39,7 @@ def is_nba_product(item):
 
 def classify(title, category_hint=''):
     s = normalized(f'{title} {category_hint}')
-    if re.search(r'\b(retro|vintage|classic)\b',s) or re.search(r'\b(?:19[5-9]\d|200[0-9]|201[0-3])\b',s): cat = 'retro'
+    if re.search(r'\b(retro|vintage|classic)\b',s) or is_older_than_five_seasons(title): cat = 'retro'
     elif any(x in s for x in ('kids','children','infantil','baby','youth','16-28','16~28','16-30')): cat = 'infantil'
     elif any(x in s for x in ('women','woman','feminina','feminino')): cat = 'feminino'
     elif any(x in s for x in ('basketball','nba','warriors','lakers','celtics')): cat = 'nba'
@@ -102,19 +103,19 @@ def normalize_product(raw):
     if isinstance(price,str):price=price.replace('R$','').strip().replace('.','').replace(',','.') if ',' in price else price
     price=float(price)
     if not 1<=price<=100000:raise ValueError('Preço fora do intervalo permitido')
-    return {**raw,'id':product_id,'title':title,'category':cat,'kind':kind,'price':round(price,2),
+    return apply_retro_policy({**raw,'id':product_id,'title':title,'category':cat,'kind':kind,'price':round(price,2),
        'image':images[0] if images else '', 'images':images,'imageOrigin':('upload_local' if images[0].startswith('/images/') else 'fornecedor_yupoo') if images else 'ilustracao_svg',
        'source': 'import_yupoo_publico' if source else str(raw.get('source') or 'manual'), 'sourceUrl':source,
        'sizes':sz[:25], 'primary':str(raw.get('primary') or '#ededed'), 'accent':str(raw.get('accent') or '#2e3936'),
        'description':str(raw.get('description') or 'Modelo sob encomenda. Disponibilidade e grade sujeitos à confirmação do fornecedor.')[:450],
-       'badge':str(raw.get('badge') or '')[:60]}
+       'badge':str(raw.get('badge') or '')[:60]})
 
 def read_catalog():
     try:return json.loads(CATALOG.read_text(encoding='utf-8'))
     except (OSError,ValueError):return []
 
 def save_catalog(products):
-    products=[p for p in products if not is_nba_product(p)]
+    products=[apply_retro_policy(p) for p in products if not is_nba_product(p)]
     CATALOG.parent.mkdir(parents=True,exist_ok=True)
     content=json.dumps(products,ensure_ascii=False,indent=2)
     path=CATALOG.with_suffix('.json.tmp')
