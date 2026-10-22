@@ -2,6 +2,7 @@ import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRout
 import {supplierIdValid} from './supplier-mapping.js';
 import {STAGES,safeTrackingCode,formatProgress} from './order-progress.js';
 import {customerTrackingLink,verifyTrackingKey} from './order-tracking-access.js';
+import {handleAccountRoute,linkAuthenticatedCheckout} from './customer-accounts.js';
 /** Streetball Store - Cloudflare Worker + D1 + Asaas sandbox/production
  * Nunca armazene tokens ou chaves na pasta public/.
  * IMPORTANTE: pagamento ao fornecedor NÃO é automatizado neste MVP.
@@ -40,10 +41,10 @@ if(!attempt.meta?.changes){
  const prior=await env.DB.prepare('SELECT request_key,payload_hash,order_id FROM checkout_attempts WHERE request_key=?').bind(requestKey).first();
  if(!prior||prior.payload_hash!==hash)return clientError('Essa tentativa de checkout já está vinculada a outros dados. Atualize o checkout.',409);
  const saved=await env.DB.prepare('SELECT id,status,total,shipping,payment_url FROM orders WHERE id=?').bind(prior.order_id).first();
- if(saved?.payment_url&&saved.status==='awaiting_payment')return json({orderId:saved.id,paymentUrl:saved.payment_url,total:saved.total,shipping:saved.shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',reused:true,trackingUrl:await customerTrackingLink(env,saved.id)});
+ if(saved?.payment_url&&saved.status==='awaiting_payment'){await linkAuthenticatedCheckout(req,env,saved.id,email);return json({orderId:saved.id,paymentUrl:saved.payment_url,total:saved.total,shipping:saved.shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',reused:true,trackingUrl:await customerTrackingLink(env,saved.id)});}
  return clientError('Sua cobrança ainda está em processamento ou precisa ser conferida. Consulte o pedido antes de tentar outra compra.',409);
 }
-await env.DB.prepare('INSERT INTO orders(id,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id,now,now,'awaiting_payment',name,email,phone,cpf,zip,address,city,state,JSON.stringify(cart.items),cart.subtotal,shipping,total).run();if(whatsappOptIn)await env.DB.prepare('INSERT OR IGNORE INTO buyer_message_optin(order_id,consented_at) VALUES(?,?)').bind(id,now).run();
+await env.DB.prepare('INSERT INTO orders(id,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id,now,now,'awaiting_payment',name,email,phone,cpf,zip,address,city,state,JSON.stringify(cart.items),cart.subtotal,shipping,total).run();await linkAuthenticatedCheckout(req,env,id,email);if(whatsappOptIn)await env.DB.prepare('INSERT OR IGNORE INTO buyer_message_optin(order_id,consented_at) VALUES(?,?)').bind(id,now).run();
 if(importTaxAcknowledged)await env.DB.prepare('INSERT OR IGNORE INTO order_import_disclosures(order_id,accepted_at,policy) VALUES(?,?,?)').bind(id,now,'customer_pays_import_taxes_v1').run();
 try{const customer=await asaas('/customers',env,{name,email,cpfCnpj:cpf,mobilePhone:phone,postalCode:zip,addressNumber:(address.match(/\b\d{1,5}\b/)||[])[0]||'S/N',externalReference:id,notificationDisabled:true});const due=new Date(Date.now()+48*3600*1000).toISOString().slice(0,10);const charge=await asaas('/payments',env,{customer:customer.id,billingType,value:total,dueDate:due,description:`Streetball Store pedido ${id.slice(0,8)}`,externalReference:id});if(!charge.id||!charge.invoiceUrl)throw Error('Cobrança não retornou link seguro.');await env.DB.prepare('UPDATE orders SET payment_id=?,payment_url=?,updated_at=? WHERE id=?').bind(charge.id,charge.invoiceUrl,new Date().toISOString(),id).run();return json({orderId:id,paymentUrl:charge.invoiceUrl,total,subtotal:cart.subtotal,shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',trackingUrl:await customerTrackingLink(env,id)});}catch(e){await env.DB.prepare('UPDATE orders SET status=?,updated_at=? WHERE id=?').bind('payment_setup_failed',new Date().toISOString(),id).run();return clientError('Não foi possível gerar a cobrança. Tente novamente mais tarde.',502)}}
 async function paymentWebhook(req,env,ctx){
@@ -323,6 +324,7 @@ async function whatsappInbound(req,env,ctx){
 }
 export default {async fetch(request,env,ctx){const url=new URL(request.url);if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors});try{
  if(url.pathname.startsWith('/api/admin/'))return await adminApi(request,env,ctx);
+ if(url.pathname.startsWith('/api/account/'))return await handleAccountRoute(request,env);
  if(url.pathname==='/api/track'&&request.method==='POST'){
    if(Number(request.headers.get('content-length')||0)>1100)return clientError('Solicitação muito grande.',413);
    const body=await request.json().catch(()=>null);
