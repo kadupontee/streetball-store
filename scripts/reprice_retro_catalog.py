@@ -45,7 +45,8 @@ def audit(products):
                     'newPrice': updated.get('price'),
                 })
         dated = is_older_than_five_seasons(product.get('supplierTitle') or product.get('title') or '')
-        if dated:
+        if dated and str(product.get('kind') or '').lower() != 'jacket':
+            # Jaquetas vintage pertencem a vestuário, não à política de camisas retrô.
             changed['olderDatedProducts'] += 1
             if product.get('categoryLocked') or product.get('priceLocked') or product.get('kindLocked'):
                 changed['olderWithManualLocks'] += 1
