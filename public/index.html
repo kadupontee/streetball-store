@@ -6,23 +6,68 @@
 <meta name="description" content="Streetball Store: camisas de futebol, seleções, retrôs, edições jogador, infantil e acessórios. Encontre seu próximo manto." />
 <meta name="theme-color" content="#111514" />
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="styles.css?v=20261020-pagamentos" />
+<link rel="stylesheet" href="styles.css?v=20261022-editorial" />
+<link rel="stylesheet" href="editorial.css?v=20261022-3" />
 </head>
 <body>
 <div class="demo-notice" id="demoNotice"><span id="demoText">PRÉVIA · pagamentos ainda não habilitados</span> <button id="dismissNotice" aria-label="Fechar aviso">×</button></div>
 <div class="announcement"><div class="container announce-inner"><span>FUTEBOL É IDENTIDADE. VISTA A SUA.</span><span class="announce-right">BRASIL INTEIRO <i class="dot"></i> COLEÇÕES 2026/27</span></div></div>
 <header class="site-header" id="top"><div class="container header-main">
   <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Abrir menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-  <a class="brand" href="#inicio" aria-label="Streetball Store - Início"><span class="brand-icon"><svg viewBox="0 0 44 44"><path d="M22 2 40 11v21L22 42 4 32V11Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="22" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m22 13 6 5-2 7h-8l-2-7ZM16 18l-5-2m17 2 5-2m-15 9-4 5m12-5 4 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span><span class="brand-word">STREETBALL<small>STORE</small></span></a>
+  <a class="brand" href="#inicio" aria-label="Streetball Store - Início"><span class="brand-word">STREETBALL<small>STORE</small></span><span class="brand-spark" aria-hidden="true">✦</span></a>
+  <nav class="primary-nav" aria-label="Navegação principal">
+    <a class="active" href="#inicio">Início</a>
+    <a href="#colecao">Coleções</a>
+    <a href="/account.html#pedidos">Pedidos</a>
+    <a href="/account.html#criar-conta">Criar conta</a>
+  </nav>
   <label class="search-box"><svg viewBox="0 0 24 24"><circle cx="10.7" cy="10.7" r="7"/><path d="m16 16 5 5"/></svg><input type="search" id="globalSearch" placeholder="Busque seu time, seleção ou coleção" autocomplete="off"><kbd>/</kbd></label>
-  <div class="header-actions"><button class="icon-btn search-mobile" id="mobileSearch" aria-label="Buscar"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><button class="icon-btn heart-trigger" id="favoriteTrigger" title="Favoritos" aria-label="Ver favoritos"><svg viewBox="0 0 24 24"><path d="M20.8 4.8a5.5 5.5 0 0 0-7.8 0L12 5.9l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.4a5.5 5.5 0 0 0 0-7.8Z"/></svg></button><button class="icon-btn cart-trigger" id="cartTrigger" title="Sacola" aria-label="Abrir sacola"><svg viewBox="0 0 24 24"><path d="M5 8h14l1 13H4L5 8ZM9 9V6a3 3 0 0 1 6 0v3"/></svg><span id="cartCount" class="cart-count">0</span></button></div>
+  <div class="header-actions"><button class="icon-btn search-mobile" id="mobileSearch" aria-label="Buscar"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></button><button class="icon-btn heart-trigger" id="favoriteTrigger" title="Favoritos" aria-label="Ver favoritos"><svg viewBox="0 0 24 24"><path d="M20.8 4.8a5.5 5.5 0 0 0-7.8 0L12 5.9l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.4a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>
+    <div class="account-menu-wrap">
+      <button id="accountTrigger" class="account-trigger" type="button" aria-expanded="false" aria-controls="accountDropdown" aria-label="Abrir menu da conta">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4 3-6 7.5-6s7.5 2 7.5 6"/></svg><span>Conta</span>⌄
+      </button>
+      <nav class="account-menu" id="accountDropdown" aria-label="Minha conta" hidden>
+        <a href="/account.html">Minha conta</a>
+        <a href="/account.html#pedidos">Meus pedidos</a>
+        <a href="/account.html#pedidos">Acompanhar pedido</a>
+        <a href="/account.html#criar-conta">Criar conta</a>
+      </nav>
+    </div><button class="icon-btn cart-trigger" id="cartTrigger" title="Sacola" aria-label="Abrir sacola"><svg viewBox="0 0 24 24"><path d="M5 8h14l1 13H4L5 8ZM9 9V6a3 3 0 0 1 6 0v3"/></svg><span id="cartCount" class="cart-count">0</span></button></div>
 </div></header>
 <nav class="desktop-nav"><div class="container nav-inner" id="desktopNav"><button data-category="todos" class="active">Início</button><button data-category="brasileirao">Brasileirão</button><button data-category="europa">Europa</button><button data-category="selecoes">Seleções</button><button data-category="retro">Retrô</button><button data-category="player">Versão Jogador</button><button data-category="infantil">Infantil</button><button data-category="feminino">Feminino</button><button data-category="acessorios">Acessórios</button><button data-category="outras">Outros</button></div></nav>
 <main id="inicio">
-<section class="hero"><div class="container hero-layout"><div class="hero-copy"><div class="eyebrow"><span class="eyebrow-line"></span>NOVA TEMPORADA. A MESMA PAIXÃO.</div><h1>O MANTO<br>É <em>SEU.</em></h1><p>Dos clássicos que marcaram época aos lançamentos que fazem história. Seu time. Sua camisa. Sua identidade.</p><div class="hero-buttons"><button id="heroShop" class="btn-accent">EXPLORAR COLEÇÃO <span>↗</span></button><button id="heroRetro" class="btn-ghost">VER RETRÔ <span>→</span></button></div><div class="hero-footer"><strong>26<span>/</span>27</strong><span>COLEÇÃO ATUAL<br><b>FUTEBOL & CULTURA</b></span></div></div><div class="hero-art" aria-hidden="true"><span class="hero-bgnum">10</span><div class="hero-disc"></div><div id="heroJersey" class="hero-jersey"></div><span class="hero-sideword">EST. 2025 / STREETBALL STORE</span><div class="hero-corner">01 <span>—</span> 04</div></div></div></section>
-<div class="service-strip"><div class="container service-grid"><span><b>01</b> NOVAS COLEÇÕES TODA TEMPORADA</span><span><b>02</b> PERSONALIZAÇÃO DISPONÍVEL</span><span><b>03</b> <a href="/track.html" style="color:inherit;text-decoration:underline">ACOMPANHAR PEDIDO</a></span></div></div>
-<div class="container" style="padding:13px 16px;font-size:12px;line-height:1.65;color:var(--muted,#49554c)"><strong>IMPORTAÇÃO INTERNACIONAL:</strong> o preço da Streetball Store não inclui eventuais impostos de importação, ICMS ou Despacho Postal. Esses valores, quando cobrados, serão pagos pelo destinatário nos canais oficiais. <a href="https://www.correios.com.br/receber/encomenda/internacional" target="_blank" rel="noopener noreferrer">Entenda como funciona</a>.</div>
-<section class="category-section container"><div class="section-head"><div><p class="micro">DESCUBRA SEU ESTILO</p><h2>Escolha sua <i>torcida.</i></h2></div><button id="showAllCats" class="text-link">TODAS AS CATEGORIAS <span>↗</span></button></div><div class="category-grid" id="categoryGrid"></div></section>
+<section class="hero" aria-label="O manto é seu — coleção retrô Streetball Store">
+  <div class="container hero-layout">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="eyebrow-line"></span>FUTEBOL, HISTÓRIA E IDENTIDADE</div>
+      <h1>O MANTO<br>É <em>SEU.</em></h1>
+      <p>FUTEBOL, HISTÓRIA E ESTILO EM CADA CAMISA.</p>
+      <div class="hero-buttons">
+        <button id="heroShop" class="btn-accent" type="button">COMPRAR AGORA <span>→</span></button>
+        <a href="/account.html#criar-conta" class="btn-ghost">CRIAR CONTA <span>↗</span></a>
+      </div>
+      <div class="hero-slider-controls" id="heroSliderControls" role="group" aria-label="Trocar fotos do futebol retrô">
+        <button class="hero-dot" type="button" data-hero-slide="0" aria-label="Mostrar foto 1" aria-current="true"></button>
+        <button class="hero-dot" type="button" data-hero-slide="1" aria-label="Mostrar foto 2" aria-current="false"></button>
+        <button class="hero-dot" type="button" data-hero-slide="2" aria-label="Mostrar foto 3" aria-current="false"></button>
+        <button class="hero-dot" type="button" data-hero-slide="3" aria-label="Mostrar foto 4" aria-current="false"></button>
+      </div>
+    </div>
+    <div class="hero-art" aria-label="Seleção rotativa de camisas e história do futebol">
+      <div class="hero-brush" aria-hidden="true"></div>
+      <div id="editorialHeroScenes" class="editorial-hero-scenes" aria-live="off"></div>
+      <span class="hero-notes">MAIS QUE CAMISAS.<br>CULTURA.</span>
+    </div>
+  </div>
+</section>
+<div class="service-strip"><div class="container service-grid">
+  <div class="service-item"><b>01</b><span class="service-icon" aria-hidden="true">♧</span><div><strong>NOVAS COLEÇÕES<br>TODA TEMPORADA</strong><small>Do passado ao presente,<br>sempre com novidades.</small></div></div>
+  <div class="service-item"><b>02</b><span class="service-icon" aria-hidden="true">✎</span><div><strong>PERSONALIZAÇÃO<br>DISPONÍVEL</strong><small>Seu nome, seu número,<br>seu estilo.</small></div></div>
+  <div class="service-item"><b>03</b><span class="service-icon" aria-hidden="true">↗</span><div><strong>ACOMPANHAR PEDIDO</strong><small>Acesse <a href="/account.html#pedidos">Conta → Pedidos</a><br>para acompanhar sua compra.</small></div></div>
+</div></div>
+<div class="container shipping-disclosure"><strong>IMPORTAÇÃO INTERNACIONAL:</strong> o preço da Streetball Store não inclui eventuais impostos de importação, ICMS ou Despacho Postal. Esses valores, quando cobrados, serão pagos pelo destinatário nos canais oficiais. <a href="https://www.correios.com.br/receber/encomenda/internacional" target="_blank" rel="noopener noreferrer">Entenda como funciona</a>.</div>
+<section class="category-section container"><div class="section-head"><div><p class="micro">COLEÇÕES · FUTEBOL & CULTURA</p><h2>CAMISAS PARA<br>TODAS AS <i>GERAÇÕES.</i></h2></div><button id="showAllCats" class="text-link">VER TODAS AS COLEÇÕES <span>↗</span></button></div><div class="category-grid" id="categoryGrid"></div></section>
 <section class="catalog-section" id="colecao"><div class="container"><div class="section-head catalog-heading"><div><p class="micro">A COLEÇÃO</p><h2>Seu próximo <i>manto.</i></h2><p class="subtitle" id="catalogSubtitle">Carregando catálogo completo...</p></div><div class="sort-wrap"><label for="sortSelect">ORDENAR POR</label><select id="sortSelect"><option value="featured">Destaques</option><option value="lowest">Menor preço</option><option value="highest">Maior preço</option><option value="az">Nome A-Z</option></select></div></div><section id="brasileiraoClubs" class="brasileirao-clubs" aria-label="Clubes do Brasileirão 2026" hidden>
 <div class="brasileirao-clubs-heading">
 <div><p class="micro">BRASILEIRÃO · SÉRIE A 2026</p><h3>Escolha seu clube.</h3></div>
@@ -40,5 +85,5 @@
 <div class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalProductTitle"><button class="modal-close" id="closeProduct" aria-label="Fechar">×</button><div id="productModalInner"></div></div>
 <div class="checkout-modal" id="checkoutModal" role="dialog" aria-modal="true" aria-label="Finalizar pedido"><div class="checkout-head"><div><span class="micro">CHECKOUT</span><h3>Finalizar pedido</h3></div><button id="closeCheckout" aria-label="Fechar">×</button></div><form id="checkoutForm"><p id="checkoutIntro">Informe seus dados para gerar uma cobrança segura pela plataforma Asaas. Os produtos são enviados do exterior. O valor pago à Streetball Store NÃO inclui eventuais impostos de importação (Imposto de Importação e ICMS) nem Despacho Postal. Essas cobranças, se ocorrerem, são de responsabilidade do destinatário e devem ser pagas diretamente pelo canal oficial dos Correios ou da transportadora. <a href="https://www.correios.com.br/receber/encomenda/internacional" target="_blank" rel="noopener noreferrer">Entenda a importação</a>. Vendas reais ainda dependem de revisão fiscal e confirmação das condições comerciais.</p><div class="form-grid"><label>Nome completo<input name="name" type="text" required minlength="3" autocomplete="name"></label><label>WhatsApp<input name="phone" type="tel" placeholder="11999999999" minlength="10" required autocomplete="tel"></label><label>E-mail<input name="email" type="email" required autocomplete="email"></label><label>CPF (necessário para cobrança)<input name="cpf" inputmode="numeric" minlength="11" maxlength="14" placeholder="Somente números" required></label><label>CEP<input name="zip" inputmode="numeric" minlength="8" maxlength="9" required></label><label>Endereço (rua, número, complemento)<input name="address" required></label><label>Cidade<input name="city" required></label><label>UF<input name="state" required maxlength="2" placeholder="SP"></label></div><label class="checkout-method-label">Forma de pagamento<select name="paymentMethod" id="paymentMethod" required><option value="PIX">Pix</option><option value="CREDIT_CARD">Cartão de crédito</option></select></label><label class="consent-label"><input type="checkbox" name="consent" required> Aceito o uso dos dados para processar meu pedido.</label><label class="consent-label"><input type="checkbox" name="importTaxAcknowledged" required> Estou ciente de que este produto vem do exterior e que os impostos de importação, ICMS e eventual Despacho Postal NÃO estão incluídos no pagamento à Streetball Store. Se houver cobrança, serei responsável por pagá-la diretamente pelos canais oficiais dos Correios ou da transportadora para liberar a encomenda.</label><label class="consent-label"><input type="checkbox" name="whatsappOptIn"> Autorizo receber atualizações sobre meu pedido pelo WhatsApp, incluindo avisos de atraso (opcional).</label><div class="checkout-total"><span>Produtos</span><strong id="checkoutSubtotal">R$ 0,00</strong></div><div class="checkout-total"><span>Entrega</span><strong id="checkoutShipping">A calcular</strong></div><div class="checkout-total checkout-grand-total"><span>Total</span><strong id="checkoutGrandTotal">A calcular</strong></div><p class="checkout-note" id="checkoutNote">O total acima é o pagamento à Streetball Store e não inclui impostos de importação nem eventual Despacho Postal cobrados depois no Brasil. Se houver cobrança, o destinatário deverá pagá-la pelos canais oficiais.</p><button class="btn-accent full" type="submit" id="placeOrder">SOLICITAR PAGAMENTO SEGURO <span>→</span></button><p class="status" id="checkoutStatus" aria-live="polite"></p></form></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="app.js?v=20261020-checkout-asaas-final" defer></script>
+<script src="app.js?v=20261022-editorial" defer></script>
 </body></html>
