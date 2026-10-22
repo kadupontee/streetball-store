@@ -73,7 +73,7 @@ test('marco de tributo confirmado aparece separado do tributo pendente',()=>{
  assert.equal(value.payTaxesAtOfficialCorreios,false);
  assert.equal(value.importTaxesManagedByStore,false);
  assert.equal(value.importTaxesPaidByRecipient,true);
- assert.match(value.importTaxGuidance,/Streetball Store/);
+ assert.match(value.importTaxGuidance,/Pagamento dos tributos registrado/);
 });
 test('simulador de planejamento tem campos explícitos e frontend válido',()=>{
  const page=readFileSync(new URL('../public/imports.html',import.meta.url),'utf8');
