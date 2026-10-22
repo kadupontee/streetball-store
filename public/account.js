@@ -18,6 +18,7 @@ $('loginTab').addEventListener('click',()=>switchTab('login'));
 $('registerTab').addEventListener('click',()=>switchTab('register'));
 function showLoggedOut(){
  $('authPane').hidden=false;$('profilePane').hidden=true;$('logout').hidden=true;
+ if(googleReady)renderGoogleButtons();
 }
 async function showLoggedIn(user){
  $('authPane').hidden=true;$('profilePane').hidden=false;$('logout').hidden=false;
@@ -25,6 +26,7 @@ async function showLoggedIn(user){
  $('accountEmail').textContent=user.email;
  const saved=localStorage.getItem('streetball_tracking_link');
  $('claimSaved').hidden=!saved;
+ if(googleReady)renderGoogleButtons();
  await loadOrders();
  if(location.hash==='#pedidos')$('pedidos').scrollIntoView({block:'start'});
 }
@@ -99,4 +101,58 @@ async function init(){
   else{showLoggedOut();if(location.hash==='#criar-conta')switchTab('register');}
  }catch(err){showLoggedOut();msg('Não foi possível carregar a área de conta. Verifique se a migração do banco foi aplicada.')}
 }
-init();
+
+let googleReady=false,googleClientId=null;
+const googleScript=()=>new Promise((resolve,reject)=>{
+ if(window.google?.accounts?.id){resolve();return;}
+ const tag=document.createElement('script');
+ tag.src='https://accounts.google.com/gsi/client';
+ tag.async=true;
+ tag.onload=()=>window.google?.accounts?.id?resolve():reject(new Error('Biblioteca Google indisponível'));
+ tag.onerror=()=>reject(new Error('Não foi possível carregar o Google'));
+ document.head.append(tag);
+});
+function renderGoogleButtons(){
+ if(!googleReady||!window.google?.accounts?.id)return;
+ const targets=[$('googleSignInButton'),$('googleConnectButton')];
+ targets.forEach(el=>el.replaceChildren());
+ const target=$('profilePane').hidden?targets[0]:targets[1];
+ window.google.accounts.id.renderButton(target,{
+  type:'standard',theme:'outline',size:'large',shape:'rectangular',text:'continue_with',
+  logo_alignment:'left',width:Math.min(340,Math.max(240,target.parentElement.clientWidth-30))
+ });
+}
+async function googleCredentialReceived(response){
+ if(typeof response?.credential!=='string'){msg('O Google não retornou uma credencial válida.');return;}
+ const isLinking=!$('profilePane').hidden;
+ try{
+  msg(isLinking?'Conectando sua Conta do Google...':'Confirmando sua identidade com o Google...');
+  const data=await call(isLinking?'google/connect':'google/login','POST',{credential:response.credential});
+  if(isLinking)msg('Conta do Google conectada com sucesso. Agora você também pode usá-la para entrar.');
+  else{await showLoggedIn(data.user);msg('Você entrou com sua Conta do Google.');}
+ }catch(error){
+  msg(error.message);
+  // O nonce anterior pode estar vencido; tente novamente após atualizar a página.
+ }
+}
+async function initGoogle(){
+ let config;
+ try{config=await call('google/config')}catch{return;}
+ if(!config.enabled||!config.clientId)return; // Não expor botão quebrado sem Google Cloud configurado.
+ try{
+  const {nonce}=await call('google/nonce');
+  await googleScript();
+  window.google.accounts.id.initialize({
+   client_id:config.clientId,nonce,
+   callback:googleCredentialReceived,auto_select:false,
+   cancel_on_tap_outside:true,ux_mode:'popup'
+  });
+  googleClientId=config.clientId;
+  googleReady=true;
+  $('googleAuthBox').hidden=false;
+  $('googleConnectBox').hidden=false;
+  renderGoogleButtons();
+ }catch(error){msg('O login Google não está disponível. Use seu e-mail e senha por enquanto.');}
+}
+
+init().then(initGoogle);
