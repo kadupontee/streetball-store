@@ -172,9 +172,19 @@ function catalogRender(){
 }
 function categoryLabel(p){const labels={brasileirao:'Clubes Brasileiros',europa:'Clubes Europeus',selecoes:'Seleções',retro:'Coleção Retrô',outras:'Outros produtos',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios'};return labels[p.category]||p.category;}
 function editorialImages(){
- const valid=catalog.filter(hasVerifiedPhoto);
- const retro=valid.filter(p=>p.category==='retro'||/retr[oô]|vintage|classic|19(?:[7-9]\\d)|20(?:0[0-9]|1[0-7])/i.test(String(p.title)+' '+String(p.supplierTitle||'')));
- return (retro.length>=7?retro:[...retro,...valid.filter(p=>!retro.includes(p))]).filter((p,i,arr)=>arr.findIndex(x=>x.id===p.id)===i);
+ // Não percorrer milhares de álbuns repetidamente no carrossel:
+ // priorizar as fotos retrô autorizadas e limitar a galeria a 40 produtos distintos.
+ const retro=[],regular=[],seen=new Set();
+ for(const p of catalog){
+  if(!hasVerifiedPhoto(p)||seen.has(p.id))continue;
+  seen.add(p.id);
+  const title=String(p.title)+' '+String(p.supplierTitle||'');
+  const isRetro=p.category==='retro'||/retr[oô]|vintage|classic|19[7-9][0-9]|20(?:0[0-9]|1[0-7])/i.test(title);
+  if(isRetro&&retro.length<40)retro.push(p);
+  else if(!isRetro&&regular.length<40)regular.push(p);
+  if(retro.length>=40&&regular.length>=40)break;
+ }
+ return (retro.length>=20?retro:[...retro,...regular]).slice(0,40);
 }
 let heroActive=0,heroTimer=null;
 function showHeroSlide(index){
@@ -238,7 +248,18 @@ function detailOpen(id){const p=findProduct(id);if(!p)return;state.detail=id;sta
 function addCart(){state.checkoutRequestKey=null;const c={...state.choice},p=findProduct(state.detail);if(!p||!c.size){toast('Selecione um tamanho.');return}if(c.personalize&&!c.customName.trim()&&!c.customNumber.trim()){toast('Preencha o nome ou o número para personalizar.');return}const record={id:p.id,size:c.size,patch:c.patch,personalize:c.personalize,customName:c.personalize?c.customName.trim():'',customNumber:c.personalize?c.customNumber.trim():'',qty:1};const found=state.cart.find(it=>it.id===record.id&&it.size===record.size&&it.patch===record.patch&&it.personalize===record.personalize&&it.customName===record.customName&&it.customNumber===record.customNumber);if(found)found.qty++;else state.cart.push(record);cartRender();openUI('cart');toast('Produto adicionado à sacola.');}
 function toggleFav(id){state.favorites=state.favorites.includes(id)?state.favorites.filter(x=>x!==id):[...state.favorites,id];persist('streetball_favorites',state.favorites);catalogRender();}
 function totals(){return {items:state.cart,subtotal:cartSum()}}
-function openCheckout(){if(!state.cart.length||!state.checkoutReady)return;openUI('checkout');$('checkoutStatus').textContent='';}
+function openCheckout(){
+ if(!state.cart.length||!state.checkoutReady)return;
+ openUI('checkout');$('checkoutStatus').textContent='';
+ // Sem dados da conta no localStorage: cookie de sessão HttpOnly com consulta same-origin.
+ fetch('/api/account/me',{credentials:'same-origin',cache:'no-store'})
+  .then(r=>r.ok?r.json():null).then(me=>{
+   if(!me?.authenticated||!state.checkout)return;
+   const form=$('checkoutForm');
+   if(!form.elements.email.value)form.elements.email.value=me.user.email;
+   if(!form.elements.name.value)form.elements.name.value=me.user.displayName;
+  }).catch(()=>{});
+}
 async function submitOrder(e){e.preventDefault();const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length||!state.checkoutReady){status.textContent='Checkout ainda não habilitado.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;const whatsappOptIn=customer.whatsappOptIn==='on';delete customer.whatsappOptIn;const importTaxAcknowledged=customer.importTaxAcknowledged==='on';delete customer.importTaxAcknowledged;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={customer,whatsappOptIn,importTaxAcknowledged,paymentMethod:data.get('paymentMethod'),items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};const fingerprint=JSON.stringify(payload);if(state.checkoutPayload!==fingerprint){state.checkoutRequestKey=crypto.randomUUID();state.checkoutPayload=fingerprint;}btn.disabled=true;status.textContent='Verificando integração segura...';
  try{if(location.hostname.endsWith('.github.io'))throw new Error('Esta é uma vitrine de demonstração. O checkout exige a publicação do backend de pagamentos (Cloudflare/Asaas).');const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':state.checkoutRequestKey},body:JSON.stringify(payload)});const result=await res.json().catch(()=>null);if(!res.ok)throw new Error(result?.error||'Checkout indisponível. A loja ainda não está conectada a um provedor de pagamento.');if(!result?.paymentUrl||!/^https:\/\//.test(result.paymentUrl))throw new Error('A cobrança não retornou um endereço seguro.');if(typeof result.trackingUrl==='string'&&result.trackingUrl.startsWith(location.origin+'/track.html#')){try{localStorage.setItem('streetball_tracking_link',result.trackingUrl)}catch{}}
  status.textContent=result.sandbox?'Redirecionando ao ambiente de testes Asaas...':'Redirecionando para o pagamento seguro no Asaas...';window.location.assign(result.paymentUrl)}catch(err){status.textContent=err.message.includes('Failed to fetch')?'Prévia: conecte o backend e o Asaas antes de receber pedidos reais.':err.message;btn.disabled=false;}}
