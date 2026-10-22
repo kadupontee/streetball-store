@@ -326,9 +326,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);if(r
  // Rotas de conta explícitas: evitam 404 da camada de assets em navegadores mobile.
  if(request.method==='GET'&&['/conta','/criar-conta','/pedidos'].includes(url.pathname)){
   const fragment=url.pathname==='/criar-conta'?'#criar-conta':url.pathname==='/pedidos'?'#pedidos':'';
-  const redirect=Response.redirect(new URL('/account.html'+fragment,url),302);
-  redirect.headers.set('cache-control','no-store');
-  return redirect;
+  return new Response(null,{status:302,headers:{location:new URL('/account.html'+fragment,url).toString(),'cache-control':'no-store'}});
  }
  if(request.method==='GET'&&url.pathname==='/account.html'){
   if(!env.ASSETS)return new Response('Página de cadastro temporariamente indisponível.',{status:503,headers:{'content-type':'text/plain; charset=utf-8','cache-control':'no-store'}});
