@@ -39,6 +39,13 @@ class GarmentPolicyTest(unittest.TestCase):
         higher=product("Casaco Casual Benfica",kind="coat",price=329.90)
         self.assertEqual(apply_garment_pricing(higher)["price"],189.90)
 
+    def test_top_de_treino_manga_longa_e_blusao(self):
+        for title in ("Arsenal Training Top Long Sleeves S-2XL","Blusão de treino Palmeiras"):
+            p=apply_garment_pricing(product(title,kind="long",price=189.90))
+            self.assertEqual((p["kind"],p["price"]),("blouse",189.90),title)
+        ambiguous=apply_garment_pricing(product("Barcelona Training Top S-2XL",kind="long",price=189.90))
+        self.assertEqual(ambiguous["kind"],"long")
+
     def test_hoodie_pullover_e_sweatshirt_sao_blusas(self):
         for name in ("Real Madrid Hoodie S-2XL","Barcelona Sweatshirt S-3XL","São Paulo Moletom preto", "Arsenal Fleece Pullover"):
             item=product(name,kind="fan",price=159.90)
