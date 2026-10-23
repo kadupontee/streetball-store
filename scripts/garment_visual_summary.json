@@ -1,0 +1,517 @@
+{
+  "method": "CLIP zero-shot classification from each actual local product image; predictions are advisory and not verified by a human",
+  "model": "openai/clip-vit-base-patch32",
+  "catalog_products": 10936,
+  "candidate_images": 1727,
+  "images_examined": 1727,
+  "processing_errors": [],
+  "current_kinds": {
+    "long": 608,
+    "set": 420,
+    "coat": 173,
+    "fan": 171,
+    "jacket": 154,
+    "kids": 49,
+    "retro_long": 79,
+    "female": 22,
+    "retro": 31,
+    "shorts": 3,
+    "player_adidas": 17
+  },
+  "visual_guesses": {
+    "long": 706,
+    "shirt": 499,
+    "jacket": 108,
+    "shorts": 101,
+    "set": 299,
+    "blouse": 13,
+    "coat": 1
+  },
+  "disagreements": 15,
+  "high_confidence_disagreements": 5,
+  "examples_high_confidence": [
+    {
+      "id": "YUP-247829255",
+      "image": "/images/yupoo/247829255.webp",
+      "supplierTitle": "Player Version 26/27 Manchester United Red Half-Zip (S–3XL)",
+      "original_kind": "jacket",
+      "original_price": 379.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.7876
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1453
+        },
+        {
+          "class": "shorts",
+          "probability": 0.04
+        }
+      ]
+    },
+    {
+      "id": "YUP-242243267",
+      "image": "/images/yupoo/242243267.webp",
+      "supplierTitle": "Argentina World Cup style white casual windbreaker S-3XL",
+      "original_kind": "jacket",
+      "original_price": 379.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.6246
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.2695
+        },
+        {
+          "class": "shorts",
+          "probability": 0.0659
+        }
+      ]
+    },
+    {
+      "id": "YUP-239347372",
+      "image": "/images/yupoo/239347372.webp",
+      "supplierTitle": "F1 McLaren Orange and Black Racing Jacket, S-3XL",
+      "original_kind": "jacket",
+      "original_price": 379.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "polo",
+          "probability": 0.6659
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.1708
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1436
+        }
+      ]
+    },
+    {
+      "id": "YUP-224573126",
+      "image": "/images/yupoo/224573126.webp",
+      "supplierTitle": "mexico Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8625
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0575
+        },
+        {
+          "class": "coat",
+          "probability": 0.0326
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575800",
+      "image": "/images/yupoo/224575800.webp",
+      "supplierTitle": "Betis Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.9341
+        },
+        {
+          "class": "coat",
+          "probability": 0.0377
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.0121
+        }
+      ]
+    }
+  ],
+  "examples_review": [
+    {
+      "id": "YUP-253860017",
+      "image": "/images/yupoo/253860017.webp",
+      "supplierTitle": "Real Madrid Jacket Set S-2XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.4675
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.4011
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.1226
+        }
+      ]
+    },
+    {
+      "id": "YUP-253724017",
+      "image": "/images/yupoo/253724017.webp",
+      "supplierTitle": "Barcelona black fleece hoodie",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.5624
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.2673
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.097
+        }
+      ]
+    },
+    {
+      "id": "YUP-253217096",
+      "image": "/images/yupoo/253217096.webp",
+      "supplierTitle": "Moncler Classic Down Tib Stand Collar Vest",
+      "original_kind": "retro",
+      "original_price": 199.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.4962
+        },
+        {
+          "class": "coat",
+          "probability": 0.3593
+        },
+        {
+          "class": "sleeveless",
+          "probability": 0.0888
+        }
+      ]
+    },
+    {
+      "id": "YUP-251584182",
+      "image": "/images/yupoo/251584182.webp",
+      "supplierTitle": "26-27 Paris Half-Zip Training Top Embroidery S-2XL",
+      "original_kind": "jacket",
+      "original_price": 379.9,
+      "visual_guess": "shirt",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.3824
+        },
+        {
+          "class": "shorts",
+          "probability": 0.2373
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.201
+        }
+      ]
+    },
+    {
+      "id": "YUP-247829255",
+      "image": "/images/yupoo/247829255.webp",
+      "supplierTitle": "Player Version 26/27 Manchester United Red Half-Zip (S–3XL)",
+      "original_kind": "jacket",
+      "original_price": 379.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.7876
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1453
+        },
+        {
+          "class": "shorts",
+          "probability": 0.04
+        }
+      ]
+    },
+    {
+      "id": "YUP-247822376",
+      "image": "/images/yupoo/247822376.webp",
+      "supplierTitle": "Barcelona Grey Windbreaker S-2XL",
+      "original_kind": "jacket",
+      "original_price": 379.9,
+      "visual_guess": "shirt",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.4096
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.3575
+        },
+        {
+          "class": "shorts",
+          "probability": 0.1693
+        }
+      ]
+    },
+    {
+      "id": "YUP-242243267",
+      "image": "/images/yupoo/242243267.webp",
+      "supplierTitle": "Argentina World Cup style white casual windbreaker S-3XL",
+      "original_kind": "jacket",
+      "original_price": 379.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.6246
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.2695
+        },
+        {
+          "class": "shorts",
+          "probability": 0.0659
+        }
+      ]
+    },
+    {
+      "id": "YUP-239347372",
+      "image": "/images/yupoo/239347372.webp",
+      "supplierTitle": "F1 McLaren Orange and Black Racing Jacket, S-3XL",
+      "original_kind": "jacket",
+      "original_price": 379.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "polo",
+          "probability": 0.6659
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.1708
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1436
+        }
+      ]
+    },
+    {
+      "id": "YUP-230405914",
+      "image": "/images/yupoo/230405914.webp",
+      "supplierTitle": "2014/15 season Bayern hooded sweater",
+      "original_kind": "retro",
+      "original_price": 199.9,
+      "visual_guess": "blouse",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.2627
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.1647
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1581
+        }
+      ]
+    },
+    {
+      "id": "YUP-227138431",
+      "image": "/images/yupoo/227138431.webp",
+      "supplierTitle": "Algeria Green Hooded Full Pull Windbreaker Set S-2XL",
+      "original_kind": "long",
+      "original_price": 189.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.5097
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.3204
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.0492
+        }
+      ]
+    },
+    {
+      "id": "YUP-224572812",
+      "image": "/images/yupoo/224572812.webp",
+      "supplierTitle": "mexico Half pulled top",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_half_zip",
+          "probability": 0.4229
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.3626
+        },
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.0634
+        }
+      ]
+    },
+    {
+      "id": "YUP-223471983",
+      "image": "/images/yupoo/223471983.webp",
+      "supplierTitle": "Real Madrid Windbreaker set",
+      "original_kind": "long",
+      "original_price": 189.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.2301
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1994
+        },
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.1758
+        }
+      ]
+    },
+    {
+      "id": "YUP-223471959",
+      "image": "/images/yupoo/223471959.webp",
+      "supplierTitle": "Real Madrid Windbreaker set",
+      "original_kind": "long",
+      "original_price": 189.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.3213
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.203
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1289
+        }
+      ]
+    },
+    {
+      "id": "YUP-224573126",
+      "image": "/images/yupoo/224573126.webp",
+      "supplierTitle": "mexico Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8625
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0575
+        },
+        {
+          "class": "coat",
+          "probability": 0.0326
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575800",
+      "image": "/images/yupoo/224575800.webp",
+      "supplierTitle": "Betis Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.9341
+        },
+        {
+          "class": "coat",
+          "probability": 0.0377
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.0121
+        }
+      ]
+    }
+  ],
+  "note": "Confiança do modelo é relativa; sem análise humana individual nenhuma classificação pode ser garantida. Não altera preços ou títulos automaticamente."
+}
