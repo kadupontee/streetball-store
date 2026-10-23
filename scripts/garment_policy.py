@@ -37,10 +37,10 @@ LONG = re.compile(
     r"\b(?:long\s*[- ]?sleeves?|long\s*[- ]?sleeved|longsleeves?|"
     r"mangas?\s*longas?)\b",re.I
 )
-SHORT = re.compile(r"\b(?:short\s*[- ]?sleeves?|regata|vest\s*training|tank\s*top)\b",re.I)
+SHORT = re.compile(r"\b(?:short\s*[- ]?sleeves?d?|regata|vest\s*training|tank\s*top)\b",re.I)
 SET = re.compile(
     r"\b(?:tracksuits?|jacket\s*sets?|jacket\s*kits?|coat\s*sets?|casaco\s*conjunto|windbreaker\s*sets?|"
-    r"hoodie\s*sets?|training\s*suits?|conjuntos?|"
+    r"hoodie\s*sets?|half\s*[- ]?zip\s*sets?|sweatshirt\s*sets?|pullover\s*sets?|training\s*suits?|conjuntos?|"
     r"jackets?\s*(?:and|\+)\s*pants?|suits?)\b",re.I
 )
 RETRO = re.compile(r"\b(?:retro|vintage|classic|classico|classica)\b",re.I)
