@@ -31,7 +31,14 @@ def undo_ambiguous_jackets(products):
     for p in products:
         old=originals.get(p.get("id"))
         if p.get("id") in targets and old and not p.get("priceLocked") and any(abs(float(p.get("price") or 0)-value)<0.01 for value in (379.90,189.90)):
-            result.append(old)
+            # Restaura só campos de preço/tipo. Nunca descarta novas fotos,
+            # nomes, links de pedidos ou edições posteriores do produto.
+            restored=dict(p)
+            for field in ("kind","category","price"):
+                if field in old:restored[field]=old[field]
+            for field in ("garmentClassification","garmentPriceSource"):
+                restored.pop(field,None)
+            result.append(restored)
             reverted+=1
         else:
             result.append(p)
