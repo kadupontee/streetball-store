@@ -28,7 +28,7 @@ test('o cache do HTML no Cloudflare nao prende o mobile a versoes antigas',()=>{
  assert.match(headers,/\/index\.html\s+Cache-Control: no-store/);
  assert.match(headers,/\/\s+Cache-Control: no-store/);
  assert.match(html,/editorial\.css\?v=20261022-mobile-refresh-v8/);
- assert.match(html,/app\.js\?v=20261022-coat-blouse-v12/);
+ assert.match(html,/app\.js\?v=20261023-visual-blouses-v13/);
  assert.match(js,/EDITORIAL_IMAGE_REVISION='20261022-mobile-refresh-v8'/);
  assert.match(js,/EDITORIAL_ASSET_COMMIT='d27a00d6bcd45c27132f445b7e214f3bc934c61a'/);
  const mobile=css.split('V8 mobile: 4 novos banners')[1];
