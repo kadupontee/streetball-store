@@ -68,6 +68,13 @@ PHOTO_CONFIRMED = {
     # Quarta rodada: novas peças isoladas verificadas individualmente pela foto.
     "221773922": ("treino", "jacket", 379.90, "Manchester City — Jaqueta Corta-Vento Azul"),
     "220637211": ("treino", "jacket", 379.90, "São Paulo — Jaqueta Corta-Vento Vermelha"),
+    # Quinta rodada: conferência direta das fotos de treino restantes.
+    "213864129": ("treino", "fan", 159.90, "Olympique Lyonnais — Camiseta Estampada de Pré-Jogo"),
+    "247420991": ("treino", "fan", 159.90, "Portugal — Camiseta Preta de Treino"),
+    "226924401": ("treino", "fan", 159.90, "Inter de Milão — Camiseta Preta de Treino"),
+    "250002465": ("treino", "fan", 159.90, "Flamengo — Camiseta Preta de Treino"),
+    "258349273": ("treino", "player_adidas", 209.90, "Bayern de Munique — Camiseta de Treino Versão Jogador"),
+    "249224006": ("treino", "player_nike", 229.90, "Barcelona — Camiseta de Treino Versão Jogador"),
     # Fotos são camisas: os álbuns vinham com a indicação incorreta 'hoodie'
     "250929923": ("selecoes", "fan", 159.90, "Argentina — Camiseta Branca Adidas"),
     "250929853": ("selecoes", "fan", 159.90, "Itália — Camiseta Branca Adidas"),
