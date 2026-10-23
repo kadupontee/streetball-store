@@ -33,7 +33,7 @@ def proposed(p, r):
     category=str(top[0].get("class") or "")
     score=float(top[0].get("probability") or 0)
     margin=score-float(top[1].get("probability") or 0)
-    if category in ("jacket_full_zip","jacket_windbreaker") and OUTER.search(title) and score>=0.65 and margin>=0.35:
+    if category in ("jacket_full_zip","jacket_windbreaker","one_track_jacket","hooded_single_jacket") and OUTER.search(title) and score>=0.65 and margin>=0.35:
         return ("jacket","treino",379.90,"modelo+titulo:jaqueta")
     if category.startswith("blouse_") and BLOUSE.search(title) and score>=0.64 and margin>=0.27:
         return ("blouse","treino",189.90,"modelo+titulo:blusa")
@@ -68,7 +68,7 @@ def reconcile(products, audit):
                                 "old_price":p.get("price"),"new_price":price})
         if new is p and not p.get("kindLocked"):
             top=v.get("top") or []
-            if top and top[0].get("class")=="tracksuit" and p.get("kind")!="set" and float(top[0].get("probability") or 0)>=0.85:
+            if top and top[0].get("class") in ("tracksuit","jersey_shorts_set","sleeveless_shorts_set") and p.get("kind")!="set" and float(top[0].get("probability") or 0)>=0.85:
                 if len(pending)<140:pending.append({"id":key,"title":p.get("supplierTitle"),"kind":p.get("kind"),"image":p.get("image")})
         revised.append(new)
     if checked < 10500 or len(revised)!=len(products):
