@@ -33,7 +33,6 @@ jobs:
       - name: Aplicar somente as 22 correcoes verificadas
         run: |
           python scripts/visual_verified.py
-          python scripts/visual_verified.py
           python scripts/test_visual_verified.py
       - name: Garantir que catalogo e scripts permanecem consistentes
         run: |
