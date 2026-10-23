@@ -5,6 +5,7 @@ on:
     paths:
       - scripts/visual_verified.py
       - scripts/test_visual_verified.py
+      - scripts/review_remaining_visual.py
       - scripts/catalog_utils.py
       - .github/workflows/apply-visual-verified.yml
   workflow_dispatch:
@@ -30,7 +31,7 @@ jobs:
           python scripts/test_visual_verified.py
           python scripts/test_garment_policy.py
           python scripts/test_retro_policy.py
-      - name: Aplicar somente as 22 correcoes verificadas
+      - name: Aplicar 44 correcoes verificadas por fotografia
         run: |
           python scripts/visual_verified.py
           python scripts/test_visual_verified.py
@@ -40,11 +41,13 @@ jobs:
           python scripts/reprice_retro_catalog.py --check
           python scripts/test_supplier_costs.py
           node --check public/app.js
+      - name: Priorizar outras peças com possível categoria incorreta
+        run: python scripts/review_remaining_visual.py
       - name: Gravar alteracoes do catalogo com historico no GitHub
         run: |
           git config user.name "streetball-visual-audit[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/catalog.json public/catalog.js scripts/visual_verified_result.json
+          git add public/catalog.json public/catalog.js scripts/visual_verified_result.json scripts/remaining_visual_candidates.json
           if ! git diff --cached --quiet; then
             git commit -m "catalog: aplicar 22 correcoes verificadas em fotos"
             git pull --rebase origin main
