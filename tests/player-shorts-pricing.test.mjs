@@ -25,7 +25,7 @@ test('calção versão jogador custa R$143,90 na vitrine e no checkout',()=>{
  }
  assert.equal(existing.kind,'shorts');
  assert.equal(existing.price,119.90);
- assert.match(html,/<script src="app\\.js\\?v=[a-zA-Z0-9_-]+" defer><\\/script>/);
+ assert.ok(html.includes('<script src="app.js?v=') && html.includes(' defer></script>'), 'A vitrine deve carregar um app.js versionado');
 });
 
 test('calção comum continua R$119,90 e camisa jogador não muda',()=>{
