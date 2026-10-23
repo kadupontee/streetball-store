@@ -65,6 +65,9 @@ PHOTO_CONFIRMED = {
     "258349011": ("treino", "fan", 159.90, "Real Madrid — Camiseta Azul de Treino"),
     "245820955": ("treino", "fan", 159.90, "Brasil — Camiseta Estampada de Treino"),
     "223321809": ("acessorios", "shorts", 119.90, "Flamengo — Calção de Treino Preto"),
+    # Quarta rodada: novas peças isoladas verificadas individualmente pela foto.
+    "221773922": ("treino", "jacket", 379.90, "Manchester City — Jaqueta Corta-Vento Azul"),
+    "220637211": ("treino", "jacket", 379.90, "São Paulo — Jaqueta Corta-Vento Vermelha"),
     # Fotos são camisas: os álbuns vinham com a indicação incorreta 'hoodie'
     "250929923": ("selecoes", "fan", 159.90, "Argentina — Camiseta Branca Adidas"),
     "250929853": ("selecoes", "fan", 159.90, "Itália — Camiseta Branca Adidas"),
