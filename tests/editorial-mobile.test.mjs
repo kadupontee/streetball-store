@@ -56,5 +56,5 @@ test('iPhone e Android exibem imagens completas, sem height fixo nem crop',()=>{
  }
  assert.match(app,/width="'\+imageWidth\+'" height="557"/);
  assert.match(html,/editorial\.css\?v=20261022-mobile-refresh-v8/);
- assert.match(html,/app\.js\?v=20261022-coat-blouse-v12/);
+ assert.match(html,/app\.js\?v=20261023-visual-blouses-v13/);
 });
