@@ -1,0 +1,905 @@
+{
+  "catalog_items": 10936,
+  "previously_scanned_images": 10885,
+  "matched_images": 10885,
+  "without_corresponding_scanned_image": 51,
+  "new_safe_corrections": 7,
+  "corrections_by_rule": {
+    "modelo+titulo:camiseta_curta": 7
+  },
+  "corrected_items": [
+    {
+      "id": "YUP-252737540",
+      "before": "long",
+      "after": "fan",
+      "old_price": 189.9,
+      "new_price": 159.9
+    },
+    {
+      "id": "YUP-246402907",
+      "before": "long",
+      "after": "fan",
+      "old_price": 189.9,
+      "new_price": 159.9
+    },
+    {
+      "id": "YUP-245376551",
+      "before": "long",
+      "after": "fan",
+      "old_price": 189.9,
+      "new_price": 159.9
+    },
+    {
+      "id": "YUP-241110109",
+      "before": "long",
+      "after": "fan",
+      "old_price": 189.9,
+      "new_price": 159.9
+    },
+    {
+      "id": "YUP-235132135",
+      "before": "long",
+      "after": "fan",
+      "old_price": 189.9,
+      "new_price": 159.9
+    },
+    {
+      "id": "YUP-224836635",
+      "before": "long",
+      "after": "fan",
+      "old_price": 189.9,
+      "new_price": 159.9
+    },
+    {
+      "id": "YUP-220841358",
+      "before": "long",
+      "after": "fan",
+      "old_price": 189.9,
+      "new_price": 159.9
+    }
+  ],
+  "unpriced_possible_set_examples": [
+    {
+      "id": "YUP-258349477",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/258349477.webp"
+    },
+    {
+      "id": "YUP-258349340",
+      "title": null,
+      "kind": "blouse",
+      "image": "/images/yupoo/258349340.webp"
+    },
+    {
+      "id": "YUP-258349237",
+      "title": null,
+      "kind": "blouse",
+      "image": "/images/yupoo/258349237.webp"
+    },
+    {
+      "id": "YUP-258349193",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/258349193.webp"
+    },
+    {
+      "id": "YUP-258349186",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/258349186.webp"
+    },
+    {
+      "id": "YUP-258348731",
+      "title": null,
+      "kind": "jacket",
+      "image": "/images/yupoo/258348731.webp"
+    },
+    {
+      "id": "YUP-255956504",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/255956504.webp"
+    },
+    {
+      "id": "YUP-254973712",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/254973712.webp"
+    },
+    {
+      "id": "YUP-254632505",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/254632505.webp"
+    },
+    {
+      "id": "YUP-253859836",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/253859836.webp"
+    },
+    {
+      "id": "YUP-253733452",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/253733452.webp"
+    },
+    {
+      "id": "YUP-252880102",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/252880102.webp"
+    },
+    {
+      "id": "YUP-252363367",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/252363367.webp"
+    },
+    {
+      "id": "YUP-252363239",
+      "title": null,
+      "kind": "kids",
+      "image": "/images/yupoo/252363239.webp"
+    },
+    {
+      "id": "YUP-251583914",
+      "title": null,
+      "kind": "blouse",
+      "image": "/images/yupoo/251583914.webp"
+    },
+    {
+      "id": "YUP-251091264",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/251091264.webp"
+    },
+    {
+      "id": "YUP-251091174",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/251091174.webp"
+    },
+    {
+      "id": "YUP-251090715",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/251090715.webp"
+    },
+    {
+      "id": "YUP-250565503",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/250565503.webp"
+    },
+    {
+      "id": "YUP-250564965",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/250564965.webp"
+    },
+    {
+      "id": "YUP-250563129",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/250563129.webp"
+    },
+    {
+      "id": "YUP-250247313",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/250247313.webp"
+    },
+    {
+      "id": "YUP-248837969",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/248837969.webp"
+    },
+    {
+      "id": "YUP-248316930",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/248316930.webp"
+    },
+    {
+      "id": "YUP-248316902",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/248316902.webp"
+    },
+    {
+      "id": "YUP-248313172",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/248313172.webp"
+    },
+    {
+      "id": "YUP-248313094",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/248313094.webp"
+    },
+    {
+      "id": "YUP-247432386",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/247432386.webp"
+    },
+    {
+      "id": "YUP-247432190",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/247432190.webp"
+    },
+    {
+      "id": "YUP-247431963",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/247431963.webp"
+    },
+    {
+      "id": "YUP-247431505",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/247431505.webp"
+    },
+    {
+      "id": "YUP-247431309",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/247431309.webp"
+    },
+    {
+      "id": "YUP-247431130",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/247431130.webp"
+    },
+    {
+      "id": "YUP-247430596",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/247430596.webp"
+    },
+    {
+      "id": "YUP-247297443",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/247297443.webp"
+    },
+    {
+      "id": "YUP-247297404",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/247297404.webp"
+    },
+    {
+      "id": "YUP-247297264",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/247297264.webp"
+    },
+    {
+      "id": "YUP-247211360",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/247211360.webp"
+    },
+    {
+      "id": "YUP-245585720",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/245585720.webp"
+    },
+    {
+      "id": "YUP-245416466",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/245416466.webp"
+    },
+    {
+      "id": "YUP-245416262",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/245416262.webp"
+    },
+    {
+      "id": "YUP-245415638",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/245415638.webp"
+    },
+    {
+      "id": "YUP-245082765",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/245082765.webp"
+    },
+    {
+      "id": "YUP-244723171",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/244723171.webp"
+    },
+    {
+      "id": "YUP-243255531",
+      "title": null,
+      "kind": "jacket",
+      "image": "/images/yupoo/243255531.webp"
+    },
+    {
+      "id": "YUP-243255321",
+      "title": null,
+      "kind": "jacket",
+      "image": "/images/yupoo/243255321.webp"
+    },
+    {
+      "id": "YUP-242782683",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/242782683.webp"
+    },
+    {
+      "id": "YUP-242481459",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/242481459.webp"
+    },
+    {
+      "id": "YUP-241141199",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/241141199.webp"
+    },
+    {
+      "id": "YUP-241141159",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/241141159.webp"
+    },
+    {
+      "id": "YUP-241141033",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/241141033.webp"
+    },
+    {
+      "id": "YUP-240436847",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/240436847.webp"
+    },
+    {
+      "id": "YUP-240305372",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/240305372.webp"
+    },
+    {
+      "id": "YUP-240196751",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/240196751.webp"
+    },
+    {
+      "id": "YUP-240196654",
+      "title": null,
+      "kind": "retro",
+      "image": "/images/yupoo/240196654.webp"
+    },
+    {
+      "id": "YUP-240196494",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/240196494.webp"
+    },
+    {
+      "id": "YUP-240195432",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/240195432.webp"
+    },
+    {
+      "id": "YUP-240195357",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/240195357.webp"
+    },
+    {
+      "id": "YUP-240195172",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/240195172.webp"
+    },
+    {
+      "id": "YUP-240194701",
+      "title": null,
+      "kind": "retro",
+      "image": "/images/yupoo/240194701.webp"
+    },
+    {
+      "id": "YUP-240185352",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/240185352.webp"
+    },
+    {
+      "id": "YUP-239837322",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239837322.webp"
+    },
+    {
+      "id": "YUP-239829140",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239829140.webp"
+    },
+    {
+      "id": "YUP-239499485",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239499485.webp"
+    },
+    {
+      "id": "YUP-239267214",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239267214.webp"
+    },
+    {
+      "id": "YUP-239267095",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239267095.webp"
+    },
+    {
+      "id": "YUP-239266985",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239266985.webp"
+    },
+    {
+      "id": "YUP-239103987",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239103987.webp"
+    },
+    {
+      "id": "YUP-239103935",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239103935.webp"
+    },
+    {
+      "id": "YUP-239103870",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239103870.webp"
+    },
+    {
+      "id": "YUP-239102941",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239102941.webp"
+    },
+    {
+      "id": "YUP-239102843",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239102843.webp"
+    },
+    {
+      "id": "YUP-239102713",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/239102713.webp"
+    },
+    {
+      "id": "YUP-238944791",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/238944791.webp"
+    },
+    {
+      "id": "YUP-238930839",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/238930839.webp"
+    },
+    {
+      "id": "YUP-238901657",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/238901657.webp"
+    },
+    {
+      "id": "YUP-238779120",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/238779120.webp"
+    },
+    {
+      "id": "YUP-238477996",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/238477996.webp"
+    },
+    {
+      "id": "YUP-237926282",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/237926282.webp"
+    },
+    {
+      "id": "YUP-237568795",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/237568795.webp"
+    },
+    {
+      "id": "YUP-237190576",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/237190576.webp"
+    },
+    {
+      "id": "YUP-237189578",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/237189578.webp"
+    },
+    {
+      "id": "YUP-237036825",
+      "title": null,
+      "kind": "blouse",
+      "image": "/images/yupoo/237036825.webp"
+    },
+    {
+      "id": "YUP-236716640",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/236716640.webp"
+    },
+    {
+      "id": "YUP-234866888",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/234866888.webp"
+    },
+    {
+      "id": "YUP-234865400",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/234865400.webp"
+    },
+    {
+      "id": "YUP-234865063",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/234865063.webp"
+    },
+    {
+      "id": "YUP-234014856",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/234014856.webp"
+    },
+    {
+      "id": "YUP-234014718",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/234014718.webp"
+    },
+    {
+      "id": "YUP-234014567",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/234014567.webp"
+    },
+    {
+      "id": "YUP-234014394",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/234014394.webp"
+    },
+    {
+      "id": "YUP-234011556",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/234011556.webp"
+    },
+    {
+      "id": "YUP-233441407",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/233441407.webp"
+    },
+    {
+      "id": "YUP-233438188",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/233438188.webp"
+    },
+    {
+      "id": "YUP-233437569",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/233437569.webp"
+    },
+    {
+      "id": "YUP-232937023",
+      "title": null,
+      "kind": "kids",
+      "image": "/images/yupoo/232937023.webp"
+    },
+    {
+      "id": "YUP-232936446",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/232936446.webp"
+    },
+    {
+      "id": "YUP-232933815",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/232933815.webp"
+    },
+    {
+      "id": "YUP-232933179",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/232933179.webp"
+    },
+    {
+      "id": "YUP-232203580",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/232203580.webp"
+    },
+    {
+      "id": "YUP-232021953",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/232021953.webp"
+    },
+    {
+      "id": "YUP-231251950",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/231251950.webp"
+    },
+    {
+      "id": "YUP-230408904",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/230408904.webp"
+    },
+    {
+      "id": "YUP-229796126",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/229796126.webp"
+    },
+    {
+      "id": "YUP-228987061",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/228987061.webp"
+    },
+    {
+      "id": "YUP-228986615",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/228986615.webp"
+    },
+    {
+      "id": "YUP-228793941",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/228793941.webp"
+    },
+    {
+      "id": "YUP-228793882",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/228793882.webp"
+    },
+    {
+      "id": "YUP-228792183",
+      "title": null,
+      "kind": "blouse",
+      "image": "/images/yupoo/228792183.webp"
+    },
+    {
+      "id": "YUP-228787459",
+      "title": null,
+      "kind": "kids",
+      "image": "/images/yupoo/228787459.webp"
+    },
+    {
+      "id": "YUP-228587699",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/228587699.webp"
+    },
+    {
+      "id": "YUP-228573736",
+      "title": null,
+      "kind": "blouse",
+      "image": "/images/yupoo/228573736.webp"
+    },
+    {
+      "id": "YUP-227581472",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/227581472.webp"
+    },
+    {
+      "id": "YUP-227581158",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/227581158.webp"
+    },
+    {
+      "id": "YUP-227578497",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/227578497.webp"
+    },
+    {
+      "id": "YUP-227304432",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/227304432.webp"
+    },
+    {
+      "id": "YUP-227248972",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/227248972.webp"
+    },
+    {
+      "id": "YUP-226373708",
+      "title": null,
+      "kind": "kids",
+      "image": "/images/yupoo/226373708.webp"
+    },
+    {
+      "id": "YUP-226373566",
+      "title": null,
+      "kind": "kids",
+      "image": "/images/yupoo/226373566.webp"
+    },
+    {
+      "id": "YUP-226215552",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/226215552.webp"
+    },
+    {
+      "id": "YUP-225245004",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/225245004.webp"
+    },
+    {
+      "id": "YUP-225244957",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/225244957.webp"
+    },
+    {
+      "id": "YUP-225244930",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/225244930.webp"
+    },
+    {
+      "id": "YUP-225244753",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/225244753.webp"
+    },
+    {
+      "id": "YUP-225244729",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/225244729.webp"
+    },
+    {
+      "id": "YUP-225244634",
+      "title": null,
+      "kind": "long",
+      "image": "/images/yupoo/225244634.webp"
+    },
+    {
+      "id": "YUP-225244512",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/225244512.webp"
+    },
+    {
+      "id": "YUP-225244494",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/225244494.webp"
+    },
+    {
+      "id": "YUP-225244365",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/225244365.webp"
+    },
+    {
+      "id": "YUP-225244340",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/225244340.webp"
+    },
+    {
+      "id": "YUP-225244296",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/225244296.webp"
+    },
+    {
+      "id": "YUP-225244220",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/225244220.webp"
+    },
+    {
+      "id": "YUP-225244188",
+      "title": null,
+      "kind": "coat",
+      "image": "/images/yupoo/225244188.webp"
+    },
+    {
+      "id": "YUP-225191369",
+      "title": null,
+      "kind": "kids",
+      "image": "/images/yupoo/225191369.webp"
+    },
+    {
+      "id": "YUP-225191355",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/225191355.webp"
+    },
+    {
+      "id": "YUP-225191309",
+      "title": null,
+      "kind": "kids",
+      "image": "/images/yupoo/225191309.webp"
+    },
+    {
+      "id": "YUP-225135081",
+      "title": null,
+      "kind": "jacket",
+      "image": "/images/yupoo/225135081.webp"
+    },
+    {
+      "id": "YUP-225135016",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/225135016.webp"
+    },
+    {
+      "id": "YUP-225133540",
+      "title": null,
+      "kind": "fan",
+      "image": "/images/yupoo/225133540.webp"
+    },
+    {
+      "id": "YUP-225133511",
+      "title": null,
+      "kind": "kids",
+      "image": "/images/yupoo/225133511.webp"
+    }
+  ],
+  "not_repriced": "Conjuntos, coletes, roupas sem foto e modelos ambiguos",
+  "limits": "Triagem automatica de cada foto com CLIP e titulo; nao equivale a 10 mil revisoes humanas."
+}
