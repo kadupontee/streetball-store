@@ -74,11 +74,15 @@ def main():
  from transformers import CLIPModel, CLIPProcessor
  parser=argparse.ArgumentParser()
  parser.add_argument("--max-images",type=int,default=2200)
+ parser.add_argument("--all-images",action="store_true",help="Examinar cada foto local do catálogo")
  parser.add_argument("--max-seconds",type=int,default=1700)
  parser.add_argument("--model",default="openai/clip-vit-base-patch32")
  args=parser.parse_args()
  data=json.loads(CATALOG.read_text(encoding="utf8"))
  candidates,other=select(data,args.max_images)
+ if args.all_images:
+  candidates=[(p,file) for p in data if (file:=relative_photo(p)) is not None]
+  other=0
  print("TOTAL",len(data),"CANDIDATES",len(candidates),"OTHER_WITH_LOCAL_PHOTO",other,flush=True)
  print("Loading zero-shot visual model",args.model,flush=True)
  torch.set_num_threads(2)
@@ -144,6 +148,8 @@ def main():
    "method":"CLIP zero-shot classification from each actual local product image; predictions are advisory and not verified by a human",
    "model":args.model,
    "catalog_products":len(data),"candidate_images":len(candidates),
+   "all_images_requested":args.all_images,
+   "catalog_without_local_photo":len(data)-len(candidates) if args.all_images else None,
    "images_examined":len(rows),"processing_errors":failures[:30],
    "current_kinds":dict(Counter(r["original_kind"] for r in rows)),
    "visual_guesses":dict(Counter(r["visual_guess"] for r in rows)),
