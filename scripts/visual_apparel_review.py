@@ -36,6 +36,12 @@ LABELS={
  "polo":"a product photo of a polo sports shirt with short sleeves",
  "sleeveless":"a product photo of a sleeveless sports training tank top",
  "pants":"a product photo of long sports training pants or joggers",
+ "puffer_vest":"a product photo of a padded sleeveless winter gilet puffer vest with zipper, no sleeves",
+ "puffer_coat":"a product photo of a thick quilted winter coat with sleeves and padded hood",
+ "jersey_shorts_set":"a product photo showing a short-sleeve soccer jersey alongside matching shorts",
+ "sleeveless_shorts_set":"a product photo showing a sleeveless tank top training shirt alongside matching shorts",
+ "one_track_jacket":"a product photo of only one track jacket with a full front zipper and no pants",
+ "hooded_single_jacket":"a product photo of one lightweight zippered hooded sports jacket and no trousers",
 }
 GARMENT_HINT=re.compile(
  r"\b(?:sweat|sweater|sudadera|hood|pullover|fleece|half.zip|quarter.zip|"
@@ -119,15 +125,17 @@ def main():
    predicted=top[0]["class"]
    garment=(
      "blouse" if predicted.startswith("blouse_") else
-     "jacket" if predicted.startswith("jacket_") else
-     "coat" if predicted=="coat" else
+     "jacket" if predicted.startswith("jacket_") or predicted in ("one_track_jacket","hooded_single_jacket") else
+     "coat" if predicted in ("coat","puffer_coat") else
+     "vest" if predicted=="puffer_vest" else
      "long" if predicted=="jersey_long" else
      "shorts" if predicted=="shorts" else
-     "set" if predicted=="tracksuit" else
+     "pants" if predicted=="pants" else
+     "set" if predicted in ("tracksuit","jersey_shorts_set","sleeveless_shorts_set") else
      "shirt"
    )
    high=top[0]["probability"]>=0.57 and top[0]["probability"]-top[1]["probability"]>=0.18
-   disagrees=(kind in ("fan","long","retro","player_adidas","player_nike","player_puma") and garment in ("blouse","jacket","coat")) or (kind in ("jacket","coat","blouse") and garment=="shirt")
+   disagrees=(kind in ("fan","long","retro","player_adidas","player_nike","player_puma") and garment in ("blouse","jacket","coat","vest","set","shorts")) or (kind in ("jacket","coat","blouse") and garment in ("shirt","set","vest")) or (kind in ("long","retro_long") and predicted=="jersey_short")
    rows.append({
     "id":item.get("id"),"image":"/images/yupoo/"+path.name,
     "supplierTitle":str(item.get("supplierTitle") or item.get("title") or "")[:175],
