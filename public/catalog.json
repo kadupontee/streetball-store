@@ -272946,11 +272946,11 @@
   },
   {
     "id": "YUP-221773922",
-    "title": "Manchester City PUMA x KidSuper Joint Double sided Windbreaker black S-3XL",
+    "title": "Manchester City — Jaqueta Corta-Vento Azul",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221773922",
-    "category": "infantil",
-    "kind": "kids",
-    "price": 179.9,
+    "category": "treino",
+    "kind": "jacket",
+    "price": 379.9,
     "image": "/images/yupoo/221773922.webp",
     "images": [
       "/images/yupoo/221773922.webp"
@@ -272971,7 +272971,12 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/05d6dacf/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/05d6dacf/small.jpg",
+    "kindLocked": true,
+    "categoryLocked": true,
+    "priceLocked": true,
+    "visualReviewStatus": "foto_local_conferida_2026-10-22",
+    "visualReviewedImage": "/images/yupoo/221773922.webp"
   },
   {
     "id": "YUP-221773849",
@@ -308856,11 +308861,11 @@
   },
   {
     "id": "YUP-220637211",
-    "title": "516_Sao Paulo 509 2111758268",
+    "title": "São Paulo — Jaqueta Corta-Vento Vermelha",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/220637211",
-    "category": "brasileirao",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "jacket",
+    "price": 379.9,
     "image": "/images/yupoo/220637211.webp",
     "images": [
       "/images/yupoo/220637211.webp"
@@ -308881,7 +308886,12 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/4258b88c/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/4258b88c/small.jpg",
+    "kindLocked": true,
+    "categoryLocked": true,
+    "priceLocked": true,
+    "visualReviewStatus": "foto_local_conferida_2026-10-22",
+    "visualReviewedImage": "/images/yupoo/220637211.webp"
   },
   {
     "id": "YUP-220637200",

@@ -1,14 +1,14 @@
 {
   "catalog_size": 10936,
   "images_examined": 10885,
-  "selected_candidates": 765,
+  "selected_candidates": 763,
   "counts_by_reason": {
     "possivel_conjunto": 501,
     "possivel_camisa_ou_polo": 93,
     "nome_de_treino_pendente": 145,
-    "possivel_casaco_blusa": 26
+    "possivel_casaco_blusa": 24
   },
-  "already_confirmed_by_photo": 54,
+  "already_confirmed_by_photo": 56,
   "manual_review_only": 9,
   "method": "Priorizacao pelo modelo e titulo. Nenhuma alteracao automatica de produtos ou precos.",
   "candidates_by_reason": {
@@ -1903,19 +1903,6 @@
         "priority": 118.69
       },
       {
-        "id": "YUP-221773922",
-        "image": "/images/yupoo/221773922.webp",
-        "title": "Manchester City PUMA x KidSuper Joint Double sided Windbreaker black S-3XL",
-        "kind": "kids",
-        "category": "infantil",
-        "price": 179.9,
-        "vision": "jacket_full_zip",
-        "score": 0.467,
-        "margin": 0.0944,
-        "reason": "possivel_casaco_blusa",
-        "priority": 118.67
-      },
-      {
         "id": "YUP-221647875",
         "image": "/images/yupoo/221647875.webp",
         "title": "Nike Half Pull Set",
@@ -2122,19 +2109,6 @@
         "margin": 0.0119,
         "reason": "possivel_casaco_blusa",
         "priority": 104.03
-      },
-      {
-        "id": "YUP-220637211",
-        "image": "/images/yupoo/220637211.webp",
-        "title": "516_Sao Paulo 509 2111758268",
-        "kind": "fan",
-        "category": "brasileirao",
-        "price": 159.9,
-        "vision": "jacket_windbreaker",
-        "score": 0.3562,
-        "margin": 0.0361,
-        "reason": "possivel_casaco_blusa",
-        "priority": 103.91
       },
       {
         "id": "YUP-245096466",
