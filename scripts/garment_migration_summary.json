@@ -3,8 +3,8 @@
   "classifiable_with_photo": {
     "coat": 149,
     "long": 281,
-    "blouse": 101,
-    "jacket": 126,
+    "blouse": 90,
+    "jacket": 122,
     "retro_long": 78
   },
   "changed_items": 0,
@@ -815,6 +815,13 @@
       "old_price": 189.9
     },
     {
+      "id": "YUP-240416700",
+      "title": "Player 2627 Brazil Training Half-Zip Long Sleeve Set S~3XL",
+      "reason": "conjunto com jaqueta ou casaco: preco de conjunto nao confirmado",
+      "image": "/images/yupoo/240416700.webp",
+      "old_price": 189.9
+    },
+    {
       "id": "YUP-240185352",
       "title": "Fan 2627 Jordan Brazil half-sleeve training jersey royal blue with yellow S-2XL",
       "reason": "manga nao identificavel com seguranca",
@@ -855,13 +862,6 @@
       "reason": "manga nao identificavel com seguranca",
       "image": "/images/yupoo/240033506.webp",
       "old_price": 189.9
-    },
-    {
-      "id": "YUP-239878264",
-      "title": "26-27 Paris 4th Away Training Jersey White S-3XL",
-      "reason": "manga nao identificavel com seguranca",
-      "image": "/images/yupoo/239878264.webp",
-      "old_price": 189.9
     }
   ],
   "changed_examples": [],
@@ -872,8 +872,8 @@
     "price_locked": 0,
     "price_brl": 189.9
   },
-  "reverted_false_jackets": 0,
-  "jacket_products_now": 126,
+  "reverted_false_jackets": 15,
+  "jacket_products_now": 122,
   "coat_products_now": 173,
-  "blouse_products_now": 101
+  "blouse_products_now": 90
 }
