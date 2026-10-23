@@ -27,7 +27,7 @@ class GarmentPolicyTest(unittest.TestCase):
         a=apply_garment_pricing(product("Arsenal Windbreaker Jacket",kind="jacket",price=379.90))
         self.assertEqual((a["kind"],a["price"]),("jacket",379.90))
         b=apply_garment_pricing(product("Barcelona Half-Zip Training Top",kind="jacket",price=379.90))
-        self.assertEqual(b["price"],379.90)
+        self.assertEqual((b["kind"],b["price"]),("blouse",189.90))
 
     def test_conjunto_de_casaco_nao_muda(self):
         p=apply_garment_pricing(product("Chelsea Coat Set",kind="set",price=299.90))
@@ -95,13 +95,16 @@ class GarmentPolicyTest(unittest.TestCase):
         self.assertEqual(a,b)
         self.assertEqual(a["price"],379.90)
     def test_plain_hoodies_are_not_individual_jackets(self):
-        for name in ("Barcelona fleece hoodie","Huamian Embroidered Cardigan Hoodie White","Flamengo Jacket kits 815"):
+        for name in ("Barcelona fleece hoodie","Huamian Embroidered Cardigan Hoodie White"):
             item=product(name)
-            self.assertIsNone(garment_decision(item)[0],name)
-            self.assertEqual(apply_garment_pricing(item)["price"],159.90)
-    def test_zip_front_jacket_is_individual_jacket(self):
-        item=product("Manchester United Half-Zip Training Top")
-        self.assertEqual(garment_decision(item)[0],"jacket")
+            self.assertEqual(garment_decision(item)[0],"blouse",name)
+            self.assertEqual(apply_garment_pricing(item)["price"],189.90)
+        self.assertIsNone(garment_decision(product("Flamengo Jacket kits 815"))[0])
+    def test_halfzip_blusa_e_zip_frontal_jaqueta(self):
+        top=product("Manchester United Half-Zip Training Top")
+        self.assertEqual(garment_decision(top)[0],"blouse")
+        jacket=product("Manchester United Full-Zip Training Jacket")
+        self.assertEqual(garment_decision(jacket)[0],"jacket")
     def test_old_retro_jacket_cost_overrides_jersey(self):
         item=product("1998 Arsenal Retro Windbreaker Jacket",kind="retro",price=199.90)
         self.assertEqual(apply_garment_pricing(item)["price"],379.90)
