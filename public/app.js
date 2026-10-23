@@ -5,6 +5,7 @@ const CATS=[['todos','Todos'],['brasileirao','Brasileirão'],['europa','Europa']
 const TILES=[['brasileirao','BRASILEIRÃO','Clubes nacionais','#fcfcfc','#cf292c'],['europa','EUROPA','Grandes ligas','#152f6f','#cf3b4f'],['selecoes','SELEÇÕES','Futebol mundial','#ead039','#136849'],['retro','RETRÔ','Lendas eternas','#17549d','#f8e4c6'],['player','JOGADOR','Versão de campo','#eee','#1b2b4a'],['infantil','INFANTIL','Pequenos craques','#c42c3c','#1b1d1c']];
 
 // Subcategorias da Série A 2026 (lista oficial da CBF).
+const EUROPE=window.STREETBALL_EUROPE || {leagues:[],otherClubs:[],teamFor:()=>null,leagueFor:p=>p.category==='europa'?'outros':'',isEuropeProduct:p=>p.category==='europa'};
 const BR_CLUBS=[
  ['athletico-pr','Athletico-PR',['athletico paranaense','athletico pr','athletico']],
  ['atletico-mg','Atlético-MG',['atletico mineiro','atletico mg','atletico m g']],
@@ -60,13 +61,77 @@ function selectBrazilClub(slug){
  $('productsGrid').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
+// Europa: primeiro as cinco ligas, depois os clubes de cada campeonato.
+const europeLeagueFor=p=>p.europeLeague===undefined?EUROPE.leagueFor(p):p.europeLeague;
+const europeClubFor=p=>p.europeClub===undefined?(EUROPE.teamFor(p)?.club||''):p.europeClub;
+const isEuropeProduct=p=>Boolean(europeLeagueFor(p));
+function renderEuropeNavigation(){
+ const section=$('europeLeagues');
+ if(!section)return;
+ section.hidden=state.category!=='europa'||state.favoritesOnly;
+ if(section.hidden)return;
+ const options=[...EUROPE.leagues.map(([id,label])=>[id,label]),['outros','Demais clubes europeus']];
+ const visible=catalog.filter(p=>hasVerifiedPhoto(p)&&isEuropeProduct(p));
+ const leagueCounts=Object.fromEntries(options.map(([id])=>[id,0]));
+ for(const p of visible)if(Object.hasOwn(leagueCounts,europeLeagueFor(p)))leagueCounts[europeLeagueFor(p)]++;
+ $('europeLeagueGrid').innerHTML=options.map(([id,label])=>
+   '<button type="button" class="br-club europe-league '+(state.europeLeague===id?'active':'')+
+   '" data-euro-league="'+esc(id)+'" aria-pressed="'+(state.europeLeague===id)+'" aria-label="'+esc(label)+', '+leagueCounts[id]+' modelos">'+
+   '<span class="br-club-name">'+esc(label)+'</span><span class="br-club-count">'+leagueCounts[id]+' '+(leagueCounts[id]===1?'modelo':'modelos')+'</span></button>'
+ ).join('');
+ const clubSection=$('europeClubSection');
+ clubSection.hidden=state.europeLeague==='todos';
+ if(clubSection.hidden)return;
+ const league=EUROPE.leagues.find(([id])=>id===state.europeLeague);
+ const teams=league?league[3]:EUROPE.otherClubs;
+ const names=new Map(teams.map(([id,label])=>[id,label]));
+ const counts=Object.fromEntries(teams.map(([id])=>[id,0]));
+ let other=0,total=0;
+ for(const p of visible){
+   if(europeLeagueFor(p)!==state.europeLeague)continue;
+   total++;
+   const club=europeClubFor(p);
+   if(club&&Object.hasOwn(counts,club))counts[club]++;
+   else other++;
+ }
+ const leagueName=league?league[1]:'Demais clubes europeus';
+ $('europeClubHeading').textContent='Clubes · '+leagueName;
+ const opts=[['todos','Todos os clubes',total],...teams.map(([id,label])=>[id,label,counts[id]]),['outros','Outras equipes',other]];
+ $('europeClubGrid').innerHTML=opts.map(([id,label,n])=>
+   '<button type="button" class="br-club '+(state.europeClub===id?'active':'')+
+   '" data-euro-club="'+esc(id)+'" aria-pressed="'+(state.europeClub===id)+'" aria-label="'+esc(label)+', '+n+' modelos">'+
+   '<span class="br-club-name">'+esc(label)+'</span><span class="br-club-count">'+n+' '+(n===1?'modelo':'modelos')+'</span></button>'
+ ).join('');
+}
+function selectEuropeLeague(id){
+ if(id!=='outros'&&!EUROPE.leagues.some(([league])=>league===id))return;
+ state.category='europa';state.europeLeague=id;state.europeClub='todos';
+ state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;state.query='';$('globalSearch').value='';
+ catalogRender();
+ $('europeClubSection').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function selectEuropeClub(id){
+ const league=EUROPE.leagues.find(([slug])=>slug===state.europeLeague);
+ const teams=league?league[3]:EUROPE.otherClubs;
+ if(!['todos','outros'].includes(id)&&!teams.some(([slug])=>slug===id))return;
+ state.category='europa';state.europeClub=id;state.limit=PRODUCT_LIMIT;
+ state.favoritesOnly=false;state.query='';$('globalSearch').value='';
+ catalogRender();
+ $('productsGrid').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function resetEuropeLeague(){
+ state.europeLeague='todos';state.europeClub='todos';state.limit=PRODUCT_LIMIT;
+ catalogRender();
+ $('europeLeagues').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 const ADDON={personalization:20,patch:8,size:{XXL:5,'3XL':10,'4XL':15}};
 const PRODUCT_LIMIT=36;
 const isBasketball=p=>p?.category==='nba'||p?.kind==='nba'||/\b(nba|basketball)\b/i.test(String(p?.title||''));
 let catalog=(Array.isArray(window.STREETBALL_CATALOG)?window.STREETBALL_CATALOG:[]).filter(p=>!isBasketball(p));
 const ls=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const persist=(key,val)=>{try{localStorage.setItem(key,JSON.stringify(val))}catch{}};
-let state={checkoutRequestKey:null,checkoutPayload:null,checkoutReady:false,checkoutSandbox:false,checkoutShipping:null,category:'todos',club:'todos',query:'',sort:'featured',limit:PRODUCT_LIMIT,favoritesOnly:false,favorites:ls('streetball_favorites',[]),cart:ls('streetball_cart',[]),detail:null,choice:null,drawer:false,checkout:false};
+let state={checkoutRequestKey:null,checkoutPayload:null,checkoutReady:false,checkoutSandbox:false,checkoutShipping:null,category:'todos',club:'todos',europeLeague:'todos',europeClub:'todos',query:'',sort:'featured',limit:PRODUCT_LIMIT,favoritesOnly:false,favorites:ls('streetball_favorites',[]),cart:ls('streetball_cart',[]),detail:null,choice:null,drawer:false,checkout:false};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);
 const localImageURL=u=>String(u||'').startsWith('/images/')?new URL(String(u).slice(1),document.baseURI).href:String(u||'');
@@ -98,11 +163,15 @@ document.addEventListener('error', e=>{
  const holder=img.closest('.product-asset');
  if(holder){holder.classList.add('missing-photo');holder.innerHTML='<span class="product-no-photo">FOTO TEMPORARIAMENTE INDISPONÍVEL</span>';}
 },true);
-const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):p.category===c)||(c==='infantil'&&p.kind==='kids')||(c==='feminino'&&p.kind==='female')||(c==='player'&&(String(p.kind).startsWith('player_')||p.kind==='shorts_player'))||(c==='personalizadas'&&!['acessorios','treino'].includes(p.category)&&!['socks','shorts','shorts_player'].includes(p.kind));
+const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):c==='europa'?isEuropeProduct(p):p.category===c)||(c==='infantil'&&p.kind==='kids')||(c==='feminino'&&p.kind==='female')||(c==='player'&&(String(p.kind).startsWith('player_')||p.kind==='shorts_player'))||(c==='personalizadas'&&!['acessorios','treino'].includes(p.category)&&!['socks','shorts','shorts_player'].includes(p.kind));
 function filtered(){
  let ps=catalog.filter(p=>hasVerifiedPhoto(p)&&matchCategory(p,state.category));
  if(state.category==='brasileirao'&&state.club!=='todos'){
    ps=ps.filter(p=>state.club==='outros'?!clubFor(p):clubFor(p)===state.club);
+ }
+ if(state.category==='europa'){
+   if(state.europeLeague!=='todos')ps=ps.filter(p=>europeLeagueFor(p)===state.europeLeague);
+   if(state.europeClub!=='todos')ps=ps.filter(p=>state.europeClub==='outros'?!europeClubFor(p):europeClubFor(p)===state.europeClub);
  }
  if(state.query)ps=ps.filter(p=>[p.title,p.category,p.kind].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(state.query.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()));
  if(state.favoritesOnly)ps=ps.filter(p=>state.favorites.includes(p.id));
@@ -199,7 +268,7 @@ function playerShortsReprice(p){
  if(!item.priceLocked&&Math.abs(Number(item.price)-119.90)<0.005)item.price=143.90;
  return item;
 }
-function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>{const clean=playerShortsReprice(retroProduct({...p,supplierTitle:p.supplierTitle||p.title}));clean.title=displayTitle(clean);if(!String(clean.id).startsWith('YUP-')&&clean.category==='retro'&&!/retr[oô]/i.test(clean.title))clean.title+=' · Retrô';clean.brazilClub=findBrazilClub(clean);return clean;});}
+function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>{const clean=playerShortsReprice(retroProduct({...p,supplierTitle:p.supplierTitle||p.title}));clean.title=displayTitle(clean);if(!String(clean.id).startsWith('YUP-')&&clean.category==='retro'&&!/retr[oô]/i.test(clean.title))clean.title+=' · Retrô';clean.brazilClub=findBrazilClub(clean);const euro=EUROPE.teamFor(clean);clean.europeClub=euro?.club||'';clean.europeLeague=EUROPE.leagueFor(clean);return clean;});}
 
 function catalogRender(){
  const ps=filtered();const visible=ps.slice(0,state.limit);$('catalogSubtitle').textContent=state.favoritesOnly?'Modelos que você salvou.':state.query?`Resultados da busca por “${state.query}”.`:'Modelos com fotografias cadastradas no catálogo do fornecedor.';
@@ -207,10 +276,20 @@ function catalogRender(){
  const club=BR_CLUBS.find(([id])=>id===state.club);
  $('catalogSubtitle').textContent=state.club==='todos'?'Escolha seu clube e explore as camisas dos times brasileiros.':state.club==='outros'?'Modelos dos demais clubes brasileiros.':club?'Camisas, versões de jogador, retrôs e modelos infantis do '+club[1]+'.':'Escolha seu clube.';
  }
- $('productsGrid').innerHTML=visible.map(p=>`<article class="product-card" data-id="${esc(p.id)}"><div class="product-image"><span class="label-chip ${p.badge==='NOVO'||p.badge==='COPA 2026'?'highlight':''}">${esc(p.badge||'STREETBALL')}</span><button class="fav-btn ${state.favorites.includes(p.id)?'active':''}" data-fav="${esc(p.id)}" aria-label="Adicionar aos favoritos"><svg viewBox="0 0 24 24"><path d="M20 4c-2.3-2-5.3-1.2-8 1.6C9.3 2.8 6.4 2 4 4c-3.1 3-2.2 7.2 0 9.4L12 21l8-7.6c2.2-2.2 3.1-6.4 0-9.4Z"/></svg></button>${imageHTML(p)}<button class="quick-btn" data-open="${esc(p.id)}" aria-label="Escolher opções de ${esc(p.title)}"><span>ESCOLHER OPÇÕES</span><svg class="quick-btn-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M8 5h11v11"/></svg></button></div><div class="product-meta"><div class="product-label">${esc(categoryLabel(p))}</div><h3 class="product-title">${esc(p.title)}</h3><div class="product-price"><small>A partir de</small>${money(p.price)}</div><div class="product-price-note">Tamanhos e personalização disponíveis</div></div></article>`).join('')||'<div class="empty-cart">'+esc(state.category==='brasileirao'&&state.club!=='todos'&&state.club!=='outros'?'Ainda não temos modelos com foto cadastrada para '+(BR_CLUBS.find(([id])=>id===state.club)?.[1]||'este clube')+'.':'Nenhum modelo encontrado. Experimente outra pesquisa ou categoria.')+'</div>';
+ if(state.category==='europa'&&!state.query){
+   const league=EUROPE.leagues.find(([id])=>id===state.europeLeague);
+   const team=state.europeClub==='todos'?null:(league?.[3]||EUROPE.otherClubs).find(([id])=>id===state.europeClub);
+   $('catalogSubtitle').textContent=state.europeLeague==='todos'?
+     'Escolha uma das cinco principais ligas europeias e depois o seu clube.':
+     team?'Camisas e modelos disponíveis de '+team[1]+'.':
+     state.europeClub==='outros'?'Outros modelos disponíveis dessa liga.':
+     'Escolha um clube de '+(league?.[1]||'outras ligas europeias')+'.';
+ }
+ $('productsGrid').innerHTML=visible.map(p=>`<article class="product-card" data-id="${esc(p.id)}"><div class="product-image"><span class="label-chip ${p.badge==='NOVO'||p.badge==='COPA 2026'?'highlight':''}">${esc(p.badge||'STREETBALL')}</span><button class="fav-btn ${state.favorites.includes(p.id)?'active':''}" data-fav="${esc(p.id)}" aria-label="Adicionar aos favoritos"><svg viewBox="0 0 24 24"><path d="M20 4c-2.3-2-5.3-1.2-8 1.6C9.3 2.8 6.4 2 4 4c-3.1 3-2.2 7.2 0 9.4L12 21l8-7.6c2.2-2.2 3.1-6.4 0-9.4Z"/></svg></button>${imageHTML(p)}<button class="quick-btn" data-open="${esc(p.id)}" aria-label="Escolher opções de ${esc(p.title)}"><span>ESCOLHER OPÇÕES</span><svg class="quick-btn-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M8 5h11v11"/></svg></button></div><div class="product-meta"><div class="product-label">${esc(categoryLabel(p))}</div><h3 class="product-title">${esc(p.title)}</h3><div class="product-price"><small>A partir de</small>${money(p.price)}</div><div class="product-price-note">Tamanhos e personalização disponíveis</div></div></article>`).join('')||'<div class="empty-cart">'+esc(state.category==='brasileirao'&&state.club!=='todos'&&state.club!=='outros'?'Ainda não temos modelos com foto cadastrada para '+(BR_CLUBS.find(([id])=>id===state.club)?.[1]||'este clube')+'.':state.category==='europa'&&state.europeClub!=='todos'?'Nenhum modelo com foto disponível para esta equipe. Selecione outro clube.':'Nenhum modelo encontrado. Experimente outra pesquisa ou categoria.')+'</div>';
  $('catalogTotal').textContent=`Exibindo ${visible.length} de ${ps.length} modelos · ${catalog.filter(hasVerifiedPhoto).length} produtos com foto cadastrada`;
  $('loadMore').classList.toggle('hide',visible.length>=ps.length);
  renderBrazilClubNavigation();
+ renderEuropeNavigation();
  $('activeFilters').innerHTML=CATS.map(([id,label])=>`<button class="filter-tag ${id===state.category?'active':''}" data-category="${id}">${label}</button>`).join('');
  document.querySelectorAll('[data-category]').forEach(b=>b.classList.toggle('active',b.dataset.category===state.category));
 }
@@ -315,7 +394,7 @@ document.addEventListener('error',event=>{
  const frame=img.closest('.editorial-frame');
  if(frame){frame.classList.add('image-unavailable');frame.setAttribute('aria-label','Foto temporariamente indisponível');}
 },true);
-function selectCategory(cat){state.category=cat;state.club='todos';state.query='';$('globalSearch').value='';state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
+function selectCategory(cat){state.category=cat;state.club='todos';state.europeLeague='todos';state.europeClub='todos';state.query='';$('globalSearch').value='';state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
 function openUI(kind){state.drawer=kind==='cart';state.checkout=kind==='checkout';$('cartDrawer').classList.toggle('open',state.drawer);$('checkoutModal').classList.toggle('open',state.checkout);$('productModal').classList.toggle('open',kind==='product');$('overlay').classList.toggle('visible',!!kind);document.body.classList.toggle('lock',!!kind);$('cartDrawer').setAttribute('aria-hidden',String(!state.drawer));}
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),3100);}
 function findProduct(id){return catalog.find(p=>p.id===id)}
@@ -372,7 +451,7 @@ refreshHomepageSessionLinks();
 window.addEventListener('pageshow',event=>{if(event.persisted)refreshHomepageSessionLinks()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshHomepageSessionLinks()});
 // Delegate events from cards, tabs and cart controls.
-document.addEventListener('click',e=>{const brClub=e.target.closest('[data-br-club]');if(brClub){selectBrazilClub(brClub.dataset.brClub);return}const cat=e.target.closest('[data-category]');if(cat){selectCategory(cat.dataset.category);return}const foot=e.target.closest('[data-footer-category]');if(foot){selectCategory(foot.dataset.footerCategory);return}const fav=e.target.closest('[data-fav]');if(fav){toggleFav(fav.dataset.fav);return}const photo=e.target.closest('[data-photo-index]');if(photo&&state.detail){const p=findProduct(state.detail),i=Number(photo.dataset.photoIndex),u=photoSources(p||{})[i];if(trustedPhoto(u)){const main=$('detailMainPhoto');main.innerHTML=imageHTML({...p,image:u});document.querySelectorAll('.detail-photo-btn').forEach(b=>b.classList.toggle('active',b===photo));}return}const product=e.target.closest('[data-open]')||e.target.closest('.product-card');if(product){detailOpen(product.dataset.open||product.dataset.id);return}const size=e.target.closest('[data-size]');if(size&&state.choice){state.choice.size=size.dataset.size;document.querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===state.choice.size));updateDetailPrice();return}const remove=e.target.closest('[data-remove]');if(remove){state.checkoutRequestKey=null;state.cart.splice(+remove.dataset.remove,1);cartRender();return}const qty=e.target.closest('[data-qty]');if(qty){state.checkoutRequestKey=null;const it=state.cart[+qty.dataset.qty];if(!it)return;it.qty+=+qty.dataset.dir;if(it.qty<=0)state.cart.splice(+qty.dataset.qty,1);cartRender();return}});
+document.addEventListener('click',e=>{const brClub=e.target.closest('[data-br-club]');if(brClub){selectBrazilClub(brClub.dataset.brClub);return}const euroLeague=e.target.closest('[data-euro-league]');if(euroLeague){selectEuropeLeague(euroLeague.dataset.euroLeague);return}const euroClub=e.target.closest('[data-euro-club]');if(euroClub){selectEuropeClub(euroClub.dataset.euroClub);return}if(e.target.closest('[data-euro-back]')){resetEuropeLeague();return}const cat=e.target.closest('[data-category]');if(cat){selectCategory(cat.dataset.category);return}const foot=e.target.closest('[data-footer-category]');if(foot){selectCategory(foot.dataset.footerCategory);return}const fav=e.target.closest('[data-fav]');if(fav){toggleFav(fav.dataset.fav);return}const photo=e.target.closest('[data-photo-index]');if(photo&&state.detail){const p=findProduct(state.detail),i=Number(photo.dataset.photoIndex),u=photoSources(p||{})[i];if(trustedPhoto(u)){const main=$('detailMainPhoto');main.innerHTML=imageHTML({...p,image:u});document.querySelectorAll('.detail-photo-btn').forEach(b=>b.classList.toggle('active',b===photo));}return}const product=e.target.closest('[data-open]')||e.target.closest('.product-card');if(product){detailOpen(product.dataset.open||product.dataset.id);return}const size=e.target.closest('[data-size]');if(size&&state.choice){state.choice.size=size.dataset.size;document.querySelectorAll('.size-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===state.choice.size));updateDetailPrice();return}const remove=e.target.closest('[data-remove]');if(remove){state.checkoutRequestKey=null;state.cart.splice(+remove.dataset.remove,1);cartRender();return}const qty=e.target.closest('[data-qty]');if(qty){state.checkoutRequestKey=null;const it=state.cart[+qty.dataset.qty];if(!it)return;it.qty+=+qty.dataset.dir;if(it.qty<=0)state.cart.splice(+qty.dataset.qty,1);cartRender();return}});
 $('globalSearch').addEventListener('input',e=>{state.query=e.target.value.trim();state.limit=PRODUCT_LIMIT;catalogRender();if(state.query)$('colecao').scrollIntoView({behavior:'smooth',block:'start'})});
 $('sortSelect').addEventListener('change',e=>{state.sort=e.target.value;catalogRender()});
 $('loadMore').addEventListener('click',()=>{state.limit+=PRODUCT_LIMIT;catalogRender()});
