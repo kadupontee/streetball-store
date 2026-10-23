@@ -26,7 +26,7 @@ COAT = re.compile(r"\b(?:coats?|casacos?)\b",re.I)
 # Blusas de treino e moletons são peças diferentes das camisas (jerseys).
 BLOUSE = re.compile(
     r"\b(?:sweatshirts?|sweaters?|pullovers?|hoodies?|hooded\s*sweatshirts?|"
-    r"cardigans?|sudaderas?|blusas?|moletom|moletons|"
+    r"cardigans?|sudaderas?|blusas?|blusoes?|blusao|moletom|moletons|"
     r"training\s*pullovers?|training\s*sweatshirts?|fleece\s*(?:tops?|sweatshirts?)|"
     r"half\s*[- ]?zip(?:per)?|quarter\s*[- ]?zip(?:per)?|"
     r"1/2\s*[- ]?zip|1/4\s*[- ]?zip|half\s*[- ]?pull(?:over)?)\b",re.I
@@ -100,6 +100,8 @@ def garment_decision(product, *, require_photo=False):
         return None,"peca de manga curta, regata ou colete"
     if is_blouse and not SHORT.search(title):
         return "blouse","blusa, moletom ou pullover identificado por nome"
+    if TRAINING_TOP.search(title) and LONG.search(title) and not JERSEY.search(title):
+        return "blouse","top de treino de manga longa sem indicacao de camisa"
     if TRAINING_TOP.search(title) and not LONG.search(title):
         return None,"training top sem manga confirmada: revisar foto"
     if not LONG.search(title):
