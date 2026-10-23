@@ -1,0 +1,29 @@
+name: Validar ligas e clubes europeus
+on:
+  push:
+    branches: [main]
+    paths:
+      - public/europe-clubs.js
+      - public/app.js
+      - public/index.html
+      - public/styles.css
+      - tests/europe-leagues.test.mjs
+      - .github/workflows/europe-leagues.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Conferir JavaScript
+        run: |
+          node --check public/europe-clubs.js
+          node --check public/app.js
+      - name: Testar rotas das ligas, clubes, retrôs e layout mobile
+        run: node --test tests/europe-leagues.test.mjs
