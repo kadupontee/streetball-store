@@ -13,3 +13,5 @@
   Cache-Control: public, max-age=0, must-revalidate
 /images/editorial/*
   Cache-Control: public, max-age=0, must-revalidate
+/styles.css
+  Cache-Control: public, max-age=0, must-revalidate
