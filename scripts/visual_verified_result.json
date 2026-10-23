@@ -1,6 +1,7 @@
 {
   "catalog_products": 10936,
   "photo_confirmed": 22,
+  "confirmed_present": 22,
   "changed": 0,
   "changed_ids": [],
   "review_only": {
