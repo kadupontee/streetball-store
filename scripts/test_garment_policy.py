@@ -39,6 +39,25 @@ class GarmentPolicyTest(unittest.TestCase):
         higher=product("Casaco Casual Benfica",kind="coat",price=329.90)
         self.assertEqual(apply_garment_pricing(higher)["price"],189.90)
 
+    def test_hoodie_pullover_e_sweatshirt_sao_blusas(self):
+        for name in ("Real Madrid Hoodie S-2XL","Barcelona Sweatshirt S-3XL","São Paulo Moletom preto", "Arsenal Fleece Pullover"):
+            item=product(name,kind="fan",price=159.90)
+            revised=apply_garment_pricing(item)
+            self.assertEqual((revised["kind"],revised["price"]),("blouse",189.90),name)
+
+    def test_half_zip_nao_deve_ser_jaqueta(self):
+        item=product("Betis Half-Zip Training Top S-2XL",kind="jacket",price=379.90)
+        revised=apply_garment_pricing(item)
+        self.assertEqual((revised["kind"],revised["price"]),("blouse",189.90))
+
+    def test_jaqueta_com_zip_eh_diferente_de_blusa_half_zip(self):
+        item=product("Chelsea Half-Zip Jacket",kind="jacket",price=379.90)
+        self.assertEqual(apply_garment_pricing(item)["kind"],"jacket")
+
+    def test_hoodie_em_conjunto_nao_reprecifica(self):
+        item=product("Portugal Hoodie Set",kind="set",price=299.90)
+        self.assertEqual((apply_garment_pricing(item)["kind"],apply_garment_pricing(item)["price"]),("set",299.90))
+
     def test_jacket_set_needs_review(self):
         p=apply_garment_pricing(product("Barcelona windbreaker set S-2XL",kind="set",price=299.90))
         self.assertEqual(p["kind"],"set")
