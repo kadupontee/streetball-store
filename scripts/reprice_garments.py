@@ -18,8 +18,8 @@ ORIGINAL_CATALOG_REF="272cca3590a676fc3752b8e4d3bfde033b9a752f"
 
 def undo_ambiguous_jackets(products):
     needs=[p for p in products if p.get("garmentPriceSource")=="supplier_usd_garment_policy_20261022"
-           and p.get("kind")=="jacket"
-           and garment_decision(p,require_photo=True)[0] not in ("jacket","coat")]
+           and p.get("kind") in ("jacket","blouse")
+           and garment_decision(p,require_photo=True)[0] not in ("jacket","coat","blouse")]
     if not needs:return products,0
     baseline=json.loads(subprocess.check_output([
         "git","show",ORIGINAL_CATALOG_REF+":public/catalog.json"
@@ -30,7 +30,7 @@ def undo_ambiguous_jackets(products):
     result=[]
     for p in products:
         old=originals.get(p.get("id"))
-        if p.get("id") in targets and old and not p.get("priceLocked") and abs(float(p.get("price") or 0)-379.90)<0.01:
+        if p.get("id") in targets and old and not p.get("priceLocked") and any(abs(float(p.get("price") or 0)-value)<0.01 for value in (379.90,189.90)):
             result.append(old)
             reverted+=1
         else:
