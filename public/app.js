@@ -144,7 +144,7 @@ function displayTitle(p){
  if(m)season=m[1]+'/'+m[2];else{m=t.match(/\b([0-9]{2})\s*[-_/]\s*(\d{2})\b/);if(m)season=(Number(m[1])>=80?'19':'20')+m[1]+'/'+m[2];}
  if(m&&season)t=t.replace(m[0],' ');
  const typeByKind={jacket:'Jaqueta',coat:'Casaco',blouse:'Blusa',set:'Conjunto',shorts:'Calção',shorts_player:'Calção de jogador',socks:'Meião',long:'Camisa manga longa',retro_long:'Camisa retrô manga longa'};
- let type=typeByKind[p.kind]||(p.category==='treino'?'Peça de treino':'Camisa');
+ let type=typeByKind[p.kind]||(p.category==='treino'&&p.kind==='fan'?'Camisa de treino':p.category==='treino'?'Peça de treino':'Camisa');
  const types=[[/trench\s*coat|long\s*coat|winter\s*coat/i,'Casaco longo'],[/tracksuit|track\s*suit|training\s*suit/i,'Agasalho'],[/windbreaker|wind\s*breaker/i,'Jaqueta corta-vento'],[/\bpolo\b/i,'Camisa polo'],[/\bshorts?\b/i,'Calção'],[/\bsocks?\b|stockings?/i,'Meião'],[/\bpre\s*-?\s*match\s*kit/i,'Kit pré-jogo'],[/\btraining\s*(?:shirt|jersey)\b/i,'Camisa de treino'],[/\bhalf\s*pull\b/i,'Blusa de treino'],[/\bvest\b/i,'Regata'],[/\bcultural\s*shirt\b/i,'Camisa cultural'],[/\bkit\b|\bset\b/i,'Conjunto']];
  for(const [re,v] of types)if(re.test(t)){if(!['jacket','coat','blouse','set','shorts','shorts_player','socks'].includes(p.kind))type=v;t=t.replace(new RegExp(re.source,'gi'),' ');break}
  if(['jacket','coat','blouse'].includes(p.kind))t=t.replace(/\b(?:jackets?|jaquetas?|casacos?|coats?|hoodies?|windbreakers?|softshell|cardigan|cardigans?|sweatshirts?|sweaters?|pullovers?|sudaderas?|blusas?|moletons?|half[- ]?zipp?ers?|quarter[- ]?zipp?ers?)\b/gi,' ');
