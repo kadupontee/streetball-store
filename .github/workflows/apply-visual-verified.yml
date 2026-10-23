@@ -1,0 +1,53 @@
+name: Aplicar correcoes visuais confirmadas
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/visual_verified.py
+      - scripts/test_visual_verified.py
+      - scripts/catalog_utils.py
+      - .github/workflows/apply-visual-verified.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: streetball-verified-visual-update
+  cancel-in-progress: false
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validar classificacao fotografica sem modificar arquivos
+        run: |
+          python scripts/test_visual_verified.py
+          python scripts/test_garment_policy.py
+          python scripts/test_retro_policy.py
+      - name: Aplicar somente as 22 correcoes verificadas
+        run: |
+          python scripts/visual_verified.py
+          python scripts/visual_verified.py
+          python scripts/test_visual_verified.py
+      - name: Garantir que catalogo e scripts permanecem consistentes
+        run: |
+          python scripts/reprice_garments.py --check
+          python scripts/reprice_retro_catalog.py --check
+          python scripts/test_supplier_costs.py
+          node --check public/app.js
+      - name: Gravar alteracoes do catalogo com historico no GitHub
+        run: |
+          git config user.name "streetball-visual-audit[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/catalog.json public/catalog.js scripts/visual_verified_result.json
+          if ! git diff --cached --quiet; then
+            git commit -m "catalog: aplicar 22 correcoes verificadas em fotos"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
