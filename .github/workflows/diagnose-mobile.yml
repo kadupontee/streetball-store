@@ -1,0 +1,36 @@
+name: Diagnosticar mobile publicado
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/diagnose-mobile.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Comparar arquivos públicos GitHub Pages e Cloudflare
+        shell: bash
+        run: |
+          set -uo pipefail
+          for item in             "CLOUDFLARE|https://streetball-store.kpgmer.workers.dev/"             "GITHUB_PAGES|https://kadupontee.github.io/streetball-store/"; do
+            LABEL="${item%%|*}"; URL="${item#*|}"
+            echo "--- $LABEL ---"
+            status=$(curl -L --compressed -sS --max-time 22 -o "/tmp/$LABEL.html" -w "%{http_code}" "$URL?mobile-diagnosis=20261023" || true)
+            echo "html_status=$status"
+            if [[ "$status" != "200" ]]; then continue; fi
+            if grep -q 'mobile-collection-nav' "/tmp/$LABEL.html"; then echo 'mobile_shortcut=YES'; else echo 'mobile_shortcut=NO'; fi
+            if grep -q 'europeLeagues' "/tmp/$LABEL.html"; then echo 'europe_subcategories=YES'; else echo 'europe_subcategories=NO'; fi
+            version=$(grep -o 'app.js?v=[^"]*' "/tmp/$LABEL.html" | tail -1 || true)
+            echo "app_version=${version:-MISSING}"
+            for path in app.js styles.css editorial.css; do
+              status=$(curl -L --compressed -sS --max-time 24 -o "/tmp/$LABEL-$path" -w "%{http_code}" "${URL}${path}?diagnose=20261023" || true)
+              echo "$path status=$status"
+            done
+            if grep -q 'function renderEuropeNavigation' "/tmp/$LABEL-app.js"; then echo 'europe_navigation_js=YES'; else echo 'europe_navigation_js=NO'; fi
+            if grep -q 'mobile-collection-nav' "/tmp/$LABEL-editorial.css"; then echo 'mobile_css=YES'; else echo 'mobile_css=NO'; fi
+            if grep -q 'europe-league-grid' "/tmp/$LABEL-styles.css"; then echo 'europe_css=YES'; else echo 'europe_css=NO'; fi
+          done
