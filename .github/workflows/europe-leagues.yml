@@ -7,6 +7,9 @@ on:
       - public/app.js
       - public/index.html
       - public/styles.css
+      - public/editorial.css
+      - public/_headers
+      - tests/mobile-europe.test.mjs
       - tests/europe-leagues.test.mjs
       - .github/workflows/europe-leagues.yml
   workflow_dispatch:
@@ -26,4 +29,4 @@ jobs:
           node --check public/europe-clubs.js
           node --check public/app.js
       - name: Testar rotas das ligas, clubes, retrôs e layout mobile
-        run: node --test tests/europe-leagues.test.mjs
+        run: node --test tests/europe-leagues.test.mjs tests/mobile-europe.test.mjs
