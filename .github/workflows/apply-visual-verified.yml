@@ -41,6 +41,7 @@ jobs:
           python scripts/reprice_retro_catalog.py --check
           python scripts/test_supplier_costs.py
           node --check public/app.js
+          node --test tests/visual-title-lock.test.mjs
       - name: Priorizar outras peças com possível categoria incorreta
         run: python scripts/review_remaining_visual.py
       - name: Gravar alteracoes do catalogo com historico no GitHub
