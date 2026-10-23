@@ -31,7 +31,7 @@ jobs:
           python scripts/test_visual_verified.py
           python scripts/test_garment_policy.py
           python scripts/test_retro_policy.py
-      - name: Aplicar 44 correcoes verificadas por fotografia
+      - name: Aplicar 54 correcoes verificadas por fotografia
         run: |
           python scripts/visual_verified.py
           python scripts/test_visual_verified.py
