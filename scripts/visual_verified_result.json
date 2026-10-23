@@ -2,19 +2,8 @@
   "catalog_products": 10936,
   "photo_confirmed": 54,
   "confirmed_present": 54,
-  "changed": 10,
-  "changed_ids": [
-    "YUP-258349011",
-    "YUP-250242076",
-    "YUP-245820955",
-    "YUP-244882480",
-    "YUP-244834881",
-    "YUP-238767432",
-    "YUP-233362819",
-    "YUP-223321809",
-    "YUP-213864520",
-    "YUP-213863996"
-  ],
+  "changed": 0,
+  "changed_ids": [],
   "review_only": {
     "258349411": "Colete acolchoado São Paulo: custo/preço de colete não informado",
     "247829255": "Polo Manchester United manga curta: custo de polo não informado",
