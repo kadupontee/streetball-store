@@ -34,6 +34,21 @@ html{overflow-x:clip}
 @media(max-width:730px){.brasileirao-club-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.brasileirao-clubs{padding:19px}.brasileirao-clubs-heading{align-items:start;flex-direction:column;gap:9px}.brasileirao-clubs-heading h3{font-size:31px}.brasileirao-clubs-heading>p{max-width:100%}}
 @media(max-width:510px){.brasileirao-club-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.brasileirao-clubs{padding:13px}.br-club{min-height:68px;padding:10px}.br-club-name{font-size:11px}.br-club-count{font-size:9px}}
 
+/* Europa: mesmas peças visuais do Brasileirão, com seleção liga > clube. */
+.europe-clubs[hidden],.europe-club-section[hidden]{display:none!important}
+.europe-league-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.europe-league{min-height:84px;padding:15px}
+.europe-league .br-club-name{font-size:16px;font-family:'Barlow Condensed',Impact,sans-serif;font-weight:800;letter-spacing:.01em}
+.europe-club-section{margin-top:25px;border-top:1px solid #e2e7df;padding-top:22px}
+.europe-club-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:0 0 14px}
+.europe-club-heading .micro{font-size:10px;color:#78836f;margin:0 0 5px}
+.europe-club-heading h4{font-family:'Barlow Condensed',Impact,sans-serif;font-size:27px;color:#202624;margin:0;font-weight:800}
+.europe-back{cursor:pointer;min-height:40px;padding:9px 12px;border:1px solid #cbd6c5;background:#f6f8f4;color:#29352c;font-size:11px;font-weight:800;letter-spacing:.04em}
+.europe-back:hover{background:#e8f0e1}
+.europe-back:focus-visible{outline:2px solid #5c803d;outline-offset:2px}
+@media(max-width:730px){.europe-league-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.europe-league{min-height:76px}.europe-club-heading{align-items:start;flex-direction:column;gap:10px}}
+@media(max-width:510px){.europe-league-grid{gap:7px}.europe-league{padding:11px;min-height:73px}.europe-league .br-club-name{font-size:15px}.europe-club-heading h4{font-size:24px}.europe-club-section{margin-top:20px;padding-top:17px}}
+
 /* Checkout via provedor externo: seleção de meio e total transparente */
 .checkout-method-label{display:flex;flex-direction:column;gap:8px;margin:19px 0 14px;font-size:12px;font-weight:800;color:#343f37}
 .checkout-method-label select{width:100%;background:#fff;border:1px solid #cfd7ce;border-radius:3px;min-height:47px;padding:11px;font-size:13px;color:#172018}
