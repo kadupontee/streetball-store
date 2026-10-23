@@ -15,7 +15,7 @@ catalog=json.loads((ROOT/"public/catalog.json").read_text(encoding="utf-8"))
 visual=json.loads((ROOT/"scripts/garment_visual_review.json").read_text(encoding="utf-8"))
 by_id={p.get("id"):p for p in catalog}
 already=set(PHOTO_CONFIRMED)|set(REVIEW_ONLY)
-outer=set(("jacket_full_zip","jacket_windbreaker","coat","blouse_half_zip","blouse_sweatshirt","blouse_hoodie"))
+outer=set(("jacket_full_zip","jacket_windbreaker","one_track_jacket","hooded_single_jacket","coat","puffer_coat","puffer_vest","blouse_half_zip","blouse_sweatshirt","blouse_hoodie"))
 garment_hints=re.compile(r"jacket|hoodie|sweat|fleece|windbreaker|pullover|half.?zip|quarter.?zip|coat|casaco|blusa|moletom|track.?suit|long.?pull|treino|training|kit|suit|套装|外套|卫衣|棉衣|棉服|夹克",re.I)
 result=[]
 reason_counts=Counter()
@@ -36,7 +36,7 @@ for r in visual:
     if guess in outer and kind not in ("jacket","coat","blouse") and prob>=.20:
         reason="possivel_casaco_blusa"
         priority=95 + prob*25 + (12 if hits else 0)
-    elif guess=="tracksuit" and kind!="set" and prob>=.36:
+    elif guess in ("tracksuit","jersey_shorts_set","sleeveless_shorts_set") and kind!="set" and prob>=.36:
         reason="possivel_conjunto"
         priority=77 + prob*25 + (15 if hits else 0)
     elif kind in ("jacket","coat","blouse") and guess in ("jersey_short","jersey_long","polo") and prob>=.36:
