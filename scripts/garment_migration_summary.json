@@ -1,5 +1,208 @@
 {
   "total_products": 10936,
+  "training_garments_pending_image_confirmation": 730,
+  "training_garments_pending_examples": [
+    {
+      "id": "SB-0044",
+      "title": "Camiseta de treino Brasil 2026",
+      "image": null
+    },
+    {
+      "id": "SB-0045",
+      "title": "Conjunto de treino Brasil 2026",
+      "image": null
+    },
+    {
+      "id": "YUP-258349976",
+      "title": "Barcelona POLO S-2XL",
+      "image": "/images/yupoo/258349976.jpg"
+    },
+    {
+      "id": "YUP-258349966",
+      "title": "player 26_27 Real Madrid pre-match kit S-2XL",
+      "image": "/images/yupoo/258349966.jpg"
+    },
+    {
+      "id": "YUP-258349777",
+      "title": "26-27 Argentina training kit S-2XL",
+      "image": "/images/yupoo/258349777.webp"
+    },
+    {
+      "id": "YUP-258349621",
+      "title": "Paris POLO",
+      "image": "/images/yupoo/258349621.webp"
+    },
+    {
+      "id": "YUP-258349378",
+      "title": "Tang suit S-2XL",
+      "image": "/images/yupoo/258349378.webp"
+    },
+    {
+      "id": "YUP-258349273",
+      "title": "Player 2627 Bayern training shirt grey S~3XL",
+      "image": "/images/yupoo/258349273.webp"
+    },
+    {
+      "id": "YUP-258349267",
+      "title": "Player 2627 Chelsea Pre-match Shirt S-3XL",
+      "image": "/images/yupoo/258349267.webp"
+    },
+    {
+      "id": "YUP-258349253",
+      "title": "Player 2627 Chelsea Pre-match Shirt S-3XL",
+      "image": "/images/yupoo/258349253.webp"
+    },
+    {
+      "id": "YUP-258349016",
+      "title": "Barcelona POLO S-2XL",
+      "image": "/images/yupoo/258349016.webp"
+    },
+    {
+      "id": "YUP-258349011",
+      "title": "27_28 Real Madrid training S-4XL",
+      "image": "/images/yupoo/258349011.webp"
+    },
+    {
+      "id": "YUP-258315979",
+      "title": "26-27 Seville Pre-match gear S-3XL",
+      "image": "/images/yupoo/258315979.webp"
+    },
+    {
+      "id": "YUP-258315896",
+      "title": "26-27 Seville Pre-match gear S-3XL",
+      "image": "/images/yupoo/258315896.webp"
+    },
+    {
+      "id": "YUP-258315798",
+      "title": "26-27 Seville Pre-match gear S-3XL",
+      "image": "/images/yupoo/258315798.webp"
+    },
+    {
+      "id": "YUP-256141563",
+      "title": "26-27 Spain Polo shirt S-2xl",
+      "image": "/images/yupoo/256141563.webp"
+    },
+    {
+      "id": "YUP-256141549",
+      "title": "Manchester United Flame God POLO Shirt Special Edition S-2XL",
+      "image": "/images/yupoo/256141549.webp"
+    },
+    {
+      "id": "YUP-255956237",
+      "title": "player 26-27 Paris pre-match kit S-2XL",
+      "image": "/images/yupoo/255956237.webp"
+    },
+    {
+      "id": "YUP-255956231",
+      "title": "player 26-27 Paris pre-match kit S-2XL",
+      "image": "/images/yupoo/255956231.webp"
+    },
+    {
+      "id": "YUP-255956224",
+      "title": "26-27 Bayern training jersey red blue S-2XL",
+      "image": "/images/yupoo/255956224.webp"
+    },
+    {
+      "id": "YUP-255956179",
+      "title": "F1 2627 racing suit S-3XL",
+      "image": "/images/yupoo/255956179.webp"
+    },
+    {
+      "id": "YUP-255956166",
+      "title": "F1 2627 racing suit S-3XL",
+      "image": "/images/yupoo/255956166.webp"
+    },
+    {
+      "id": "YUP-255956152",
+      "title": "F1 2627 Racing Suit Crew Neck S-5XL",
+      "image": "/images/yupoo/255956152.webp"
+    },
+    {
+      "id": "YUP-255956012",
+      "title": "26-27 Paris Champions League pre-match kit white red blue S-4XL",
+      "image": "/images/yupoo/255956012.webp"
+    },
+    {
+      "id": "YUP-255955996",
+      "title": "26-27 Paris Champions League pre-match kit platinum S-4XL",
+      "image": "/images/yupoo/255955996.webp"
+    },
+    {
+      "id": "YUP-255476195",
+      "title": "26-27 Barca training kit S-3XL",
+      "image": "/images/yupoo/255476195.webp"
+    },
+    {
+      "id": "YUP-254973784",
+      "title": "26-27 Marseille Peacock Blue Short Sleeve Training Jersey S to 3XL",
+      "image": "/images/yupoo/254973784.webp"
+    },
+    {
+      "id": "YUP-254973773",
+      "title": "26-27 Aston Villa Light Grey Short Sleeve Training Top S to 3XL",
+      "image": "/images/yupoo/254973773.webp"
+    },
+    {
+      "id": "YUP-254973745",
+      "title": "25-26 Malaga White Vest Short Sleeve Training Jersey S to 3XL",
+      "image": "/images/yupoo/254973745.webp"
+    },
+    {
+      "id": "YUP-254973725",
+      "title": "25-26 Sunderland Blue Training Kit S-3XL",
+      "image": "/images/yupoo/254973725.webp"
+    },
+    {
+      "id": "YUP-254973202",
+      "title": "Adult thin bodysuit with label 紧身衣",
+      "image": "/images/yupoo/254973202.webp"
+    },
+    {
+      "id": "YUP-254973054",
+      "title": "26-27 Barcelona Polo Special Edition S-4XL",
+      "image": "/images/yupoo/254973054.webp"
+    },
+    {
+      "id": "YUP-254514923",
+      "title": "England polo 迈锐",
+      "image": "/images/yupoo/254514923.webp"
+    },
+    {
+      "id": "YUP-254514789",
+      "title": "Real Madrid polo 8号体育",
+      "image": "/images/yupoo/254514789.webp"
+    },
+    {
+      "id": "YUP-254514493",
+      "title": "Manchester United polo 4xl 天朗",
+      "image": "/images/yupoo/254514493.webp"
+    },
+    {
+      "id": "YUP-253873139",
+      "title": "26-27 C Polo Special Edition S-2XL C罗",
+      "image": "/images/yupoo/253873139.webp"
+    },
+    {
+      "id": "YUP-253868201",
+      "title": "F1 Racing suit long sleeve S-3XL",
+      "image": "/images/yupoo/253868201.webp"
+    },
+    {
+      "id": "YUP-253868168",
+      "title": "F1 Racing suit long sleeve S-3XL",
+      "image": "/images/yupoo/253868168.webp"
+    },
+    {
+      "id": "YUP-253868093",
+      "title": "F1 Racing suit long sleeve S-3XL",
+      "image": "/images/yupoo/253868093.webp"
+    },
+    {
+      "id": "YUP-253731162",
+      "title": "Mineiro training suit S-4XL",
+      "image": "/images/yupoo/253731162.webp"
+    }
+  ],
   "classifiable_with_photo": {
     "coat": 149,
     "long": 281,
