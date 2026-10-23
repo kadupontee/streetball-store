@@ -134,6 +134,8 @@ const REPLACEMENTS=Object.entries(TEAM_NAMES).sort((a,b)=>b[0].length-a[0].lengt
 const KEEP_UPPER=new Set(['sc','fc','ac','pec','rb','afc','psg','psv','usa','cf','cd','ss','as']);
 function niceCase(s){return s.split(/\s+/).map((word,i)=>{let l=word.toLocaleLowerCase('pt-BR');return KEEP_UPPER.has(l)?l.toUpperCase():i&&['de','do','da','dos','das','e'].includes(l)?l:l.replace(/^\p{L}/u,v=>v.toLocaleUpperCase('pt-BR'));}).join(' ')}
 function displayTitle(p){
+ // Revisão por foto tem prioridade sobre o título possivelmente incorreto do fornecedor.
+ if(String(p.visualReviewStatus||'').startsWith('foto_local_conferida_') && String(p.title||'').trim())return String(p.title).trim();
  if(!String(p.id||'').startsWith('YUP-'))return p.title;
  let t=String(p.supplierTitle||p.title||'').replace(/[\u4e00-\u9fff]/g,' ').replace(/[‐‑–—]/g,'-').replace(/\s+/g,' ').trim();
  const kids=/\b16\s*[-~]\s*(28|30)\b|\b(kids?|children|child|youth)\b/i.test(t)||p.kind==='kids';
