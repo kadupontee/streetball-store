@@ -145,6 +145,20 @@ def save_catalog(products):
     js.write_text('window.STREETBALL_CATALOG = '+json.dumps(products,ensure_ascii=False,separators=(',',':'))+';\n',encoding='utf-8')
     js.replace(CATALOG_JS)
 
+def preserve_reviewed_entry(old, entry):
+    """Preserva revisões humanas/visuais e preços manuais em reimportações."""
+    merged=dict(entry)
+    for lock,field in (("kindLocked","kind"),("categoryLocked","category"),("priceLocked","price")):
+        if old.get(lock):
+            merged[field]=old.get(field)
+            merged[lock]=True
+    # Correções de títulos feitas olhando a foto só persistem se a foto for a mesma.
+    if old.get('visualReviewStatus') and old.get('image')==merged.get('image'):
+        merged['title']=old.get('title') or merged.get('title')
+        merged['visualReviewStatus']=old['visualReviewStatus']
+        merged['visualReviewedImage']=old.get('visualReviewedImage', old.get('image'))
+    return merged
+
 def merge_catalog(new_products, *, keep_existing=True):
     before=read_catalog() if keep_existing else []
     out={p['id']:p for p in before}
@@ -158,10 +172,7 @@ def merge_catalog(new_products, *, keep_existing=True):
             # No-data imports must never discard existing imagery or manually set prices.
             if not entry.get('images') and old.get('images'):
                 entry['images']=old['images'];entry['image']=old.get('image','');entry['imageOrigin']=old.get('imageOrigin','')
-            if old.get('priceLocked'):
-                entry['price']=old['price'];entry['priceLocked']=True
-            if old.get('categoryLocked'):
-                entry['category']=old['category'];entry['categoryLocked']=True
+            entry=preserve_reviewed_entry(old,entry)
             updated+=1
         else:added+=1
         out[entry['id']]={**out.get(entry['id'],{}),**entry}
