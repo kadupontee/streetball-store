@@ -1,0 +1,46 @@
+name: Conferir fotos de blusas casacos e camisas
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/visual_apparel_review.py
+      - .github/workflows/review-apparel-images.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: streetball-visual-garment-review
+  cancel-in-progress: false
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Preparar modelo visual local
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install "transformers==4.46.3" "Pillow>=10,<12"
+      - name: Analisar imagens individuais com modelo visual CLIP
+        env:
+          HF_HUB_DISABLE_XET: "1"
+          HF_HUB_DOWNLOAD_TIMEOUT: "180"
+          OMP_NUM_THREADS: "2"
+        run: |
+          python scripts/visual_apparel_review.py --max-images 2100 --max-seconds 1700
+      - name: Registrar resultado sem mexer nos preços
+        run: |
+          git config user.name "streetball-visual-audit[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/garment_visual_review.json scripts/garment_visual_summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m "audit: analisar visualmente fotos de produtos para corrigir categorias"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
