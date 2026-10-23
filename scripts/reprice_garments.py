@@ -65,8 +65,19 @@ def migrate(products):
                 "image":p.get("image")
             })
         revised.append(updated)
+    still_ambiguous=[
+        p for p in revised
+        if p.get("category")=="treino"
+        and p.get("kind") in ("fan","long","retro","set")
+        and garment_decision(p,require_photo=True)[0] is None
+    ]
     report={
         "total_products":len(products),
+        "training_garments_pending_image_confirmation":len(still_ambiguous),
+        "training_garments_pending_examples":[
+            {"id":p.get("id"),"title":str(p.get("supplierTitle") or p.get("title") or "")[:160],"image":p.get("image")}
+            for p in still_ambiguous[:40]
+        ],
         "classifiable_with_photo":dict(categories),
         "changed_items":len(changes),
         "changed_by_kind":dict(Counter(i["kind_after"] for i in changes)),
