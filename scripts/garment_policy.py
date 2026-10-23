@@ -72,7 +72,7 @@ def garment_decision(product, *, require_photo=False):
         return None,"sem nome"
     if kind in NO_GARMENT or re.search(r"\b(?:kids?|children|infantil|baby)\b",title):
         return None,"produto infantil ou acessorio"
-    is_coat=bool(COAT.search(title))
+    is_coat=bool(COAT.search(title)) or kind=="coat"
     is_jacket=bool(JACKET.search(title))
     is_set=bool(SET.search(title)) or (
         (is_jacket or is_coat) and bool(re.search(r"\b(?:pants?|calcas?|trousers?|joggers?|bottoms?)\b",title))
@@ -110,7 +110,7 @@ def apply_garment_pricing(product, *, require_photo=False):
     if not item.get("priceLocked"):
         try: old_price=float(item.get("price") or 0)
         except (TypeError,ValueError):old_price=0
-        if old_price==0 or any(abs(old_price-old)<0.01 for old in LEGACY_PRICES) or (target=="coat" and abs(old_price-379.90)<0.01):
+        if target=="coat" or old_price==0 or any(abs(old_price-old)<0.01 for old in LEGACY_PRICES):
             item["price"]=PRICES_BRL[target]
     if item.get("kind")!=old_kind or item.get("price")!=product.get("price"):
         item["garmentClassification"]="title_and_image_link"
