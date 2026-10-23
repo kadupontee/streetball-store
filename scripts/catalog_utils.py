@@ -5,6 +5,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from retro_policy import apply_retro_policy, is_older_than_five_seasons
 from garment_policy import garment_decision, apply_garment_pricing, PRICES_BRL
+from visual_verified import apply_reviewed_visual_fix
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / 'public' / 'catalog.json'
 CATALOG_JS = ROOT / 'public' / 'catalog.js'
@@ -134,7 +135,7 @@ def read_catalog():
     except (OSError,ValueError):return []
 
 def save_catalog(products):
-    products=[apply_garment_pricing(apply_retro_policy(p),require_photo=True) for p in products if not is_nba_product(p)]
+    products=[apply_reviewed_visual_fix(apply_garment_pricing(apply_retro_policy(p),require_photo=True)) for p in products if not is_nba_product(p)]
     CATALOG.parent.mkdir(parents=True,exist_ok=True)
     content=json.dumps(products,ensure_ascii=False,indent=2)
     path=CATALOG.with_suffix('.json.tmp')
