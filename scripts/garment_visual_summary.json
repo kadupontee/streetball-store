@@ -2,37 +2,87 @@
   "method": "CLIP zero-shot classification from each actual local product image; predictions are advisory and not verified by a human",
   "model": "openai/clip-vit-base-patch32",
   "catalog_products": 10936,
-  "candidate_images": 1775,
-  "all_images_requested": false,
-  "catalog_without_local_photo": null,
-  "images_examined": 1775,
+  "candidate_images": 10885,
+  "all_images_requested": true,
+  "catalog_without_local_photo": 51,
+  "images_examined": 10885,
   "processing_errors": [],
   "current_kinds": {
     "long": 583,
+    "fan": 5932,
     "set": 419,
+    "retro": 1187,
     "coat": 173,
-    "fan": 158,
+    "shorts": 70,
+    "player_adidas": 991,
+    "kids": 888,
+    "female": 333,
     "blouse": 101,
-    "kids": 51,
     "jacket": 126,
     "retro_long": 79,
-    "female": 25,
-    "retro": 36,
-    "shorts": 3,
-    "player_adidas": 21
+    "player_nike": 1,
+    "player_puma": 2
   },
   "visual_guesses": {
-    "long": 722,
-    "shirt": 505,
-    "jacket": 109,
-    "shorts": 99,
-    "set": 323,
-    "blouse": 16,
-    "coat": 1
+    "long": 4721,
+    "shirt": 4509,
+    "jacket": 154,
+    "shorts": 875,
+    "set": 597,
+    "blouse": 27,
+    "coat": 2
   },
-  "disagreements": 19,
-  "high_confidence_disagreements": 6,
+  "disagreements": 73,
+  "high_confidence_disagreements": 31,
   "examples_high_confidence": [
+    {
+      "id": "YUP-258349411",
+      "image": "/images/yupoo/258349411.webp",
+      "supplierTitle": "Sao Paulo Rome m-5xl",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.6681
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.0993
+        },
+        {
+          "class": "shorts",
+          "probability": 0.0817
+        }
+      ]
+    },
+    {
+      "id": "YUP-253733487",
+      "image": "/images/yupoo/253733487.webp",
+      "supplierTitle": "Brazil",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6708
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2007
+        },
+        {
+          "class": "coat",
+          "probability": 0.1028
+        }
+      ]
+    },
     {
       "id": "YUP-250929923",
       "image": "/images/yupoo/250929923.webp",
@@ -45,7 +95,7 @@
       "top": [
         {
           "class": "polo",
-          "probability": 0.6356
+          "probability": 0.6355
         },
         {
           "class": "jersey_long",
@@ -106,6 +156,30 @@
       ]
     },
     {
+      "id": "YUP-247296871",
+      "image": "/images/yupoo/247296871.webp",
+      "supplierTitle": "26-27 Eindhoven 10-18",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_half_zip",
+          "probability": 0.8038
+        },
+        {
+          "class": "shorts",
+          "probability": 0.0588
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0581
+        }
+      ]
+    },
+    {
       "id": "YUP-242243267",
       "image": "/images/yupoo/242243267.webp",
       "supplierTitle": "Argentina World Cup style white casual windbreaker S-3XL",
@@ -126,6 +200,102 @@
         {
           "class": "shorts",
           "probability": 0.0659
+        }
+      ]
+    },
+    {
+      "id": "YUP-240293645",
+      "image": "/images/yupoo/240293645.webp",
+      "supplierTitle": "26-27 mexico S-2XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.7281
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1403
+        },
+        {
+          "class": "polo",
+          "probability": 0.0411
+        }
+      ]
+    },
+    {
+      "id": "YUP-239985687",
+      "image": "/images/yupoo/239985687.webp",
+      "supplierTitle": "Brazil Match Jersey S-3XL",
+      "original_kind": "player_adidas",
+      "original_price": 209.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6403
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1788
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1084
+        }
+      ]
+    },
+    {
+      "id": "YUP-239985290",
+      "image": "/images/yupoo/239985290.webp",
+      "supplierTitle": "Netherlands Orange Match Kit S-3XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.7935
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0871
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0713
+        }
+      ]
+    },
+    {
+      "id": "YUP-239984784",
+      "image": "/images/yupoo/239984784.webp",
+      "supplierTitle": "Norway on-field jersey S-3XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6714
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1676
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.0634
         }
       ]
     },
@@ -154,6 +324,222 @@
       ]
     },
     {
+      "id": "YUP-235451056",
+      "image": "/images/yupoo/235451056.webp",
+      "supplierTitle": "Barcelona",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.7192
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0987
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0941
+        }
+      ]
+    },
+    {
+      "id": "YUP-231665554",
+      "image": "/images/yupoo/231665554.webp",
+      "supplierTitle": "Paris",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.7485
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.1817
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0377
+        }
+      ]
+    },
+    {
+      "id": "YUP-230605620",
+      "image": "/images/yupoo/230605620.webp",
+      "supplierTitle": "25-26 France",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.6934
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1932
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.0513
+        }
+      ]
+    },
+    {
+      "id": "YUP-226917927",
+      "image": "/images/yupoo/226917927.webp",
+      "supplierTitle": "Corinthian",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.6642
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.23
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.0347
+        }
+      ]
+    },
+    {
+      "id": "YUP-226917893",
+      "image": "/images/yupoo/226917893.webp",
+      "supplierTitle": "Corinthian",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.6376
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.1007
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1001
+        }
+      ]
+    },
+    {
+      "id": "YUP-224576022",
+      "image": "/images/yupoo/224576022.webp",
+      "supplierTitle": "Belgium Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.9025
+        },
+        {
+          "class": "coat",
+          "probability": 0.0609
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0215
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575992",
+      "image": "/images/yupoo/224575992.webp",
+      "supplierTitle": "Bayern Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6336
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.152
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.093
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575931",
+      "image": "/images/yupoo/224575931.webp",
+      "supplierTitle": "Germany Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8513
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0734
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0257
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575800",
+      "image": "/images/yupoo/224575800.webp",
+      "supplierTitle": "Betis Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.9341
+        },
+        {
+          "class": "coat",
+          "probability": 0.0377
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.0121
+        }
+      ]
+    },
+    {
       "id": "YUP-224575760",
       "image": "/images/yupoo/224575760.webp",
       "supplierTitle": "spain Cotton clothing M-5XL",
@@ -176,9 +562,249 @@
           "probability": 0.0091
         }
       ]
+    },
+    {
+      "id": "YUP-224575686",
+      "image": "/images/yupoo/224575686.webp",
+      "supplierTitle": "Arsenal Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8147
+        },
+        {
+          "class": "coat",
+          "probability": 0.0752
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0392
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575624",
+      "image": "/images/yupoo/224575624.webp",
+      "supplierTitle": "Colombia Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.9089
+        },
+        {
+          "class": "coat",
+          "probability": 0.0741
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.0079
+        }
+      ]
+    },
+    {
+      "id": "YUP-224573190",
+      "image": "/images/yupoo/224573190.webp",
+      "supplierTitle": "Japan Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8053
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1012
+        },
+        {
+          "class": "coat",
+          "probability": 0.0337
+        }
+      ]
+    },
+    {
+      "id": "YUP-224573126",
+      "image": "/images/yupoo/224573126.webp",
+      "supplierTitle": "mexico Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8625
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0575
+        },
+        {
+          "class": "coat",
+          "probability": 0.0326
+        }
+      ]
+    },
+    {
+      "id": "YUP-223011413",
+      "image": "/images/yupoo/223011413.webp",
+      "supplierTitle": "Hollywood Brazil Goalkeeper S-2XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.5714
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1906
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1793
+        }
+      ]
+    },
+    {
+      "id": "YUP-220838919",
+      "image": "/images/yupoo/220838919.webp",
+      "supplierTitle": "Paris 977491101",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.8075
+        },
+        {
+          "class": "coat",
+          "probability": 0.1071
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.0572
+        }
+      ]
+    },
+    {
+      "id": "YUP-220752866",
+      "image": "/images/yupoo/220752866.webp",
+      "supplierTitle": "Corinthians 百佳 509",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.691
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.2011
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0551
+        }
+      ]
+    },
+    {
+      "id": "YUP-220746711",
+      "image": "/images/yupoo/220746711.webp",
+      "supplierTitle": "Brazil 2046342283",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6515
+        },
+        {
+          "class": "coat",
+          "probability": 0.1909
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.125
+        }
+      ]
+    },
+    {
+      "id": "YUP-220612500",
+      "image": "/images/yupoo/220612500.webp",
+      "supplierTitle": "351_Paris 977491101",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.7128
+        },
+        {
+          "class": "coat",
+          "probability": 0.1598
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.1011
+        }
+      ]
     }
   ],
   "examples_review": [
+    {
+      "id": "YUP-258349411",
+      "image": "/images/yupoo/258349411.webp",
+      "supplierTitle": "Sao Paulo Rome m-5xl",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.6681
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.0993
+        },
+        {
+          "class": "shorts",
+          "probability": 0.0817
+        }
+      ]
+    },
     {
       "id": "YUP-253860017",
       "image": "/images/yupoo/253860017.webp",
@@ -200,6 +826,54 @@
         {
           "class": "jacket_windbreaker",
           "probability": 0.1226
+        }
+      ]
+    },
+    {
+      "id": "YUP-253737092",
+      "image": "/images/yupoo/253737092.webp",
+      "supplierTitle": "Italy Light Green",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.4819
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.2311
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1633
+        }
+      ]
+    },
+    {
+      "id": "YUP-253733487",
+      "image": "/images/yupoo/253733487.webp",
+      "supplierTitle": "Brazil",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6708
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2007
+        },
+        {
+          "class": "coat",
+          "probability": 0.1028
         }
       ]
     },
@@ -287,7 +961,7 @@
       "top": [
         {
           "class": "polo",
-          "probability": 0.6356
+          "probability": 0.6355
         },
         {
           "class": "jersey_long",
@@ -320,6 +994,78 @@
         {
           "class": "jersey_long",
           "probability": 0.1044
+        }
+      ]
+    },
+    {
+      "id": "YUP-249150245",
+      "image": "/images/yupoo/249150245.webp",
+      "supplierTitle": "Real Madrid",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.3974
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.3274
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.243
+        }
+      ]
+    },
+    {
+      "id": "YUP-248514946",
+      "image": "/images/yupoo/248514946.webp",
+      "supplierTitle": "Argentina",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.3443
+        },
+        {
+          "class": "shorts",
+          "probability": 0.2483
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1864
+        }
+      ]
+    },
+    {
+      "id": "YUP-248095837",
+      "image": "/images/yupoo/248095837.webp",
+      "supplierTitle": "Brazil away kit blue exterior red interior S-3XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.4719
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.2081
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1477
         }
       ]
     },
@@ -372,6 +1118,78 @@
       ]
     },
     {
+      "id": "YUP-247430287",
+      "image": "/images/yupoo/247430287.webp",
+      "supplierTitle": "spain",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.516
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.4506
+        },
+        {
+          "class": "blouse_half_zip",
+          "probability": 0.0242
+        }
+      ]
+    },
+    {
+      "id": "YUP-247296871",
+      "image": "/images/yupoo/247296871.webp",
+      "supplierTitle": "26-27 Eindhoven 10-18",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_half_zip",
+          "probability": 0.8038
+        },
+        {
+          "class": "shorts",
+          "probability": 0.0588
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0581
+        }
+      ]
+    },
+    {
+      "id": "YUP-245096466",
+      "image": "/images/yupoo/245096466.webp",
+      "supplierTitle": "Portuguese Pink",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_half_zip",
+          "probability": 0.3396
+        },
+        {
+          "class": "shorts",
+          "probability": 0.2807
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1979
+        }
+      ]
+    },
+    {
       "id": "YUP-242243267",
       "image": "/images/yupoo/242243267.webp",
       "supplierTitle": "Argentina World Cup style white casual windbreaker S-3XL",
@@ -392,6 +1210,174 @@
         {
           "class": "shorts",
           "probability": 0.0659
+        }
+      ]
+    },
+    {
+      "id": "YUP-241988826",
+      "image": "/images/yupoo/241988826.webp",
+      "supplierTitle": "mexico",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.3613
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.3494
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1136
+        }
+      ]
+    },
+    {
+      "id": "YUP-240293645",
+      "image": "/images/yupoo/240293645.webp",
+      "supplierTitle": "26-27 mexico S-2XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.7281
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1403
+        },
+        {
+          "class": "polo",
+          "probability": 0.0411
+        }
+      ]
+    },
+    {
+      "id": "YUP-240293298",
+      "image": "/images/yupoo/240293298.webp",
+      "supplierTitle": "26-27 Wales S-2XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.4345
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1726
+        },
+        {
+          "class": "polo",
+          "probability": 0.1637
+        }
+      ]
+    },
+    {
+      "id": "YUP-239985687",
+      "image": "/images/yupoo/239985687.webp",
+      "supplierTitle": "Brazil Match Jersey S-3XL",
+      "original_kind": "player_adidas",
+      "original_price": 209.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6403
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1788
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1084
+        }
+      ]
+    },
+    {
+      "id": "YUP-239985290",
+      "image": "/images/yupoo/239985290.webp",
+      "supplierTitle": "Netherlands Orange Match Kit S-3XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.7935
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0871
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0713
+        }
+      ]
+    },
+    {
+      "id": "YUP-239985025",
+      "image": "/images/yupoo/239985025.webp",
+      "supplierTitle": "England Match Jersey S-3XL",
+      "original_kind": "player_adidas",
+      "original_price": 209.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.3552
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.3294
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2407
+        }
+      ]
+    },
+    {
+      "id": "YUP-239984784",
+      "image": "/images/yupoo/239984784.webp",
+      "supplierTitle": "Norway on-field jersey S-3XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6714
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1676
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.0634
         }
       ]
     },
@@ -420,6 +1406,222 @@
       ]
     },
     {
+      "id": "YUP-236313526",
+      "image": "/images/yupoo/236313526.webp",
+      "supplierTitle": "22/23 Brazil Lake Blue Jersey",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.415
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.308
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1841
+        }
+      ]
+    },
+    {
+      "id": "YUP-235853547",
+      "image": "/images/yupoo/235853547.webp",
+      "supplierTitle": "Real Madrid",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.2497
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.2333
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.221
+        }
+      ]
+    },
+    {
+      "id": "YUP-235451056",
+      "image": "/images/yupoo/235451056.webp",
+      "supplierTitle": "Barcelona",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.7192
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0987
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0941
+        }
+      ]
+    },
+    {
+      "id": "YUP-231665554",
+      "image": "/images/yupoo/231665554.webp",
+      "supplierTitle": "Paris",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.7485
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.1817
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0377
+        }
+      ]
+    },
+    {
+      "id": "YUP-230605620",
+      "image": "/images/yupoo/230605620.webp",
+      "supplierTitle": "25-26 France",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.6934
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1932
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.0513
+        }
+      ]
+    },
+    {
+      "id": "YUP-229794834",
+      "image": "/images/yupoo/229794834.webp",
+      "supplierTitle": "Inter Milan",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.3626
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.3541
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1069
+        }
+      ]
+    },
+    {
+      "id": "YUP-229794745",
+      "image": "/images/yupoo/229794745.webp",
+      "supplierTitle": "Paris",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.3955
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1609
+        },
+        {
+          "class": "blouse_half_zip",
+          "probability": 0.1582
+        }
+      ]
+    },
+    {
+      "id": "YUP-229794657",
+      "image": "/images/yupoo/229794657.webp",
+      "supplierTitle": "Manchester United",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_half_zip",
+          "probability": 0.2413
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2409
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1891
+        }
+      ]
+    },
+    {
+      "id": "YUP-229331556",
+      "image": "/images/yupoo/229331556.webp",
+      "supplierTitle": "25-26 Fluminense Jujube",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.4231
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2687
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1602
+        }
+      ]
+    },
+    {
       "id": "YUP-227138431",
       "image": "/images/yupoo/227138431.webp",
       "supplierTitle": "Algeria Green Hooded Full Pull Windbreaker Set S-2XL",
@@ -444,6 +1646,54 @@
       ]
     },
     {
+      "id": "YUP-226917927",
+      "image": "/images/yupoo/226917927.webp",
+      "supplierTitle": "Corinthian",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.6642
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.23
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.0347
+        }
+      ]
+    },
+    {
+      "id": "YUP-226917893",
+      "image": "/images/yupoo/226917893.webp",
+      "supplierTitle": "Corinthian",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.6376
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.1007
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1001
+        }
+      ]
+    },
+    {
       "id": "YUP-226743160",
       "image": "/images/yupoo/226743160.webp",
       "supplierTitle": "Columbia Blue POLO Half Pull S~2XL",
@@ -464,6 +1714,270 @@
         {
           "class": "jersey_long",
           "probability": 0.1608
+        }
+      ]
+    },
+    {
+      "id": "YUP-226548741",
+      "image": "/images/yupoo/226548741.webp",
+      "supplierTitle": "Campos home S-2XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.4078
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2895
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1493
+        }
+      ]
+    },
+    {
+      "id": "YUP-224733758",
+      "image": "/images/yupoo/224733758.webp",
+      "supplierTitle": "25-26 6Long Pull Manchester United Red S-XXL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.3549
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.309
+        },
+        {
+          "class": "blouse_half_zip",
+          "probability": 0.1208
+        }
+      ]
+    },
+    {
+      "id": "YUP-224576022",
+      "image": "/images/yupoo/224576022.webp",
+      "supplierTitle": "Belgium Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.9025
+        },
+        {
+          "class": "coat",
+          "probability": 0.0609
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0215
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575992",
+      "image": "/images/yupoo/224575992.webp",
+      "supplierTitle": "Bayern Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6336
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.152
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.093
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575931",
+      "image": "/images/yupoo/224575931.webp",
+      "supplierTitle": "Germany Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8513
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0734
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0257
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575800",
+      "image": "/images/yupoo/224575800.webp",
+      "supplierTitle": "Betis Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.9341
+        },
+        {
+          "class": "coat",
+          "probability": 0.0377
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.0121
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575760",
+      "image": "/images/yupoo/224575760.webp",
+      "supplierTitle": "spain Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.9481
+        },
+        {
+          "class": "coat",
+          "probability": 0.0328
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.0091
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575686",
+      "image": "/images/yupoo/224575686.webp",
+      "supplierTitle": "Arsenal Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8147
+        },
+        {
+          "class": "coat",
+          "probability": 0.0752
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0392
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575624",
+      "image": "/images/yupoo/224575624.webp",
+      "supplierTitle": "Colombia Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.9089
+        },
+        {
+          "class": "coat",
+          "probability": 0.0741
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.0079
+        }
+      ]
+    },
+    {
+      "id": "YUP-224573190",
+      "image": "/images/yupoo/224573190.webp",
+      "supplierTitle": "Japan Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8053
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1012
+        },
+        {
+          "class": "coat",
+          "probability": 0.0337
+        }
+      ]
+    },
+    {
+      "id": "YUP-224573126",
+      "image": "/images/yupoo/224573126.webp",
+      "supplierTitle": "mexico Cotton clothing M-5XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.8625
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.0575
+        },
+        {
+          "class": "coat",
+          "probability": 0.0326
         }
       ]
     },
@@ -564,6 +2078,30 @@
       ]
     },
     {
+      "id": "YUP-223011413",
+      "image": "/images/yupoo/223011413.webp",
+      "supplierTitle": "Hollywood Brazil Goalkeeper S-2XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.5714
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1906
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1793
+        }
+      ]
+    },
+    {
       "id": "YUP-223009182",
       "image": "/images/yupoo/223009182.webp",
       "supplierTitle": "25-26 Manchester City Blue and White W Long Sleeve Hoodie M-4XL",
@@ -584,6 +2122,54 @@
         {
           "class": "shorts",
           "probability": 0.0535
+        }
+      ]
+    },
+    {
+      "id": "YUP-222838822",
+      "image": "/images/yupoo/222838822.webp",
+      "supplierTitle": "巴黎白配红防水训练风衣S-3XL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.3522
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2405
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.2019
+        }
+      ]
+    },
+    {
+      "id": "YUP-222710825",
+      "image": "/images/yupoo/222710825.webp",
+      "supplierTitle": "25-26 long pull hat Flamengo Boran color S-XXL",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.3179
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.308
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2578
         }
       ]
     },
@@ -612,9 +2198,153 @@
       ]
     },
     {
-      "id": "YUP-224575760",
-      "image": "/images/yupoo/224575760.webp",
-      "supplierTitle": "spain Cotton clothing M-5XL",
+      "id": "YUP-222024504",
+      "image": "/images/yupoo/222024504.webp",
+      "supplierTitle": "Oasis Clover WHITE",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.4029
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2688
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1274
+        }
+      ]
+    },
+    {
+      "id": "YUP-220839632",
+      "image": "/images/yupoo/220839632.webp",
+      "supplierTitle": "Sao Paulo 2111758268 509",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.4248
+        },
+        {
+          "class": "blouse_half_zip",
+          "probability": 0.2411
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.1814
+        }
+      ]
+    },
+    {
+      "id": "YUP-220839618",
+      "image": "/images/yupoo/220839618.webp",
+      "supplierTitle": "Sao Paulo 509 2111758268",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.4085
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.3476
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.2308
+        }
+      ]
+    },
+    {
+      "id": "YUP-220838919",
+      "image": "/images/yupoo/220838919.webp",
+      "supplierTitle": "Paris 977491101",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.8075
+        },
+        {
+          "class": "coat",
+          "probability": 0.1071
+        },
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.0572
+        }
+      ]
+    },
+    {
+      "id": "YUP-220838810",
+      "image": "/images/yupoo/220838810.webp",
+      "supplierTitle": "Palmeiras 2111758268 509",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.3876
+        },
+        {
+          "class": "blouse_hoodie",
+          "probability": 0.1706
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.1284
+        }
+      ]
+    },
+    {
+      "id": "YUP-220753750",
+      "image": "/images/yupoo/220753750.webp",
+      "supplierTitle": "Japan 玉峰",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "blouse",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "blouse_sweatshirt",
+          "probability": 0.3619
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.2121
+        },
+        {
+          "class": "sleeveless",
+          "probability": 0.1215
+        }
+      ]
+    },
+    {
+      "id": "YUP-220752866",
+      "image": "/images/yupoo/220752866.webp",
+      "supplierTitle": "Corinthians 百佳 509",
       "original_kind": "fan",
       "original_price": 159.9,
       "visual_guess": "jacket",
@@ -623,15 +2353,111 @@
       "top": [
         {
           "class": "jacket_windbreaker",
-          "probability": 0.9481
+          "probability": 0.691
         },
         {
-          "class": "coat",
-          "probability": 0.0328
+          "class": "jacket_full_zip",
+          "probability": 0.2011
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0551
+        }
+      ]
+    },
+    {
+      "id": "YUP-220752322",
+      "image": "/images/yupoo/220752322.webp",
+      "supplierTitle": "Celtic 362217411",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.3157
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.2745
         },
         {
           "class": "blouse_hoodie",
-          "probability": 0.0091
+          "probability": 0.2525
+        }
+      ]
+    },
+    {
+      "id": "YUP-220746711",
+      "image": "/images/yupoo/220746711.webp",
+      "supplierTitle": "Brazil 2046342283",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.6515
+        },
+        {
+          "class": "coat",
+          "probability": 0.1909
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.125
+        }
+      ]
+    },
+    {
+      "id": "YUP-220637843",
+      "image": "/images/yupoo/220637843.webp",
+      "supplierTitle": "976_Sao Paulo 2111758268 509",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.55
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.1958
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1002
+        }
+      ]
+    },
+    {
+      "id": "YUP-220637341",
+      "image": "/images/yupoo/220637341.webp",
+      "supplierTitle": "678_Corinthians 百佳 509",
+      "original_kind": "fan",
+      "original_price": 159.9,
+      "visual_guess": "jacket",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jacket_windbreaker",
+          "probability": 0.4263
+        },
+        {
+          "class": "jacket_full_zip",
+          "probability": 0.419
+        },
+        {
+          "class": "tracksuit",
+          "probability": 0.0988
         }
       ]
     }
