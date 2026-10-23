@@ -1,7 +1,7 @@
 """Testes puros da lista de classificações conferidas por fotografia."""
 from visual_verified import PHOTO_CONFIRMED, REVIEW_ONLY, AUDIT_TAG, expected_image, apply_reviewed_visual_fix
 
-assert len(PHOTO_CONFIRMED) == 44
+assert len(PHOTO_CONFIRMED) == 54
 assert len(REVIEW_ONLY) == 9
 assert set(PHOTO_CONFIRMED).isdisjoint(REVIEW_ONLY)
 for number, (category, kind, price, title) in PHOTO_CONFIRMED.items():
@@ -20,4 +20,4 @@ for number, (category, kind, price, title) in PHOTO_CONFIRMED.items():
     assert apply_reviewed_visual_fix(changed_photo)==changed_photo
     manual = {**p, "priceLocked":True}
     assert apply_reviewed_visual_fix(manual)==manual
-print("OK: 44 revisões idempotentes, 9 em revisão, preservação de preços manuais e fotos")
+print("OK: 54 revisões idempotentes, 9 em revisão, preservação de preços manuais e fotos")
