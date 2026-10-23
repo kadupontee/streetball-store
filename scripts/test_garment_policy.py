@@ -10,6 +10,29 @@ class GarmentPolicyTest(unittest.TestCase):
     def test_jacket_individual(self):
         p=apply_garment_pricing(product("America Adidas Hooded jacket long zipper"))
         self.assertEqual((p["kind"],p["price"],p["category"]),("jacket",379.90,"treino"))
+    def test_coat_same_price_as_blouse(self):
+        for title in ("Real Madrid Long Coat", "Winter coat Flamengo", "Casaco Portugal 2026", "Manchester United Trench Coat"):
+            p=apply_garment_pricing(product(title, kind="jacket", price=379.90))
+            self.assertEqual((p["kind"],p["price"]),("coat",189.90),title)
+            self.assertEqual(apply_garment_pricing(p),p)
+
+    def test_coat_without_manual_price_change_and_without_image(self):
+        locked=apply_garment_pricing(product("Casaco São Paulo",kind="jacket",price=379.90,priceLocked=True))
+        self.assertEqual(locked["price"],379.90)
+        absent=product("Chelsea coat",kind="jacket",price=379.90)
+        absent["image"]=""
+        self.assertEqual(apply_garment_pricing(absent,require_photo=True)["price"],379.90)
+
+    def test_jaquetas_continuam_com_preco_original(self):
+        a=apply_garment_pricing(product("Arsenal Windbreaker Jacket",kind="jacket",price=379.90))
+        self.assertEqual((a["kind"],a["price"]),("jacket",379.90))
+        b=apply_garment_pricing(product("Barcelona Half-Zip Training Top",kind="jacket",price=379.90))
+        self.assertEqual(b["price"],379.90)
+
+    def test_conjunto_de_casaco_nao_muda(self):
+        p=apply_garment_pricing(product("Chelsea Coat Set",kind="set",price=299.90))
+        self.assertEqual((p["kind"],p["price"]),("set",299.90))
+
     def test_jacket_set_needs_review(self):
         p=apply_garment_pricing(product("Barcelona windbreaker set S-2XL",kind="set",price=299.90))
         self.assertEqual(p["kind"],"set")
