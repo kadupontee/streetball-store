@@ -10,7 +10,7 @@ CATALOG = ROOT / 'public' / 'catalog.json'
 CATALOG_JS = ROOT / 'public' / 'catalog.js'
 CATEGORIES = {'brasileirao','europa','selecoes','retro','infantil','feminino','nba','treino','acessorios','outras'}
 PRICES = {'fan':159.90,'female':159.90,'kids':179.90,'retro':199.90,'retro_long':229.90,'long':189.90,
-          'player_adidas':209.90,'player_puma':219.90,'player_nike':229.90,'nba':219.90,'shorts':119.90,'shorts_player':143.90,'socks':59.90,'jacket':379.90,'coat':189.90,'set':299.90}
+          'player_adidas':209.90,'player_puma':219.90,'player_nike':229.90,'nba':219.90,'shorts':119.90,'shorts_player':143.90,'socks':59.90,'jacket':379.90,'coat':189.90,'blouse':189.90,'set':299.90}
 KINDS = set(PRICES)
 BRAZIL = ('sao paulo','corinthians','palmeiras','flamengo','gremio','internacional','santos','vasco', 'botafogo','fluminense','bahia','fortaleza','remo','paysandu','cruzeiro','atletico mineiro','bragantino','ceara','sport recife','vitoria','nautico','athletico','paranaense','santa cruz','chapecoense','guarani','figueirense','goias','avai','corinthian')
 EUROPE = ('real madrid','barcelona','manchester','arsenal','chelsea','liverpool','tottenham','juventus','milan','napoli','paris','psg','bayern','dortmund','benfica','porto','sporting','braga','valencia','betis','sevilla','ajax','lyon','marseille','villarreal','roma','aston villa','leicester','newcastle','leeds','frankfurt','wolfsburg','st pauli','bremen','hannover')
@@ -50,7 +50,7 @@ def is_player_shorts(title, kind=''):
 def classify(title, category_hint=''):
     s = normalized(f'{title} {category_hint}')
     garment,_ = garment_decision({'title':title})
-    if garment in ('jacket','coat'): return 'treino',garment
+    if garment in ('jacket','coat','blouse'): return 'treino',garment
     if re.search(r'\b(retro|vintage|classic)\b',s) or is_older_than_five_seasons(title): cat = 'retro'
     elif any(x in s for x in ('kids','children','infantil','baby','youth','16-28','16~28','16-30')): cat = 'infantil'
     elif any(x in s for x in ('women','woman','feminina','feminino')): cat = 'feminino'
