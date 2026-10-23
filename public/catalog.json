@@ -3957,8 +3957,8 @@
     "title": "Manchester United Black Half-Zip Top S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/258349344",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/258349344.webp",
     "images": [
       "/images/yupoo/258349344.webp"
@@ -3988,8 +3988,8 @@
     "title": "Betis Half-Zip Training Top 10-18 S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/258349340",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/258349340.webp",
     "images": [
       "/images/yupoo/258349340.webp"
@@ -4367,8 +4367,8 @@
     "title": "Al Hilal Half-Zip Training Top S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/258349237",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/258349237.webp",
     "images": [
       "/images/yupoo/258349237.webp"
@@ -5651,8 +5651,8 @@
     "title": "Boca white half-zip top S to 3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/258348991",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/258348991.webp",
     "images": [
       "/images/yupoo/258348991.webp"
@@ -6959,9 +6959,9 @@
     "id": "YUP-258348707",
     "title": "Huamian Embroidered Cardigan Hoodie White S~2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/258348707",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/258348707.webp",
     "images": [
       "/images/yupoo/258348707.webp"
@@ -6982,7 +6982,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/282fadacb3/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/282fadacb3/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-258348698",
@@ -19845,9 +19847,9 @@
     "id": "YUP-254051447",
     "title": "Bayern Thickened sweatshirt",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/254051447",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/254051447.webp",
     "images": [
       "/images/yupoo/254051447.webp"
@@ -19868,14 +19870,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/a1a9da03bb/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/a1a9da03bb/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-254051379",
     "title": "Inter Milan blue thickened long-sleeved sweatshirt",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/254051379",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/254051379.webp",
     "images": [
@@ -19897,7 +19901,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7f56a20aa6/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7f56a20aa6/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-254051110",
@@ -22757,9 +22763,9 @@
     "id": "YUP-253724017",
     "title": "Barcelona black fleece hoodie",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/253724017",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/253724017.webp",
     "images": [
       "/images/yupoo/253724017.webp"
@@ -22780,7 +22786,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/4098e15b08/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/4098e15b08/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-253723750",
@@ -26304,8 +26312,8 @@
     "title": "Aston Villa Half-Zip Set (Sizes S–3XL)",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/252878982",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/252878982.webp",
     "images": [
       "/images/yupoo/252878982.webp"
@@ -26335,8 +26343,8 @@
     "title": "Ajax Royal Blue Half-Zip Set (Sizes S–3XL)",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/252878537",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/252878537.webp",
     "images": [
       "/images/yupoo/252878537.webp"
@@ -32493,8 +32501,8 @@
     "title": "26-27 Paris Half-Zip Training Top Embroidery S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251584182",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/251584182.webp",
     "images": [
       "/images/yupoo/251584182.webp"
@@ -32524,8 +32532,8 @@
     "title": "26-27 Chelsea Half-Zip Training Top Embroidered S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251583914",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/251583914.webp",
     "images": [
       "/images/yupoo/251583914.webp"
@@ -32555,8 +32563,8 @@
     "title": "26-27 Chelsea Half-Zip Training Top Embroidered S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251583870",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/251583870.webp",
     "images": [
       "/images/yupoo/251583870.webp"
@@ -33080,9 +33088,9 @@
     "id": "YUP-251567628",
     "title": "Barcelona short-sleeved sweatshirt beige S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251567628",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/251567628.webp",
     "images": [
       "/images/yupoo/251567628.webp"
@@ -33103,7 +33111,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/12714443b3/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/12714443b3/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-251567173",
@@ -33933,9 +33943,9 @@
     "id": "YUP-251440011",
     "title": "Portugal Half-pull S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251440011",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/251440011.webp",
     "images": [
       "/images/yupoo/251440011.webp"
@@ -33956,7 +33966,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/5faad7cdf2/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/5faad7cdf2/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-251439965",
@@ -34629,8 +34641,8 @@
     "id": "YUP-251429933",
     "title": "Brazil long-sleeved thickened sweatshirt",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251429933",
-    "category": "selecoes",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/251429933.webp",
     "images": [
@@ -34652,14 +34664,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/f188cc8f64/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/f188cc8f64/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-251429891",
     "title": "Bayern long-sleeve thick sweatshirt",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/251429891",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/251429891.webp",
     "images": [
@@ -34681,7 +34695,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9e2cabe7bb/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9e2cabe7bb/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-251429783",
@@ -36810,9 +36826,9 @@
     "id": "YUP-250930241",
     "title": "Barcelona hoodie S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/250930241",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/250930241.webp",
     "images": [
       "/images/yupoo/250930241.webp"
@@ -36833,15 +36849,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/8201a58e28/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/8201a58e28/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-250929923",
     "title": "26.27 Argentina hoodie s-3xl",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/250929923",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/250929923.webp",
     "images": [
       "/images/yupoo/250929923.webp"
@@ -36862,15 +36880,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2348c55fd1/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2348c55fd1/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-250929853",
     "title": "26.27 Italy hoodie S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/250929853",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/250929853.webp",
     "images": [
       "/images/yupoo/250929853.webp"
@@ -36891,7 +36911,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/266d9eef32/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/266d9eef32/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-250926732",
@@ -45118,9 +45140,9 @@
     "id": "YUP-248512774",
     "title": "Elche hoodie S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/248512774",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/248512774.webp",
     "images": [
       "/images/yupoo/248512774.webp"
@@ -45141,7 +45163,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/8d8044e17d/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/8d8044e17d/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-248512472",
@@ -46366,8 +46390,8 @@
     "title": "Feyenoord Half Zipper Training Long Sleeve",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/248313740",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/248313740.webp",
     "images": [
       "/images/yupoo/248313740.webp"
@@ -46397,8 +46421,8 @@
     "title": "Feyenoord Half Zipper Training Long Sleeve",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/248313692",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/248313692.webp",
     "images": [
       "/images/yupoo/248313692.webp"
@@ -50345,8 +50369,8 @@
     "title": "Manchester United Black Half-Zip",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/247829814",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/247829814.webp",
     "images": [
       "/images/yupoo/247829814.webp"
@@ -50376,8 +50400,8 @@
     "title": "Player Version 26/27 Manchester United Red Half-Zip (S–3XL)",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/247829255",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/247829255.webp",
     "images": [
       "/images/yupoo/247829255.webp"
@@ -55513,8 +55537,8 @@
     "title": "Marseille Half Zipper Training Long Sleeve",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/247181198",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/247181198.webp",
     "images": [
       "/images/yupoo/247181198.webp"
@@ -55544,8 +55568,8 @@
     "title": "Marseille Half Zipper Training Long Sleeve",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/247180982",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/247180982.webp",
     "images": [
       "/images/yupoo/247180982.webp"
@@ -62476,8 +62500,8 @@
     "title": "26-27 Barcelona half-zip training top S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/245995091",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/245995091.webp",
     "images": [
       "/images/yupoo/245995091.webp"
@@ -66484,8 +66508,8 @@
     "title": "Real Madrid 26-27 Adult Half-Zip Set",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/245416466",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/245416466.webp",
     "images": [
       "/images/yupoo/245416466.webp"
@@ -66515,8 +66539,8 @@
     "title": "Brazil 26-27 Adult Half-Zip Set",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/245416262",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/245416262.webp",
     "images": [
       "/images/yupoo/245416262.webp"
@@ -66546,8 +66570,8 @@
     "title": "Brazil 26-27 Adult Half-Zip Set",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/245416167",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/245416167.webp",
     "images": [
       "/images/yupoo/245416167.webp"
@@ -66577,8 +66601,8 @@
     "title": "Brazil 26-27 Adult Half-Zip Set",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/245416090",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/245416090.webp",
     "images": [
       "/images/yupoo/245416090.webp"
@@ -66608,8 +66632,8 @@
     "title": "26-27 spain Adult Half-Zip Set",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/245415638",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/245415638.webp",
     "images": [
       "/images/yupoo/245415638.webp"
@@ -72042,9 +72066,9 @@
     "id": "YUP-244291355",
     "title": "26/27 half pull France blue S-XXL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/244291355",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/244291355.webp",
     "images": [
       "/images/yupoo/244291355.webp"
@@ -72065,7 +72089,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/89c1e582e3/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/89c1e582e3/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-244291132",
@@ -79438,9 +79464,9 @@
     "id": "YUP-242243446",
     "title": "Bayern short-sleeved sweatshirt S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242243446",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/242243446.webp",
     "images": [
       "/images/yupoo/242243446.webp"
@@ -79461,15 +79487,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/081c127a60/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/081c127a60/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-242243339",
     "title": "Argentina classic black casual loose thickened short-sleeved sweatshirt S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/242243339",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/242243339.webp",
     "images": [
       "/images/yupoo/242243339.webp"
@@ -79490,7 +79518,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/db1489678a/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/db1489678a/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-242243267",
@@ -91126,9 +91156,9 @@
     "id": "YUP-240419007",
     "title": "Kolo Retro Hoodie S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/240419007",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/240419007.webp",
     "images": [
       "/images/yupoo/240419007.webp"
@@ -91149,7 +91179,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/e96303f0fe/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/e96303f0fe/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-240417835",
@@ -91243,8 +91275,8 @@
     "title": "Player 2627 Brazil Training Half-Zip Long Sleeve Set S~3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/240416700",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/240416700.webp",
     "images": [
       "/images/yupoo/240416700.webp"
@@ -98360,8 +98392,8 @@
     "title": "Mexico light green half-zip S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/239919586",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/239919586.webp",
     "images": [
       "/images/yupoo/239919586.webp"
@@ -127994,8 +128026,8 @@
     "title": "26-27 Jordan Brazil Black with Yellow Half-Zip Training Top, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237370325",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/237370325.webp",
     "images": [
       "/images/yupoo/237370325.webp"
@@ -128025,8 +128057,8 @@
     "title": "26-27 Jordan Brazil Black with Yellow Half-Zip Training Top, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237370053",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/237370053.webp",
     "images": [
       "/images/yupoo/237370053.webp"
@@ -128056,8 +128088,8 @@
     "title": "Atletico Madrid Black Half-Zip Training Top, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237369670",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/237369670.webp",
     "images": [
       "/images/yupoo/237369670.webp"
@@ -130032,8 +130064,8 @@
     "title": "26-27 France Royal Blue Half-Zip Training Top S-2XL Fanatics",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237178718",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/237178718.webp",
     "images": [
       "/images/yupoo/237178718.webp"
@@ -130063,8 +130095,8 @@
     "title": "26-27 Netherlands Black Half-Pull Training Kit, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237178554",
     "category": "treino",
-    "kind": "set",
-    "price": 299.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/237178554.webp",
     "images": [
       "/images/yupoo/237178554.webp"
@@ -130085,7 +130117,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/4a16733c88/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/4a16733c88/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-237178362",
@@ -130150,8 +130184,8 @@
     "title": "26-27 Real Madrid White Half-Zip Training Top, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237177769",
     "category": "treino",
-    "kind": "jacket",
-    "price": 379.9,
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/237177769.webp",
     "images": [
       "/images/yupoo/237177769.webp"
@@ -131951,9 +131985,9 @@
     "id": "YUP-237037186",
     "title": "Spani Red Half Pull",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237037186",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/237037186.webp",
     "images": [
       "/images/yupoo/237037186.webp"
@@ -131974,15 +132008,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/cd8a98cc7d/small.png"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/cd8a98cc7d/small.png",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-237036825",
     "title": "French White Half Pull",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/237036825",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/237036825.webp",
     "images": [
       "/images/yupoo/237036825.webp"
@@ -132003,7 +132039,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/17b6f76e35/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/17b6f76e35/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-237036589",
@@ -136199,9 +136237,9 @@
     "id": "YUP-236327229",
     "title": "France Blue Half Pull-up",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/236327229",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/236327229.webp",
     "images": [
       "/images/yupoo/236327229.webp"
@@ -136222,7 +136260,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/e3d5a0f0f1/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/e3d5a0f0f1/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-236327133",
@@ -141538,9 +141578,9 @@
     "id": "YUP-236074010",
     "title": "AC retro sweatshirt M-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/236074010",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/236074010.webp",
     "images": [
       "/images/yupoo/236074010.webp"
@@ -141561,7 +141601,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7b5d265511/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7b5d265511/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-236073593",
@@ -156097,9 +156139,9 @@
     "id": "YUP-234952587",
     "title": "World Cup France Match Jersey Light Green Hoodie, One Size S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/234952587",
-    "category": "selecoes",
-    "kind": "player_adidas",
-    "price": 209.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/234952587.webp",
     "images": [
       "/images/yupoo/234952587.webp"
@@ -156120,7 +156162,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/eae2997494/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/eae2997494/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-234951431",
@@ -185091,9 +185135,9 @@
     "id": "YUP-230405914",
     "title": "2014/15 season Bayern hooded sweater",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/230405914",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/230405914.webp",
     "images": [
       "/images/yupoo/230405914.webp"
@@ -185114,7 +185158,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "RETRÔ",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2b6b4b02/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2b6b4b02/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-230405725",
@@ -189177,9 +189223,9 @@
     "id": "YUP-229908246",
     "title": "25-26 Chelsea Half-pull Player Edition",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/229908246",
-    "category": "europa",
-    "kind": "player_adidas",
-    "price": 209.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/229908246.webp",
     "images": [
       "/images/yupoo/229908246.webp"
@@ -189200,7 +189246,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/29fbc2f4/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/29fbc2f4/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-229906751",
@@ -198671,9 +198719,9 @@
     "id": "YUP-228792183",
     "title": "Adi red half-pull adult",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/228792183",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/228792183.webp",
     "images": [
       "/images/yupoo/228792183.webp"
@@ -198694,7 +198742,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/12fd9b0c/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/12fd9b0c/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-228792083",
@@ -200007,9 +200057,9 @@
     "id": "YUP-228573736",
     "title": "Adi purple half pull adult 阿迪",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/228573736",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/228573736.webp",
     "images": [
       "/images/yupoo/228573736.webp"
@@ -200030,7 +200080,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7cef3b7e/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7cef3b7e/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-228573149",
@@ -206387,9 +206439,9 @@
     "id": "YUP-227861350",
     "title": "26-27 Half-pull Brazil International Red S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/227861350",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/227861350.webp",
     "images": [
       "/images/yupoo/227861350.webp"
@@ -206410,7 +206462,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/6a58e3d7/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/6a58e3d7/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-227861223",
@@ -210088,9 +210142,9 @@
     "id": "YUP-227308245",
     "title": "half pull mexican black",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/227308245",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/227308245.webp",
     "images": [
       "/images/yupoo/227308245.webp"
@@ -210111,7 +210165,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/f0b6eca2/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/f0b6eca2/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-227304432",
@@ -210904,9 +210960,9 @@
     "id": "YUP-227190033",
     "title": "26-27 Colo Sweater Black S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/227190033",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/227190033.webp",
     "images": [
       "/images/yupoo/227190033.webp"
@@ -210927,15 +210983,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7a0408b0/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7a0408b0/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-227189742",
     "title": "26-27 University of Chile sweater red S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/227189742",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/227189742.webp",
     "images": [
       "/images/yupoo/227189742.webp"
@@ -210956,7 +211014,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/80ed129d/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/80ed129d/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-227146169",
@@ -215868,7 +215928,7 @@
     "title": "Columbia Blue POLO Half Pull S~2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/226743160",
     "category": "treino",
-    "kind": "long",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/226743160.webp",
     "images": [
@@ -215890,7 +215950,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7e101098/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7e101098/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-226741937",
@@ -221441,9 +221503,9 @@
     "id": "YUP-226384228",
     "title": "1996-97 Newcastle Retro Collar Hoodie S-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/226384228",
-    "category": "retro",
-    "kind": "retro",
-    "price": 199.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/226384228.webp",
     "images": [
       "/images/yupoo/226384228.webp"
@@ -221464,7 +221526,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "RETRÔ",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/16342793/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/16342793/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-226382621",
@@ -227101,9 +227165,9 @@
     "id": "YUP-225191510",
     "title": "Brazil Thickened Hoodie S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/225191510",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/225191510.webp",
     "images": [
       "/images/yupoo/225191510.webp"
@@ -227124,7 +227188,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/ff112204/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/ff112204/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-225191445",
@@ -234730,9 +234796,9 @@
     "id": "YUP-224572960",
     "title": "styles Brazil Half Pull XXS-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/224572960",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/224572960.webp",
     "images": [
       "/images/yupoo/224572960.webp"
@@ -234753,15 +234819,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/913e505b/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/913e505b/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-224572934",
     "title": "styles Brazil Half Pull XXS-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/224572934",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/224572934.webp",
     "images": [
       "/images/yupoo/224572934.webp"
@@ -234782,15 +234850,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/5233d3a2/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/5233d3a2/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-224572910",
     "title": "styles Brazil Half Pull XXS-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/224572910",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/224572910.webp",
     "images": [
       "/images/yupoo/224572910.webp"
@@ -234811,7 +234881,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/a7f4e5b8/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/a7f4e5b8/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-224572828",
@@ -234875,9 +234947,9 @@
     "id": "YUP-224572752",
     "title": "mexico Half pull",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/224572752",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/224572752.webp",
     "images": [
       "/images/yupoo/224572752.webp"
@@ -234898,7 +234970,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/13a88364/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/13a88364/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-224469289",
@@ -237487,9 +237561,9 @@
     "id": "YUP-224276666",
     "title": "Kolo Half pull set",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/224276666",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/224276666.webp",
     "images": [
       "/images/yupoo/224276666.webp"
@@ -237510,15 +237584,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/6b5bf488/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/6b5bf488/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-224276656",
     "title": "University of Chile Half pull set",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/224276656",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/224276656.webp",
     "images": [
       "/images/yupoo/224276656.webp"
@@ -237539,7 +237615,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/078c6b7d/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/078c6b7d/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-224276619",
@@ -240449,9 +240527,9 @@
     "id": "YUP-224091044",
     "title": "24-25 Paris Saint Germain (Red and Blue) Half Pull Player Set can be obtained separately with S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/224091044",
-    "category": "europa",
-    "kind": "player_adidas",
-    "price": 209.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/224091044.webp",
     "images": [
       "/images/yupoo/224091044.webp"
@@ -240472,7 +240550,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/fd682c65/small.jpeg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/fd682c65/small.jpeg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-224090855",
@@ -242313,9 +242393,9 @@
     "id": "YUP-223982072",
     "title": "Inter Milan hoodie",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223982072",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/223982072.webp",
     "images": [
       "/images/yupoo/223982072.webp"
@@ -242336,7 +242416,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/d6a3cc41/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/d6a3cc41/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223981799",
@@ -243156,9 +243238,9 @@
     "id": "YUP-223798590",
     "title": "25-26 Marseille Half Pull Blue S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223798590",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/223798590.webp",
     "images": [
       "/images/yupoo/223798590.webp"
@@ -243179,7 +243261,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/35326254/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/35326254/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223798539",
@@ -243214,9 +243298,9 @@
     "id": "YUP-223798511",
     "title": "25-26 Half Pull Real Madrid White S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223798511",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/223798511.webp",
     "images": [
       "/images/yupoo/223798511.webp"
@@ -243237,7 +243321,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/557ffea4/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/557ffea4/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223798491",
@@ -243330,9 +243416,9 @@
     "id": "YUP-223798352",
     "title": "26-27 Germany half pull red S-XXL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223798352",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/223798352.webp",
     "images": [
       "/images/yupoo/223798352.webp"
@@ -243353,7 +243439,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/35986664c1/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/35986664c1/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223798325",
@@ -244346,7 +244434,7 @@
     "title": "25-26 Bayern Munich player version half pull training uniform, orange black color, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223747039",
     "category": "treino",
-    "kind": "long",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223747039.webp",
     "images": [
@@ -244368,14 +244456,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/6fc83432/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/6fc83432/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223746918",
     "title": "25-26 Barcelona Spotify Collaboration Half Pull Player Long Sleeve Orange S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223746918",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223746918.webp",
     "images": [
@@ -244397,7 +244487,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2f3dcb7f/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2f3dcb7f/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223746614",
@@ -246990,9 +247082,9 @@
     "id": "YUP-223561486",
     "title": "26-27 Spain Half Pull S~XXL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223561486",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/223561486.webp",
     "images": [
       "/images/yupoo/223561486.webp"
@@ -247013,7 +247105,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/bfda462f/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/bfda462f/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223561381",
@@ -247222,8 +247316,8 @@
     "id": "YUP-223559929",
     "title": "Bayern Red Blue Spliced Long Sleeve Thick Sweatshirt M-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223559929",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223559929.webp",
     "images": [
@@ -247245,14 +247339,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/503c41f2/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/503c41f2/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223559826",
     "title": "Barcelona red and blue patchwork long sleeved thick casual hoodie M to 4X",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223559826",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223559826.webp",
     "images": [
@@ -247274,14 +247370,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/abb2114e/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/abb2114e/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223559737",
     "title": "Germany black long sleeved thick casual hoodie M to 4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223559737",
-    "category": "selecoes",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223559737.webp",
     "images": [
@@ -247303,7 +247401,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/dd539ee2/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/dd539ee2/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223559623",
@@ -249001,9 +249101,9 @@
     "id": "YUP-223405373",
     "title": "AC Milan red and black thick casual hoodie M-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223405373",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/223405373.webp",
     "images": [
       "/images/yupoo/223405373.webp"
@@ -249024,7 +249124,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7c18cb4b/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7c18cb4b/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223405358",
@@ -249059,8 +249161,8 @@
     "id": "YUP-223405323",
     "title": "Bayern long-sleeved sweatshirt",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223405323",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223405323.webp",
     "images": [
@@ -249082,14 +249184,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/0e6ecc77/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/0e6ecc77/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223405316",
     "title": "AC Milan long-sleeved sweatshirt",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223405316",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223405316.webp",
     "images": [
@@ -249111,14 +249215,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/c2df7814/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/c2df7814/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223405306",
     "title": "Italy long-sleeved sweatshirt S-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223405306",
-    "category": "selecoes",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223405306.webp",
     "images": [
@@ -249140,14 +249246,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/b251f408/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/b251f408/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223405294",
     "title": "Arsenal long-sleeved sweatshirt",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223405294",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223405294.webp",
     "images": [
@@ -249169,14 +249277,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2b548964/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2b548964/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223405288",
     "title": "Paris long-sleeved sweatshirt",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223405288",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223405288.webp",
     "images": [
@@ -249198,7 +249308,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9dd6d1fa/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9dd6d1fa/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223405280",
@@ -251758,9 +251870,9 @@
     "id": "YUP-223324383",
     "title": "Yellow Tiger Half Pull Top S-3XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223324383",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/223324383.webp",
     "images": [
       "/images/yupoo/223324383.webp"
@@ -251781,7 +251893,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/cbc9c3e4/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/cbc9c3e4/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223324368",
@@ -253703,9 +253817,9 @@
     "id": "YUP-223183305",
     "title": "25-26 Chelsea hoodie",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223183305",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/223183305.webp",
     "images": [
       "/images/yupoo/223183305.webp"
@@ -253726,7 +253840,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/93787828/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/93787828/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223183098",
@@ -255994,8 +256110,8 @@
     "id": "YUP-223009218",
     "title": "25-26 AC red and black W long sleeved sweatshirt M-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223009218",
-    "category": "outras",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223009218.webp",
     "images": [
@@ -256017,14 +256133,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2085b15e/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2085b15e/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223009182",
     "title": "25-26 Manchester City Blue and White W Long Sleeve Hoodie M-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223009182",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223009182.webp",
     "images": [
@@ -256046,14 +256164,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/254f1c89/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/254f1c89/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223009121",
     "title": "25-26 Inter Milan gradient blue black W long sleeved sweatshirt M-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223009121",
-    "category": "europa",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223009121.webp",
     "images": [
@@ -256075,14 +256195,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/3568a516/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/3568a516/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223009087",
     "title": "25-26 Argentina Blue Black W Long Sleeve Hoodie M-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/223009087",
-    "category": "selecoes",
-    "kind": "long",
+    "category": "treino",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/223009087.webp",
     "images": [
@@ -256104,7 +256226,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9b321b12/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9b321b12/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-223008856",
@@ -257127,9 +257251,9 @@
     "id": "YUP-222942592",
     "title": "25-26 Betis Half Pull Set S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222942592",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/222942592.webp",
     "images": [
       "/images/yupoo/222942592.webp"
@@ -257150,7 +257274,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/af8fc79f/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/af8fc79f/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222932022",
@@ -258761,9 +258887,9 @@
     "id": "YUP-222821949",
     "title": "25-26 Barcelona thick hoodie in navy blue M-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222821949",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/222821949.webp",
     "images": [
       "/images/yupoo/222821949.webp"
@@ -258784,7 +258910,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/53fdab25/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/53fdab25/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222821885",
@@ -258820,7 +258948,7 @@
     "title": "25-26 Bayern player version half pull training uniform, orange black color, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222821815",
     "category": "treino",
-    "kind": "long",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/222821815.webp",
     "images": [
@@ -258842,7 +258970,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/a40d10c1/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/a40d10c1/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222821764",
@@ -261075,9 +261205,9 @@
     "id": "YUP-222750193",
     "title": "Barcelona navy blue paired with jujube red thick hoodie M-4XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222750193",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/222750193.webp",
     "images": [
       "/images/yupoo/222750193.webp"
@@ -261098,15 +261228,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/ad055e39/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/ad055e39/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222750172",
     "title": "25-26 Argentina hoodie",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222750172",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/222750172.webp",
     "images": [
       "/images/yupoo/222750172.webp"
@@ -261127,7 +261259,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7cc9ec54/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7cc9ec54/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222750126",
@@ -262177,9 +262311,9 @@
     "id": "YUP-222730220",
     "title": "Real Madrid hoodie",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222730220",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/222730220.webp",
     "images": [
       "/images/yupoo/222730220.webp"
@@ -262200,7 +262334,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/990538e9/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/990538e9/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222730157",
@@ -262758,7 +262894,7 @@
     "title": "2026. Italy Training Clothing Half Pull Adult Set s-xxl",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222714752",
     "category": "treino",
-    "kind": "long",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/222714752.webp",
     "images": [
@@ -262780,15 +262916,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/b443360f/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/b443360f/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222714635",
     "title": "26-27 Half Pull Germany S-XXL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222714635",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/222714635.webp",
     "images": [
       "/images/yupoo/222714635.webp"
@@ -262809,14 +262947,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/a77e04eed3/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/a77e04eed3/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222714538",
     "title": "2026. spain Training Clothing Half Pull Adult Set S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222714538",
     "category": "treino",
-    "kind": "long",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/222714538.webp",
     "images": [
@@ -262838,7 +262978,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2d6187a2/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/2d6187a2/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222714384",
@@ -262960,9 +263102,9 @@
     "id": "YUP-222711130",
     "title": "26-27 26-27 Half Pull Argentina White S-XXL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222711130",
-    "category": "selecoes",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/222711130.webp",
     "images": [
       "/images/yupoo/222711130.webp"
@@ -262983,7 +263125,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9de166c7/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9de166c7/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222710949",
@@ -263424,9 +263568,9 @@
     "id": "YUP-222658433",
     "title": "Manchester City thick hoodie",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222658433",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/222658433.webp",
     "images": [
       "/images/yupoo/222658433.webp"
@@ -263447,7 +263591,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/ba35750e/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/ba35750e/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222658422",
@@ -263482,9 +263628,9 @@
     "id": "YUP-222658412",
     "title": "Inter Milan hoodie",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/222658412",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/222658412.webp",
     "images": [
       "/images/yupoo/222658412.webp"
@@ -263505,7 +263651,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/83134963/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/83134963/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-222658372",
@@ -272207,7 +272355,7 @@
     "title": "25-26, Manchester United player half pull training uniform, black, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221824087",
     "category": "treino",
-    "kind": "long",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/221824087.webp",
     "images": [
@@ -272229,14 +272377,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/80d98970/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/80d98970/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-221823892",
     "title": "25-26, Arsenal player half pull training uniform, black, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221823892",
     "category": "treino",
-    "kind": "long",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/221823892.webp",
     "images": [
@@ -272258,14 +272408,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9100658b/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9100658b/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-221823790",
     "title": "25-26, Manchester United player half pull training uniform, black, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221823790",
     "category": "treino",
-    "kind": "long",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/221823790.webp",
     "images": [
@@ -272287,14 +272439,16 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/20adaf78/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/20adaf78/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-221823660",
     "title": "25-26 Paris player half pull training uniform, gray, S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221823660",
     "category": "treino",
-    "kind": "long",
+    "kind": "blouse",
     "price": 189.9,
     "image": "/images/yupoo/221823660.webp",
     "images": [
@@ -272316,7 +272470,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7c09ccb0/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7c09ccb0/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-221823541",
@@ -273975,9 +274131,9 @@
     "id": "YUP-221647875",
     "title": "Nike Half Pull Set",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221647875",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/221647875.webp",
     "images": [
       "/images/yupoo/221647875.webp"
@@ -273998,7 +274154,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/fe924e86/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/fe924e86/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-221647841",
@@ -279263,9 +279421,9 @@
     "id": "YUP-221379149",
     "title": "Adidas x Oasis Touring Firebird Sports Hoodie",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221379149",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/221379149.webp",
     "images": [
       "/images/yupoo/221379149.webp"
@@ -279286,7 +279444,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/630e22f1/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/630e22f1/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-221378735",
@@ -280692,9 +280852,9 @@
     "id": "YUP-221219200",
     "title": "Riverbed Half Pull Set black S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221219200",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/221219200.webp",
     "images": [
       "/images/yupoo/221219200.webp"
@@ -280715,15 +280875,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/c397165b/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/c397165b/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-221219134",
     "title": "Riverbed Half Pull Set red S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221219134",
-    "category": "outras",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/221219134.webp",
     "images": [
       "/images/yupoo/221219134.webp"
@@ -280744,15 +280906,17 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/c8a3c65c/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/c8a3c65c/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-221219003",
     "title": "Arsenal Half Pull Set S-2XL",
     "sourceUrl": "https://james66jersey.x.yupoo.com/albums/221219003",
-    "category": "europa",
-    "kind": "fan",
-    "price": 159.9,
+    "category": "treino",
+    "kind": "blouse",
+    "price": 189.9,
     "image": "/images/yupoo/221219003.webp",
     "images": [
       "/images/yupoo/221219003.webp"
@@ -280773,7 +280937,9 @@
     "primary": "#ededed",
     "accent": "#2e3936",
     "badge": "",
-    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/af85bb5b/small.jpg"
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/af85bb5b/small.jpg",
+    "garmentClassification": "title_and_image_link",
+    "garmentPriceSource": "supplier_usd_garment_policy_20261022"
   },
   {
     "id": "YUP-221218667",
