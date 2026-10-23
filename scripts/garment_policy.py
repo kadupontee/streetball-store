@@ -41,7 +41,7 @@ SHORT = re.compile(r"\b(?:short\s*[- ]?sleeves?d?|regata|vest\s*training|tank\s*
 SET = re.compile(
     r"\b(?:tracksuits?|jacket\s*sets?|jacket\s*kits?|coat\s*sets?|casaco\s*conjunto|windbreaker\s*sets?|"
     r"hoodie\s*sets?|half\s*[- ]?zip\s*sets?|sweatshirt\s*sets?|pullover\s*sets?|training\s*suits?|conjuntos?|"
-    r"jackets?\s*(?:and|\+)\s*pants?|suits?)\b",re.I
+    r"jackets?\s*(?:and|\+)\s*pants?|suits?|sets?)\b",re.I
 )
 RETRO = re.compile(r"\b(?:retro|vintage|classic|classico|classica)\b",re.I)
 SEASON = re.compile(r"(?<!\d)((?:19|20)\d{2}|\d{2})\s*[-/._]\s*((?:19|20)\d{2}|\d{2})(?!\d)")
