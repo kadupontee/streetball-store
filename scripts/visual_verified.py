@@ -54,6 +54,17 @@ PHOTO_CONFIRMED = {
     "220752322": ("treino", "blouse", 189.90, "Celtic — Moletom Vermelho com Capuz"),
     "220637843": ("treino", "jacket", 379.90, "São Paulo — Jaqueta Corta-Vento Cinza"),
     "220637341": ("treino", "jacket", 379.90, "Corinthians — Jaqueta de Treino Cinza e Preta"),
+    # Terceira rodada: camisetas de treino com manga curta incorretamente marcadas 'long'.
+    "238767432": ("treino", "fan", 159.90, "Brasil — Camiseta de Treino Cinza"),
+    "250242076": ("treino", "fan", 159.90, "Espanha — Camiseta de Treino Azul"),
+    "213864520": ("treino", "fan", 159.90, "Portugal — Camiseta Vermelha de Treino"),
+    "244882480": ("treino", "fan", 159.90, "Corinthians — Camiseta Preta de Pré-Jogo"),
+    "233362819": ("treino", "fan", 159.90, "Brasil — Camiseta Preta de Treino"),
+    "213863996": ("treino", "fan", 159.90, "Newcastle — Camiseta Estampada de Pré-Jogo"),
+    "244834881": ("treino", "fan", 159.90, "Real Madrid — Camiseta Estampada de Treino"),
+    "258349011": ("treino", "fan", 159.90, "Real Madrid — Camiseta Azul de Treino"),
+    "245820955": ("treino", "fan", 159.90, "Brasil — Camiseta Estampada de Treino"),
+    "223321809": ("acessorios", "shorts", 119.90, "Flamengo — Calção de Treino Preto"),
     # Fotos são camisas: os álbuns vinham com a indicação incorreta 'hoodie'
     "250929923": ("selecoes", "fan", 159.90, "Argentina — Camiseta Branca Adidas"),
     "250929853": ("selecoes", "fan", 159.90, "Itália — Camiseta Branca Adidas"),
