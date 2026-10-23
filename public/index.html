@@ -6,8 +6,8 @@
 <meta name="description" content="Streetball Store: camisas de futebol, seleções, retrôs, edições jogador, infantil e acessórios. Encontre seu próximo manto." />
 <meta name="theme-color" content="#111514" />
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=streetball-official-2"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=streetball-official-2"><link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=streetball-official-2">
-<link rel="stylesheet" href="styles.css?v=20261023-europe-leagues-v1" />
-<link rel="stylesheet" href="editorial.css?v=20261022-mobile-refresh-v8" />
+<link rel="stylesheet" href="styles.css?v=20261023-mobile-europe-v3" />
+<link rel="stylesheet" href="editorial.css?v=20261023-mobile-europe-v3" />
 </head>
 <body>
 <div class="demo-notice" id="demoNotice"><span id="demoText">PRÉVIA · pagamentos ainda não habilitados</span> <button id="dismissNotice" aria-label="Fechar aviso">×</button></div>
@@ -35,6 +35,14 @@
       </nav>
     </div><button class="icon-btn cart-trigger" id="cartTrigger" title="Sacola" aria-label="Abrir sacola"><svg viewBox="0 0 24 24"><path d="M5 8h14l1 13H4L5 8ZM9 9V6a3 3 0 0 1 6 0v3"/></svg><span id="cartCount" class="cart-count">0</span></button></div>
 </div></header>
+<nav class="mobile-collection-nav" aria-label="Coleções no celular">
+  <div class="mobile-collection-inner">
+    <button type="button" data-category="brasileirao">Brasileirão</button>
+    <button type="button" data-category="europa" data-mobile-europe>Europa · 5 ligas</button>
+    <button type="button" data-category="selecoes">Seleções</button>
+    <button type="button" data-category="retro">Retrô</button>
+  </div>
+</nav>
 <nav class="desktop-nav"><div class="container nav-inner" id="desktopNav"><button data-category="todos" class="active">Início</button><button data-category="brasileirao">Brasileirão</button><button data-category="europa">Europa</button><button data-category="selecoes">Seleções</button><button data-category="retro">Retrô</button><button data-category="player">Versão Jogador</button><button data-category="infantil">Infantil</button><button data-category="feminino">Feminino</button><button data-category="acessorios">Acessórios</button><button data-category="outras">Outros</button></div></nav>
 <main id="inicio">
 <section class="hero" aria-label="O manto é seu — coleção retrô Streetball Store">
@@ -97,5 +105,5 @@
 <div class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalProductTitle"><button class="modal-close" id="closeProduct" aria-label="Fechar">×</button><div id="productModalInner"></div></div>
 <div class="checkout-modal" id="checkoutModal" role="dialog" aria-modal="true" aria-label="Finalizar pedido"><div class="checkout-head"><div><span class="micro">CHECKOUT</span><h3>Finalizar pedido</h3></div><button id="closeCheckout" aria-label="Fechar">×</button></div><form id="checkoutForm"><p id="checkoutIntro">Informe seus dados para gerar uma cobrança segura pela plataforma Asaas. Os produtos são enviados do exterior. O valor pago à Streetball Store NÃO inclui eventuais impostos de importação (Imposto de Importação e ICMS) nem Despacho Postal. Essas cobranças, se ocorrerem, são de responsabilidade do destinatário e devem ser pagas diretamente pelo canal oficial dos Correios ou da transportadora. <a href="https://www.correios.com.br/receber/encomenda/internacional" target="_blank" rel="noopener noreferrer">Entenda a importação</a>. Vendas reais ainda dependem de revisão fiscal e confirmação das condições comerciais.</p><div class="form-grid"><label>Nome completo<input name="name" type="text" required minlength="3" autocomplete="name"></label><label>WhatsApp<input name="phone" type="tel" placeholder="11999999999" minlength="10" required autocomplete="tel"></label><label>E-mail<input name="email" type="email" required autocomplete="email"></label><label>CPF (necessário para cobrança)<input name="cpf" inputmode="numeric" minlength="11" maxlength="14" placeholder="Somente números" required></label><label>CEP<input name="zip" inputmode="numeric" minlength="8" maxlength="9" required></label><label>Endereço (rua, número, complemento)<input name="address" required></label><label>Cidade<input name="city" required></label><label>UF<input name="state" required maxlength="2" placeholder="SP"></label></div><label class="checkout-method-label">Forma de pagamento<select name="paymentMethod" id="paymentMethod" required><option value="PIX">Pix</option><option value="CREDIT_CARD">Cartão de crédito</option></select></label><label class="consent-label"><input type="checkbox" name="consent" required> Aceito o uso dos dados para processar meu pedido.</label><label class="consent-label"><input type="checkbox" name="importTaxAcknowledged" required> Estou ciente de que este produto vem do exterior e que os impostos de importação, ICMS e eventual Despacho Postal NÃO estão incluídos no pagamento à Streetball Store. Se houver cobrança, serei responsável por pagá-la diretamente pelos canais oficiais dos Correios ou da transportadora para liberar a encomenda.</label><label class="consent-label"><input type="checkbox" name="whatsappOptIn"> Autorizo receber atualizações sobre meu pedido pelo WhatsApp, incluindo avisos de atraso (opcional).</label><div class="checkout-total"><span>Produtos</span><strong id="checkoutSubtotal">R$ 0,00</strong></div><div class="checkout-total"><span>Entrega</span><strong id="checkoutShipping">A calcular</strong></div><div class="checkout-total checkout-grand-total"><span>Total</span><strong id="checkoutGrandTotal">A calcular</strong></div><p class="checkout-note" id="checkoutNote">O total acima é o pagamento à Streetball Store e não inclui impostos de importação nem eventual Despacho Postal cobrados depois no Brasil. Se houver cobrança, o destinatário deverá pagá-la pelos canais oficiais.</p><button class="btn-accent full" type="submit" id="placeOrder">SOLICITAR PAGAMENTO SEGURO <span>→</span></button><p class="status" id="checkoutStatus" aria-live="polite"></p></form></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="app.js?v=20261023-europe-inline-v2" defer></script>
+<script src="app.js?v=20261023-mobile-europe-v3" defer></script>
 </body></html>
