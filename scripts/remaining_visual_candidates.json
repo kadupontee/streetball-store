@@ -1,14 +1,14 @@
 {
   "catalog_size": 10936,
   "images_examined": 10885,
-  "selected_candidates": 763,
+  "selected_candidates": 757,
   "counts_by_reason": {
     "possivel_conjunto": 501,
     "possivel_camisa_ou_polo": 93,
-    "nome_de_treino_pendente": 145,
+    "nome_de_treino_pendente": 139,
     "possivel_casaco_blusa": 24
   },
-  "already_confirmed_by_photo": 56,
+  "already_confirmed_by_photo": 62,
   "manual_review_only": 9,
   "method": "Priorizacao pelo modelo e titulo. Nenhuma alteracao automatica de produtos ou precos.",
   "candidates_by_reason": {
@@ -38,19 +38,6 @@
         "margin": 0.873,
         "reason": "nome_de_treino_pendente",
         "priority": 88.59
-      },
-      {
-        "id": "YUP-249224006",
-        "image": "/images/yupoo/249224006.webp",
-        "title": "Player 2627Barcelona training shirt S~3XL",
-        "kind": "long",
-        "category": "treino",
-        "price": 189.9,
-        "vision": "jersey_long",
-        "score": 0.9265,
-        "margin": 0.862,
-        "reason": "nome_de_treino_pendente",
-        "priority": 88.53
       },
       {
         "id": "YUP-223323503",
@@ -131,19 +118,6 @@
         "priority": 87.07
       },
       {
-        "id": "YUP-258349273",
-        "image": "/images/yupoo/258349273.webp",
-        "title": "Player 2627 Bayern training shirt grey S~3XL",
-        "kind": "long",
-        "category": "treino",
-        "price": 189.9,
-        "vision": "jersey_long",
-        "score": 0.8407,
-        "margin": 0.6916,
-        "reason": "nome_de_treino_pendente",
-        "priority": 86.81
-      },
-      {
         "id": "YUP-234199313",
         "image": "/images/yupoo/234199313.webp",
         "title": "26-27 Mineiro Training uniform: S-4XL",
@@ -194,19 +168,6 @@
         "margin": 0.7364,
         "reason": "nome_de_treino_pendente",
         "priority": 86.0
-      },
-      {
-        "id": "YUP-213864129",
-        "image": "/images/yupoo/213864129.webp",
-        "title": "Olympique Lyonnais 2025_26 Pre-match training Jersey",
-        "kind": "long",
-        "category": "treino",
-        "price": 189.9,
-        "vision": "jersey_short",
-        "score": 0.7904,
-        "margin": 0.6341,
-        "reason": "nome_de_treino_pendente",
-        "priority": 85.81
       },
       {
         "id": "YUP-235623787",
@@ -326,19 +287,6 @@
         "priority": 85.16
       },
       {
-        "id": "YUP-247420991",
-        "image": "/images/yupoo/247420991.webp",
-        "title": "Portugal training shirt black S-2XL",
-        "kind": "long",
-        "category": "treino",
-        "price": 189.9,
-        "vision": "jersey_short",
-        "score": 0.7545,
-        "margin": 0.6013,
-        "reason": "nome_de_treino_pendente",
-        "priority": 85.09
-      },
-      {
         "id": "YUP-223010285",
         "image": "/images/yupoo/223010285.webp",
         "title": "26-27 Senegal Training Uniform Player Edition",
@@ -391,19 +339,6 @@
         "priority": 84.99
       },
       {
-        "id": "YUP-250002465",
-        "image": "/images/yupoo/250002465.webp",
-        "title": "Flamengo training short-sleeved shirt S-4XL",
-        "kind": "long",
-        "category": "treino",
-        "price": 189.9,
-        "vision": "polo",
-        "score": 0.7469,
-        "margin": 0.5961,
-        "reason": "nome_de_treino_pendente",
-        "priority": 84.94
-      },
-      {
         "id": "YUP-240034758",
         "image": "/images/yupoo/240034758.webp",
         "title": "26/27 Italy training jersey army green S-3XL",
@@ -441,19 +376,6 @@
         "margin": 0.5458,
         "reason": "nome_de_treino_pendente",
         "priority": 84.85
-      },
-      {
-        "id": "YUP-226924401",
-        "image": "/images/yupoo/226924401.webp",
-        "title": "26-27 Inter Milan training uniform S-4Xl",
-        "kind": "long",
-        "category": "treino",
-        "price": 189.9,
-        "vision": "jersey_short",
-        "score": 0.7392,
-        "margin": 0.5585,
-        "reason": "nome_de_treino_pendente",
-        "priority": 84.78
       },
       {
         "id": "YUP-230053234",
@@ -922,6 +844,84 @@
         "margin": 0.2439,
         "reason": "nome_de_treino_pendente",
         "priority": 82.28
+      },
+      {
+        "id": "YUP-222749596",
+        "image": "/images/yupoo/222749596.webp",
+        "title": "26-27 Cruzeiro Training Uniform Color Blue S-4XL",
+        "kind": "long",
+        "category": "treino",
+        "price": 189.9,
+        "vision": "jersey_short",
+        "score": 0.6117,
+        "margin": 0.3118,
+        "reason": "nome_de_treino_pendente",
+        "priority": 82.23
+      },
+      {
+        "id": "YUP-239281694",
+        "image": "/images/yupoo/239281694.webp",
+        "title": "26-27 Paris training gear black S-3XL",
+        "kind": "long",
+        "category": "treino",
+        "price": 189.9,
+        "vision": "jersey_short",
+        "score": 0.6096,
+        "margin": 0.2774,
+        "reason": "nome_de_treino_pendente",
+        "priority": 82.19
+      },
+      {
+        "id": "YUP-221452357",
+        "image": "/images/yupoo/221452357.webp",
+        "title": "Algerian training uniform pink S-4XL",
+        "kind": "long",
+        "category": "treino",
+        "price": 189.9,
+        "vision": "jersey_long",
+        "score": 0.6062,
+        "margin": 0.2555,
+        "reason": "nome_de_treino_pendente",
+        "priority": 82.12
+      },
+      {
+        "id": "YUP-234199265",
+        "image": "/images/yupoo/234199265.webp",
+        "title": "26-27 Mineiro Training uniform: S-4XL",
+        "kind": "long",
+        "category": "treino",
+        "price": 189.9,
+        "vision": "jersey_long",
+        "score": 0.6037,
+        "margin": 0.2247,
+        "reason": "nome_de_treino_pendente",
+        "priority": 82.07
+      },
+      {
+        "id": "YUP-235624023",
+        "image": "/images/yupoo/235624023.webp",
+        "title": "Manchester United Adult training vests S-xxL",
+        "kind": "long",
+        "category": "treino",
+        "price": 189.9,
+        "vision": "shorts",
+        "score": 0.6013,
+        "margin": 0.3718,
+        "reason": "nome_de_treino_pendente",
+        "priority": 82.03
+      },
+      {
+        "id": "YUP-227493208",
+        "image": "/images/yupoo/227493208.webp",
+        "title": "Brazil Training clothes short sleeves S～2XL",
+        "kind": "long",
+        "category": "treino",
+        "price": 189.9,
+        "vision": "jersey_short",
+        "score": 0.6007,
+        "margin": 0.2552,
+        "reason": "nome_de_treino_pendente",
+        "priority": 82.01
       }
     ],
     "possivel_camisa_ou_polo": [

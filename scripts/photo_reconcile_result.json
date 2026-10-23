@@ -3,61 +3,9 @@
   "previously_scanned_images": 10885,
   "matched_images": 10885,
   "without_corresponding_scanned_image": 51,
-  "new_safe_corrections": 7,
-  "corrections_by_rule": {
-    "modelo+titulo:camiseta_curta": 7
-  },
-  "corrected_items": [
-    {
-      "id": "YUP-252737540",
-      "before": "long",
-      "after": "fan",
-      "old_price": 189.9,
-      "new_price": 159.9
-    },
-    {
-      "id": "YUP-246402907",
-      "before": "long",
-      "after": "fan",
-      "old_price": 189.9,
-      "new_price": 159.9
-    },
-    {
-      "id": "YUP-245376551",
-      "before": "long",
-      "after": "fan",
-      "old_price": 189.9,
-      "new_price": 159.9
-    },
-    {
-      "id": "YUP-241110109",
-      "before": "long",
-      "after": "fan",
-      "old_price": 189.9,
-      "new_price": 159.9
-    },
-    {
-      "id": "YUP-235132135",
-      "before": "long",
-      "after": "fan",
-      "old_price": 189.9,
-      "new_price": 159.9
-    },
-    {
-      "id": "YUP-224836635",
-      "before": "long",
-      "after": "fan",
-      "old_price": 189.9,
-      "new_price": 159.9
-    },
-    {
-      "id": "YUP-220841358",
-      "before": "long",
-      "after": "fan",
-      "old_price": 189.9,
-      "new_price": 159.9
-    }
-  ],
+  "new_safe_corrections": 0,
+  "corrections_by_rule": {},
+  "corrected_items": [],
   "unpriced_possible_set_examples": [
     {
       "id": "YUP-258349477",
