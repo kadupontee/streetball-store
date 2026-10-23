@@ -95,6 +95,7 @@ def main():
     report["reverted_false_jackets"]=reverted
     report["jacket_products_now"]=sum(1 for p in updated if p.get("kind")=="jacket")
     report["coat_products_now"]=sum(1 for p in updated if p.get("kind")=="coat")
+    report["blouse_products_now"]=sum(1 for p in updated if p.get("kind")=="blouse")
     print(json.dumps({k:v for k,v in report.items() if k not in ("review_examples","changed_examples")},ensure_ascii=False))
     if args.check:
         if report["changed_items"] or reverted:
