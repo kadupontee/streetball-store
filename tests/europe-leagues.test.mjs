@@ -59,7 +59,13 @@ test('navegação da loja tem dois níveis, eventos delegados e estilos mobile',
  const app=fs.readFileSync('public/app.js','utf8');
  const css=fs.readFileSync('public/styles.css','utf8');
  for(const id of ['europeLeagues','europeLeagueGrid','europeClubSection','europeClubGrid','europeClubHeading'])assert.match(html,new RegExp('id="'+id+'"'));
- assert.ok(html.indexOf('europe-clubs.js')<html.indexOf('app.js'),'dados devem carregar antes do app');
+ assert.match(html, /<script src="app\.js\?v=/, 'o navegador carrega o app principal');
+ assert.ok(!html.includes('europe-clubs.js'), 'uma única requisição JS para a navegação');
+ const begin=app.indexOf('const EUROPE='); const end=app.indexOf('const BR_CLUBS=',begin);
+ assert.ok(begin>=0&&end>begin,'a lista de ligas deve estar incluída no app.js');
+ const InlineEurope=vm.runInNewContext(app.slice(begin,end)+'\nEUROPE');
+ assert.deepEqual(Array.from(InlineEurope.leagues,([id])=>id),['premier','laliga','seriea','bundesliga','ligue1']);
+ assert.deepEqual(JSON.parse(JSON.stringify(InlineEurope.leagues)), JSON.parse(JSON.stringify(Europe.leagues)),'o app deve ter todos os clubes definidos');
  for(const token of ['renderEuropeNavigation()','selectEuropeLeague(','selectEuropeClub(','state.europeLeague','state.europeClub','data-euro-league','data-euro-club','europeLeagueFor(p)'])assert.ok(app.includes(token),'faltou '+token);
  assert.ok(css.includes('@media(max-width:510px)')&&css.includes('.europe-league-grid'));
 });
