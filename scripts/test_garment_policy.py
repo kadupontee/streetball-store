@@ -33,6 +33,12 @@ class GarmentPolicyTest(unittest.TestCase):
         p=apply_garment_pricing(product("Chelsea Coat Set",kind="set",price=299.90))
         self.assertEqual((p["kind"],p["price"]),("set",299.90))
 
+    def test_coat_kind_without_label_keeps_blouse_price(self):
+        item=product("Modelo de inverno",kind="coat",price=379.90)
+        self.assertEqual(apply_garment_pricing(item)["price"],189.90)
+        higher=product("Casaco Casual Benfica",kind="coat",price=329.90)
+        self.assertEqual(apply_garment_pricing(higher)["price"],189.90)
+
     def test_jacket_set_needs_review(self):
         p=apply_garment_pricing(product("Barcelona windbreaker set S-2XL",kind="set",price=299.90))
         self.assertEqual(p["kind"],"set")
