@@ -83,11 +83,14 @@ def garment_decision(product, *, require_photo=False):
     if kind in NO_GARMENT or re.search(r"\b(?:kids?|children|infantil|baby)\b",title):
         return None,"produto infantil ou acessorio"
     is_coat=bool(COAT.search(title)) or kind=="coat"
-    is_jacket=bool(JACKET.search(title)) or kind=="jacket"
+    is_blouse=bool(BLOUSE.search(title)) or kind=="blouse"
+    # Corrige rótulos antigos: half-zip é blusa mesmo se importado como jacket.
+    has_explicit_jacket=bool(JACKET.search(title))
+    is_jacket=has_explicit_jacket or (kind=="jacket" and not is_blouse and not is_coat)
     is_set=bool(SET.search(title)) or (
-        (is_jacket or is_coat) and bool(re.search(r"\b(?:pants?|calcas?|trousers?|joggers?|bottoms?)\b",title))
+        (is_jacket or is_coat or is_blouse) and bool(re.search(r"\b(?:pants?|calcas?|trousers?|joggers?|bottoms?)\b",title))
     )
-    if (is_jacket or is_coat) and is_set:
+    if (is_jacket or is_coat or is_blouse) and is_set:
         return None,"conjunto com jaqueta ou casaco: preco de conjunto nao confirmado"
     if is_coat:
         return "coat","casaco identificado no titulo: mesmo preco de blusa"
@@ -95,7 +98,7 @@ def garment_decision(product, *, require_photo=False):
         return "jacket","jaqueta ou corta-vento com fecho integral identificado no titulo"
     if SHORT.search(title):
         return None,"peca de manga curta, regata ou colete"
-    if (BLOUSE.search(title) or kind=="blouse") and not SHORT.search(title):
+    if is_blouse and not SHORT.search(title):
         return "blouse","blusa, moletom ou pullover identificado por nome"
     if TRAINING_TOP.search(title) and not LONG.search(title):
         return None,"training top sem manga confirmada: revisar foto"
