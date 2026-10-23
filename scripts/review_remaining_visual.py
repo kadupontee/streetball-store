@@ -62,6 +62,6 @@ path.write_text(json.dumps({
     "already_confirmed_by_photo":len(PHOTO_CONFIRMED),
     "manual_review_only":len(REVIEW_ONLY),
     "method":"Priorizacao pelo modelo e titulo. Nenhuma alteracao automatica de produtos ou precos.",
-    "candidates":result[:200]
+    "candidates_by_reason":{name: [x for x in result if x["reason"]==name][:70] for name in sorted(reason_counts)}
 },ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 print("Candidatos adicionais:",len(result),"amostra",min(200,len(result)))
