@@ -61,6 +61,13 @@ class GarmentPolicyTest(unittest.TestCase):
         item=product("Chelsea Half-Zip Jacket",kind="jacket",price=379.90)
         self.assertEqual(apply_garment_pricing(item)["kind"],"jacket")
 
+    def test_generico_set_nao_pode_ser_blusa_ou_jaqueta(self):
+        for title in ("Nike Half Pull Set", "Ajax Royal Blue Half-Zip Set", "Barcelona Sweatshirt Set"):
+            p=product(title,kind="blouse",price=189.90)
+            self.assertIsNone(garment_decision(p)[0],title)
+        p=product("Paris Windbreaker Set",kind="jacket",price=379.90)
+        self.assertIsNone(garment_decision(p)[0])
+
     def test_hoodie_em_conjunto_nao_reprecifica(self):
         item=product("Portugal Hoodie Set",kind="set",price=299.90)
         self.assertEqual((apply_garment_pricing(item)["kind"],apply_garment_pricing(item)["price"]),("set",299.90))
