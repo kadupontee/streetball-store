@@ -6,6 +6,7 @@ on:
       - scripts/visual_verified.py
       - scripts/test_visual_verified.py
       - scripts/photo_catalog_reconcile.py
+      - scripts/garment_visual_review.json
       - scripts/test_photo_catalog_reconcile.py
       - scripts/test_visual_import_preservation.py
       - scripts/review_remaining_visual.py
