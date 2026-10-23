@@ -9,7 +9,7 @@ const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
 test('os tres Criar conta da home sao visiveis apenas para visitantes',()=>{
  assert.equal((html.match(/data-guest-only/g)||[]).length,3);
  assert.match(html,/<a href="account\.html#criar-conta"[^>]*data-guest-only[^>]*>CRIAR CONTA/);
- assert.match(html,/app\.js\?v=20261022-coat-blouse-v12/);
+ assert.match(html,/app\.js\?v=20261023-visual-blouses-v13/);
  assert.match(app,/credentials:'same-origin',cache:'no-store'/);
 });
 
