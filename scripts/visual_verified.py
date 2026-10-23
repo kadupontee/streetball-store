@@ -99,8 +99,9 @@ def validate_and_apply(products: list[dict]) -> tuple[list[dict], dict]:
         raise ValueError(f"Conferência interrompida: ausentes={missing}; fotos trocadas={mismatched_photos}; travas conflitantes={blocked}")
     revised = [apply_reviewed_visual_fix(p) for p in products]
     changes = [p["id"] for p, q in zip(products, revised) if p != q]
+    confirmed_present = sum(p.get("visualReviewStatus") == AUDIT_TAG for p in revised)
     return revised, {"catalog_products":len(products),
-        "photo_confirmed":len(PHOTO_CONFIRMED), "changed":len(changes),
+        "photo_confirmed":len(PHOTO_CONFIRMED), "confirmed_present":confirmed_present, "changed":len(changes),
         "changed_ids":changes,"review_only":REVIEW_ONLY,
         "safety":"Sem mudanças de imagem, link ou produtos com travas manuais conflitantes."}
 
