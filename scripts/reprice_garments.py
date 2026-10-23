@@ -80,6 +80,18 @@ def main():
     if not products: raise SystemExit("Catalogo vazio: migração abortada.")
     products,reverted=undo_ambiguous_jackets(products)
     updated,report=migrate(products)
+    coats=[p for p in updated if p.get("kind")=="coat"]
+    unlocked=[p for p in coats if not p.get("priceLocked")]
+    mismatches=[p for p in unlocked if abs(float(p.get("price") or 0)-189.90)>0.01]
+    if mismatches:
+        bad=", ".join(str(p.get("id")) for p in mismatches[:15])
+        raise SystemExit("Casacos sem preço de blusa, revisão necessária: "+bad)
+    report["coat_price_audit"]={
+        "coat_products":len(coats),
+        "unlocked_at_blouse_price":len(unlocked),
+        "price_locked":len(coats)-len(unlocked),
+        "price_brl":189.90
+    }
     report["reverted_false_jackets"]=reverted
     report["jacket_products_now"]=sum(1 for p in updated if p.get("kind")=="jacket")
     report["coat_products_now"]=sum(1 for p in updated if p.get("kind")=="coat")
