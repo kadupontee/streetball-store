@@ -2,40 +2,91 @@
   "method": "CLIP zero-shot classification from each actual local product image; predictions are advisory and not verified by a human",
   "model": "openai/clip-vit-base-patch32",
   "catalog_products": 10936,
-  "candidate_images": 1727,
-  "images_examined": 1727,
+  "candidate_images": 1775,
+  "all_images_requested": false,
+  "catalog_without_local_photo": null,
+  "images_examined": 1775,
   "processing_errors": [],
   "current_kinds": {
-    "long": 608,
-    "set": 420,
+    "long": 583,
+    "set": 419,
     "coat": 173,
-    "fan": 171,
-    "jacket": 154,
-    "kids": 49,
+    "fan": 158,
+    "blouse": 101,
+    "kids": 51,
+    "jacket": 126,
     "retro_long": 79,
-    "female": 22,
-    "retro": 31,
+    "female": 25,
+    "retro": 36,
     "shorts": 3,
-    "player_adidas": 17
+    "player_adidas": 21
   },
   "visual_guesses": {
-    "long": 706,
-    "shirt": 499,
-    "jacket": 108,
-    "shorts": 101,
-    "set": 299,
-    "blouse": 13,
+    "long": 722,
+    "shirt": 505,
+    "jacket": 109,
+    "shorts": 99,
+    "set": 323,
+    "blouse": 16,
     "coat": 1
   },
-  "disagreements": 15,
-  "high_confidence_disagreements": 5,
+  "disagreements": 19,
+  "high_confidence_disagreements": 6,
   "examples_high_confidence": [
+    {
+      "id": "YUP-250929923",
+      "image": "/images/yupoo/250929923.webp",
+      "supplierTitle": "26.27 Argentina hoodie s-3xl",
+      "original_kind": "blouse",
+      "original_price": 189.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "polo",
+          "probability": 0.6356
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.2035
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.1556
+        }
+      ]
+    },
+    {
+      "id": "YUP-250929853",
+      "image": "/images/yupoo/250929853.webp",
+      "supplierTitle": "26.27 Italy hoodie S-3XL",
+      "original_kind": "blouse",
+      "original_price": 189.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "polo",
+          "probability": 0.7008
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.1914
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1044
+        }
+      ]
+    },
     {
       "id": "YUP-247829255",
       "image": "/images/yupoo/247829255.webp",
       "supplierTitle": "Player Version 26/27 Manchester United Red Half-Zip (S–3XL)",
-      "original_kind": "jacket",
-      "original_price": 379.9,
+      "original_kind": "blouse",
+      "original_price": 189.9,
       "visual_guess": "shirt",
       "high_confidence": true,
       "disagrees_with_catalog": true,
@@ -103,9 +154,9 @@
       ]
     },
     {
-      "id": "YUP-224573126",
-      "image": "/images/yupoo/224573126.webp",
-      "supplierTitle": "mexico Cotton clothing M-5XL",
+      "id": "YUP-224575760",
+      "image": "/images/yupoo/224575760.webp",
+      "supplierTitle": "spain Cotton clothing M-5XL",
       "original_kind": "fan",
       "original_price": 159.9,
       "visual_guess": "jacket",
@@ -114,39 +165,15 @@
       "top": [
         {
           "class": "jacket_windbreaker",
-          "probability": 0.8625
-        },
-        {
-          "class": "jacket_full_zip",
-          "probability": 0.0575
+          "probability": 0.9481
         },
         {
           "class": "coat",
-          "probability": 0.0326
-        }
-      ]
-    },
-    {
-      "id": "YUP-224575800",
-      "image": "/images/yupoo/224575800.webp",
-      "supplierTitle": "Betis Cotton clothing M-5XL",
-      "original_kind": "fan",
-      "original_price": 159.9,
-      "visual_guess": "jacket",
-      "high_confidence": true,
-      "disagrees_with_catalog": true,
-      "top": [
-        {
-          "class": "jacket_windbreaker",
-          "probability": 0.9341
-        },
-        {
-          "class": "coat",
-          "probability": 0.0377
+          "probability": 0.0328
         },
         {
           "class": "blouse_hoodie",
-          "probability": 0.0121
+          "probability": 0.0091
         }
       ]
     }
@@ -173,30 +200,6 @@
         {
           "class": "jacket_windbreaker",
           "probability": 0.1226
-        }
-      ]
-    },
-    {
-      "id": "YUP-253724017",
-      "image": "/images/yupoo/253724017.webp",
-      "supplierTitle": "Barcelona black fleece hoodie",
-      "original_kind": "fan",
-      "original_price": 159.9,
-      "visual_guess": "blouse",
-      "high_confidence": false,
-      "disagrees_with_catalog": true,
-      "top": [
-        {
-          "class": "blouse_hoodie",
-          "probability": 0.5624
-        },
-        {
-          "class": "jacket_windbreaker",
-          "probability": 0.2673
-        },
-        {
-          "class": "tracksuit",
-          "probability": 0.097
         }
       ]
     },
@@ -228,8 +231,8 @@
       "id": "YUP-251584182",
       "image": "/images/yupoo/251584182.webp",
       "supplierTitle": "26-27 Paris Half-Zip Training Top Embroidery S-2XL",
-      "original_kind": "jacket",
-      "original_price": 379.9,
+      "original_kind": "blouse",
+      "original_price": 189.9,
       "visual_guess": "shirt",
       "high_confidence": false,
       "disagrees_with_catalog": true,
@@ -249,11 +252,83 @@
       ]
     },
     {
+      "id": "YUP-251429933",
+      "image": "/images/yupoo/251429933.webp",
+      "supplierTitle": "Brazil long-sleeved thickened sweatshirt",
+      "original_kind": "blouse",
+      "original_price": 189.9,
+      "visual_guess": "shirt",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.5328
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.4477
+        },
+        {
+          "class": "shorts",
+          "probability": 0.0068
+        }
+      ]
+    },
+    {
+      "id": "YUP-250929923",
+      "image": "/images/yupoo/250929923.webp",
+      "supplierTitle": "26.27 Argentina hoodie s-3xl",
+      "original_kind": "blouse",
+      "original_price": 189.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "polo",
+          "probability": 0.6356
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.2035
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.1556
+        }
+      ]
+    },
+    {
+      "id": "YUP-250929853",
+      "image": "/images/yupoo/250929853.webp",
+      "supplierTitle": "26.27 Italy hoodie S-3XL",
+      "original_kind": "blouse",
+      "original_price": 189.9,
+      "visual_guess": "shirt",
+      "high_confidence": true,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "polo",
+          "probability": 0.7008
+        },
+        {
+          "class": "jersey_short",
+          "probability": 0.1914
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1044
+        }
+      ]
+    },
+    {
       "id": "YUP-247829255",
       "image": "/images/yupoo/247829255.webp",
       "supplierTitle": "Player Version 26/27 Manchester United Red Half-Zip (S–3XL)",
-      "original_kind": "jacket",
-      "original_price": 379.9,
+      "original_kind": "blouse",
+      "original_price": 189.9,
       "visual_guess": "shirt",
       "high_confidence": true,
       "disagrees_with_catalog": true,
@@ -345,30 +420,6 @@
       ]
     },
     {
-      "id": "YUP-230405914",
-      "image": "/images/yupoo/230405914.webp",
-      "supplierTitle": "2014/15 season Bayern hooded sweater",
-      "original_kind": "retro",
-      "original_price": 199.9,
-      "visual_guess": "blouse",
-      "high_confidence": false,
-      "disagrees_with_catalog": true,
-      "top": [
-        {
-          "class": "blouse_sweatshirt",
-          "probability": 0.2627
-        },
-        {
-          "class": "blouse_hoodie",
-          "probability": 0.1647
-        },
-        {
-          "class": "tracksuit",
-          "probability": 0.1581
-        }
-      ]
-    },
-    {
       "id": "YUP-227138431",
       "image": "/images/yupoo/227138431.webp",
       "supplierTitle": "Algeria Green Hooded Full Pull Windbreaker Set S-2XL",
@@ -393,6 +444,30 @@
       ]
     },
     {
+      "id": "YUP-226743160",
+      "image": "/images/yupoo/226743160.webp",
+      "supplierTitle": "Columbia Blue POLO Half Pull S~2XL",
+      "original_kind": "blouse",
+      "original_price": 189.9,
+      "visual_guess": "shirt",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.3981
+        },
+        {
+          "class": "polo",
+          "probability": 0.3874
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.1608
+        }
+      ]
+    },
+    {
       "id": "YUP-224572812",
       "image": "/images/yupoo/224572812.webp",
       "supplierTitle": "mexico Half pulled top",
@@ -413,6 +488,30 @@
         {
           "class": "blouse_sweatshirt",
           "probability": 0.0634
+        }
+      ]
+    },
+    {
+      "id": "YUP-223798511",
+      "image": "/images/yupoo/223798511.webp",
+      "supplierTitle": "25-26 Half Pull Real Madrid White S-2XL",
+      "original_kind": "blouse",
+      "original_price": 189.9,
+      "visual_guess": "shirt",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.4946
+        },
+        {
+          "class": "shorts",
+          "probability": 0.4554
+        },
+        {
+          "class": "jersey_long",
+          "probability": 0.0302
         }
       ]
     },
@@ -465,33 +564,57 @@
       ]
     },
     {
-      "id": "YUP-224573126",
-      "image": "/images/yupoo/224573126.webp",
-      "supplierTitle": "mexico Cotton clothing M-5XL",
-      "original_kind": "fan",
-      "original_price": 159.9,
-      "visual_guess": "jacket",
-      "high_confidence": true,
+      "id": "YUP-223009182",
+      "image": "/images/yupoo/223009182.webp",
+      "supplierTitle": "25-26 Manchester City Blue and White W Long Sleeve Hoodie M-4XL",
+      "original_kind": "blouse",
+      "original_price": 189.9,
+      "visual_guess": "shirt",
+      "high_confidence": false,
       "disagrees_with_catalog": true,
       "top": [
         {
-          "class": "jacket_windbreaker",
-          "probability": 0.8625
+          "class": "jersey_short",
+          "probability": 0.4808
         },
         {
-          "class": "jacket_full_zip",
-          "probability": 0.0575
+          "class": "jersey_long",
+          "probability": 0.4618
         },
         {
-          "class": "coat",
-          "probability": 0.0326
+          "class": "shorts",
+          "probability": 0.0535
         }
       ]
     },
     {
-      "id": "YUP-224575800",
-      "image": "/images/yupoo/224575800.webp",
-      "supplierTitle": "Betis Cotton clothing M-5XL",
+      "id": "YUP-222658433",
+      "image": "/images/yupoo/222658433.webp",
+      "supplierTitle": "Manchester City thick hoodie",
+      "original_kind": "blouse",
+      "original_price": 189.9,
+      "visual_guess": "shirt",
+      "high_confidence": false,
+      "disagrees_with_catalog": true,
+      "top": [
+        {
+          "class": "jersey_short",
+          "probability": 0.317
+        },
+        {
+          "class": "shorts",
+          "probability": 0.2973
+        },
+        {
+          "class": "polo",
+          "probability": 0.1388
+        }
+      ]
+    },
+    {
+      "id": "YUP-224575760",
+      "image": "/images/yupoo/224575760.webp",
+      "supplierTitle": "spain Cotton clothing M-5XL",
       "original_kind": "fan",
       "original_price": 159.9,
       "visual_guess": "jacket",
@@ -500,15 +623,15 @@
       "top": [
         {
           "class": "jacket_windbreaker",
-          "probability": 0.9341
+          "probability": 0.9481
         },
         {
           "class": "coat",
-          "probability": 0.0377
+          "probability": 0.0328
         },
         {
           "class": "blouse_hoodie",
-          "probability": 0.0121
+          "probability": 0.0091
         }
       ]
     }
