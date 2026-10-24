@@ -1,1 +1,6 @@
-{}
+{
+  "YUP-259986580": {
+    "at": "2026-10-24T17:38:01.251967+00:00",
+    "reason": "HTTP Error 567: Unknown Status; Dimensoes inesperadas"
+  }
+}
