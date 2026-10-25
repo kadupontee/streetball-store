@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#17171b">
+ <title>Editor visual | Streetball Store</title>
+ <link rel="icon" type="image/svg+xml" href="favicon.svg?v=streetball-official-2">
+ <link rel="stylesheet" href="editor.css?v=20261025-editor-v1">
+ <script type="module" src="editor.js?v=20261025-editor-v1"></script>
+</head>
+<body>
+ <header class="editor-header">
+  <a class="editor-brand" href="/editor.html" aria-label="Editor Streetball"><span class="brand-mark">S/</span><span>STREETBALL<span class="brand-caption">ESTÚDIO DA LOJA</span></span></a>
+  <div class="document-label"><span class="status-dot"></span><span id="publicationStatus">Editor visual</span><small id="saveStatus">Entre para começar</small></div>
+  <div class="header-actions"><button id="undo" class="icon-button" title="Desfazer (Ctrl/⌘ Z)" aria-label="Desfazer" disabled>↶</button><button id="redo" class="icon-button" title="Refazer" aria-label="Refazer" disabled>↷</button><span class="action-divider"></span><a class="button button-light live-link" href="/" target="_blank" rel="noopener">Ver loja <span aria-hidden="true">↗</span></a><button id="publish" class="button button-primary" disabled>Publicar alterações</button><button id="logout" class="button button-quiet" hidden>Sair</button></div>
+ </header>
+ <main class="editor-workspace" id="workspace" hidden>
+  <aside class="editor-sidebar" aria-label="Ferramentas de edição">
+   <div class="sidebar-heading"><span class="eyebrow">SUA LOJA, DO SEU JEITO</span><h1>Editar vitrine</h1><p>Selecione algo na prévia ou escolha abaixo.</p></div>
+   <nav class="panel-tabs" aria-label="Ferramentas"><button data-tab="layout" class="active" aria-pressed="true">Layout</button><button data-tab="products" aria-pressed="false">Produtos</button><button data-tab="history" aria-pressed="false">Histórico</button></nav>
+   <div class="sidebar-content" id="properties"></div>
+   <div class="sidebar-footer"><span id="editCount">Nenhuma correção manual</span><p>As mudanças chegam aos clientes ao publicar.</p><div><button id="export" class="text-button">Exportar rascunho</button><label class="text-button import-label">Importar<input type="file" id="import" accept="application/json,.json" hidden></label></div></div>
+  </aside>
+  <section class="preview-area" aria-label="Prévia da loja">
+   <div class="preview-toolbar">
+    <div class="segmented" aria-label="Modo da prévia"><button id="selectMode" class="active" aria-pressed="true">Selecionar</button><button id="browseMode" aria-pressed="false">Navegar</button></div>
+    <div class="device-controls"><div class="segmented" aria-label="Tamanho da prévia"><button data-device="desktop" class="active" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18v12H3zM8 21h8m-4-5v5"/></svg><span>Computador</span></button><button data-device="mobile" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg><span>Celular</span></button></div><span class="preview-size" id="previewSize">1440 px</span></div>
+    <button id="resetDraft" class="text-button" title="Voltar à última versão publicada">Voltar ao publicado</button>
+   </div>
+   <div class="draft-recovery" id="draftRecovery" hidden><span>Encontramos um rascunho salvo neste navegador.</span><button id="recoverDraft">Recuperar</button><button id="discardDraft">Descartar</button></div>
+   <div class="preview-stage" id="previewStage"><div class="preview-shell" id="previewShell"><div class="preview-browser"><span class="browser-dots">● ● ●</span><span id="previewAddress">lojastreetball.com.br</span><span class="preview-badge">PRÉVIA</span></div><iframe id="storePreview" title="Prévia visual da Streetball Store" sandbox="allow-scripts allow-same-origin" referrerpolicy="same-origin"></iframe></div><div id="previewLoading" class="preview-loading">Carregando sua loja…</div></div>
+   <div class="preview-footnote"><span class="preview-footnote-dot"></span><span id="previewTip">Clique em um produto para corrigir nome, preço, categoria ou visibilidade.</span><span id="catalogCount"></span></div>
+  </section>
+ </main>
+ <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle"><div class="login-decoration"><span class="large-mark">S/</span><p>O manto é seu.<br><em>A vitrine também.</em></p><span class="decoration-caption">STREETBALL / ESTÚDIO DA LOJA</span></div><form id="loginForm" class="login-card"><span class="eyebrow">ACESSO DA ADMINISTRAÇÃO</span><h1 id="loginTitle">Sua loja.<br>Sob seu controle.</h1><p>Veja a vitrine inteira, corrija os produtos e ajuste o visual antes de publicar.</p><label for="adminKey">Chave administrativa</label><input id="adminKey" name="adminKey" type="password" autocomplete="off" placeholder="A mesma chave do painel de fornecedores" required><button class="button button-primary" id="connect">Abrir editor visual <span aria-hidden="true">→</span></button><p class="login-note">Use sua chave ADMIN_TOKEN. Sua chave não será incluída nos rascunhos nem na prévia.</p><p id="loginError" class="error-text" role="alert"></p></form></section>
+ <div class="editor-toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

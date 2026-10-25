@@ -265,6 +265,8 @@ const ADDON={personalization:20,patch:8,size:{XXL:5,'3XL':10,'4XL':15}};
 const PRODUCT_LIMIT=36;
 const isBasketball=p=>p?.category==='nba'||p?.kind==='nba'||/\b(nba|basketball)\b/i.test(String(p?.title||''));
 let catalog=(Array.isArray(window.STREETBALL_CATALOG)?window.STREETBALL_CATALOG:[]).filter(p=>!isBasketball(p));
+let editorBaseCatalog=[],storeSettingsModel=null,storeProductEdits={},storePublishedRevision=0,storeEditsSignature='{}';
+const editorPreview=window.parent!==window&&new URLSearchParams(location.search).get('editor')==='visual';
 const ls=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const persist=(key,val)=>{try{localStorage.setItem(key,JSON.stringify(val))}catch{}};
 let state={checkoutRequestKey:null,checkoutPayload:null,checkoutReady:false,checkoutSandbox:false,checkoutShipping:null,category:'todos',club:'todos',europeLeague:'todos',europeClub:'todos',query:'',sort:'featured',limit:PRODUCT_LIMIT,favoritesOnly:false,favorites:ls('streetball_favorites',[]),cart:ls('streetball_cart',[]),detail:null,choice:null,drawer:false,checkout:false};
@@ -301,7 +303,7 @@ document.addEventListener('error', e=>{
 },true);
 const matchCategory=(p,c)=>c==='todos'||(c==='brasileirao'?isBrazilProduct(p):c==='europa'?isEuropeProduct(p):p.category===c)||(c==='infantil'&&p.kind==='kids')||(c==='feminino'&&p.kind==='female')||(c==='player'&&(String(p.kind).startsWith('player_')||p.kind==='shorts_player'))||(c==='personalizadas'&&!['acessorios','treino'].includes(p.category)&&!['socks','shorts','shorts_player'].includes(p.kind));
 function filtered(){
- let ps=catalog.filter(p=>hasVerifiedPhoto(p)&&matchCategory(p,state.category));
+ let ps=catalog.filter(p=>!p.hidden&&hasVerifiedPhoto(p)&&matchCategory(p,state.category));
  if(state.category==='brasileirao'&&state.club!=='todos'){
    ps=ps.filter(p=>state.club==='outros'?!clubFor(p):clubFor(p)===state.club);
  }
@@ -557,7 +559,7 @@ function openCheckout(){
    if(!form.elements.name.value)form.elements.name.value=me.user.displayName;
   }).catch(()=>{});
 }
-async function submitOrder(e){e.preventDefault();const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length||!state.checkoutReady){status.textContent='Checkout ainda não habilitado.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;const whatsappOptIn=customer.whatsappOptIn==='on';delete customer.whatsappOptIn;const importTaxAcknowledged=customer.importTaxAcknowledged==='on';delete customer.importTaxAcknowledged;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={customer,whatsappOptIn,importTaxAcknowledged,paymentMethod:data.get('paymentMethod'),items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};const fingerprint=JSON.stringify(payload);if(state.checkoutPayload!==fingerprint){state.checkoutRequestKey=crypto.randomUUID();state.checkoutPayload=fingerprint;}btn.disabled=true;status.textContent='Verificando integração segura...';
+async function submitOrder(e){e.preventDefault();if(editorPreview){toast('A prévia não envia pedidos.');return;}const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length||!state.checkoutReady){status.textContent='Checkout ainda não habilitado.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;const whatsappOptIn=customer.whatsappOptIn==='on';delete customer.whatsappOptIn;const importTaxAcknowledged=customer.importTaxAcknowledged==='on';delete customer.importTaxAcknowledged;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={customer,whatsappOptIn,importTaxAcknowledged,storeRevision:storePublishedRevision,paymentMethod:data.get('paymentMethod'),items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};const fingerprint=JSON.stringify(payload);if(state.checkoutPayload!==fingerprint){state.checkoutRequestKey=crypto.randomUUID();state.checkoutPayload=fingerprint;}btn.disabled=true;status.textContent='Verificando integração segura...';
  try{if(location.hostname.endsWith('.github.io'))throw new Error('Esta é uma vitrine de demonstração. O checkout exige a publicação do backend de pagamentos (Cloudflare/Asaas).');const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':state.checkoutRequestKey},body:JSON.stringify(payload)});const result=await res.json().catch(()=>null);if(!res.ok)throw new Error(result?.error||'Checkout indisponível. A loja ainda não está conectada a um provedor de pagamento.');if(!result?.paymentUrl||!/^https:\/\//.test(result.paymentUrl))throw new Error('A cobrança não retornou um endereço seguro.');if(typeof result.trackingUrl==='string'&&result.trackingUrl.startsWith(location.origin+'/track.html#')){try{localStorage.setItem('streetball_tracking_link',result.trackingUrl)}catch{}}
  status.textContent=result.sandbox?'Redirecionando ao ambiente de testes Asaas...':'Redirecionando para o pagamento seguro no Asaas...';window.location.assign(result.paymentUrl)}catch(err){status.textContent=err.message.includes('Failed to fetch')?'Prévia: conecte o backend e o Asaas antes de receber pedidos reais.':err.message;btn.disabled=false;}}
 // Links de cadastro aparecem apenas para visitantes, nunca para uma sessão autenticada.
@@ -656,7 +658,47 @@ async function loadCheckoutConfig(){
  checkoutIndicator();
 }
 
-loadCheckoutConfig();
+// Configuração de cobrança é carregada depois dos preços publicados.
 // If published with catalog.json generated by importer, use its full validated catalog.
-if(/^https?:$/.test(location.protocol)){fetch('catalog.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catálogo indisponível');return r.json()}).then(data=>{if(Array.isArray(data)&&data.length){catalog=prepareCatalog(data);state.cart=state.cart.filter(it=>findProduct(it.id));renderEditorialHero();categoryRender();catalogRender();cartRender()}}).catch(err=>{$('catalogSubtitle').textContent='Falha ao carregar o catálogo. Atualize a página para tentar novamente.';console.error('Erro ao carregar catálogo:',err);});}
+function editorCatalogSummary(){
+ return editorBaseCatalog.map(p=>({id:p.id,title:p.title,price:p.price,category:p.category,kind:p.kind,image:p.image,hidden:!!p.hidden}));
+}
+function applyStoreProductEdits(){
+ catalog=editorBaseCatalog.map(p=>{
+  const patch=storeProductEdits[p.id];if(!storeSettingsModel||!patch)return p;
+  const edited=storeSettingsModel.applyProductOverride(p,patch);
+  if(['title','category','kind'].some(key=>Object.hasOwn(patch,key))){const euro=EUROPE.teamFor(edited);return {...edited,brazilClub:findBrazilClub(edited),europeClub:euro?.club||'',europeLeague:EUROPE.leagueFor(edited)}}
+  return edited;
+ }).filter(p=>!p.hidden);
+ state.checkoutRequestKey=null;
+ state.cart=state.cart.filter(it=>{const product=findProduct(it.id);return product&&!product.hidden});
+ catalogRender();cartRender();
+ if(state.detail&&findProduct(state.detail)&&!findProduct(state.detail).hidden)detailOpen(state.detail);
+}
+window.addEventListener('streetball:settings-change',event=>{const edits=event.detail.products||{},signature=JSON.stringify(edits);if(signature===storeEditsSignature)return;storeEditsSignature=signature;storeProductEdits=edits;if(editorBaseCatalog.length)applyStoreProductEdits()});
+window.addEventListener('streetball:editor-catalog-request',()=>{if(editorPreview&&editorBaseCatalog.length)window.dispatchEvent(new CustomEvent('streetball:catalog-ready',{detail:editorCatalogSummary()}))});
+window.addEventListener('streetball:editor-select-product',event=>{
+ if(!editorPreview)return;
+ state.category='todos';state.club='todos';state.europeLeague='todos';state.europeClub='todos';state.query='';state.favoritesOnly=false;
+ state.limit=PRODUCT_LIMIT;
+ const product=findProduct(event.detail);if(!product)return;
+ state.query=product.title;$('globalSearch').value=product.title;catalogRender();
+ $('colecao').scrollIntoView({behavior:'smooth',block:'start'});
+});
+if(/^https?:$/.test(location.protocol)){
+ Promise.all([
+  fetch('catalog.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Catálogo indisponível');return r.json()}),
+  window.STREETBALL_SETTINGS_READY||Promise.resolve({settings:{products:{}},model:null})
+ ]).then(([data,info])=>{
+  if(!Array.isArray(data)||!data.length)throw Error('Catálogo vazio');
+  storeSettingsModel=info.model;storePublishedRevision=info.revision||0;storeProductEdits=info.settings.products||{};storeEditsSignature=JSON.stringify(storeProductEdits);
+  editorBaseCatalog=prepareCatalog(data);applyStoreProductEdits();renderEditorialHero();categoryRender();loadCheckoutConfig();
+  if(editorPreview)window.dispatchEvent(new CustomEvent('streetball:catalog-ready',{detail:editorCatalogSummary()}));
+ }).catch(err=>{
+  state.checkoutReady=false;catalog=[];catalogRender();checkoutIndicator();
+  $('catalogSubtitle').textContent=err.message||'Falha ao carregar a loja. Atualize a página.';
+  if(editorPreview)window.dispatchEvent(new CustomEvent('streetball:catalog-error',{detail:err.message}));
+  console.error('Erro ao carregar catálogo:',err);
+ });
+}
 })();

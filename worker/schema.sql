@@ -174,3 +174,6 @@ CREATE TABLE IF NOT EXISTS customer_google_identities (
  linked_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_customer_google_identities_account ON customer_google_identities(customer_id);
+
+-- Editor visual: versões de layout e correções por ID, independentes da importação.
+CREATE TABLE IF NOT EXISTS store_editor_versions (revision INTEGER PRIMARY KEY, state_json TEXT NOT NULL, published_at TEXT NOT NULL);
