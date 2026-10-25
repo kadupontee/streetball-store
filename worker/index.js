@@ -11,7 +11,7 @@ import accountPageHtml from '../public/account.html';
  * IMPORTANTE: pagamento ao fornecedor NÃO é automatizado neste MVP.
  */
 const json=(data,status=200,more={})=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...more}});
-const cors={ 'access-control-allow-origin':'https://streetballstore.com.br', 'access-control-allow-headers':'content-type', 'access-control-allow-methods':'GET, POST, OPTIONS'};
+const cors={ 'access-control-allow-origin':'https://lojastreetball.com.br', 'access-control-allow-headers':'content-type', 'access-control-allow-methods':'GET, POST, OPTIONS'};
 const unaccent=s=>String(s||'').replace(/\D/g,'');
 const round=n=>Math.round((n+Number.EPSILON)*100)/100;
 const safeText=(s,len=100)=>String(s??'').trim().slice(0,len);

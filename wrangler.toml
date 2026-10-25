@@ -1,6 +1,13 @@
 name = "streetball-store"
 main = "worker/index.js"
 compatibility_date = "2026-07-01"
+workers_dev = true
+
+# Os dois nomes usam o mesmo Worker e banco. A zona precisa estar ativa no Cloudflare.
+routes = [
+  { pattern = "lojastreetball.com.br", custom_domain = true },
+  { pattern = "www.lojastreetball.com.br", custom_domain = true }
+]
 
 [assets]
 directory = "./public"
@@ -27,7 +34,7 @@ IMPORT_TAX_DISCLOSURE_APPROVED = "false"
 IMPORT_COMPLIANCE_APPROVED = "false"
 WA_AUTOMATION_ENABLED = "false"
 # Dominio HTTPS da vitrine usado somente para montar URLs publicas das fotos na previa.
-STORE_PUBLIC_URL = "https://streetball-store.kpgmer.workers.dev"
+STORE_PUBLIC_URL = "https://lojastreetball.com.br"
 # Valor TEMPORARIO apenas para simular cobranças no Sandbox. Nao habilitar producao com este frete.
 SHIPPING_FLAT_BRL = "0.00"
 # Catálogo compartilhado: números autorizados são cadastrados no painel /suppliers.html
