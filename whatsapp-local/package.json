@@ -17,6 +17,11 @@
     "integrar-loja": "node integrate.mjs",
     "testar-loja": "node store-cli.mjs test",
     "status-loja": "node store-cli.mjs status",
+    "integrar-pedidos": "node integrate.mjs",
+    "simular-pedido": "node store-cli.mjs orders-preview",
+    "status-pedidos": "node store-cli.mjs orders-status",
+    "ativar-pedidos": "node store-cli.mjs orders-enable",
+    "desativar-pedidos": "node store-cli.mjs orders-disable",
     "test": "node --test *.test.mjs"
   },
   "dependencies": {

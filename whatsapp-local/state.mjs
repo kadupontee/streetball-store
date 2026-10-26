@@ -9,7 +9,8 @@ export function statePaths(home = os.homedir(), platform = process.platform) {
     : path.join(home, '.local', 'state', 'streetball-whatsapp');
   return { base, auth: path.join(base, 'auth'), lock: path.join(base, 'process.json'),
     status: path.join(base, 'status.json'), log: path.join(base, 'conexao.log'),
-    config: path.join(base, 'bridge-config.json'), journal: path.join(base, 'bridge-journal.json') };
+    config: path.join(base, 'bridge-config.json'), journal: path.join(base, 'bridge-journal.json'),
+    ordersJournal: path.join(base,'order-journal.json'),ordersInbox: path.join(base,'order-inbox.json') };
 }
 
 export function prepareState(paths) {
@@ -28,6 +29,11 @@ export function isAlive(pid) {
 export function readJson(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
   catch { return null; }
+}
+
+export function writePrivateJson(file,value){
+  fs.writeFileSync(file+'.tmp',JSON.stringify(value,null,2),{mode:0o600});
+  fs.renameSync(file+'.tmp',file);fs.chmodSync(file,0o600);
 }
 
 export function hasSession(paths) {

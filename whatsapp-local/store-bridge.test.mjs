@@ -66,7 +66,9 @@ test('configuration uses HTTPS and the API does not follow redirects or expose t
 test('installation keeps the secret on stdin and only adds test tables before deployment',()=>{
  const steps=wranglerSteps('fake-private-token');
  assert.ok(steps[0].args.includes('--file=worker/local-whatsapp-schema.sql'));
- assert.equal(steps[1].input,'fake-private-token\n');
- assert.ok(!steps[1].args.includes('fake-private-token'));
- assert.deepEqual(steps[2].args,['deploy']);
+ const secret=steps.find(s=>s.args[0]==='secret');
+ assert.equal(secret.input,'fake-private-token\n');
+ assert.ok(!secret.args.includes('fake-private-token'));
+ assert.ok(steps.some(s=>s.args.includes('--file=worker/local-orders-schema.sql')));
+ assert.deepEqual(steps.at(-1).args,['deploy']);
 });

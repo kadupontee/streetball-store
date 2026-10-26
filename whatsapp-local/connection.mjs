@@ -66,7 +66,7 @@ export function startConnection({ makeSocket, auth, saveCreds, logger, browser, 
           await persistCredentials();
           if (finished || current !== generation) return;
           retries = 0; status('connected');
-          log('Conectado. Esta etapa não envia pedidos a fornecedores.');
+          log('Conectado. WhatsApp disponível para o modo configurado.');
           await onConnected(activeSocket);
           if (finished || current !== generation) return;
           if (selfTest && !tested) {

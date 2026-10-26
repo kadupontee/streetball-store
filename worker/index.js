@@ -1,5 +1,6 @@
-import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply,supplierReplyAction} from './fulfillment.js';
+import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply,supplierReplyAction,sendBuyerUpdate} from './fulfillment.js';
 import {handleLocalWhatsApp} from './local-whatsapp.js';
+import {recordPaymentEnvironment,recordPaymentReceipt} from './local-orders.js';
 import {supplierIdValid} from './supplier-mapping.js';
 import {STAGES,safeTrackingCode,formatProgress} from './order-progress.js';
 import {customerTrackingLink,verifyTrackingKey} from './order-tracking-access.js';
@@ -86,6 +87,7 @@ if(!attempt.meta?.changes){
 }
 await env.DB.prepare('INSERT INTO orders(id,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id,now,now,'awaiting_payment',name,email,phone,cpf,zip,address,city,state,JSON.stringify(cart.items),cart.subtotal,shipping,total).run();await linkAuthenticatedCheckout(req,env,id,email);if(whatsappOptIn)await env.DB.prepare('INSERT OR IGNORE INTO buyer_message_optin(order_id,consented_at) VALUES(?,?)').bind(id,now).run();
 if(importTaxAcknowledged)await env.DB.prepare('INSERT OR IGNORE INTO order_import_disclosures(order_id,accepted_at,policy) VALUES(?,?,?)').bind(id,now,'customer_pays_import_taxes_v1').run();
+if(env.WA_TRANSPORT==='local')await recordPaymentEnvironment(env,id);
 try{const customer=await asaas('/customers',env,{name,email,cpfCnpj:cpf,mobilePhone:phone,postalCode:zip,addressNumber:(address.match(/\b\d{1,5}\b/)||[])[0]||'S/N',externalReference:id,notificationDisabled:true});const due=new Date(Date.now()+48*3600*1000).toISOString().slice(0,10);const charge=await asaas('/payments',env,{customer:customer.id,billingType,value:total,dueDate:due,description:`Streetball Store pedido ${id.slice(0,8)}`,externalReference:id});if(!charge.id||!charge.invoiceUrl)throw Error('Cobrança não retornou link seguro.');await env.DB.prepare('UPDATE orders SET payment_id=?,payment_url=?,updated_at=? WHERE id=?').bind(charge.id,charge.invoiceUrl,new Date().toISOString(),id).run();return json({orderId:id,paymentUrl:charge.invoiceUrl,total,subtotal:cart.subtotal,shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',trackingUrl:await customerTrackingLink(env,id)});}catch(e){await env.DB.prepare('UPDATE orders SET status=?,updated_at=? WHERE id=?').bind('payment_setup_failed',new Date().toISOString(),id).run();return clientError('Não foi possível gerar a cobrança. Tente novamente mais tarde.',502)}}
 async function paymentWebhook(req,env,ctx){
  if(!env.ASAAS_WEBHOOK_TOKEN||req.headers.get('asaas-access-token')!==env.ASAAS_WEBHOOK_TOKEN)return clientError('Não autorizado.',401);
@@ -103,6 +105,7 @@ async function paymentWebhook(req,env,ctx){
  if(event.payment.externalReference&&event.payment.externalReference!==order.id)return clientError('Cobrança inconsistente.',409);
  if(Math.abs(Number(event.payment.value)-Number(order.total))>0.009||!Number.isFinite(Number(event.payment.value)))return clientError('Valor da cobrança divergente.',409);
  if(order.payment_id&&order.payment_id!==event.payment.id)return clientError('ID da cobrança divergente.',409);
+ if(event.event==='PAYMENT_RECEIVED'&&env.WA_TRANSPORT==='local')await recordPaymentReceipt(env,order.id,event.payment.id);
  await env.DB.prepare('INSERT OR IGNORE INTO webhook_events(id,received_at,event_name) VALUES(?,?,?)').bind(event.id,new Date().toISOString(),event.event).run();
  if(!order.payment_id)await env.DB.prepare('UPDATE orders SET payment_id=?,updated_at=? WHERE id=? AND payment_id IS NULL').bind(event.payment.id,new Date().toISOString(),order.id).run();
  // PAYMENT_CONFIRMED pode não significar saldo disponível; só liberar fornecedor quando RECEIVED.
@@ -345,7 +348,7 @@ async function adminApi(request,env,ctx){
   await env.DB.prepare('UPDATE supplier_jobs SET status=?,updated_at=? WHERE order_id=?').bind(body.status,new Date().toISOString(),order.id).run();
   if(body.status==='supplier_confirmed'&&order.status==='paid_supplier_pending'){
     await env.DB.prepare('UPDATE orders SET status=?,updated_at=? WHERE id=?').bind('supplier_preparing',new Date().toISOString(),order.id).run();
-    if(ctx&&env.WA_AUTOMATION_ENABLED==='true'&&env.ASAAS_SANDBOX!=='true'&&env.BUYER_WA_TEMPLATE)ctx.waitUntil(sendApprovedTemplate(env,'55'+unaccent(order.phone),env.BUYER_WA_TEMPLATE,[order.id.slice(0,8)]).catch(()=>{}));
+    if(ctx&&env.WA_AUTOMATION_ENABLED==='true'&&env.ASAAS_SANDBOX!=='true')ctx.waitUntil(sendBuyerUpdate(env,order).catch(()=>{}));
   }
   return json({ok:true});
  }
@@ -363,7 +366,7 @@ async function whatsappInbound(req,env,ctx){
  return json({ok:true});
 }
 export default {async fetch(request,env,ctx){const url=new URL(request.url);if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors});try{
- if(url.pathname.startsWith('/api/local-whatsapp/'))return await handleLocalWhatsApp(request,env);
+ if(url.pathname.startsWith('/api/local-whatsapp/'))return await handleLocalWhatsApp(request,env,{onInbound:message=>handleSupplierInbound(env,message,ctx)});
  // Rotas de conta explícitas: evitam 404 da camada de assets em navegadores mobile.
  if(request.method==='GET'&&['/conta','/criar-conta','/pedidos'].includes(url.pathname)){
   const fragment=url.pathname==='/criar-conta'?'#criar-conta':url.pathname==='/pedidos'?'#pedidos':'';

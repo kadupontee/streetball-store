@@ -17,7 +17,7 @@ async function authenticated(request,secret){
 }
 
 /** Isolated installation test: no order table, supplier contact or payment API is used here. */
-export async function handleLocalWhatsApp(request,env){
+export async function handleLocalWhatsApp(request,env,callbacks={}){
  const route=new URL(request.url).pathname;
  if(!route.startsWith(PREFIX))return null;
  if(!env.DB||!env.WA_LOCAL_BRIDGE_TOKEN)return reply({error:'Ponte ainda não configurada.'},503);
@@ -41,11 +41,14 @@ export async function handleLocalWhatsApp(request,env){
   if(!binding||binding.account_jid!==own)return reply({error:'A ponte deve usar a mesma conta secundária cadastrada.'},409);
   if(action==='session'||action==='claim')await env.DB.prepare('UPDATE wa_local_bridge SET heartbeat_at=? WHERE id=1 AND account_jid=?').bind(instant(),own).run();
   if(action==='session')return reply({ok:true,mode:'self_test_only'});
+  if(action.startsWith('orders-'))return await handleOrderBridgeAction(action,env,body,own,callbacks);
   if(action==='status'){
    const jobs=await env.DB.prepare('SELECT state,COUNT(*) AS count FROM wa_local_test_jobs GROUP BY state').all();
    const latest=await env.DB.prepare('SELECT id,state,updated_at FROM wa_local_test_jobs ORDER BY created_at DESC LIMIT 1').first();
-   return reply({ok:true,mode:'self_test_only',heartbeatAt:binding.heartbeat_at,
-    online:Date.now()-Date.parse(binding.heartbeat_at)<60000,queue:jobs.results||[],latest:latest||null});
+   let orderBridge=null;
+   try{orderBridge=await orderBridgeStatus(env);}catch{/* Optional additive migration may not be installed yet. */}
+   return reply({ok:true,mode:orderBridge?.enabled?'live_orders':'self_test_only',heartbeatAt:binding.heartbeat_at,
+    online:Date.now()-Date.parse(binding.heartbeat_at)<60000,queue:jobs.results||[],latest:latest||null,orderBridge});
   }
   if(action==='test'){
    // Double clicks reuse the same recent job. The client cannot supply text or a recipient.
@@ -91,3 +94,4 @@ export async function handleLocalWhatsApp(request,env){
   return reply({ok:true});
  }catch{return reply({error:'Ponte indisponível. Confira a migração do banco e a implantação.'},503);}
 }
+import {handleOrderBridgeAction,orderBridgeStatus} from './local-orders.js';

@@ -33,6 +33,8 @@ CUSTOMER_PAYS_IMPORT_TAXES = "true"
 IMPORT_TAX_DISCLOSURE_APPROVED = "false"
 IMPORT_COMPLIANCE_APPROVED = "false"
 WA_AUTOMATION_ENABLED = "false"
+WA_TRANSPORT = "local"
+WA_LOCAL_ORDERS_ENABLED = "false"
 # Dominio HTTPS da vitrine usado somente para montar URLs publicas das fotos na previa.
 STORE_PUBLIC_URL = "https://lojastreetball.com.br"
 # Valor TEMPORARIO apenas para simular cobranças no Sandbox. Nao habilitar producao com este frete.

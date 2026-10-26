@@ -10,6 +10,7 @@ import {restartConnection} from './restart.mjs';
 export function wranglerSteps(token) {
   return [
     { label: 'Preparando a fila de teste no banco.', args: ['d1','execute','streetball-db','--remote','--file=worker/local-whatsapp-schema.sql','--yes'] },
+    { label: 'Preparando a fila de pedidos e respostas.', args: ['d1','execute','streetball-db','--remote','--file=worker/local-orders-schema.sql','--yes'] },
     { label: 'Configurando a chave privada da ponte.', args: ['secret','put','WA_LOCAL_BRIDGE_TOKEN'], input: token + '\n' },
     { label: 'Publicando a ligação com o site.', args: ['deploy'] }
   ];
@@ -31,7 +32,7 @@ export async function integrate() {
   const previous = readJson(paths.config);
   const token = typeof previous?.token === 'string' && /^[A-Za-z0-9_-]{43}$/.test(previous.token)
     ? previous.token : randomBytes(32).toString('base64url');
-  const config = { version: 1, storeUrl: 'https://lojastreetball.com.br', token, enabled: false };
+  const config = { version: 1, storeUrl: 'https://lojastreetball.com.br', token, enabled: false,ordersEnabled:false };
   writePrivateJson(paths.config, config);
   console.log('Será configurado um teste entre o site e o próprio WhatsApp conectado.');
   for (const step of wranglerSteps(token)) {

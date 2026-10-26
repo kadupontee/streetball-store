@@ -45,7 +45,10 @@ try {
           if (command === 'self-test') return;
           try {
             const config = readBridgeConfig(paths);
-            if (config) bridge = startStoreBridge({socket,config,paths});
+            if (config) {
+              console.log(config.ordersEnabled===true?'Encaminhamento de pedidos ativo neste Mac; a loja também precisa estar liberada.':'Modo de teste ativo. Pedidos reais desativados neste Mac.');
+              bridge = startStoreBridge({socket,config,paths,normalizeMessageContent:baileys.normalizeMessageContent});
+            }
           } catch { console.log('Confira a configuração da ponte com npm run integrar-loja.'); }
         },
         onDisconnected: () => bridge?.stop() });

@@ -2,7 +2,7 @@
 
 Alternativa local: vincular o número por QR code, guardar a sessão no Mac, testar uma mensagem na conversa do próprio número, manter a conexão em segundo plano e validar a ligação com o site. Não depende da conclusão da verificação empresarial da Meta.
 
-**Estado desta entrega:** conexão local e ponte de teste entre Cloudflare/D1 e o Mac. Ainda não consulta pedidos do D1, não envia mensagens a fornecedores/clientes, não processa respostas e não faz pagamentos. A integração dos pedidos será a próxima etapa depois de confirmar a ponte. O instalador verifica que Asaas Sandbox está ativo e os pagamentos/automação de produção estão desligados.
+**Estado desta entrega:** conexão local, fila de pedidos, envio de fotos, leitura de respostas vinculadas e avisos consentidos ao comprador. A operação real permanece desligada na configuração entregue. O pagamento ao fornecedor continua manual. O instalador verifica que Asaas Sandbox está ativo e os pagamentos/automação de produção estão desligados.
 
 Baileys é um cliente não oficial do WhatsApp Web. Há risco de bloqueio do número; não há garantia de disponibilidade para operação comercial. Esta versão está fixada na versão publicada `7.0.0-rc14` (pré-lançamento). A alternativa oficial continua sendo a Meta Cloud API.
 
@@ -88,7 +88,7 @@ Com a conta já vinculada, execute no mesmo Mac:
 npm run integrar-loja
 ```
 
-O comando cria somente as duas tabelas de teste da ponte, gera uma chave privada, cadastra essa chave como segredo do Worker e publica a versão do projeto desta pasta. Usa sua autenticação existente do Wrangler/Cloudflare; se o Cloudflare pedir login, conclua o acesso na sua própria conta. A chave fica fora do Git e não é impressa nem precisa ser enviada no chat. O comando reinicia a conexão em segundo plano depois da implantação.
+O comando aplica as migrações aditivas da ponte, gera uma chave privada, cadastra essa chave como segredo do Worker e publica a versão do projeto desta pasta. Usa sua autenticação existente do Wrangler/Cloudflare; se o Cloudflare pedir login, conclua o acesso na sua própria conta. A chave fica fora do Git e não é impressa nem precisa ser enviada no chat. O comando reinicia a conexão em segundo plano depois da implantação.
 
 Quando `npm run status` mostrar `connected`:
 
@@ -99,11 +99,22 @@ npm run status-loja
 
 Em poucos segundos, uma mensagem identificada como teste deve chegar à conversa do próprio número. `status-loja` deve mostrar `online: true` e, após a confirmação, `latest.state: "sent"`. Esse teste percorre site → fila no D1 → Mac → WhatsApp → confirmação no site. Ele confirma o envio aceito pelo WhatsApp; confira a chegada no celular.
 
-A ponte só aceita a conta secundária vinculada e mensagens fixas de teste, sem campos para destinatário ou texto livre. Ela não abre portas públicas no Mac. Uma reserva expirada antes do início pode ser retomada; um envio iniciado sem confirmação fica `uncertain` e não é repetido automaticamente. As confirmações são guardadas em um histórico privado local para permitir retomar após uma queda de conexão.
+O teste simples usa somente a conta secundária vinculada e uma mensagem fixa. O transporte de pedidos reais tem liberação separada, descrita abaixo. A ligação não abre portas públicas no Mac. Uma reserva expirada antes do início pode ser retomada; um envio iniciado sem confirmação fica `uncertain` e não é repetido automaticamente. As confirmações são guardadas em um histórico privado local para permitir retomar após uma queda de conexão.
 
 Se a implantação parar, confira o erro informado pelo Wrangler e execute `npm run integrar-loja` novamente. Se o WhatsApp estiver conectado mas a ponte estiver aguardando, use `npm run status-loja` e `npm run logs`.
 
-## Validação
+## 5. Testar uma consulta com foto e resposta
+
+```bash
+npm run integrar-pedidos
+npm run simular-pedido
+```
+
+A foto e os dados fictícios chegam somente à própria conta secundária. No celular, use **Responder** na foto e escreva `sim`. Depois execute `npm run status-loja`: o campo `orderBridge.latestPreview.reply.kind` deve mostrar `available`.
+
+As consultas reais exigem liberação de produção no Worker e ativação separada no Mac. Consulte `worker/LOCAL_WHATSAPP_ORDERS.md` para o fluxo e os limites. O instalador não converte pagamentos simulados em compras reais.
+
+## Validação local
 
 ```bash
 npm test

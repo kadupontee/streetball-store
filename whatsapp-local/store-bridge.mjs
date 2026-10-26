@@ -1,6 +1,8 @@
 import fs from 'node:fs';
 import { ownJid } from './connection.mjs';
-import { readJson } from './state.mjs';
+import { readJson,writePrivateJson } from './state.mjs';
+export {writePrivateJson} from './state.mjs';
+import {createOrderChannel} from './order-channel.mjs';
 
 export function readBridgeConfig(paths) {
   const config = readJson(paths.config);
@@ -29,14 +31,8 @@ export function selfTestText(id) {
   return 'Streetball Store: conexão entre o site e este WhatsApp confirmada.\nTeste: ' + id.slice(0, 8) + '\nEsta mensagem é um teste para o próprio número. Nenhum pedido foi feito.';
 }
 
-export function writePrivateJson(file, value) {
-  fs.writeFileSync(file + '.tmp', JSON.stringify(value, null, 2), { mode: 0o600 });
-  fs.renameSync(file + '.tmp', file);
-  fs.chmodSync(file, 0o600);
-}
-
 export function startStoreBridge({ socket, config, paths, api = bridgeApi, log = console.log,
-  schedule = setTimeout, cancel = clearTimeout, intervalMs = 3000 }) {
+  schedule = setTimeout, cancel = clearTimeout, intervalMs = 3000,normalizeMessageContent }) {
   const account = ownJid(socket.user);
   const existing = readJson(paths.journal);
   if (fs.existsSync(paths.journal) && (!existing || typeof existing !== 'object' || Array.isArray(existing))) {
@@ -45,6 +41,7 @@ export function startStoreBridge({ socket, config, paths, api = bridgeApi, log =
   const journal = existing || {};
   let active = true, timer, running = Promise.resolve(), warned = false, registered = false;
   const call = (action, data) => api(config, account, action, data);
+  const orders=paths.ordersJournal&&paths.ordersInbox?createOrderChannel({socket,account,config,paths,call,log,normalizeMessageContent}):null;
   function remember(id, entry) {
     journal[id] = entry;
     const complete = Object.keys(journal).filter(key => journal[key].phase === 'acked');
@@ -70,7 +67,7 @@ export function startStoreBridge({ socket, config, paths, api = bridgeApi, log =
       await reconcile();
       if (!active) return;
       const { job } = await call('claim');
-      if (!job || !active) return;
+      if (!job || !active) {if(active)await orders?.tick();return;}
       if (job.kind !== 'self_test_v1' || job.accountJid !== account ||
           !/^[a-f0-9-]{36}$/i.test(job.id) || !/^[a-f0-9-]{36}$/i.test(job.lease)) {
         throw new Error('A loja devolveu uma tarefa incompatível com o modo de teste.');
@@ -93,6 +90,7 @@ export function startStoreBridge({ socket, config, paths, api = bridgeApi, log =
       remember(job.id, { phase: 'sent', lease: job.lease, messageId: result.key.id });
       await reconcile();
       log('Teste da loja enviado e confirmado no site. Confira a conversa do próprio número.');
+      await orders?.tick();
       warned = false;
     } catch {
       if (!warned) log('A ponte com a loja está aguardando conexão. Confira npm run status-loja.');
@@ -103,5 +101,5 @@ export function startStoreBridge({ socket, config, paths, api = bridgeApi, log =
   }
   function tick() { running = poll(); }
   tick();
-  return { stop() { active = false; cancel(timer); return running; } };
+  return { stop() { active = false; cancel(timer); return Promise.all([running,orders?.stop()]); } };
 }
