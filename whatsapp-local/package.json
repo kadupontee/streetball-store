@@ -1,0 +1,22 @@
+{
+  "name": "streetball-whatsapp-local",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20.0.0" },
+  "scripts": {
+    "conectar": "node cli.mjs connect",
+    "testar": "node cli.mjs self-test",
+    "status": "node cli.mjs status",
+    "desvincular": "node cli.mjs reset",
+    "iniciar": "node background.mjs start",
+    "parar": "node background.mjs stop",
+    "logs": "node background.mjs logs",
+    "test": "node --test *.test.mjs"
+  },
+  "dependencies": {
+    "baileys": "7.0.0-rc14",
+    "pino": "9.6.0",
+    "qrcode-terminal": "0.12.0"
+  }
+}
