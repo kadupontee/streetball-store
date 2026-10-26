@@ -64,6 +64,12 @@ npm run diagnostico
 
 O diagnóstico não exibe a chave privada nem o conteúdo das credenciais. Um registro do serviço no macOS não é confirmação de conexão: `iniciar` e `integrar-loja` agora aguardam a conexão antes de indicar que está pronta.
 
+O início habilita apenas o serviço `com.streetball.whatsapp`, confere se ele permaneceu carregado e solicita a execução quando necessário. O reinício aguarda a remoção do registro anterior e preserva o arquivo de inicialização e a sessão. Se o macOS remover o serviço logo após aceitar o carregamento, o comando informa essa falha imediatamente.
+
+O campo `servicoDoMac.desativado` indica a política de execução desse serviço: `true` é desativado, `false` é permitido pelo `launchctl`, e `null` indica que a consulta não foi concluída. Se a execução continuar bloqueada pelo macOS, confira **Ajustes do Sistema > Geral > Itens de Início e Extensões**, na seção de atividade em segundo plano. Os nomes podem variar conforme a versão do sistema. [Orientação da Apple](https://support.apple.com/pt-br/guide/mac-help/mtusr003/mac).
+
+Para continuar o teste com o Terminal aberto, use `npm run parar` e `npm run conectar`. Deixe essa aba aberta e use **Command + T** para abrir outra aba na mesma pasta. Nela, execute `npm run simular-pedido` e `npm run status-pedidos`. Antes de voltar ao segundo plano, encerre a conexão da primeira aba com **Control + C** e execute `npm run iniciar` na segunda.
+
 ## Sessão e recuperação
 
 A sessão fica em `~/Library/Application Support/Streetball WhatsApp/auth`, com permissões restritas, fora do repositório. Não envie essa pasta ao GitHub ou para outras pessoas: ela permite acesso à conta vinculada. O serviço não registra conteúdo de conversas nem imprime QR code no log do segundo plano.

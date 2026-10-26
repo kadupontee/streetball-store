@@ -10,13 +10,13 @@ export async function restartConnection({paths = statePaths(), command = backgro
   ready = () => waitForConnection({paths}), log = console.log} = {}) {
   if (!hasSession(paths)) throw new Error('Primeiro vincule o número com npm run conectar.');
   log('Reiniciando o serviço com a sessão já salva.');
-  command('stop');
+  await command('stop',{removeAgent:false});
   const until = clock() + 15000;
   while (isRunning()) {
     if (clock() >= until) throw new Error('A conexão anterior ainda está ativa. Se ela estiver em um Terminal, encerre com Control+C e repita npm run reiniciar.');
     await pause(200);
   }
-  command('start');
+  await command('start');
   return await ready();
 }
 

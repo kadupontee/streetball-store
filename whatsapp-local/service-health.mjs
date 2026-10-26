@@ -2,6 +2,9 @@ import fs from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {connectionStatus,readJson,statePaths} from './state.mjs';
 
+export const SERVICE_LABEL = 'com.streetball.whatsapp';
+const runLaunchctl = args => spawnSync('/bin/launchctl', args, {encoding:'utf8',timeout:10000});
+
 export function parseService(result) {
   if (result.error || result.status !== 0) return { cadastrado: false, estado: 'unloaded', pid: null,
     ultimoCodigoSaida: null, codigoConsulta: result.error?.code || result.status };
@@ -19,10 +22,19 @@ export function launchFailure(result) {
   return 'launchctl ' + code + (detail ? ': ' + detail : '');
 }
 
-function service() {
-  if (process.platform !== 'darwin') return { cadastrado: false, estado: 'unsupported', pid: null, ultimoCodigoSaida: null };
-  return parseService(spawnSync('/bin/launchctl', ['print', `gui/${process.getuid()}/com.streetball.whatsapp`],
-    { encoding: 'utf8', timeout: 5000 }));
+export function parseServicePolicy(result) {
+  if (result.error || result.status !== 0) return null;
+  // Keep only our label, never another application's settings.
+  const value = String(result.stdout || '').match(/^\s*"com\.streetball\.whatsapp"\s*=>\s*(true|false|disabled|enabled)\s*$/m)?.[1];
+  return value === 'true' || value === 'disabled';
+}
+
+export function inspectMacService({platform=process.platform,uid,run=runLaunchctl}={}) {
+  if (platform !== 'darwin') return { cadastrado: false, estado: 'unsupported', pid: null, ultimoCodigoSaida: null };
+  const domain = `gui/${uid ?? process.getuid()}`;
+  const current = parseService(run(['print', `${domain}/${SERVICE_LABEL}`]));
+  const policy = run(['print-disabled', domain]);
+  return {...current,desativado:parseServicePolicy(policy)};
 }
 
 function recentMessages(file) {
@@ -34,7 +46,7 @@ function recentMessages(file) {
   } catch { return []; }
 }
 
-export function serviceHealth(paths = statePaths(), inspect = service) {
+export function serviceHealth(paths = statePaths(), inspect = inspectMacService) {
   const local = connectionStatus(paths);
   return { ...local, processoPid: local.ativo ? readJson(paths.lock)?.pid : null,
     servicoDoMac: inspect(), ponteConfigurada: readJson(paths.config)?.enabled === true,
@@ -48,6 +60,9 @@ export async function waitForConnection({paths = statePaths(), snapshot = () => 
   log('Confirmando a conexão em segundo plano (até 35 segundos).');
   while (true) {
     const current = snapshot();
+    if (current.servicoDoMac.desativado === true) {
+      throw new Error('O macOS desativou o serviço Streetball. Confira Ajustes do Sistema > Geral > Itens de Início e a permissão para executar em segundo plano.');
+    }
     if (current.ativo && current.estado === 'connected' && current.servicoDoMac.cadastrado &&
         current.servicoDoMac.pid === current.processoPid) {
       log('Conectado. Serviço em segundo plano confirmado no macOS.');

@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {connectionStatus,prepareState,statePaths} from './state.mjs';
-import {launchFailure,parseService,serviceHealth,waitForConnection} from './service-health.mjs';
+import {inspectMacService,launchFailure,parseService,parseServicePolicy,serviceHealth,waitForConnection} from './service-health.mjs';
 import {restartConnection} from './restart.mjs';
 import {storeCommand} from './store-cli.mjs';
 
@@ -44,6 +44,27 @@ test('start failure includes the native code and only the first error line',()=>
   assert.match(message,/launchctl 5/);assert.match(message,/Input\/output/);assert.ok(!message.includes('root'));
   assert.match(launchFailure({error:{code:'ETIMEDOUT'},status:null}),/ETIMEDOUT/);
 });
+test('only Streetball disabled policy is parsed, across boolean and named launchctl formats',()=>{
+  assert.equal(parseServicePolicy({status:0,stdout:'disabled services = {\n "com.other.private" => true\n "com.streetball.whatsapp" => false\n}'}),false);
+  assert.equal(parseServicePolicy({status:0,stdout:' "com.streetball.whatsapp" => true\n'}),true);
+  assert.equal(parseServicePolicy({status:0,stdout:' "com.streetball.whatsapp" => disabled\n'}),true);
+  assert.equal(parseServicePolicy({status:0,stdout:' "com.streetball.whatsapp" => enabled\n'}),false);
+  assert.equal(parseServicePolicy({status:0,stdout:'disabled services = {}'}),false);
+  assert.equal(parseServicePolicy({status:1}),null);
+});
+test('an unloaded disabled service is diagnosed without exposing other applications',()=>{
+  const current=inspectMacService({platform:'darwin',uid:501,run:args=>{
+    if(args[0]==='print'){assert.equal(args[1],'gui/501/com.streetball.whatsapp');return {status:113};}
+    assert.deepEqual(args,['print-disabled','gui/501']);
+    return {status:0,stdout:' "com.other.private" => true\n "com.streetball.whatsapp" => disabled\n'};
+  }});
+  assert.equal(current.cadastrado,false);assert.equal(current.desativado,true);
+  assert.ok(!JSON.stringify(current).includes('com.other.private'));
+});
+test('readiness reports a disabled service immediately with the macOS settings location',async()=>{
+  await assert.rejects(waitForConnection({snapshot:()=>({ativo:false,servicoDoMac:{desativado:true}}),
+    pause:()=>assert.fail('A disabled service must not wait for a connection'),log:()=>{}}),/desativou.*Itens de Início/);
+});
 test('readiness requires the connected process to match the macOS service PID',async()=>{
   let time=0,step=0;
   const snapshots=[
@@ -74,6 +95,16 @@ test('restart never starts a second instance while another process is still aliv
   await assert.rejects(restartConnection({paths,command:value=>commands.push(value),isRunning:()=>true,
     clock:()=>time,pause:async()=>{time+=8000;},ready:async()=>commands.push('ready'),log:()=>{}}),/anterior ainda está ativa/);
   assert.deepEqual(commands,['stop']);
+});
+test('restart awaits asynchronous unload and preserves the login registration file',async t=>{
+  const {paths}=fixture(t),commands=[];
+  await restartConnection({paths,isRunning:()=>false,command:async(value,options)=>{
+    if(value==='stop'){
+      assert.equal(options.removeAgent,false);
+      await Promise.resolve();commands.push('unloaded');
+    } else {assert.deepEqual(commands,['unloaded']);commands.push('started');}
+  },ready:async()=>commands.push('ready'),log:()=>{}});
+  assert.deepEqual(commands,['unloaded','started','ready']);
 });
 test('diagnostics omit credentials, bridge tokens, arbitrary log dumps and chat text',t=>{
   const {paths,write}=fixture(t),token='A'.repeat(43);
