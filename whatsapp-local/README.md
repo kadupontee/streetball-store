@@ -50,6 +50,20 @@ npm run parar
 
 Pare o segundo plano antes de usar `conectar` ou `testar`: a trava local impede duas conexões concorrentes.
 
+Se `status` mostrar `ativo: false` e `sessaoSalva: true`, reinicie aproveitando a sessão existente:
+
+```bash
+npm run reiniciar
+```
+
+O comando aguarda até 35 segundos pela confirmação de que o processo conectado é o serviço cadastrado no macOS. Se não conectar, apresenta o estado do serviço e o último código de saída. Também é possível conferir esses dados sem reiniciar:
+
+```bash
+npm run diagnostico
+```
+
+O diagnóstico não exibe a chave privada nem o conteúdo das credenciais. Um registro do serviço no macOS não é confirmação de conexão: `iniciar` e `integrar-loja` agora aguardam a conexão antes de indicar que está pronta.
+
 ## Sessão e recuperação
 
 A sessão fica em `~/Library/Application Support/Streetball WhatsApp/auth`, com permissões restritas, fora do repositório. Não envie essa pasta ao GitHub ou para outras pessoas: ela permite acesso à conta vinculada. O serviço não registra conteúdo de conversas nem imprime QR code no log do segundo plano.

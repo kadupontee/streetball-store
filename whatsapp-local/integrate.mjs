@@ -3,9 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
-import { hasSession, isAlive, prepareState, readJson, statePaths } from './state.mjs';
+import { hasSession, prepareState, readJson, statePaths } from './state.mjs';
 import { writePrivateJson } from './store-bridge.mjs';
-import { main as background } from './background.mjs';
+import {restartConnection} from './restart.mjs';
 
 export function wranglerSteps(token) {
   return [
@@ -43,18 +43,12 @@ export async function integrate() {
     if (result.error || result.status !== 0) throw new Error('A configuração parou nesta etapa. Corrija o erro acima e execute npm run integrar-loja novamente.');
   }
   writePrivateJson(paths.config, { ...config, enabled: true });
-  background('stop');
-  const deadline = Date.now() + 15000;
-  while (isAlive(readJson(paths.lock)?.pid)) {
-    if (Date.now() >= deadline) throw new Error('A conexão anterior ainda está encerrando. Aguarde e execute npm run iniciar.');
-    await new Promise(resolve => setTimeout(resolve, 200));
-  }
-  background('start');
-  console.log('Ligação publicada. Aguarde o Mac conectar e execute npm run testar-loja.');
+  await restartConnection();
+  console.log('Ligação publicada e WhatsApp conectado. Execute npm run testar-loja.');
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   process.umask(0o077);
   try { await integrate(); }
-  catch (error) { console.error(error.message); process.exitCode = 1; }
+  catch (error) { console.error(error.message); console.log('Para conferir o serviço do Mac, execute npm run diagnostico.'); process.exitCode = 1; }
 }

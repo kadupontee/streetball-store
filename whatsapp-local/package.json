@@ -11,6 +11,8 @@
     "desvincular": "node cli.mjs reset",
     "iniciar": "node background.mjs start",
     "parar": "node background.mjs stop",
+    "reiniciar": "node restart.mjs restart",
+    "diagnostico": "node restart.mjs diagnose",
     "logs": "node background.mjs logs",
     "integrar-loja": "node integrate.mjs",
     "testar-loja": "node store-cli.mjs test",

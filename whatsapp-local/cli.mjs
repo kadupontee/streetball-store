@@ -1,4 +1,4 @@
-import { acquireLock, hasSession, isAlive, prepareState, readJson, statePaths, writeStatus } from './state.mjs';
+import { acquireLock, connectionStatus, hasSession, prepareState, readJson, statePaths, writeStatus } from './state.mjs';
 import { startConnection } from './connection.mjs';
 import fs from 'node:fs';
 import {readBridgeConfig,startStoreBridge} from './store-bridge.mjs';
@@ -11,10 +11,7 @@ let release;
 try {
   if (!['connect', 'self-test', 'status', 'reset'].includes(command)) throw new Error('Use npm run conectar, testar, status ou desvincular.');
   if (command === 'status') {
-    const state = readJson(paths.status);
-    const active = isAlive(readJson(paths.lock)?.pid);
-    console.log(JSON.stringify({ ativo: active, estado: active ? state?.state || 'starting' : 'stopped',
-      sessaoSalva: hasSession(paths), atualizadoEm: state?.updatedAt || null }, null, 2));
+    console.log(JSON.stringify(connectionStatus(paths), null, 2));
   } else if (command === 'reset') {
     prepareState(paths);
     release = acquireLock(paths);

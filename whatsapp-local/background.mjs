@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { hasSession, isAlive, prepareState, readJson, statePaths } from './state.mjs';
+import {launchFailure,serviceHealth,waitForConnection} from './service-health.mjs';
 
 export function xmlText(value) {
   return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[char]);
@@ -36,10 +37,11 @@ export function main(command) {
   const domain = `gui/${process.getuid()}`;
   const target = `${domain}/com.streetball.whatsapp`;
   const plist = path.join(os.homedir(), 'Library', 'LaunchAgents', 'com.streetball.whatsapp.plist');
-  const run = args => spawnSync('/bin/launchctl', args, { encoding: 'utf8' });
+  const run = args => spawnSync('/bin/launchctl', args, { encoding: 'utf8', timeout: 10000 });
   if (command === 'stop') {
-    if (run(['print', target]).status === 0 && run(['bootout', target]).status !== 0) {
-      throw new Error('O macOS não confirmou a parada. Confira npm run status.');
+    if (run(['print', target]).status === 0) {
+      const result = run(['bootout', target]);
+      if (result.error || result.status !== 0) throw new Error('O macOS não confirmou a parada (' + launchFailure(result) + ').');
     }
     fs.rmSync(plist, { force: true });
     console.log('Inicialização automática removida. Se houver conexão no Terminal, encerre com Control+C.');
@@ -58,12 +60,19 @@ export function main(command) {
   fs.chmodSync(paths.log, 0o600);
   fs.writeFileSync(plist, launchAgent({ node: process.execPath, directory: path.dirname(fileURLToPath(import.meta.url)), log: paths.log }), { mode: 0o600 });
   const result = loaded ? run(['kickstart', target]) : run(['bootstrap', domain, plist]);
-  if (result.error || result.status !== 0) throw new Error('O macOS não confirmou o início. Confira Ajustes > Geral > Itens de Início e npm run status.');
+  if (result.error || result.status !== 0) throw new Error('O macOS não confirmou o início (' + launchFailure(result) + '). Confira Ajustes > Geral > Itens de Início.');
   console.log('Serviço cadastrado para iniciar no login. Aguarde a conexão e confira npm run status.');
   console.log('O Mac precisa continuar ligado, com internet e sem entrar em repouso.');
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   process.umask(0o077);
-  try { main(process.argv[2]); } catch (error) { console.error(error.message); process.exitCode = 1; }
+  try {
+    main(process.argv[2]);
+    if (process.argv[2] === 'start') await waitForConnection();
+  } catch (error) {
+    console.error(error.message);
+    if (process.argv[2] === 'start') console.log(JSON.stringify(serviceHealth(), null, 2));
+    process.exitCode = 1;
+  }
 }

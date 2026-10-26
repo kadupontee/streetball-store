@@ -36,6 +36,14 @@ export function hasSession(paths) {
   catch { return false; }
 }
 
+export function connectionStatus(paths) {
+  const state = readJson(paths.status), lock = readJson(paths.lock);
+  const active = isAlive(lock?.pid);
+  const sameProcess = state?.pid === lock?.pid;
+  return { ativo: active, estado: active ? (sameProcess ? state?.state || 'starting' : 'starting') : 'stopped',
+    sessaoSalva: hasSession(paths), atualizadoEm: active && !sameProcess ? null : state?.updatedAt || null };
+}
+
 export function acquireLock(paths) {
   // One socket per account: a foreground command must not replace the background connection.
   for (let attempt = 0; attempt < 2; attempt++) {

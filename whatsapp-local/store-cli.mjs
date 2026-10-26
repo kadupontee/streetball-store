@@ -1,18 +1,18 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ownJid } from './connection.mjs';
-import { isAlive, statePaths, readJson } from './state.mjs';
+import { connectionStatus, statePaths, readJson } from './state.mjs';
 import { bridgeApi, readBridgeConfig } from './store-bridge.mjs';
 
-export async function storeCommand(action) {
+export async function storeCommand(action, paths = statePaths()) {
   if (!['test', 'status'].includes(action)) throw new Error('Use npm run testar-loja ou npm run status-loja.');
-  const paths = statePaths(), config = readBridgeConfig(paths);
+  const config = readBridgeConfig(paths);
   if (!config) throw new Error('Primeiro execute npm run integrar-loja.');
   const account = ownJid(readJson(path.join(paths.auth, 'creds.json'))?.me);
   if (action === 'test') {
-    if (!isAlive(readJson(paths.lock)?.pid) || readJson(paths.status)?.state !== 'connected') {
-      throw new Error('Aguarde npm run status mostrar connected antes de testar a loja.');
-    }
+    const current = connectionStatus(paths);
+    if (!current.ativo) throw new Error('O conector está parado. Execute npm run reiniciar.');
+    if (current.estado !== 'connected') throw new Error('A conexão ainda não foi confirmada. Confira npm run diagnostico.');
     await bridgeApi(config, account, 'session');
   }
   const result = await bridgeApi(config, account, action);
