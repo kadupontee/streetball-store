@@ -1,4 +1,4 @@
-import {emptySettings,normalizeSettings,applyProductOverride,DEFAULT_DESIGN,CATEGORIES,KINDS,RETAIL_PRICES_BRL,BRAZIL_TEAMS,SECTIONS,TEXTS} from './store-settings.js?v=20261025-editor-v1';
+import {emptySettings,normalizeSettings,applyProductOverride,DEFAULT_DESIGN,CATEGORIES,KINDS,RETAIL_PRICES_BRL,BRAZIL_TEAMS,SECTIONS,TEXTS} from './store-settings.js?v=20261026-teams-v2';
 
 const $=id=>document.getElementById(id);
 const clone=x=>structuredClone(x);
