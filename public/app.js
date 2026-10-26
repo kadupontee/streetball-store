@@ -414,7 +414,7 @@ function playerShortsReprice(p){
 }
 function assignTeam(product){
  const p={...product},chosen=String(p.team||'');
- if(chosen.startsWith('brasileirao:'))return {...p,brazilClub:chosen.slice(11)==='outros'?'':chosen.slice(11),europeClub:'',europeLeague:''};
+ if(chosen.startsWith('brasileirao:'))return {...p,brazilClub:chosen.slice(12)==='outros'?'':chosen.slice(12),europeClub:'',europeLeague:''};
  if(chosen.startsWith('europa:')){
   const club=chosen.slice(7);
   const matched=EUROPE.leagues.flatMap(([league,,,clubs])=>clubs.map(([id])=>({league,id}))).find(x=>x.id===club);
