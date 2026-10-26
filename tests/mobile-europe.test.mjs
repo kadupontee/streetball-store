@@ -23,7 +23,7 @@ test('o script principal contém a navegação de cinco ligas e seus eventos',()
  assert.match(app, /\[data-euro-league\]/);
  assert.match(app, /\[data-euro-club\]/);
  assert.match(app, /const EUROPE=\(\(\)=>/);
- assert.match(html,/app\.js\?v=20261023-mobile-europe-v3/);
+ assert.match(html,/app\.js\?v=\d{8}-[a-z0-9-]+/);
 });
 test('headers mantêm o HTML atualizado e revalidam os estilos',()=>{
  const headers=fs.readFileSync('public/_headers','utf8');
