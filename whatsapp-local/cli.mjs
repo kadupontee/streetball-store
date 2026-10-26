@@ -1,6 +1,7 @@
 import { acquireLock, hasSession, isAlive, prepareState, readJson, statePaths, writeStatus } from './state.mjs';
 import { startConnection } from './connection.mjs';
 import fs from 'node:fs';
+import {readBridgeConfig,startStoreBridge} from './store-bridge.mjs';
 
 process.umask(0o077);
 const command = process.argv[2] || 'connect';
@@ -38,10 +39,19 @@ try {
         throw new Error('Dependências indisponíveis. Execute npm ci dentro de whatsapp-local e tente novamente.');
       }
       const { state, saveCreds } = await baileys.useMultiFileAuthState(paths.auth);
+      let bridge;
       const runner = startConnection({ makeSocket: baileys.default, auth: state, saveCreds,
         logger: pino({ level: 'silent' }), browser: baileys.Browsers.macOS('Desktop'),
         renderQr: qr => qrcode.generate(qr, { small: true }),
-        selfTest: command === 'self-test', headless, status: value => writeStatus(paths, value) });
+        selfTest: command === 'self-test', headless, status: value => writeStatus(paths, value),
+        onConnected: socket => {
+          if (command === 'self-test') return;
+          try {
+            const config = readBridgeConfig(paths);
+            if (config) bridge = startStoreBridge({socket,config,paths});
+          } catch { console.log('Confira a configuração da ponte com npm run integrar-loja.'); }
+        },
+        onDisconnected: () => bridge?.stop() });
       const stop = () => runner.stop();
       process.once('SIGINT', stop); process.once('SIGTERM', stop);
       process.exitCode = await runner.done;

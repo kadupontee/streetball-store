@@ -11,7 +11,8 @@ export function ownJid(user) {
 
 export function startConnection({ makeSocket, auth, saveCreds, logger, browser, renderQr,
   selfTest = false, headless = false, log = console.log, status = () => {},
-  schedule = setTimeout, cancel = clearTimeout, testTimeoutMs = 90000 }) {
+  schedule = setTimeout, cancel = clearTimeout, testTimeoutMs = 90000,
+  onConnected = () => {}, onDisconnected = () => {} }) {
   let socket, retryTimer, timeoutTimer, generation = 0, retries = 0, finished = false, tested = false;
   let credentialsSaved = Promise.resolve(), saveFailed = false;
   let resolveDone;
@@ -22,7 +23,8 @@ export function startConnection({ makeSocket, auth, saveCreds, logger, browser, 
     cancel(retryTimer); cancel(timeoutTimer);
     try { status(state); } catch { /* Preserve cleanup even if the disk is full. */ }
     try { socket?.end(undefined); } catch { /* Already disconnected. */ }
-    credentialsSaved.then(() => resolveDone(saveFailed ? 1 : code), () => resolveDone(1));
+    Promise.all([credentialsSaved,Promise.resolve().then(onDisconnected)])
+      .then(() => resolveDone(saveFailed ? 1 : code), () => resolveDone(1));
   }
   function persistCredentials() {
     if (finished) return credentialsSaved;
@@ -65,6 +67,8 @@ export function startConnection({ makeSocket, auth, saveCreds, logger, browser, 
           if (finished || current !== generation) return;
           retries = 0; status('connected');
           log('Conectado. Esta etapa não envia pedidos a fornecedores.');
+          await onConnected(activeSocket);
+          if (finished || current !== generation) return;
           if (selfTest && !tested) {
             tested = true; // Never retry a message whose delivery may be uncertain.
             await activeSocket.sendMessage(ownJid(activeSocket.user), { text: SELF_TEST_TEXT });
@@ -73,6 +77,8 @@ export function startConnection({ makeSocket, auth, saveCreds, logger, browser, 
           }
         }
         if (update.connection === 'close') {
+          await onDisconnected();
+          if (finished || current !== generation) return;
           const code = update.lastDisconnect?.error?.output?.statusCode;
           if ([401, 403, 411, 440, 500].includes(code)) {
             log('Sessão encerrada ou substituída. Confira os aparelhos conectados e execute npm run conectar.');

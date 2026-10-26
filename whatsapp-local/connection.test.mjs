@@ -164,6 +164,16 @@ test('a failed credential write prevents connected state and sending', async () 
   assert.ok(!h.states.includes('connected')); assert.deepEqual(h.sent, []);
 });
 
+test('stopping waits for the store bridge before releasing the connection', async () => {
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  const h = harness({ onDisconnected: () => pending });
+  h.runner.stop();
+  let finished = false; h.runner.done.then(() => { finished = true; });
+  await tick(); assert.equal(finished, false);
+  release(); assert.equal(await h.runner.done, 0);
+});
+
 test('launchd arguments escape spaces and XML characters without invoking a shell', () => {
   const xml = launchAgent({ node: '/usr/local/bin/node', directory: '/Users/Test & Co/Streetball', log: '/Users/Test & Co/log.txt' });
   assert.ok(xml.includes('Test &amp; Co'));

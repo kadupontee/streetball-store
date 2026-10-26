@@ -8,7 +8,8 @@ export function statePaths(home = os.homedir(), platform = process.platform) {
     ? path.join(home, 'Library', 'Application Support', 'Streetball WhatsApp')
     : path.join(home, '.local', 'state', 'streetball-whatsapp');
   return { base, auth: path.join(base, 'auth'), lock: path.join(base, 'process.json'),
-    status: path.join(base, 'status.json'), log: path.join(base, 'conexao.log') };
+    status: path.join(base, 'status.json'), log: path.join(base, 'conexao.log'),
+    config: path.join(base, 'bridge-config.json'), journal: path.join(base, 'bridge-journal.json') };
 }
 
 export function prepareState(paths) {

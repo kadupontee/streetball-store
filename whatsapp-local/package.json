@@ -12,6 +12,9 @@
     "iniciar": "node background.mjs start",
     "parar": "node background.mjs stop",
     "logs": "node background.mjs logs",
+    "integrar-loja": "node integrate.mjs",
+    "testar-loja": "node store-cli.mjs test",
+    "status-loja": "node store-cli.mjs status",
     "test": "node --test *.test.mjs"
   },
   "dependencies": {

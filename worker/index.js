@@ -1,4 +1,5 @@
 import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply,supplierReplyAction} from './fulfillment.js';
+import {handleLocalWhatsApp} from './local-whatsapp.js';
 import {supplierIdValid} from './supplier-mapping.js';
 import {STAGES,safeTrackingCode,formatProgress} from './order-progress.js';
 import {customerTrackingLink,verifyTrackingKey} from './order-tracking-access.js';
@@ -362,6 +363,7 @@ async function whatsappInbound(req,env,ctx){
  return json({ok:true});
 }
 export default {async fetch(request,env,ctx){const url=new URL(request.url);if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors});try{
+ if(url.pathname.startsWith('/api/local-whatsapp/'))return await handleLocalWhatsApp(request,env);
  // Rotas de conta explícitas: evitam 404 da camada de assets em navegadores mobile.
  if(request.method==='GET'&&['/conta','/criar-conta','/pedidos'].includes(url.pathname)){
   const fragment=url.pathname==='/criar-conta'?'#criar-conta':url.pathname==='/pedidos'?'#pedidos':'';
