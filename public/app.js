@@ -175,7 +175,7 @@ function findBrazilClub(p){
  return '';
 }
 const clubFor=p=>p.brazilClub===undefined?findBrazilClub(p):p.brazilClub;
-const isBrazilProduct=p=>p.team?.startsWith('europa:')?false:p.team?.startsWith('brasileirao:')?true:!!clubFor(p)||(p.category==='brasileirao'&&!/\b(santos laguna|manchester united|cremona)\b/.test(clubNormalized(p.supplierTitle||p.title)));
+const isBrazilProduct=p=>p.team?.startsWith('europa:')?false:p.team?.startsWith('brasileirao:')?true:!!clubFor(p)||(p.category==='brasileirao'&&!/\b(santos laguna|corinthian casuals|manchester united|cremona)\b/.test(clubNormalized(p.supplierTitle||p.title)));
 function renderBrazilClubNavigation(){
  const section=$('brasileiraoClubs');
  if(!section)return;
@@ -348,7 +348,7 @@ function displayTitle(p){
  // Revisão por foto tem prioridade sobre o título possivelmente incorreto do fornecedor.
  if(String(p.visualReviewStatus||'').startsWith('foto_local_conferida_') && String(p.title||'').trim())return String(p.title).trim();
  if(!String(p.id||'').startsWith('YUP-'))return p.title;
- let t=String(p.supplierTitle||p.title||'').replace(/[\u4e00-\u9fff]/g,' ').replace(/[‐‑–—]/g,'-').replace(/\s+/g,' ').trim();
+ let t=String(p.supplierTitle||p.title||'').replace(/[\u4e00-\u9fff]/g,' ').replace(/(\d)([A-Za-zÀ-ÿ])/g,'$1 $2').replace(/([a-zà-ÿ])([A-Z])/g,'$1 $2').replace(/\b(corinthians?|santos|flamengo|palmeiras|gremio|vasco|botafogo|cruzeiro)(home|away|third|retro|training|player|long|special)\b/gi,'$1 $2').replace(/[‐‑–—]/g,'-').replace(/\s+/g,' ').trim();
  const kids=/\b16\s*[-~]\s*(28|30)\b|\b(kids?|children|child|youth)\b/i.test(t)||p.kind==='kids';
  t=t.replace(/\b16\s*[-~]\s*(28|30)\b/g,' ').replace(/^(\d{2})(\d{2})(?=[A-Za-zÀ-ÿ])/,'$1-$2 ');
  let season='',m=t.match(/\b(20\d{2})\s*[-_/]\s*(\d{2})\b/);
