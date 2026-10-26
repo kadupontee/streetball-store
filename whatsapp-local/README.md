@@ -18,7 +18,7 @@ npm ci
 npm run conectar
 ```
 
-No celular, selecione a conta do **número secundário**, abra **Configurações > Aparelhos conectados > Conectar aparelho** e leia o QR code mostrado no Terminal. Uma desconexão seguida de reconexão logo após a leitura é esperada. Aguarde `Conectado`.
+No celular, selecione a conta do **número secundário**, abra **Configurações > Aparelhos conectados > Conectar aparelho** e leia o QR code mostrado no Terminal. Uma desconexão seguida de reconexão logo após a leitura é esperada. Aguarde `Conectado`: a sessão local será salva antes dessa confirmação.
 
 ## 2. Testar somente na própria conta
 

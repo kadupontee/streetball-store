@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { ownJid } from './connection.mjs';
 
 export function statePaths(home = os.homedir(), platform = process.platform) {
   const base = platform === 'darwin'
@@ -29,7 +30,9 @@ export function readJson(file) {
 }
 
 export function hasSession(paths) {
-  return readJson(path.join(paths.auth, 'creds.json'))?.registered === true;
+  // QR pairing populates creds.me; the SDK leaves registered=false in this flow.
+  try { return Boolean(ownJid(readJson(path.join(paths.auth, 'creds.json'))?.me)); }
+  catch { return false; }
 }
 
 export function acquireLock(paths) {

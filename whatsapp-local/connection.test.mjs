@@ -95,7 +95,7 @@ test('local sessions are private, outside the repository, and locked against con
     const paths = statePaths(home, 'darwin'); prepareState(paths);
     assert.equal(fs.statSync(paths.auth).mode & 0o777, 0o700);
     assert.equal(hasSession(paths), false);
-    fs.writeFileSync(path.join(paths.auth, 'creds.json'), '{"registered":true}', { mode: 0o600 });
+    fs.writeFileSync(path.join(paths.auth, 'creds.json'), '{"registered":false,"me":{"id":"5511999999999:7@s.whatsapp.net"}}', { mode: 0o600 });
     assert.equal(hasSession(paths), true);
     const release = acquireLock(paths);
     assert.throws(() => acquireLock(paths), /já está ativo/);
@@ -103,6 +103,65 @@ test('local sessions are private, outside the repository, and locked against con
     fs.writeFileSync(paths.lock, '{broken');
     assert.throws(() => acquireLock(paths), /controle/);
   } finally { fs.rmSync(home, { recursive: true, force: true }); }
+});
+
+test('QR-linked credentials from the installed Baileys adapter are recognized after saving and reloading', async () => {
+  const { useMultiFileAuthState } = await import('baileys');
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'streetball-wa-qr-test-'));
+  try {
+    const paths = statePaths(home, 'darwin'); prepareState(paths);
+    const { state, saveCreds } = await useMultiFileAuthState(paths.auth);
+    assert.equal(state.creds.registered, false);
+    assert.equal(hasSession(paths), false);
+    // This is the update shape emitted by configureSuccessfulPairing for QR login.
+    state.creds.me = { id: '5511999999999:7@s.whatsapp.net', name: 'Test account' };
+    await saveCreds();
+    assert.equal(JSON.parse(fs.readFileSync(path.join(paths.auth, 'creds.json'), 'utf8')).registered, false);
+    assert.equal(hasSession(paths), true);
+    const reloaded = await useMultiFileAuthState(paths.auth);
+    assert.equal(reloaded.state.creds.me.id, state.creds.me.id);
+    assert.equal(reloaded.state.creds.registered, false);
+  } finally { fs.rmSync(home, { recursive: true, force: true }); }
+});
+
+test('registration flag alone and malformed credentials are not treated as a linked account', () => {
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'streetball-wa-unlinked-test-'));
+  try {
+    const paths = statePaths(home, 'darwin'); prepareState(paths);
+    for (const data of ['{"registered":true}', '{"registered":false}', '{"me":{"id":""}}', '{invalid', '{"me":{"id":"120363000000@g.us"}}']) {
+      fs.writeFileSync(path.join(paths.auth, 'creds.json'), data, { mode: 0o600 });
+      assert.equal(hasSession(paths), false);
+    }
+  } finally { fs.rmSync(home, { recursive: true, force: true }); }
+});
+
+test('connected state and self-test wait until credentials are written', async () => {
+  let flush;
+  const pending = new Promise(resolve => { flush = resolve; });
+  const h = harness({ selfTest: true, saveCreds: () => pending });
+  h.sockets[0].ev.emit('connection.update', { connection: 'open' });
+  await tick();
+  assert.ok(!h.states.includes('connected')); assert.deepEqual(h.sent, []);
+  flush();
+  assert.equal(await h.runner.done, 0); assert.equal(h.sent.length, 1);
+});
+
+test('stopping a connection waits for pending credential writes', async () => {
+  let flush;
+  const pending = new Promise(resolve => { flush = resolve; });
+  const h = harness({ saveCreds: () => pending });
+  h.sockets[0].ev.emit('creds.update', {});
+  await tick(); h.runner.stop();
+  let stopped = false; h.runner.done.then(() => { stopped = true; });
+  await tick(); assert.equal(stopped, false);
+  flush(); assert.equal(await h.runner.done, 0);
+});
+
+test('a failed credential write prevents connected state and sending', async () => {
+  const h = harness({ selfTest: true, saveCreds: async () => { throw new Error('disk full'); } });
+  h.sockets[0].ev.emit('connection.update', { connection: 'open' });
+  assert.equal(await h.runner.done, 1);
+  assert.ok(!h.states.includes('connected')); assert.deepEqual(h.sent, []);
 });
 
 test('launchd arguments escape spaces and XML characters without invoking a shell', () => {

@@ -13,6 +13,7 @@ export function startConnection({ makeSocket, auth, saveCreds, logger, browser, 
   selfTest = false, headless = false, log = console.log, status = () => {},
   schedule = setTimeout, cancel = clearTimeout, testTimeoutMs = 90000 }) {
   let socket, retryTimer, timeoutTimer, generation = 0, retries = 0, finished = false, tested = false;
+  let credentialsSaved = Promise.resolve(), saveFailed = false;
   let resolveDone;
   const done = new Promise(resolve => { resolveDone = resolve; });
   function finish(code = 0, state = 'stopped') {
@@ -21,7 +22,16 @@ export function startConnection({ makeSocket, auth, saveCreds, logger, browser, 
     cancel(retryTimer); cancel(timeoutTimer);
     try { status(state); } catch { /* Preserve cleanup even if the disk is full. */ }
     try { socket?.end(undefined); } catch { /* Already disconnected. */ }
-    resolveDone(code);
+    credentialsSaved.then(() => resolveDone(saveFailed ? 1 : code), () => resolveDone(1));
+  }
+  function persistCredentials() {
+    if (finished) return credentialsSaved;
+    credentialsSaved = credentialsSaved.then(saveCreds).catch(() => {
+      saveFailed = true;
+      log('Não foi possível salvar a sessão local. Confira espaço e permissões.');
+      finish(1, 'error');
+    });
+    return credentialsSaved;
   }
   function connect() {
     if (finished) return;
@@ -35,10 +45,7 @@ export function startConnection({ makeSocket, auth, saveCreds, logger, browser, 
     }
     const activeSocket = socket;
     socket.ev.on('creds.update', () => {
-      Promise.resolve().then(saveCreds).catch(() => {
-        log('Não foi possível salvar a sessão local. Confira espaço e permissões.');
-        finish(1, 'error');
-      });
+      if (current === generation) persistCredentials();
     });
     socket.ev.on('connection.update', update => {
       if (finished || current !== generation) return;
@@ -54,6 +61,8 @@ export function startConnection({ makeSocket, auth, saveCreds, logger, browser, 
           renderQr(update.qr);
         }
         if (update.connection === 'open') {
+          await persistCredentials();
+          if (finished || current !== generation) return;
           retries = 0; status('connected');
           log('Conectado. Esta etapa não envia pedidos a fornecedores.');
           if (selfTest && !tested) {
