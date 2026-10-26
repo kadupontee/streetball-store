@@ -1,0 +1,28 @@
+name: Revisar editor e classificação de times
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'public/app.js'
+      - 'public/editor.js'
+      - 'public/store-settings.js'
+      - 'public/editor.html'
+      - 'public/storefront-settings.js'
+      - 'public/europe-clubs.js'
+      - 'tests/**'
+      - '.github/workflows/pr-catalog-check.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar clubes, nomes e preços do catálogo completo
+        run: node --test tests/team-editor.test.mjs tests/europe-leagues.test.mjs tests/visual-title-lock.test.mjs
+      - name: Testar publicação segura do editor e checkout
+        run: node --import ./tests/register-worker-html.mjs --test tests/visual-editor.test.mjs

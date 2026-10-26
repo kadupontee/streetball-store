@@ -1,4 +1,4 @@
-import {emptySettings,normalizeSettings,applyProductOverride,DEFAULT_DESIGN,CATEGORIES,KINDS,SECTIONS,TEXTS} from './store-settings.js?v=20261025-editor-v1';
+import {emptySettings,normalizeSettings,applyProductOverride,DEFAULT_DESIGN,CATEGORIES,KINDS,RETAIL_PRICES_BRL,BRAZIL_TEAMS,SECTIONS,TEXTS} from './store-settings.js?v=20261026-teams-v2';
 
 const $=id=>document.getElementById(id);
 const clone=x=>structuredClone(x);
@@ -7,7 +7,7 @@ const money=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'
 const normalizeText=x=>String(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const DRAFT_KEY='streetball_visual_draft_v1';
 let token='',settings=emptySettings(),published=emptySettings(),revision=0,versions=[],catalog=[],byId=new Map(),textDefaults={};
-let tab='layout',selection=null,device='desktop',select=true,undo=[],redo=[],busy=false,recovery=null,query='',category='',onlyEdited=false,resultLimit=30,toastTimer,previewTimer,draftStored=true;
+let tab='layout',selection=null,device='desktop',select=true,undo=[],redo=[],busy=false,recovery=null,query='',category='',onlyEdited=false,onlyUnassigned=false,resultLimit=30,toastTimer,previewTimer,draftStored=true;
 const dirty=()=>JSON.stringify(settings)!==JSON.stringify(published);
 const frame=()=>$('storePreview').contentWindow;
 function toast(message,error=false){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').classList.toggle('error',error);$('toast').hidden=false;toastTimer=setTimeout(()=>$('toast').hidden=true,error?7500:4200);}
@@ -53,13 +53,29 @@ function renderLayout(){
 }
 function productImage(url,cls=''){const allowed=typeof url==='string'&&(/^\/images\/[a-zA-Z0-9_./-]+\.(?:webp|jpe?g|png)$/i.test(url)&&!url.includes('..')||/^https:\/\/photo\.yupoo\.com\//i.test(url));return allowed?'<img class="'+cls+'" src="'+esc(url)+'" alt="Foto do produto" loading="lazy">':'<span class="editor-no-photo" role="img" aria-label="Produto sem foto">SEM<br>FOTO</span>';}
 function currentProduct(id){const original=byId.get(id);return original?applyProductOverride(original,settings.products[id]):null;}
+function teamField(product){
+ const selected=settings.products[product.id]?.team||'';
+ const inferred=product.brazilClub?BRAZIL_TEAMS.find(([id])=>id===product.brazilClub)?.[1]:product.europeClub?window.STREETBALL_EUROPE?.leagues.flatMap(([,,,teams])=>teams).concat(window.STREETBALL_EUROPE.otherClubs).find(([id])=>id===product.europeClub)?.[1]:'';
+ const option=(value,label)=>'<option value="'+esc(value)+'"'+(selected===value?' selected':'')+'>'+esc(label)+'</option>';
+ const brazil='<optgroup label="Brasileirão">'+BRAZIL_TEAMS.map(([id,name])=>option('brasileirao:'+id,name)).join('')+option('brasileirao:outros','Outros times brasileiros')+'</optgroup>';
+ const euro=window.STREETBALL_EUROPE;
+ const europe=euro?euro.leagues.map(([league,label,,teams])=>'<optgroup label="'+esc(label)+'">'+teams.map(([id,name])=>option('europa:'+id,name)).join('')+'</optgroup>').join('')+'<optgroup label="Demais clubes europeus">'+euro.otherClubs.map(([id,name])=>option('europa:'+id,name)).join('')+option('europa:outros','Outras equipes europeias')+'</optgroup>':'';
+ return '<label class="field"><span>Time / Onde aparece na loja</span><select id="productTeam">'+option('',inferred?'Automático · '+inferred:'Automático · identificar pelo nome')+brazil+europe+'</select></label><p class="panel-description">Escolha um time para mover esta peça de clube. A seleção prevalece sobre o nome do fornecedor, inclusive nos produtos retrô.</p>';
+}
+function suggestedPrice(kind){return RETAIL_PRICES_BRL[kind]}
+function setSuggestedPrice(kind){
+ const price=suggestedPrice(kind),field=$('productPrice');if(!field||!Number.isFinite(price))return;
+ field.value=price.toFixed(2).replace('.',',');
+ const hint=$('priceSuggestion');if(hint)hint.textContent='Preço atualizado pelo tipo de peça: '+money(price)+'. Você pode alterar manualmente.';
+ const cover=$('properties').querySelector('.product-cover strong');if(cover)cover.textContent=money(price);
+}
 function renderProductForm(id){
- const product=currentProduct(id);if(!product)return '<div class="empty-state">O catálogo ainda está carregando. Aguarde um instante.</div>';
- return '<button id="backProducts" class="text-button back-button">← Todos os produtos</button><section class="panel-section"><h2 class="panel-title">Editar produto '+(settings.products[id]?'<span class="edited-badge">CORRIGIDO</span>':'')+'</h2><div class="product-cover">'+productImage(product.image)+'<div><small>REFERÊNCIA<br>'+esc(product.id)+'</small><strong>'+money(product.price)+'</strong></div></div><form id="productForm"><label class="field"><span>Nome na loja</span><textarea id="productTitle" maxlength="200" required>'+esc(product.title)+'</textarea></label><label class="field price-field"><span>Preço base em reais</span><input id="productPrice" inputmode="decimal" type="text" value="'+esc(product.price.toFixed(2).replace('.',','))+'" required autocomplete="off"></label><p class="panel-description">Tamanho extra, patch e personalização continuam sendo acrescentados à parte.</p><label class="field"><span>Categoria</span><select id="productCategory">'+options(CATEGORIES,product.category)+'</select></label><label class="field"><span>Tipo de peça</span><select id="productKind">'+options(KINDS,product.kind)+'</select></label><label class="check-row"><input type="checkbox" id="productHidden" '+(product.hidden?'checked':'')+'> Ocultar este produto da loja</label><div class="product-actions"><button type="submit" class="button button-primary full-width">Aplicar na prévia</button><button type="button" id="resetProduct" class="text-button">Usar os dados originais deste produto</button></div></form></section><p class="panel-description">A correção usa a referência do produto e permanece mesmo quando o catálogo é atualizado.</p>';
+ const product=currentProduct(id);if(!product)return '<div class="empty-state">Catálogo ainda não carregado.</div>';
+ return '<button id="backProducts" class="text-button back-button">← Todos os produtos</button><section class="panel-section"><h2 class="panel-title">Editar produto '+(settings.products[id]?'<span class="edited-badge">CORRIGIDO</span>':'')+'</h2><div class="product-cover">'+productImage(product.image)+'<div><small>REFERÊNCIA<br>'+esc(product.id)+'</small><strong>'+money(product.price)+'</strong></div></div><form id="productForm"><label class="field"><span>Nome na loja</span><textarea id="productTitle" maxlength="200" required>'+esc(product.title)+'</textarea></label><label class="field"><span>Categoria</span><select id="productCategory">'+options(CATEGORIES,product.category)+'</select></label><label class="field"><span>Tipo de peça (camisa, blusa, casaco…)</span><select id="productKind">'+options(KINDS,product.kind)+'</select></label><label class="field price-field"><span>Preço base em reais</span><input id="productPrice" inputmode="decimal" type="text" value="'+esc(product.price.toFixed(2).replace('.',','))+'" required autocomplete="off"></label><p class="panel-description" id="priceSuggestion">Ao trocar o tipo de peça, o valor é atualizado automaticamente conforme a tabela de preços da loja. Você pode alterá-lo antes de salvar.</p>'+teamField(product)+'<label class="check-row"><input type="checkbox" id="productHidden" '+(product.hidden?'checked':'')+'> Ocultar este produto da loja</label><div class="product-actions"><button type="submit" class="button button-primary full-width">Aplicar na prévia</button><button type="button" id="resetProduct" class="text-button">Usar os dados originais deste produto</button></div></form></section><p class="panel-description">O time, a categoria e o preço escolhidos por você continuam salvos mesmo após a atualização do catálogo. Tamanhos extras, patch e personalização são acrescentados à parte.</p>';
 }
 function filteredProducts(){
  const term=normalizeText(query);
- return catalog.map(p=>currentProduct(p.id)).filter(p=>p&&(!category||p.category===category)&&(!onlyEdited||settings.products[p.id])&&(!term||normalizeText(p.title+' '+p.id+' '+(CATEGORIES[p.category]||'')).includes(term)));
+ return catalog.map(p=>currentProduct(p.id)).filter(p=>p&&(!category||p.category===category)&&(!onlyEdited||settings.products[p.id])&&(!onlyUnassigned||((p.category==='brasileirao'&&!p.brazilClub&&!settings.products[p.id]?.team)||(p.category==='europa'&&!p.europeClub&&!settings.products[p.id]?.team)))&&(!term||normalizeText(p.title+' '+p.id+' '+(CATEGORIES[p.category]||'')).includes(term)));
 }
 function renderProductResults(){
  const target=$('productResults');if(!target)return;
@@ -70,7 +86,7 @@ function renderProductResults(){
 }
 function renderProducts(){
  if(selection?.kind==='product')return renderProductForm(selection.value);
- return '<section class="panel-section"><h2 class="panel-title">Catálogo completo <span class="edited-badge">'+catalog.length+'</span></h2><p class="panel-description">Busque pelo nome ou clique no produto na prévia.</p><input id="productSearch" class="search-input product-search" type="search" placeholder="Time, modelo ou referência…" value="'+esc(query)+'"><div class="product-filters"><select id="productCategoryFilter" aria-label="Filtrar categoria">'+options(CATEGORIES,category,'Todas as categorias')+'</select></div><label class="check-row"><input id="onlyEdited" type="checkbox" '+(onlyEdited?'checked':'')+'> Apenas produtos corrigidos</label><div class="product-results" id="productResults"></div><p class="result-caption" id="resultCaption"></p><button id="moreResults" class="button button-light load-results">Mostrar mais</button></section>';
+ return '<section class="panel-section"><h2 class="panel-title">Catálogo completo <span class="edited-badge">'+catalog.length+'</span></h2><p class="panel-description">Busque pelo nome ou clique no produto na prévia.</p><input id="productSearch" class="search-input product-search" type="search" placeholder="Time, modelo ou referência…" value="'+esc(query)+'"><div class="product-filters"><select id="productCategoryFilter" aria-label="Filtrar categoria">'+options(CATEGORIES,category,'Todas as categorias')+'</select></div><label class="check-row"><input id="onlyEdited" type="checkbox" '+(onlyEdited?'checked':'')+'> Apenas produtos corrigidos</label><label class="check-row"><input id="onlyUnassigned" type="checkbox" '+(onlyUnassigned?'checked':'')+'> Revisar produtos sem time identificado</label><div class="product-results" id="productResults"></div><p class="result-caption" id="resultCaption"></p><button id="moreResults" class="button button-light load-results">Mostrar mais</button></section>';
 }
 function dateLabel(value){try{return new Date(value).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});}catch{return value;}}
 function renderHistory(){return '<section class="panel-section"><h2 class="panel-title">Versões publicadas</h2><p class="panel-description">Uma versão anterior abre como rascunho. Confira na prévia e publique quando quiser restaurá-la.</p>'+versions.map(v=>'<button class="history-item" data-version="'+v.revision+'"><span><strong>Versão '+v.revision+(v.revision===revision?' · Atual':'')+'</strong><small>'+esc(dateLabel(v.published_at))+'</small></span><span>Revisar →</span></button>').join('')+'<button class="history-item" data-version="0"><span><strong>Layout e catálogo originais</strong><small>Sem correções manuais</small></span><span>Revisar →</span></button></section>';}
@@ -153,6 +169,19 @@ $('properties').addEventListener('change',event=>{
  if(input.dataset.sectionVisible){const next=clone(settings),hidden=new Set(next.design.hiddenSections);input.checked?hidden.delete(input.dataset.sectionVisible):hidden.add(input.dataset.sectionVisible);next.design.hiddenSections=[...hidden];commitDraft(next);}
  if(input.id==='productCategoryFilter'){category=input.value;resultLimit=30;renderProductResults();}
  if(input.id==='onlyEdited'){onlyEdited=input.checked;resultLimit=30;renderProductResults();}
+ if(input.id==='onlyUnassigned'){onlyUnassigned=input.checked;resultLimit=30;renderProductResults();}
+ if(input.id==='productKind'){
+  if(['jacket','coat','blouse'].includes(input.value))$('productCategory').value='treino';
+  setSuggestedPrice(input.value);
+ }
+ if(input.id==='productCategory'){
+  const mapping={retro:'retro',infantil:'kids',feminino:'female'};
+  if(mapping[input.value]&&['fan','retro','kids','female'].includes($('productKind').value)){$('productKind').value=mapping[input.value];setSuggestedPrice(mapping[input.value]);}
+ }
+ if(input.id==='productTeam'&&input.value){
+  const target=input.value.split(':')[0],cat=$('productCategory');
+  if(['outras','brasileirao','europa'].includes(cat.value))cat.value=target;
+ }
 });
 $('properties').addEventListener('input',event=>{
  const input=event.target;if(input.id==='productSearch'){query=input.value;resultLimit=30;renderProductResults();}
@@ -163,6 +192,7 @@ $('properties').addEventListener('submit',event=>{
  try{
   const original=byId.get(selection.value),next=clone(settings),patch={...next.products[selection.value]};
   const values={title:$('productTitle').value.trim(),price:parsePrice($('productPrice').value),category:$('productCategory').value,kind:$('productKind').value,hidden:$('productHidden').checked};
+  const chosenTeam=$('productTeam').value;if(chosenTeam)values.team=chosenTeam;else delete patch.team;
   for(const [key,value] of Object.entries(values)){if(value===(original[key]??(key==='hidden'?false:undefined)))delete patch[key];else patch[key]=value;}
   if(Object.keys(patch).length)next.products[selection.value]=patch;else delete next.products[selection.value];
   // Validate before announcing success; invalid input leaves the inspector untouched.

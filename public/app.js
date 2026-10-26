@@ -146,7 +146,7 @@ const BR_CLUBS=[
  ['athletico-pr','Athletico-PR',['athletico paranaense','athletico pr','athletico']],
  ['atletico-mg','Atlético-MG',['atletico mineiro','atletico mg','atletico m g']],
  ['bahia','Bahia',['bahia']], ['botafogo','Botafogo',['botafogo']],
- ['chapecoense','Chapecoense',['chapecoense']], ['corinthians','Corinthians',['corinthians','corinthian']],
+ ['chapecoense','Chapecoense',['chapecoense']], ['corinthians','Corinthians',['corinthians','corinthian','corinthian paulista']],
  ['coritiba','Coritiba',['coritiba']], ['cruzeiro','Cruzeiro',['cruzeiro']],
  ['flamengo','Flamengo',['flamengo']], ['fluminense','Fluminense',['fluminense']],
  ['gremio','Grêmio',['gremio']], ['internacional','Internacional',['internacional porto alegre','internacional rs','internacional']],
@@ -158,20 +158,24 @@ const BR_CLUBS=[
 ];
 const clubNormalized=s=>String(s||'').replace(/(\d)([A-Za-zÀ-ÿ])/g,'$1 $2').replace(/([a-zà-ÿ])([A-Z])/g,'$1 $2').replace(/(flamengo|gremio|vasco|santos|remo)(home|away|black|special|goalkeeper)/gi,'$1 $2').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 function findBrazilClub(p){
- if(p.category==='europa'||p.category==='selecoes')return '';
- const name=' '+clubNormalized(p.supplierTitle||p.title)+' ';
+ if(p.team?.startsWith('europa:')||p.category==='europa'||p.category==='selecoes')return '';
+ const sources=p.titleLocked?[p.title,p.supplierTitle]:[p.supplierTitle,p.title];
+ for(const source of sources){
+ const name=' '+clubNormalized(source)+' ';
  for(const [slug,,aliases] of BR_CLUBS){
    if(!aliases.some(term=>name.includes(' '+term+' ')))continue;
-   if(slug==='santos'&&/\bsantos laguna\b/.test(name))continue;
+   if(slug==='santos'&&/\bsantos (?:laguna|fc de guapiles)\b/.test(name))continue;
+   if(slug==='corinthians'&&/\bcorinthian casuals\b/.test(name))continue;
    if(slug==='botafogo'&&/\bbotafogo (sp|pb)\b/.test(name))continue;
    if(slug==='vitoria'&&/\bvitoria (guimaraes|setubal)\b/.test(name))continue;
    if(slug==='cruzeiro'&&/\bcruzeiro (rs|do sul)\b/.test(name))continue;
    return slug;
  }
+ }
  return '';
 }
 const clubFor=p=>p.brazilClub===undefined?findBrazilClub(p):p.brazilClub;
-const isBrazilProduct=p=>!!clubFor(p)||(p.category==='brasileirao'&&!/\b(santos laguna|manchester united|cremona)\b/.test(clubNormalized(p.supplierTitle||p.title)));
+const isBrazilProduct=p=>p.team?.startsWith('europa:')?false:p.team?.startsWith('brasileirao:')?true:!!clubFor(p)||(p.category==='brasileirao'&&!/\b(santos laguna|corinthian casuals|manchester united|cremona)\b/.test(clubNormalized(p.supplierTitle||p.title)));
 function renderBrazilClubNavigation(){
  const section=$('brasileiraoClubs');
  if(!section)return;
@@ -344,7 +348,7 @@ function displayTitle(p){
  // Revisão por foto tem prioridade sobre o título possivelmente incorreto do fornecedor.
  if(String(p.visualReviewStatus||'').startsWith('foto_local_conferida_') && String(p.title||'').trim())return String(p.title).trim();
  if(!String(p.id||'').startsWith('YUP-'))return p.title;
- let t=String(p.supplierTitle||p.title||'').replace(/[\u4e00-\u9fff]/g,' ').replace(/[‐‑–—]/g,'-').replace(/\s+/g,' ').trim();
+ let t=String(p.supplierTitle||p.title||'').replace(/[\u4e00-\u9fff]/g,' ').replace(/(\d)([A-Za-zÀ-ÿ])/g,'$1 $2').replace(/([a-zà-ÿ])([A-Z])/g,'$1 $2').replace(/\b(corinthians?|santos|flamengo|palmeiras|gremio|vasco|botafogo|cruzeiro)(home|away|third|retro|training|player|long|special)\b/gi,'$1 $2').replace(/[‐‑–—]/g,'-').replace(/\s+/g,' ').trim();
  const kids=/\b16\s*[-~]\s*(28|30)\b|\b(kids?|children|child|youth)\b/i.test(t)||p.kind==='kids';
  t=t.replace(/\b16\s*[-~]\s*(28|30)\b/g,' ').replace(/^(\d{2})(\d{2})(?=[A-Za-zÀ-ÿ])/,'$1-$2 ');
  let season='',m=t.match(/\b(20\d{2})\s*[-_/]\s*(\d{2})\b/);
@@ -364,6 +368,8 @@ function displayTitle(p){
  if(String(p.kind).startsWith('player_'))tags.push('Versão jogador');
  t=t.replace(/\b(?:XXS|XS|S|M|L|XL|XXL|[2-6]XL)\s*[-~]\s*(?:XXS|XS|S|M|L|XL|XXL|[2-6]XL|[2-6]X)\b/gi,' ').replace(/\b(?:XXL|[2-6]XL)\b(?=\s*$)/gi,' ').replace(/\b(?:jersey|shirt|soccer|football|uniform)\b/gi,' ').replace(/_+/g,' ').replace(/\s+/g,' ').trim();
  for(const [re,pt] of REPLACEMENTS)t=t.replace(re,pt);
+ // Muitos albuns do Corinthians usam o singular ingles; nao confundir com Corinthian-Casuals.
+ if(!/\bcorinthian[\s-]+casuals\b/i.test(t))t=t.replace(/\bcorinthian\b/gi,'Corinthians');
  t=niceCase(t.replace(/^[\s./-]+|[\s./-]+$/g,''));
  if(!t)t='Modelo '+String(p.id).replace('YUP-','');
  return (t+(season?' '+season:'')+' — '+type+(tags.length?' · '+[...new Set(tags)].join(' · '):'')).slice(0,170);
@@ -406,7 +412,27 @@ function playerShortsReprice(p){
  if(!item.priceLocked&&Math.abs(Number(item.price)-119.90)<0.005)item.price=143.90;
  return item;
 }
-function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>{const clean=playerShortsReprice(retroProduct({...p,supplierTitle:p.supplierTitle||p.title}));clean.title=displayTitle(clean);if(!String(clean.id).startsWith('YUP-')&&clean.category==='retro'&&!/retr[oô]/i.test(clean.title))clean.title+=' · Retrô';clean.brazilClub=findBrazilClub(clean);const euro=EUROPE.teamFor(clean);clean.europeClub=euro?.club||'';clean.europeLeague=EUROPE.leagueFor(clean);return clean;});}
+function assignTeam(product){
+ const p={...product},chosen=String(p.team||'');
+ if(chosen.startsWith('brasileirao:'))return {...p,brazilClub:chosen.slice(12)==='outros'?'':chosen.slice(12),europeClub:'',europeLeague:''};
+ if(chosen.startsWith('europa:')){
+  const club=chosen.slice(7);
+  const matched=EUROPE.leagues.flatMap(([league,,,clubs])=>clubs.map(([id])=>({league,id}))).find(x=>x.id===club);
+  const other=EUROPE.otherClubs.some(([id])=>id===club);
+  return {...p,brazilClub:'',europeClub:matched?.id||(other?club:''),europeLeague:matched?.league||'outros'};
+ }
+ const euro=EUROPE.teamFor(p);
+ return {...p,brazilClub:findBrazilClub(p),europeClub:euro?.club||'',europeLeague:EUROPE.leagueFor(p)};
+}
+function prepareCatalog(data){return data.filter(p=>p&&p.id&&p.title&&Number.isFinite(p.price)&&!isBasketball(p)).map(p=>{
+ const clean=playerShortsReprice(retroProduct({...p,supplierTitle:p.supplierTitle||p.title}));
+ clean.title=displayTitle(clean);
+ if(!String(clean.id).startsWith('YUP-')&&clean.category==='retro'&&!/retr[oô]/i.test(clean.title))clean.title+=' · Retrô';
+ const aligned=assignTeam(clean);
+ // Nomes de clubes brasileiros conhecidos nao devem continuar na categoria Outros.
+ if(aligned.category==='outras'&&aligned.brazilClub&&!aligned.categoryLocked)aligned.category='brasileirao';
+ return assignTeam(aligned);
+});}
 
 function catalogRender(){
  const ps=filtered();const visible=ps.slice(0,state.limit);$('catalogSubtitle').textContent=state.favoritesOnly?'Modelos que você salvou.':state.query?`Resultados da busca por “${state.query}”.`:'Modelos com fotografias cadastradas no catálogo do fornecedor.';
@@ -661,13 +687,13 @@ async function loadCheckoutConfig(){
 // Configuração de cobrança é carregada depois dos preços publicados.
 // If published with catalog.json generated by importer, use its full validated catalog.
 function editorCatalogSummary(){
- return editorBaseCatalog.map(p=>({id:p.id,title:p.title,price:p.price,category:p.category,kind:p.kind,image:p.image,hidden:!!p.hidden}));
+ return editorBaseCatalog.map(p=>({id:p.id,title:p.title,supplierTitle:p.supplierTitle,price:p.price,category:p.category,kind:p.kind,image:p.image,brazilClub:p.brazilClub,europeClub:p.europeClub,europeLeague:p.europeLeague,hidden:!!p.hidden}));
 }
 function applyStoreProductEdits(){
  catalog=editorBaseCatalog.map(p=>{
   const patch=storeProductEdits[p.id];if(!storeSettingsModel||!patch)return p;
   const edited=storeSettingsModel.applyProductOverride(p,patch);
-  if(['title','category','kind'].some(key=>Object.hasOwn(patch,key))){const euro=EUROPE.teamFor(edited);return {...edited,brazilClub:findBrazilClub(edited),europeClub:euro?.club||'',europeLeague:EUROPE.leagueFor(edited)}}
+  if(['title','category','kind','team'].some(key=>Object.hasOwn(patch,key))){return assignTeam(edited)}
   return edited;
  }).filter(p=>!p.hidden);
  state.checkoutRequestKey=null;

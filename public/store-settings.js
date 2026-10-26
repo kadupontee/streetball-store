@@ -1,6 +1,8 @@
 // Modelo compartilhado pela vitrine, pelo editor e pela validação do checkout.
 export const CATEGORIES={brasileirao:'Brasileirão',europa:'Europa',selecoes:'Seleções',retro:'Retrô',personalizadas:'Personalizadas',player:'Jogador',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios',outras:'Outros'};
 export const KINDS={fan:'Torcedor',female:'Feminina',kids:'Infantil',retro:'Retrô',retro_long:'Retrô manga longa',long:'Manga longa',player_adidas:'Jogador Adidas',player_nike:'Jogador Nike',player_puma:'Jogador Puma',shorts:'Calção',shorts_player:'Calção jogador',socks:'Meião',jacket:'Jaqueta',coat:'Casaco',blouse:'Blusa',set:'Conjunto'};
+export const RETAIL_PRICES_BRL=Object.freeze({fan:159.90,female:159.90,kids:179.90,retro:199.90,retro_long:229.90,long:189.90,player_adidas:209.90,player_puma:219.90,player_nike:229.90,shorts:119.90,shorts_player:143.90,socks:59.90,jacket:379.90,coat:189.90,blouse:189.90,set:299.90});
+export const BRAZIL_TEAMS=Object.freeze([['athletico-pr','Athletico-PR'],['atletico-mg','Atlético-MG'],['bahia','Bahia'],['botafogo','Botafogo'],['chapecoense','Chapecoense'],['corinthians','Corinthians'],['coritiba','Coritiba'],['cruzeiro','Cruzeiro'],['flamengo','Flamengo'],['fluminense','Fluminense'],['gremio','Grêmio'],['internacional','Internacional'],['mirassol','Mirassol'],['palmeiras','Palmeiras'],['bragantino','Red Bull Bragantino'],['remo','Remo'],['santos','Santos'],['sao-paulo','São Paulo'],['vasco','Vasco da Gama'],['vitoria','Vitória']]);
 export const SECTIONS={hero:'Banner principal',services:'Serviços',categories:'Coleções',catalog:'Produtos',story:'Destaque retrô',promises:'Diferenciais'};
 export const TEXTS={announcement:'Faixa superior',heroEyebrow:'Chamada do banner',heroLine1:'Título do banner · linha 1',heroLine2:'Título do banner · linha 2',heroSubtitle:'Subtítulo do banner',heroButton:'Botão do banner',categoryTitle:'Título das coleções',catalogTitle:'Título dos produtos',storyTitle:'Título do destaque retrô',storyText:'Texto do destaque retrô',footerText:'Texto do rodapé'};
 export const DEFAULT_DESIGN=Object.freeze({accent:'#818bd5',background:'#e6e6e8',textColor:'#1b1b21',headerBackground:'#e3e3e6',heroBackground:'#d7d7dc',maxWidth:1470,gridColumns:4,mobileColumns:2,productGap:24,cardRadius:0,heroHeight:600,fontScale:100,imageFit:'contain',texts:{},sectionOrder:Object.keys(SECTIONS),hiddenSections:[]});
@@ -39,11 +41,12 @@ export function normalizeSettings(input){
  const products={};
  for(const [id,patch] of entries){
   if(!/^[a-zA-Z0-9_-]{1,100}$/.test(id)||['__proto__','constructor','prototype'].includes(id)||!plain(patch))reject('Referência de produto inválida.');
-  if(Object.keys(patch).some(k=>!['title','price','category','kind','hidden'].includes(k)))reject('Campo de produto desconhecido.');
+  if(Object.keys(patch).some(k=>!['title','price','category','kind','hidden','team'].includes(k)))reject('Campo de produto desconhecido.');
   const clean={};
   if(patch.title!==undefined){if(typeof patch.title!=='string'||patch.title.trim().length<2||patch.title.length>200)reject('O nome deve ter entre 2 e 200 caracteres.');clean.title=patch.title.trim();}
   if(patch.price!==undefined){if(typeof patch.price!=='number'||!Number.isFinite(patch.price)||patch.price<0.01||patch.price>9999||Math.abs(patch.price*100-Math.round(patch.price*100))>0.00001)reject('Preço inválido. Informe reais e até dois centavos.');clean.price=patch.price;}
   for(const [field,allowed] of [['category',CATEGORIES],['kind',KINDS]]){if(patch[field]!==undefined){if(!Object.hasOwn(allowed,patch[field]))reject('Categoria ou tipo de produto inválido.');clean[field]=patch[field];}}
+  if(patch.team!==undefined){if(typeof patch.team!=='string'||!/^(?:brasileirao|europa):[a-z0-9-]{1,45}$/.test(patch.team))reject('Time inválido. Escolha um clube da lista.');clean.team=patch.team;}
   if(patch.hidden!==undefined){if(typeof patch.hidden!=='boolean')reject('Visibilidade inválida.');clean.hidden=patch.hidden;}
   if(Object.keys(clean).length)products[id]=clean;
  }
@@ -54,10 +57,11 @@ export function normalizeSettings(input){
 export function applyProductOverride(product,patch){
  if(!patch)return product;
  const result={...product};
- for(const key of ['title','price','category','kind','hidden'])if(Object.hasOwn(patch,key))result[key]=patch[key];
+ for(const key of ['title','price','category','kind','hidden','team'])if(Object.hasOwn(patch,key))result[key]=patch[key];
  if(Object.hasOwn(patch,'title'))result.titleLocked=true;
  if(Object.hasOwn(patch,'price'))result.priceLocked=true;
  if(Object.hasOwn(patch,'category'))result.categoryLocked=true;
  if(Object.hasOwn(patch,'kind'))result.kindLocked=true;
+ if(Object.hasOwn(patch,'team'))result.teamLocked=true;
  return result;
 }
