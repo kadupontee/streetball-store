@@ -22,4 +22,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --import ./tests/register-worker-html.mjs --test tests/*.test.mjs
+      - name: Testar clubes, nomes e preços do catálogo completo
+        run: node --test tests/team-editor.test.mjs tests/europe-leagues.test.mjs tests/visual-title-lock.test.mjs
+      - name: Testar publicação segura do editor e checkout
+        run: node --import ./tests/register-worker-html.mjs --test tests/visual-editor.test.mjs
