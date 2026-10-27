@@ -1,7 +1,7 @@
 """Política conservadora de jaquetas e camisas de manga longa da Streetball Store.
 
 Custo USD: jaqueta 30, manga longa 15, manga longa retrô 19; custo de casaco não informado.
-Preços BRL: jaqueta 379,90; casaco e blusa 189,90; manga longa retrô 229,90.
+Preços BRL: jaqueta, casaco e blusa 379,80; manga longa retrô 229,90.
 Não infere pixel de imagens: exige foto cadastrada na migração e classificações
 claras por título/álbum; registros ambíguos ficam no relatório de revisão.
 """
@@ -11,7 +11,10 @@ import re
 import unicodedata
 from datetime import date
 
-PRICES_BRL = {"jacket":379.90,"coat":189.90,"blouse":189.90,"long":189.90,"retro_long":229.90}
+APPAREL_PRICE_BRL = 379.80
+APPAREL_KINDS = {"jacket", "coat", "blouse"}
+APPAREL_RETAIL_POLICY = "apparel-37980-20261027"
+PRICES_BRL = {"jacket":APPAREL_PRICE_BRL,"coat":APPAREL_PRICE_BRL,"blouse":APPAREL_PRICE_BRL,"long":189.90,"retro_long":229.90}
 COSTS_USD = {"jacket":30,"long":15,"retro_long":19}
 # Tipos e preços antigos do importador que podem ser corrigidos automaticamente.
 LEGACY_PRICES = {159.90,189.90,199.90,229.90,209.90,219.90,299.90}
@@ -114,13 +117,47 @@ def garment_decision(product, *, require_photo=False):
     is_retro=is_retro or kind=="retro_long"
     return ("retro_long" if is_retro else "long"),"camisa manga longa retrô" if is_retro else "camisa manga longa"
 
+def apply_apparel_retail_policy(product, *, require_photo=False):
+    """Preço comum autorizado; nas dúvidas de tipo, usa o maior preço possível."""
+    item = dict(product)
+    kind = str(item.get("kind") or "").lower()
+    if kind not in APPAREL_KINDS and item.get("kindLocked"):
+        # Uma camisa confirmada pela foto não vira blusa por um título antigo.
+        item.pop("apparelPriceReviewRequired", None)
+        item.pop("apparelPriceReviewReason", None)
+        return item
+    target, reason = garment_decision(item, require_photo=require_photo)
+    uncertain = target is None and reason in {
+        "training top sem manga confirmada: revisar foto",
+        "conjunto com jaqueta ou casaco: preco de conjunto nao confirmado",
+        "manga longa ambigua",
+    }
+    if kind in APPAREL_KINDS or target in APPAREL_KINDS:
+        item["price"] = APPAREL_PRICE_BRL
+    elif uncertain:
+        try:
+            current = float(item.get("price") or 0)
+        except (TypeError, ValueError):
+            current = 0
+        item["price"] = max(current, APPAREL_PRICE_BRL)
+    else:
+        return item
+    item["apparelRetailPolicy"] = APPAREL_RETAIL_POLICY
+    if uncertain:
+        item["apparelPriceReviewRequired"] = True
+        item["apparelPriceReviewReason"] = reason
+    else:
+        item.pop("apparelPriceReviewRequired", None)
+        item.pop("apparelPriceReviewReason", None)
+    return item
+
 def apply_garment_pricing(product, *, require_photo=False):
     """Promove kind e preço apenas quando claramente identificados e não travados."""
     item=dict(product)
     target,why=garment_decision(item,require_photo=require_photo)
-    if target is None:return item
+    if target is None:return apply_apparel_retail_policy(item,require_photo=require_photo)
     if item.get("kindLocked") and item.get("kind")!=target:
-        return item
+        return apply_apparel_retail_policy(item,require_photo=require_photo)
     old_kind=item.get("kind")
     if not item.get("kindLocked"):
         item["kind"]=target
@@ -134,4 +171,4 @@ def apply_garment_pricing(product, *, require_photo=False):
     if item.get("kind")!=old_kind or item.get("price")!=product.get("price"):
         item["garmentClassification"]="title_and_image_link"
         item["garmentPriceSource"]="supplier_usd_garment_policy_20261022"
-    return item
+    return apply_apparel_retail_policy(item,require_photo=require_photo)

@@ -28,9 +28,9 @@ class SupplierCostTests(unittest.TestCase):
         # A product's published BRL price must remain unchanged by this update.
         self.assertEqual(PRICES["shorts"], 119.90)
         self.assertEqual(PRICES["shorts_player"], 143.90)
-        self.assertEqual(PRICES["jacket"], 379.90)
-        self.assertEqual(PRICES["coat"], PRICES["long"])
-        self.assertEqual(PRICES["coat"], 189.90)
+        self.assertEqual(PRICES["jacket"], 379.80)
+        self.assertEqual(PRICES["coat"], PRICES["jacket"])
+        self.assertEqual(PRICES["coat"], 379.80)
         self.assertEqual(PRICES["retro_long"], 229.90)
 
     def test_report_shows_both_costs_without_inventing_retail(self):

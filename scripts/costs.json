@@ -46,12 +46,14 @@
     "retro_long": "Camisa retrô de manga longa: custo US$ 19; venda de referência R$ 229,90.",
     "long": "Camisa atual de manga longa: custo US$ 15; venda de referência R$ 189,90.",
     "classification": "Classificação conservadora por títulos/álbuns e existência de fotos, não confirmação visual de cada imagem. Casos ambíguos ficam pendentes de revisão.",
-    "coat": "Casacos vendidos pelo mesmo valor das blusas de treino: R$ 189,90. Custo de compra específico do casaco não foi informado; não tratar como jaqueta de US$ 30."
+    "coat": "Casacos e blusas vendidos por R$ 379,80, igual às jaquetas. O custo de compra específico do casaco e da blusa não foi informado.",
+    "apparel_retail": "Jaquetas, blusas e casacos: preço comum de venda R$ 379,80, conforme correção do proprietário. Na dúvida de classificação, manter o maior preço aplicável."
   },
   "retail_brl_reference": {
     "retro_long": 229.9,
     "long": 189.9,
-    "jacket": 379.9,
-    "coat": 189.9
+    "jacket": 379.8,
+    "coat": 379.8,
+    "blouse": 379.8
   }
 }

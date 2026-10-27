@@ -1,3 +1,4 @@
+from garment_policy import APPAREL_PRICE_BRL
 import json, pathlib, re
 root=pathlib.Path(__file__).resolve().parents[1]
 photos={
@@ -64,7 +65,7 @@ raw=[
 ('Regata de basquete Real Madrid','nba','nba','#efefee','#2f5589',None,'BASQUETE'),
 ('Regata de basquete Barcelona','nba','nba','#243785','#b83b43',None,'BASQUETE'),
 ]
-price_map={'fan':159.90,'player_adidas':209.90,'player_puma':219.90,'player_nike':229.90,'female':159.90,'retro':199.90,'retro_long':229.90,'long':189.90,'kids':179.90,'nba':219.90,'shorts':119.90,'shorts_player':143.90,'socks':59.90,'jacket':379.90,'coat':189.90,'blouse':189.90,'set':299.90}
+price_map={'fan':159.90,'player_adidas':209.90,'player_puma':219.90,'player_nike':229.90,'female':159.90,'retro':199.90,'retro_long':229.90,'long':189.90,'kids':179.90,'nba':219.90,'shorts':119.90,'shorts_player':143.90,'socks':59.90,'jacket':APPAREL_PRICE_BRL,'coat':APPAREL_PRICE_BRL,'blouse':APPAREL_PRICE_BRL,'set':299.90}
 ret=[]
 for idx,(title,category,kind,color,accent,photo,badge) in enumerate(raw,1):
     ret.append({'id':f'SB-{idx:04}', 'title':title,'category':category,'kind':kind,'price':price_map[kind],

@@ -1,7 +1,25 @@
 // Modelo compartilhado pela vitrine, pelo editor e pela validação do checkout.
 export const CATEGORIES={brasileirao:'Brasileirão',europa:'Europa',selecoes:'Seleções',retro:'Retrô',personalizadas:'Personalizadas',player:'Jogador',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios',outras:'Outros'};
 export const KINDS={fan:'Torcedor',female:'Feminina',kids:'Infantil',retro:'Retrô',retro_long:'Retrô manga longa',long:'Manga longa',player_adidas:'Jogador Adidas',player_nike:'Jogador Nike',player_puma:'Jogador Puma',shorts:'Calção',shorts_player:'Calção jogador',socks:'Meião',jacket:'Jaqueta',coat:'Casaco',blouse:'Blusa',set:'Conjunto'};
-export const RETAIL_PRICES_BRL=Object.freeze({fan:159.90,female:159.90,kids:179.90,retro:199.90,retro_long:229.90,long:189.90,player_adidas:209.90,player_puma:219.90,player_nike:229.90,shorts:119.90,shorts_player:143.90,socks:59.90,jacket:379.90,coat:189.90,blouse:189.90,set:299.90});
+export const APPAREL_PRICE_BRL=379.80;
+export const RETAIL_PRICE_POLICY_VERSION='apparel-37980-20261027';
+export const RETAIL_PRICES_BRL=Object.freeze({fan:159.90,female:159.90,kids:179.90,retro:199.90,retro_long:229.90,long:189.90,player_adidas:209.90,player_puma:219.90,player_nike:229.90,shorts:119.90,shorts_player:143.90,socks:59.90,jacket:APPAREL_PRICE_BRL,coat:APPAREL_PRICE_BRL,blouse:APPAREL_PRICE_BRL,set:299.90});
+const APPAREL_KINDS=new Set(['jacket','coat','blouse']);
+const APPAREL_TITLE=/\b(?:jaquetas?|jackets?|casacos?|coats?|blusas?|blusoes?|blusao|moletom|moletons|hoodies?|sweatshirts?|sweaters?|pullovers?|windbreakers?|corta[- ]?vento|half[- ]?zip|quarter[- ]?zip)\b/i;
+export function apparelPriceMode(product){
+ if(APPAREL_KINDS.has(product?.kind))return 'shared';
+ if(product?.kindLocked)return null;
+ if(product?.apparelPriceReviewRequired===true)return 'highest';
+ // A name corrected in the editor also participates, even when the old kind was a shirt.
+ const title=String(product?.title||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ return product?.titleLocked&&APPAREL_TITLE.test(title)?'shared':null;
+}
+export function applyApparelRetailPrice(product){
+ const mode=apparelPriceMode(product);
+ if(!mode)return product;
+ const price=mode==='highest'?Math.max(Number(product.price)||0,APPAREL_PRICE_BRL):APPAREL_PRICE_BRL;
+ return product.price===price?product:{...product,price};
+}
 export const BRAZIL_TEAMS=Object.freeze([['athletico-pr','Athletico-PR'],['atletico-mg','Atlético-MG'],['bahia','Bahia'],['botafogo','Botafogo'],['chapecoense','Chapecoense'],['corinthians','Corinthians'],['coritiba','Coritiba'],['cruzeiro','Cruzeiro'],['flamengo','Flamengo'],['fluminense','Fluminense'],['gremio','Grêmio'],['internacional','Internacional'],['mirassol','Mirassol'],['palmeiras','Palmeiras'],['bragantino','Red Bull Bragantino'],['remo','Remo'],['santos','Santos'],['sao-paulo','São Paulo'],['vasco','Vasco da Gama'],['vitoria','Vitória']]);
 export const SECTIONS={hero:'Banner principal',services:'Serviços',categories:'Coleções',catalog:'Produtos',story:'Destaque retrô',promises:'Diferenciais'};
 export const TEXTS={announcement:'Faixa superior',heroEyebrow:'Chamada do banner',heroLine1:'Título do banner · linha 1',heroLine2:'Título do banner · linha 2',heroSubtitle:'Subtítulo do banner',heroButton:'Botão do banner',categoryTitle:'Título das coleções',catalogTitle:'Título dos produtos',storyTitle:'Título do destaque retrô',storyText:'Texto do destaque retrô',footerText:'Texto do rodapé'};
@@ -48,6 +66,7 @@ export function normalizeSettings(input){
   for(const [field,allowed] of [['category',CATEGORIES],['kind',KINDS]]){if(patch[field]!==undefined){if(!Object.hasOwn(allowed,patch[field]))reject('Categoria ou tipo de produto inválido.');clean[field]=patch[field];}}
   if(patch.team!==undefined){if(typeof patch.team!=='string'||!/^(?:brasileirao|europa):[a-z0-9-]{1,45}$/.test(patch.team))reject('Time inválido. Escolha um clube da lista.');clean.team=patch.team;}
   if(patch.hidden!==undefined){if(typeof patch.hidden!=='boolean')reject('Visibilidade inválida.');clean.hidden=patch.hidden;}
+  if(Object.hasOwn(clean,'price')&&apparelPriceMode({kind:clean.kind,kindLocked:Object.hasOwn(clean,'kind'),title:clean.title,titleLocked:Object.hasOwn(clean,'title')})==='shared')clean.price=APPAREL_PRICE_BRL;
   if(Object.keys(clean).length)products[id]=clean;
  }
  const settings={design,products};
@@ -55,7 +74,7 @@ export function normalizeSettings(input){
  return settings;
 }
 export function applyProductOverride(product,patch){
- if(!patch)return product;
+ if(!patch)return applyApparelRetailPrice(product);
  const result={...product};
  for(const key of ['title','price','category','kind','hidden','team'])if(Object.hasOwn(patch,key))result[key]=patch[key];
  if(Object.hasOwn(patch,'title'))result.titleLocked=true;
@@ -63,5 +82,5 @@ export function applyProductOverride(product,patch){
  if(Object.hasOwn(patch,'category'))result.categoryLocked=true;
  if(Object.hasOwn(patch,'kind'))result.kindLocked=true;
  if(Object.hasOwn(patch,'team'))result.teamLocked=true;
- return result;
+ return applyApparelRetailPrice(result);
 }
