@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
+import {assertAssetVersion} from './support/asset-version.mjs';
 
 const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
 const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
@@ -9,7 +10,7 @@ const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
 test('os tres Criar conta da home sao visiveis apenas para visitantes',()=>{
  assert.equal((html.match(/data-guest-only/g)||[]).length,3);
  assert.match(html,/<a href="account\.html#criar-conta"[^>]*data-guest-only[^>]*>CRIAR CONTA/);
- assert.match(html,/app\.js\?v=20261023-visual-blouses-v13/);
+ assertAssetVersion(html,'app.js');
  assert.match(app,/credentials:'same-origin',cache:'no-store'/);
 });
 
@@ -59,3 +60,4 @@ test('status de sessao oculta registro, restaura no logout e ao voltar para a ho
  await flush();
  assert.ok(links.every(link=>!link.hidden&&link.style.display===''));
 });
+

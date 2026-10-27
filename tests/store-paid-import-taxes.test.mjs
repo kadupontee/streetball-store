@@ -40,7 +40,7 @@ test('calculadora valida câmbio, porcentagens e valores',()=>{
 });
 test('nova opção B só é liberável após validação tributária e de divulgação',async()=>{
  const req=new Request('https://example.com/api/checkout/config');
- const env={DB:{},ASSETS:{},ASAAS_API_KEY:'ficticio',SHIPPING_FLAT_BRL:'20',
+ const env={DB:{},ASSETS:{},ASAAS_PRODUCTION_API_KEY:'fake-production-api-key',ASAAS_PRODUCTION_WEBHOOK_TOKEN:'fake-production-webhook-token',SHIPPING_FLAT_BRL:'20',
   SALES_ENABLED:'true',ASAAS_SANDBOX:'false',PAYMENTS_PRODUCTION_ENABLED:'true',
   CUSTOMER_PAYS_IMPORT_TAXES:'true',IMPORT_TAX_DISCLOSURE_APPROVED:'false',IMPORT_COMPLIANCE_APPROVED:'false'};
  let data=await (await worker.fetch(req,env)).json();
@@ -53,7 +53,11 @@ test('nova opção B só é liberável após validação tributária e de divulg
  assert.equal(data.enabled,true);
 });
 test('checkout em produção exige confirmação expressa dos tributos',async()=>{
- const env={DB:{},ASSETS:{},ASAAS_API_KEY:'ficticio',SHIPPING_FLAT_BRL:'20',
+ const DB={prepare(sql){
+  assert.equal(sql,'SELECT revision,state_json,published_at FROM store_editor_versions ORDER BY revision DESC LIMIT 1');
+  return {async first(){return null;}};
+ }};
+ const env={DB,ASSETS:{},ASAAS_PRODUCTION_API_KEY:'fake-production-api-key',ASAAS_PRODUCTION_WEBHOOK_TOKEN:'fake-production-webhook-token',SHIPPING_FLAT_BRL:'20',
   SALES_ENABLED:'true',ASAAS_SANDBOX:'false',PAYMENTS_PRODUCTION_ENABLED:'true',
   CUSTOMER_PAYS_IMPORT_TAXES:'true',IMPORT_TAX_DISCLOSURE_APPROVED:'true',IMPORT_COMPLIANCE_APPROVED:'true'};
  const request=new Request('https://example.com/api/orders',{method:'POST',
@@ -99,7 +103,9 @@ test('checkout informa impostos fora do preço antes da compra e registra aceite
  assert.match(schema,/CREATE TABLE IF NOT EXISTS order_import_disclosures/);
  const wrangler=readFileSync(new URL('../wrangler.toml',import.meta.url),'utf8');
  assert.match(wrangler,/CUSTOMER_PAYS_IMPORT_TAXES = "true"/);
- assert.match(wrangler,/IMPORT_TAX_DISCLOSURE_APPROVED = "false"/);
- assert.match(wrangler,/IMPORT_COMPLIANCE_APPROVED = "false"/);
+ // The owner already reviewed and released production. False-gate behavior is tested above.
+ assert.match(wrangler,/IMPORT_TAX_DISCLOSURE_APPROVED = "true"/);
+ assert.match(wrangler,/IMPORT_COMPLIANCE_APPROVED = "true"/);
  assert.doesNotMatch(wrangler,/STORE_PAYS_IMPORT_TAXES = "true"/);
 });
+

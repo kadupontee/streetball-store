@@ -172,14 +172,15 @@ test('cliente com senha pode conectar sua própria Conta Google e depois entrar 
   assert.equal(DB.accounts.size,1);
  }finally{globalThis.fetch=previousFetch;}
 });
-test('cards show full authorized square art and CTA icons no longer use emoji arrows',()=>{
+test('cards preserve complete collection artwork and CTA icons do not use emoji arrows',()=>{
  const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
  const css=readFileSync(new URL('../public/editorial.css',import.meta.url),'utf8');
  const account=readFileSync(new URL('../public/account.html',import.meta.url),'utf8');
  const accountJs=readFileSync(new URL('../public/account.js',import.meta.url),'utf8');
- assert.match(css,/Editorial cards V4/);
- assert.ok(css.includes('aspect-ratio:1/1'));
- assert.match(css,/object-fit:contain/);
+ const cards=css.split('V8 mobile: 4 novos banners')[1];
+ assert.ok(cards,'Missing current collection artwork rules');
+ assert.match(cards,/aspect-ratio:\s*960\s*\/\s*557/);
+ assert.match(cards,/object-fit:\s*contain/);
  assert.match(html,/ui-arrow-up-right/);
  assert.equal(html.includes('CRIAR CONTA <span>↗</span>'),false);
  assert.equal(html.includes('VER TODAS AS COLEÇÕES <span>↗</span>'),false);
@@ -189,3 +190,4 @@ test('cards show full authorized square art and CTA icons no longer use emoji ar
  assert.doesNotThrow(()=>new Function(accountJs));
  assert.match(readFileSync(new URL('../worker/schema.sql',import.meta.url),'utf8'),/customer_google_identities/);
 });
+
