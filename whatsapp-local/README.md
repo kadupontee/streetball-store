@@ -2,7 +2,9 @@
 
 Alternativa local: vincular o número por QR code, guardar a sessão no Mac, testar uma mensagem na conversa do próprio número, manter a conexão em segundo plano e validar a ligação com o site. Não depende da conclusão da verificação empresarial da Meta.
 
-**Estado desta entrega:** conexão local, fila de pedidos, envio de fotos, leitura de respostas vinculadas e avisos consentidos ao comprador. A operação real permanece desligada na configuração entregue. O pagamento ao fornecedor continua manual. O instalador verifica que Asaas Sandbox está ativo e os pagamentos/automação de produção estão desligados.
+**Estado desta entrega:** conexão local, fila de pedidos, envio de fotos, leitura de respostas vinculadas e avisos consentidos ao comprador. O proprietário confirmou atividade comercial e emissão fiscal para os pedidos enviados do exterior e autorizou a liberação de produção. A configuração atual está pronta para `npm run liberar-vendas`, descrito na seção 8; a publicação e a conferência ainda precisam ser executadas no Mac autenticado. O pagamento ao fornecedor continua manual.
+
+As etapas de instalação e preparação abaixo descrevem a fase anterior em Sandbox. Os instaladores `integrar-loja`/`integrar-pedidos` e os comandos `configurar-asaas`/`preparar-producao` exigem essa configuração anterior e não devem ser repetidos para liberar a configuração atual.
 
 Baileys é um cliente não oficial do WhatsApp Web. Há risco de bloqueio do número; não há garantia de disponibilidade para operação comercial. Esta versão está fixada na versão publicada `7.0.0-rc14` (pré-lançamento). A alternativa oficial continua sendo a Meta Cloud API.
 
@@ -150,9 +152,32 @@ Para repetir apenas a consulta, sem publicar novamente:
 npm run status-producao
 ```
 
-O cadastro do vendedor fica em `public/merchant.json`, no rodapé e no resumo do checkout. A verificação do CNPJ valida formato e correspondência com a conta; não é uma avaliação de CNAEs ou do enquadramento fiscal. O relatório mantém essa revisão separada. A correspondência entre o token salvo e o token do webhook ainda requer a validação de um evento recebido. Nesta preparação, o webhook desativado e os pagamentos reais desligados continuam sendo pendências esperadas.
+O cadastro do vendedor fica em `public/merchant.json`, no rodapé e no resumo do checkout. A verificação do CNPJ valida formato e correspondência com a conta; não é uma avaliação de CNAEs ou do enquadramento fiscal. O relatório mantém essa revisão separada. A correspondência entre o token salvo e o token do webhook ainda requer a validação de um evento recebido. Durante a preparação, os pagamentos reais desligados são uma pendência esperada.
 
 Quando uma consulta falha, os resultados que dependem dela ficam `null` (não verificados). Isso não significa reprovação da conta nem ausência do webhook. O bloco `consultasAsaas` informa o status HTTP, códigos conhecidos de autenticação e o tipo da falha, distinguindo recusa de acesso, rede, timeout, redirecionamento ou resposta inesperada. Não inclui descrições brutas, URLs de redirecionamento ou valores de credenciais. Redirecionamentos não são seguidos.
+
+## 8. Liberar vendas reais pelo número secundário
+
+Com a conta e o webhook conferidos e a operação comercial confirmada pelo proprietário, atualize a mesma pasta no Mac vinculado:
+
+```bash
+git pull --ff-only origin codex/whatsapp-secundario-local-20261026
+npm run liberar-vendas
+```
+
+O comando confere as credenciais e a configuração da conta real pelo Worker, verifica a fila de pedidos, habilita o transporte local e reinicia o serviço com a sessão salva. A publicação só começa depois que o WhatsApp está conectado e a loja confirma a presença do Mac. Ao terminar, o comando verifica checkout real, frete grátis, configuração de importação e encaminhamento de pedidos. Não solicita outro QR code se a sessão continua válida. Não cria uma cobrança de teste.
+
+O resultado confirmado mostra `ambienteAtivo: "producao"`, `checkoutAtivo: true`, `whatsappOnline: true` e `encaminhamentoPedidosAtivo: true`. Se a etapa falhar, o comando encerra com erro e não informa que as vendas foram liberadas. Uma publicação pode ter sido concluída mesmo que uma conferência posterior falhe; confira o estado antes de repetir:
+
+```bash
+npm run status-producao
+npm run status-loja
+npm run status-pedidos
+```
+
+Somente pedidos de produção com cobrança recebida correspondente entram no encaminhamento. Os testes antigos permanecem como testes. A confirmação do token do webhook exige o primeiro evento real recebido. Acompanhe o pagamento no Asaas e o pedido na loja para conferir esse percurso.
+
+O Mac deve permanecer ligado, com internet e sem repouso. Para parar somente o encaminhamento local, use `npm run desativar-pedidos`; esse comando não desativa o checkout nem cancela cobranças. O pagamento ao fornecedor e os reembolsos continuam sob operação manual.
 
 ## Validação local
 

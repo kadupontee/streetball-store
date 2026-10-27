@@ -1,6 +1,6 @@
 # Streetball Store — Ativar cobrança e automação (20/10/2026)
 
-O código já está publicado no Cloudflare em modo Sandbox; **vendas reais e automação WhatsApp continuam desativadas**. A notificação de desculpas exige consentimento opcional do comprador no checkout e template aprovado pela Meta. A loja do GitHub Pages continua sendo apenas vitrine. Para receber pedidos e pagamentos, é preciso publicar o **Cloudflare Worker** do repositório, vinculado ao banco **D1** e à conta **Asaas**. Não cole credenciais no GitHub ou no chat.
+O repositório contém a configuração de produção autorizada pelo proprietário após a confirmação comercial e fiscal. A publicação precisa ser executada pelo Mac autenticado com `npm run liberar-vendas` na pasta `whatsapp-local`; esse comando confere Asaas, sessão local e resultado publicado. O estado efetivamente publicado pode ser consultado com `npm run status-producao`. As etapas abaixo registram também a preparação anterior em Sandbox. A loja do GitHub Pages continua sendo apenas vitrine. Para receber pedidos e pagamentos, é preciso publicar o **Cloudflare Worker** do repositório, vinculado ao banco **D1** e à conta **Asaas**. Não cole credenciais no GitHub ou no chat.
 
 Para o transporte pelo número secundário no Mac, siga também [LOCAL_WHATSAPP_ORDERS.md](LOCAL_WHATSAPP_ORDERS.md). As exigências de templates Meta abaixo se aplicam ao transporte oficial.
 
@@ -118,7 +118,7 @@ O Worker exige ambiente explícito e não usa os segredos legados como credencia
 
 Cadastre o webhook na conta real para `https://lojastreetball.com.br/api/webhooks/asaas`, com um token de autenticação próprio, diferente da chave de API, e os eventos `PAYMENT_RECEIVED`, `PAYMENT_REFUNDED` e `PAYMENT_CHARGEBACK_REQUESTED`. O mesmo token deve ser cadastrado como segredo `ASAAS_PRODUCTION_WEBHOOK_TOKEN` no Worker. Ative esse webhook junto da liberação do ambiente real; enquanto a loja estiver em Sandbox, ela aceita apenas o token do Sandbox.
 
-Depois de preparar essas credenciais e concluir a definição de frete, informação sobre tributos, prazo, troca, fluxo de compra e reembolsos, libere as variáveis comerciais existentes e altere:
+O proprietário confirmou atividade comercial e emissão fiscal para pedidos enviados diretamente do exterior. Frete grátis, prazo de 15 a 45 dias, identificação do vendedor, contato e informação sobre tributos já constam da loja. A configuração atual contém as variáveis comerciais liberadas, o transporte local e:
 
 ```toml
 ASAAS_SANDBOX = "false"
@@ -126,13 +126,15 @@ SALES_ENABLED = "true"
 PAYMENTS_PRODUCTION_ENABLED = "true"
 ```
 
+Com o Mac já vinculado, execute `npm run liberar-vendas` em `whatsapp-local`. O comando confere a conta real, a fila e a conexão local antes de publicar. A confirmação final exige checkout fora do Sandbox, revisão comercial habilitada, frete grátis e encaminhamento local de pedidos ativo. Ele não cria cobranças de teste. Confira o primeiro evento real para validar a correspondência do token do webhook; o recebimento deve atualizar o pedido antes do encaminhamento ao fornecedor.
+
 O ambiente Sandbox e o ambiente real são diferentes. Não coloque valores de cartão no site; o Asaas faz a captura na própria fatura. Defina termos comerciais e política de privacidade/LGPD antes de disponibilizar o checkout real.
 
 Referências: [Chaves de API do Asaas](https://docs.asaas.com/docs/chaves-de-api), [autenticação por ambiente](https://docs.asaas.com/docs/autentica%C3%A7%C3%A3o-1) e [segredos do Cloudflare Workers](https://developers.cloudflare.com/workers/configuration/secrets/).
 
 ## Limites deste MVP
 
-- **Nenhuma compra real é ativada automaticamente** pela inclusão destes arquivos no GitHub; falta provisionar os serviços e inserir segredos/endereços.
+- A publicação da configuração de produção ativa cobranças reais; use `npm run liberar-vendas` no Mac já preparado para conferir os serviços antes e depois da implantação.
 - **Pix recebido de cliente ≠ Pix repassado ao fornecedor.** Não foi implementado um robô que clica em links de pagamento de terceiros ou envia comprovantes sem uma transação bancária validada. Para automatizar futuramente, use uma API financeira oficial com beneficiário verificado, limites, auditoria e autorização explícita.
 - A conferência do fornecedor por mensagem confirma que ele **afirmou** estar preparando, não que tenha pago, expedido ou comprovado estoque.
 - O checkout atual aceita **frete fixo configurado**, não calcula entrega por CEP, frete internacional, impostos ou regras de importação. Sem esses valores confiáveis, **não ative a produção**.

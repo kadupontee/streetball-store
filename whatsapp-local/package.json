@@ -25,6 +25,7 @@
     "configurar-asaas": "node payments-setup.mjs",
     "preparar-producao": "node payments-setup.mjs prepare",
     "status-producao": "node store-cli.mjs production-status",
+    "liberar-vendas": "node production-release.mjs",
     "test": "node --test *.test.mjs"
   },
   "dependencies": {

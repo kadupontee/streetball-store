@@ -23,17 +23,26 @@ O resultado esperado é `orderBridge.latestPreview.state: "sent"` e `orderBridge
 
 ## Operação real
 
-A configuração entregue continua em Sandbox e com pedidos reais desativados. O instalador não libera pagamentos de produção nem muda as declarações de importação. Após concluir a configuração comercial já prevista para a loja, o Worker exige `ASAAS_SANDBOX="false"`, `PAYMENTS_PRODUCTION_ENABLED="true"`, `SALES_ENABLED="true"`, `CUSTOMER_PAYS_IMPORT_TAXES="true"`, `IMPORT_TAX_DISCLOSURE_APPROVED="true"`, `IMPORT_COMPLIANCE_APPROVED="true"`, `WA_AUTOMATION_ENABLED="true"`, `WA_TRANSPORT="local"` e `WA_LOCAL_ORDERS_ENABLED="true"`.
+A configuração atual contém a liberação autorizada pelo proprietário, que confirmou atividade comercial e emissão fiscal para pedidos enviados diretamente do exterior. O Worker exige `ASAAS_SANDBOX="false"`, `PAYMENTS_PRODUCTION_ENABLED="true"`, `SALES_ENABLED="true"`, `CUSTOMER_PAYS_IMPORT_TAXES="true"`, `IMPORT_TAX_DISCLOSURE_APPROVED="true"`, `IMPORT_COMPLIANCE_APPROVED="true"`, `WA_AUTOMATION_ENABLED="true"`, `WA_TRANSPORT="local"` e `WA_LOCAL_ORDERS_ENABLED="true"`. A mudança no repositório só chega à loja quando publicada.
+
+Na pasta `whatsapp-local` do Mac já vinculado:
+
+```bash
+git pull --ff-only origin codex/whatsapp-secundario-local-20261026
+npm run liberar-vendas
+```
+
+Esse comando confere a conta real e o webhook, confirma a fila, habilita o transporte no Mac e reinicia a sessão existente. Só publica depois de confirmar a conexão e a presença do Mac na loja. Em seguida, verifica o checkout e o encaminhamento em produção. Não cria cobranças ou pedidos de teste. A correspondência do token do webhook será validada pelo primeiro evento real recebido.
 
 Somente pedidos novos com ambiente de pagamento registrado como produção e cobrança correspondente confirmada pelo evento `PAYMENT_RECEIVED` podem ser encaminhados. Pedidos antigos sem registro de ambiente e pagamentos simulados não são convertidos em pedidos reais ao trocar a configuração.
 
-Depois que o Worker indicar que a produção está habilitada, o operador ativa também o Mac:
+`liberar-vendas` já ativa o transporte no Mac. Para reativá-lo separadamente depois que o Worker indicar que a produção está habilitada:
 
 ```bash
 npm run ativar-pedidos
 ```
 
-Esse comando verifica a configuração do Worker antes de ativar o transporte local. Para interromper o transporte de pedidos, mantendo os testes disponíveis:
+Esse comando verifica a configuração do Worker antes de ativar o transporte local. Para interromper o transporte de pedidos, mantendo os testes disponíveis e o checkout ativo:
 
 ```bash
 npm run desativar-pedidos
