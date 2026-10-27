@@ -16,7 +16,7 @@ async function authenticated(request,secret){
  return different===0;
 }
 
-/** Isolated installation test: no order table, supplier contact or payment API is used here. */
+/** Authenticated local connector; the production inspection only reads provider settings. */
 export async function handleLocalWhatsApp(request,env,callbacks={}){
  const route=new URL(request.url).pathname;
  if(!route.startsWith(PREFIX))return null;
@@ -41,6 +41,7 @@ export async function handleLocalWhatsApp(request,env,callbacks={}){
   if(!binding||binding.account_jid!==own)return reply({error:'A ponte deve usar a mesma conta secundária cadastrada.'},409);
   if(action==='session'||action==='claim')await env.DB.prepare('UPDATE wa_local_bridge SET heartbeat_at=? WHERE id=1 AND account_jid=?').bind(instant(),own).run();
   if(action==='session')return reply({ok:true,mode:'self_test_only'});
+  if(action==='production-status')return reply(await productionReadiness(env));
   if(action.startsWith('orders-'))return await handleOrderBridgeAction(action,env,body,own,callbacks);
   if(action==='status'){
    const jobs=await env.DB.prepare('SELECT state,COUNT(*) AS count FROM wa_local_test_jobs GROUP BY state').all();
@@ -95,3 +96,4 @@ export async function handleLocalWhatsApp(request,env,callbacks={}){
  }catch{return reply({error:'Ponte indisponível. Confira a migração do banco e a implantação.'},503);}
 }
 import {handleOrderBridgeAction,orderBridgeStatus} from './local-orders.js';
+import {productionReadiness} from './production-readiness.js';

@@ -23,6 +23,8 @@
     "ativar-pedidos": "node store-cli.mjs orders-enable",
     "desativar-pedidos": "node store-cli.mjs orders-disable",
     "configurar-asaas": "node payments-setup.mjs",
+    "preparar-producao": "node payments-setup.mjs prepare",
+    "status-producao": "node store-cli.mjs production-status",
     "test": "node --test *.test.mjs"
   },
   "dependencies": {

@@ -110,6 +110,10 @@ Os ambientes usam credenciais separadas:
 | Sandbox | `ASAAS_SANDBOX_API_KEY`, ou o segredo existente `ASAAS_API_KEY` | `ASAAS_SANDBOX_WEBHOOK_TOKEN`, ou `ASAAS_WEBHOOK_TOKEN` |
 | Produção | `ASAAS_PRODUCTION_API_KEY` | `ASAAS_PRODUCTION_WEBHOOK_TOKEN` |
 
+Com os segredos cadastrados, `npm run preparar-producao` na pasta `whatsapp-local` publica o cadastro do vendedor e as condições comerciais, mantendo o Sandbox. Em seguida, consulta apenas a situação da conta real, os dados necessários para conferir o CNPJ e os webhooks existentes. A consulta exige o token da ponte e a mesma conta WhatsApp já vinculada. `npm run status-producao` repete somente a inspeção. O relatório omite a chave, o token, os dados pessoais/bancários e os demais campos comerciais retornados pelo Asaas.
+
+O cadastro público está em `public/merchant.json` e também aparece na vitrine e no checkout. A inspeção técnica não atesta CNAEs nem o enquadramento fiscal da operação. A revisão da importação e a liberação das cobranças permanecem em variáveis separadas. A leitura do webhook não retorna seu token e, por isso, não comprova a correspondência desse valor: essa validação ocorre no recebimento de um evento.
+
 O Worker exige ambiente explícito e não usa os segredos legados como credenciais de produção. Chaves com prefixo reconhecido do ambiente oposto são recusadas. Os dois ambientes podem ficar cadastrados; apenas o ativo é utilizado.
 
 Cadastre o webhook na conta real para `https://lojastreetball.com.br/api/webhooks/asaas`, com um token de autenticação próprio, diferente da chave de API, e os eventos `PAYMENT_RECEIVED`, `PAYMENT_REFUNDED` e `PAYMENT_CHARGEBACK_REQUESTED`. O mesmo token deve ser cadastrado como segredo `ASAAS_PRODUCTION_WEBHOOK_TOKEN` no Worker. Ative esse webhook junto da liberação do ambiente real; enquanto a loja estiver em Sandbox, ela aceita apenas o token do Sandbox.

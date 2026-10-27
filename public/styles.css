@@ -63,3 +63,8 @@ html{overflow-x:clip}
 .purchase-policy{margin-top:12px;font-size:12px;line-height:1.7}
 .purchase-policy summary{cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .purchase-policy p{margin-top:10px}
+
+.merchant-identification{border-top:1px solid rgba(255,255,255,.15);margin-top:24px;padding-top:18px;font-size:12px;line-height:1.7;color:#ddd;overflow-wrap:anywhere}
+.merchant-identification p{margin:3px 0}
+.merchant-identification address{font-style:normal}
+.checkout-modal .checkout-order-terms .checkout-merchant{border-top:1px solid var(--line);margin-top:10px;padding-top:10px;font-size:11px;line-height:1.6}

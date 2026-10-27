@@ -132,6 +132,26 @@ O comando verifica se o projeto e a loja publicada continuam em Sandbox e pede q
 
 Esta etapa prepara uma credencial. A configuração do webhook real e as definições comerciais continuam necessárias antes da liberação de vendas. O conector em segundo plano pode permanecer ativo durante o cadastro. Veja `worker/SETUP.md`, passo 5.
 
+## 7. Publicar o cadastro e conferir a preparação
+
+Depois de cadastrar a chave e o token de produção:
+
+```bash
+npm run preparar-producao
+```
+
+O comando publica a versão desta pasta com o cadastro público do vendedor, frete grátis, prazo e contato definidos. Exige que a configuração local e a loja publicada ainda estejam em Sandbox e preserva as variáveis de liberação existentes. Não reinicia o conector.
+
+Após publicar, o Mac usa a ponte privada já vinculada para solicitar uma consulta somente de leitura ao Asaas: aprovação da conta, correspondência do CNPJ e configuração do webhook. A chave real permanece no Worker. O relatório traz verificações e pendências, sem valores financeiros, dados bancários privados ou credenciais.
+
+Para repetir apenas a consulta, sem publicar novamente:
+
+```bash
+npm run status-producao
+```
+
+O cadastro do vendedor fica em `public/merchant.json`, no rodapé e no resumo do checkout. A verificação do CNPJ valida formato e correspondência com a conta; não é uma avaliação de CNAEs ou do enquadramento fiscal. O relatório mantém essa revisão separada. A correspondência entre o token salvo e o token do webhook ainda requer a validação de um evento recebido. Nesta preparação, o webhook desativado e os pagamentos reais desligados continuam sendo pendências esperadas.
+
 ## Validação local
 
 ```bash
