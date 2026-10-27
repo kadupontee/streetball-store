@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {localD1} from './support/local-d1.mjs';
 import {SUPPLIER_COST_VERSION,sharedSupplierCostReference,recordSharedSupplierCostReference,
- configureSharedSupplierCosts,sharedSupplierCostStatus,loadSharedSupplierCosts,applySharedSupplierCosts} from '../worker/supplier-cost-reference.js';
+ configureSharedSupplierCosts,sharedSupplierCostStatus,loadSharedSupplierCosts,applySharedSupplierCosts,sharedSupplierQuotedTotal} from '../worker/supplier-cost-reference.js';
 import worker from '../worker/index.js';
 
 const id='1234abcd-1234-4234-8234-123456789012';
@@ -118,4 +118,14 @@ test('a missing optional snapshot table does not take checkout offline, and the 
  assert.equal(response.status,200);const body=await response.json();assert.equal(body.consultaSomenteLeitura,true);assert.equal(body.reference.totalUsd,'15.00');
  query({sql:'DROP TABLE supplier_order_cost_references'});
  assert.equal(await recordSharedSupplierCostReference(env,id,[item()],[product()]),false);
+});
+
+test('USD difference is at most three dollars for the entire order, never multiplied by units',()=>{
+ for(const quantity of [1,2,100]){
+  const r={complete:true,totalUsd:'100.00',quantity};
+  assert.equal(sharedSupplierQuotedTotal(r,'103.00'),'103.00');assert.equal(sharedSupplierQuotedTotal(r,'97.00'),'97.00');
+  for(const q of ['103.01','96.99','106.00','0.00','invalid'])assert.equal(sharedSupplierQuotedTotal(r,q),null);
+  assert.equal(sharedSupplierQuotedTotal(r,null),'100.00');
+ }
+ assert.equal(sharedSupplierQuotedTotal({complete:false,totalUsd:'100.00'},'101.00'),null);
 });

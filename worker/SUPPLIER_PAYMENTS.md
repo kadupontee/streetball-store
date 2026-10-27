@@ -28,7 +28,7 @@ O câmbio pode ser informado como `Câmbio BRL por USD: 5,12`, `Exchange rate: 5
 
 `POST /api/admin/supplier-payment-check`, com token administrativo, continua somente de leitura: não solicita Pix, grava pedidos, reserva saldo ou envia comprovantes. Consulta a cobrança em `GET /payments/{id}`, o código em `POST /pix/qrCodes/decode` e o saldo em `GET /finance/balance`.
 
-Com `billingId`, o auditor exige a cobrança atual, dentro da validade, fornecedor/telefone autorizados e a referência privada do checkout. Preenche os custos dos itens e o frete pela tabela compartilhada; recusa tentativas de substituí-los. Se o orçamento declara total em USD ou câmbio, esses valores também precisam coincidir com a referência e com o cálculo. Câmbio, tarifa da plataforma, tarifa do Pix, outros custos e documento esperado do recebedor são dados financeiros independentes, nunca zeros presumidos.
+Com `billingId`, o auditor exige a cobrança atual, dentro da validade, fornecedor/telefone autorizados e a referência privada do checkout. Preenche os custos dos itens e o frete pela tabela compartilhada; recusa tentativas de substituí-los. Se o orçamento declara total em USD ou câmbio, o total USD pode diferir até US$3 da referência do pedido inteiro; o câmbio e a conversão precisam coincidir com o cálculo. Câmbio, tarifa da plataforma, tarifa do Pix, outros custos e documento esperado do recebedor são dados financeiros independentes, nunca zeros presumidos.
 
 Exemplo fictício da conferência de uma cobrança já registrada:
 
@@ -122,3 +122,9 @@ npm run conferir-pix-pendente
 O comando não cria uma nova tentativa. Se o executor já está habilitado, atualizar um perfil pode tornar elegíveis cobranças que estavam aguardando esses dados; desative novos envios antes de revisar uma política que não deve entrar em operação imediatamente.
 
 Referências oficiais: [pagar QR Code](https://docs.asaas.com/reference/pagar-um-qrcode), [consultar transação](https://docs.asaas.com/reference/recuperar-uma-unica-transacao), [decodificar QR Code](https://docs.asaas.com/reference/decodificar-um-qrcode-para-pagamento), [taxas da conta](https://docs.asaas.com/reference/recuperar-taxas-da-conta), [mecanismo de autorização](https://docs.asaas.com/docs/mecanismo-para-validacao-de-saque-via-webhooks).
+
+## Variação de custo autorizada
+
+O proprietário autorizou diferença absoluta de até US$3,00 no custo total do pedido, incluindo produtos, adicionais e frete. Essa tolerância é única por pedido e não se multiplica por peças, linhas ou fornecedores. A referência original permanece imutável. A cobrança precisa declarar o novo total em USD; sem esse dado, permanece o custo exato da referência, sem inferir valores a partir do Pix.
+
+A conversão para BRL, a reserva de saldo e o resultado usam o custo efetivamente cobrado dentro da tolerância, com as tarifas cadastradas. US$3,01 de diferença já exige revisão. Valor em reais, câmbio, Pix, recebedor e recebimento continuam sujeitos às mesmas verificações. A tolerância não habilita débitos por si só.

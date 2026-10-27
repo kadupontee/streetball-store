@@ -2,6 +2,8 @@ import table from '../scripts/costs.json' with {type:'json'};
 import {apparelPriceMode} from '../public/store-settings.js';
 
 export const SUPPLIER_COST_VERSION=table.shared_supplier_policy?.version||'unconfigured';
+// Owner-approved difference for the whole purchase, including freight and additions.
+export const SUPPLIER_ORDER_TOLERANCE_USD='3.00';
 const approved=table.currency==='USD'&&table.shared_supplier_policy?.owner_confirmed===true&&table.shared_supplier_policy?.scope==='five_registered_suppliers';
 const now=()=>new Date().toISOString();
 const idValid=value=>typeof value==='string'&&/^[a-f0-9-]{36}$/i.test(value);
@@ -10,6 +12,16 @@ const cents=value=>{
  const [whole,part='']=String(value).split('.');return BigInt(whole)*100n+BigInt(part.padEnd(2,'0'));
 };
 const usd=value=>value===null?null:(value/100n)+'.'+String(value%100n).padStart(2,'0');
+
+export function sharedSupplierQuotedTotal(reference,quotedTotalUsd){
+ const expected=cents(reference?.totalUsd);
+ if(reference?.complete!==true||expected===null||expected<=0n)return null;
+ if(quotedTotalUsd===null||quotedTotalUsd===undefined)return usd(expected);
+ const quoted=cents(quotedTotalUsd),tolerance=cents(SUPPLIER_ORDER_TOLERANCE_USD);
+ if(quoted===null||quoted<=0n||quoted>BigInt(Number.MAX_SAFE_INTEGER))return null;
+ const difference=quoted>expected?quoted-expected:expected-quoted;
+ return difference<=tolerance?usd(quoted):null;
+}
 
 /** Products come exclusively from the server's validated catalog, never from a supplier message. */
 export function sharedSupplierCostReference(items,products){

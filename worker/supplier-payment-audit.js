@@ -1,6 +1,6 @@
 import {asaasConfig} from './asaas.js';
 import {loadSupplierBillingForAudit} from './supplier-billing.js';
-import {loadSharedSupplierCosts,applySharedSupplierCosts,SUPPLIER_COST_VERSION} from './supplier-cost-reference.js';
+import {loadSharedSupplierCosts,applySharedSupplierCosts,SUPPLIER_COST_VERSION,sharedSupplierQuotedTotal,SUPPLIER_ORDER_TOLERANCE_USD} from './supplier-cost-reference.js';
 
 // Monetary inputs are converted to integer cents. No order/day spending ceiling is applied.
 function decimal(value,places=2){
@@ -18,7 +18,7 @@ const exactDocument=value=>/^\d{11}$|^\d{14}$/.test(document(value))?document(va
 const report=()=>({ok:true,consultaSomenteLeitura:true,pagamentoIniciado:false,pagamentoAutomaticoHabilitado:false,
  limitePorPedido:null,limitePorDia:null,conferenciaFinanceiraConcluida:false,verificacoes:{},valoresBrl:{},pendencias:[]});
 
-export function supplierPaymentBudget(items,costs){
+export function supplierPaymentBudget(items,costs,supplierTotalUsd){
  if(!Array.isArray(items)||!items.length||!Array.isArray(costs?.items)||costs.items.length!==items.length)return null;
  let goods=0n;
  for(let i=0;i<items.length;i++){
@@ -29,17 +29,19 @@ export function supplierPaymentBudget(items,costs){
  const freight=decimal(costs.freightUsd),fx=decimal(costs.exchangeRateBrlPerUsd,6);
  const gateway=decimal(costs.gatewayFeeBrl),pixFee=decimal(costs.pixFeeBrl),other=decimal(costs.otherCostsBrl);
  if([freight,fx,gateway,pixFee,other].includes(null)||fx<=0n)return null;
- const supplier=((goods+freight)*fx+500000n)/1000000n+gateway;
+ const total=supplierTotalUsd===undefined?goods+freight:decimal(supplierTotalUsd);
+ if(total===null||total<=0n)return null;
+ const supplier=(total*fx+500000n)/1000000n+gateway;
  const expense=supplier+pixFee+other;
  if(supplier<=0n||expense>BigInt(Number.MAX_SAFE_INTEGER))return null;
  return {supplier,expense,pixFee,other,goodsUsd:goods,freightUsd:freight};
 }
 
-export function compareSupplierPayment({order,charge,decoded,balance,costs,quotedTotalBrl,receiverCpfCnpj}){
+export function compareSupplierPayment({order,charge,decoded,balance,costs,quotedTotalBrl,receiverCpfCnpj,supplierTotalUsd}){
  const result=report(),checks=result.verificacoes;
  let items;
  try{items=JSON.parse(order.items_json);}catch{items=null;}
- const budget=supplierPaymentBudget(items,costs),gross=decimal(order.total),received=decimal(charge?.value),net=decimal(charge?.netValue);
+ const budget=supplierPaymentBudget(items,costs,supplierTotalUsd),gross=decimal(order.total),received=decimal(charge?.value),net=decimal(charge?.netValue);
  const quoted=decimal(quotedTotalBrl),qrTotal=decimal(decoded?.totalValue),qrBase=decimal(decoded?.value);
  const amount=decoded?.totalValue==null?qrBase:qrTotal,available=decimal(balance?.balance),receiver=exactDocument(receiverCpfCnpj);
  checks.custoEsperadoInformado=budget!==null;
@@ -102,14 +104,16 @@ export async function auditSupplierPayment(env,input,{request=fetch}={}){
   result.pendencias.push('O pedido não está disponível para conferência do pagamento ao fornecedor.');return result;
  }
  const usesSharedCosts=!!input.billingId;
+ let supplierTotalUsd,referenceTotalUsd;
  if(usesSharedCosts){
   const reference=await loadSharedSupplierCosts(env,order);
   if(!reference){result.pendencias.push('O pedido precisa de uma referência de compra completa e do fornecedor incluído na tabela compartilhada.');return result;}
   const costs=applySharedSupplierCosts(input.costs,reference);
   if(!costs){result.pendencias.push('Os custos ou o frete informados diferem da tabela compartilhada do pedido.');return result;}
   input={...input,costs};
-  if(input.quotedTotalUsd!==null&&decimal(input.quotedTotalUsd)!==decimal(reference.totalUsd)){
-   result.pendencias.push('O total em USD declarado pelo fornecedor difere dos produtos, adicionais e frete da tabela compartilhada.');return result;
+  supplierTotalUsd=sharedSupplierQuotedTotal(reference,input.quotedTotalUsd);referenceTotalUsd=reference.totalUsd;
+  if(supplierTotalUsd===null){
+   result.pendencias.push('O total em USD declarado pelo fornecedor excede a diferença permitida de US$3 no pedido inteiro, incluindo produtos, adicionais e frete, ou é inválido.');return result;
   }
   if(input.quotedExchangeRateBrlPerUsd!==null&&decimal(input.quotedExchangeRateBrlPerUsd,6)!==decimal(costs.exchangeRateBrlPerUsd,6)){
    result.pendencias.push('O câmbio declarado na cobrança difere do utilizado na conferência.');return result;
@@ -135,7 +139,8 @@ export async function auditSupplierPayment(env,input,{request=fetch}={}){
   result.pendencias.push('O código Pix devolvido pelo Asaas difere do enviado para conferência.');return result;
  }
  const compared=compareSupplierPayment({order,charge,decoded,balance,costs:input.costs,
-  quotedTotalBrl:input.quotedTotalBrl,receiverCpfCnpj:input.receiverCpfCnpj});
- compared.referenciaCustos=usesSharedCosts?{origem:'tabela_compartilhada_do_pedido',versao:SUPPLIER_COST_VERSION}:{origem:'administrador'};
+  quotedTotalBrl:input.quotedTotalBrl,receiverCpfCnpj:input.receiverCpfCnpj,supplierTotalUsd});
+ compared.referenciaCustos=usesSharedCosts?{origem:'tabela_compartilhada_do_pedido',versao:SUPPLIER_COST_VERSION,
+  totalReferenciaUsd:referenceTotalUsd,totalConferidoUsd:supplierTotalUsd,toleranciaPorPedidoUsd:SUPPLIER_ORDER_TOLERANCE_USD}:{origem:'administrador'};
  return compared;
 }

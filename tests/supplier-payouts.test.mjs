@@ -16,20 +16,20 @@ const one=(query,sql,args=[])=>query({sql,args}).results[0];
 const profile=changes=>({receiverCpfCnpj:receiver,exchangeRateMode:'fixed',exchangeRateBrlPerUsd:'5.12',gatewayFeeBrl:'0.00',
  otherCostsBrlPerOrder:'5.00',otherCostsBrlPerUnit:'0.00',salesCostRate:'0',validUntil:new Date(Date.now()+3600000).toISOString(),...changes});
 
-async function fixture(t,{enabled=true,withProfile=true,withRate=true,profileChanges={}}={}){
+async function fixture(t,{enabled=true,withProfile=true,withRate=true,profileChanges={},quotedUsd="15.00"}={}){
  const {db,query}=localD1(t),calls=[],posts=[];
  const env={DB:db,WA_LOCAL_BRIDGE_TOKEN:'fake-private-bridge-token-with-more-than-32-characters',WA_TRANSPORT:'local',WA_LOCAL_ORDERS_ENABLED:'true',WA_AUTOMATION_ENABLED:'true',
   ASAAS_SANDBOX:'false',SALES_ENABLED:'true',PAYMENTS_PRODUCTION_ENABLED:'true',CUSTOMER_PAYS_IMPORT_TAXES:'true',IMPORT_TAX_DISCLOSURE_APPROVED:'true',IMPORT_COMPLIANCE_APPROVED:'true',
   ASAAS_PRODUCTION_API_KEY:'fake-production-api-key',ASAAS_PRODUCTION_WEBHOOK_TOKEN:'fake-customer-webhook-token',ASAAS_SUPPLIER_PAYOUT_AUTH_TOKEN:'fake_payout_authorization_token_1234567890',STORE_PUBLIC_URL:'https://lojastreetball.com.br',
   ASSETS:{async fetch(){return Response.json(merchant);}}};
- const stamp=new Date().toISOString();
+ const stamp=new Date().toISOString(),quotedBrl=(Number(quotedUsd)*5.12).toFixed(2);
  for(let n=1;n<=5;n++){
   query({sql:'INSERT INTO supplier_directory(id,display_name,created_at,updated_at) VALUES(?,?,?,?)',args:['supplier'+n,'Fornecedor '+n,stamp,stamp]});
   query({sql:'INSERT INTO supplier_contacts(supplier_id,phone_e164,authorized,updated_at) VALUES(?,?,1,?)',args:['supplier'+n,'861380013800'+n,stamp]});
  }
  await configureSharedSupplierCosts(env,SUPPLIER_COST_VERSION);
  query({sql:'INSERT INTO wa_local_bridge(id,account_jid,heartbeat_at) VALUES(1,?,?)',args:['5511999999999@s.whatsapp.net',stamp]});
- const bank={decodeType:'DYNAMIC',balance:500,payResponseStatus:'AWAITING_REQUEST',payError:false,fee:1.99,transactionStatus:'AWAITING_REQUEST',transactionValue:76.8,transactionReceiver:receiver,
+ const bank={decodeType:'DYNAMIC',balance:500,payResponseStatus:'AWAITING_REQUEST',payError:false,fee:1.99,transactionStatus:'AWAITING_REQUEST',transactionValue:Number(quotedBrl),transactionReceiver:receiver,
   receiptUrl:'https://www.asaas.com/comprovantes/ficticio',chargeStatus:'RECEIVED',chargeRefunds:[],accountApproved:true};
  const charges=new Map();
  const seedOrder=async(orderId=id,paymentId='pay_fake',context='ORDER_REFERENCE',withFx=withRate)=>{
@@ -39,7 +39,7 @@ async function fixture(t,{enabled=true,withProfile=true,withRate=true,profileCha
   query({sql:'INSERT INTO supplier_jobs(id,order_id,status,created_at,updated_at) VALUES(?,?,?,?,?)',args:['job-'+orderId,orderId,'supplier_payment_pending',stamp,stamp]});
   query({sql:"INSERT INTO supplier_dispatch(order_id,supplier_id,supplier_phone,state,message_id,details_sent_at,created_at,updated_at) VALUES(?,?,?,'details_sent',?,?,?,?)",args:[orderId,'supplier1',phone,context,stamp,stamp,stamp]});
   await recordSharedSupplierCostReference(env,orderId,items,[{id:'p',kind:'fan',sizes:['P']}]);
-  const pix=pixFixture(),text='Total USD: 15.00\nTotal BRL: 76.80\n'+(withFx?'Câmbio BRL por USD: 5.12\n':'')+pix;
+  const pix=pixFixture({value:quotedBrl}),text='Total USD: '+quotedUsd+'\nTotal BRL: '+quotedBrl+'\n'+(withFx?'Câmbio BRL por USD: 5.12\n':'')+pix;
   await collectSupplierBilling(env,{id:'BILL-'+orderId,from:phone,type:'text',context:{id:context},text:{body:text}},{enqueue:enqueueLocalGroup,productionReceipt:async()=>true});
   charges.set(paymentId,{id:paymentId,externalReference:orderId,value:199.9,netValue:197.91,deleted:false});
   return {pix,bill:one(query,'SELECT * FROM supplier_billing_messages WHERE order_id=? ORDER BY seq DESC',[orderId])};
@@ -51,7 +51,7 @@ async function fixture(t,{enabled=true,withProfile=true,withRate=true,profileCha
   const u=new URL(url);assert.equal(u.origin,'https://api.asaas.com');assert.equal(options.headers.access_token,env.ASAAS_PRODUCTION_API_KEY);
   assert.ok(['error','manual'].includes(options.redirect));calls.push({url:String(url),method:options.method,body:options.body});
   if(u.pathname==='/v3/myAccount/fees/')return Response.json({transfer:{pix:{feeValue:bank.fee,discountValue:0}}});
-  if(u.pathname==='/v3/pix/qrCodes/decode')return Response.json({payload:JSON.parse(options.body).payload,type:bank.decodeType,value:76.8,totalValue:76.8,canBePaid:true,finality:null,receiver:{cpfCnpj:receiver,name:'Recebedor fictício'}});
+  if(u.pathname==='/v3/pix/qrCodes/decode')return Response.json({payload:JSON.parse(options.body).payload,type:bank.decodeType,value:Number(quotedBrl),totalValue:Number(quotedBrl),canBePaid:true,finality:null,receiver:{cpfCnpj:receiver,name:'Recebedor fictício'}});
   if(u.pathname==='/v3/finance/balance')return Response.json({balance:bank.balance});
   if(u.pathname.startsWith('/v3/payments/')){
    const charge=charges.get(u.pathname.split('/').at(-1));assert.ok(charge);return Response.json({...charge,status:bank.chargeStatus,refunds:bank.chargeRefunds});
@@ -206,7 +206,7 @@ test('a crash while persisting the returned transaction ID retains the exclusive
 });
 test('a conflicting USD total or an expired financial profile cannot be used to release a Pix',async t=>{
  const f=await fixture(t,{profileChanges:{exchangeRateMode:'supplier_quote',exchangeRateBrlPerUsd:null}});
- const envelope=JSON.parse(f.bill.format_json);envelope.quotedTotalUsd='16.00';
+ const envelope=JSON.parse(f.bill.format_json);envelope.quotedTotalUsd='18.01';
  f.query({sql:'UPDATE supplier_billing_messages SET format_json=? WHERE id=?',args:[JSON.stringify(envelope),f.bill.id]});
  await f.process();assert.equal(f.posts.length,0);
  assert.match(one(f.query,'SELECT reason FROM supplier_payout_checks').reason,/total em USD/);
@@ -298,4 +298,16 @@ test('a complete connector tick stays within 50 subrequests for both submission 
   assert.ok(await tick());assert.equal(one(f.query,'SELECT state FROM supplier_payout_intents').state,'paid');
   assert.ok(one(f.query,'SELECT receipt_group_id FROM supplier_payout_intents').receipt_group_id);assert.equal(f.posts.length,1);
  }finally{globalThis.fetch=originalFetch;f.env.DB.prepare=prepare;}
+});
+
+test('the whole-order USD allowance uses the actual quote for conversion, expenses and final bank confirmation',async t=>{
+ const f=await fixture(t,{quotedUsd:'18.00'});await f.process();assert.equal(f.posts.length,1);assert.equal(f.posts[0].value,92.16);
+ assert.equal((await f.authorize({changes:{value:92.16}})).status,'APPROVED');f.bank.transactionStatus='DONE';await f.process();
+ assert.equal((await supplierPayoutStatus(f.env)).latest.resultAfterRecordedCostsBrl,'98.76');
+ const a=JSON.parse(one(f.query,'SELECT audit_json FROM supplier_payout_intents').audit_json);
+ assert.equal(a.referenciaCustos.totalReferenciaUsd,'15.00');assert.equal(a.referenciaCustos.totalConferidoUsd,'18.00');
+});
+test('a quote one cent beyond the whole-order allowance is held before any Pix request',async t=>{
+ const f=await fixture(t,{quotedUsd:'18.01'});await f.process();assert.equal(f.posts.length,0);
+ assert.match(one(f.query,'SELECT reason FROM supplier_payout_checks').reason,/US\$3/);
 });
