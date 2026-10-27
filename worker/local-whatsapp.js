@@ -23,9 +23,10 @@ export async function handleLocalWhatsApp(request,env,callbacks={}){
  if(!env.DB||!env.WA_LOCAL_BRIDGE_TOKEN)return reply({error:'Ponte ainda não configurada.'},503);
  if(!await authenticated(request,env.WA_LOCAL_BRIDGE_TOKEN))return reply({error:'Autenticação inválida.'},401);
  if(request.method!=='POST')return reply({error:'Método inválido.'},405);
- if(Number(request.headers.get('content-length')||0)>4096)return reply({error:'Requisição muito grande.'},413);
+ const bodyLimit=route===PREFIX+'orders-inbound'?32000:4096;
+ if(Number(request.headers.get('content-length')||0)>bodyLimit)return reply({error:'Requisição muito grande.'},413);
  const raw=await request.text();
- if(raw.length>4096)return reply({error:'Requisição muito grande.'},413);
+ if(raw.length>bodyLimit)return reply({error:'Requisição muito grande.'},413);
  let body;
  try{body=JSON.parse(raw);}catch{return reply({error:'JSON inválido.'},400);}
  const own=accountId(body?.accountJid);

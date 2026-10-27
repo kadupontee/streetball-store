@@ -1,5 +1,7 @@
 import {supplierPhotoRequest} from './supplier-order-format.js';
 import {classifyStockReply} from './supplier-replies.js';
+import {BILLING_TEXT_LIMIT} from './supplier-billing-format.js';
+import {supplierBillingStatus} from './supplier-billing.js';
 
 const now=()=>new Date().toISOString();
 const plus=ms=>new Date(Date.now()+ms).toISOString();
@@ -55,12 +57,12 @@ async function eligible(env,group){
   const consent=await env.DB.prepare('SELECT order_id FROM buyer_message_optin WHERE order_id=?').bind(order.id).first();
   return !!consent&&(group.purpose==='buyer_update'?order.status==='supplier_preparing':order.status==='paid_supplier_pending');
  }
- if(order.status!=='paid_supplier_pending')return false;
+ if(order.status!=='paid_supplier_pending'&&group.purpose!=='billing_request')return false;
  const d=await env.DB.prepare('SELECT supplier_id,supplier_phone,state,message_id FROM supplier_dispatch WHERE order_id=?').bind(order.id).first();
  if(!d||d.supplier_phone+'@s.whatsapp.net'!==group.recipient_jid)return false;
  const c=await env.DB.prepare('SELECT phone_e164,authorized FROM supplier_contacts WHERE supplier_id=?').bind(d.supplier_id).first();
  if(c?.authorized!==1||c.phone_e164!==d.supplier_phone)return false;
- const states={stock_query:['sending','queued_local'],order_details:['awaiting_reply','overdue_24h','details_queued_local'],stock_details:['awaiting_reply','overdue_24h','details_sent']};
+ const states={stock_query:['sending','queued_local'],order_details:['awaiting_reply','overdue_24h','details_queued_local'],stock_details:['awaiting_reply','overdue_24h','details_sent'],billing_request:['details_sent','confirmed']};
  return (states[group.purpose]||[]).includes(d.state);
 }
 
@@ -155,13 +157,16 @@ async function preview(env,own){
 }
 
 async function inbound(env,body,own,onInbound){
- if(!messageId(body.messageId)||typeof body.text!=='string'||!body.text.trim()||body.text.length>400)return json({error:'Resposta inválida.'},400);
+ const mediaType=['image','document','audio','video'].includes(body.mediaType)?body.mediaType:'';
+ if(!messageId(body.messageId)||typeof body.text!=='string'||(!body.text.trim()&&!mediaType)||body.text.length>BILLING_TEXT_LIMIT||
+  (body.mediaType&&!mediaType))return json({error:'Resposta inválida.'},400);
  const from=String(body.fromJid||'');
  if(!/^\d+@(s\.whatsapp\.net|lid)$/.test(from))return json({error:'Remetente inválido.'},400);
  const context=messageId(body.contextId)?body.contextId:'';
  const match=context?await env.DB.prepare("SELECT g.*,o.id AS job_id FROM wa_local_outbox o JOIN wa_local_groups g ON g.id=o.group_id WHERE o.remote_message_id=? AND g.recipient_jid=? AND o.state='sent' LIMIT 1").bind(context,from).first():null;
  if(match?.preview===1){
   if(from!==own)return json({error:'Remetente de prévia inválido.'},403);
+  if(mediaType||body.text.length>400)return json({ok:true,preview:true,kind:'unrecognized'});
   const result=classifyStockReply(body.text,match.job_id);
   if(result)await env.DB.prepare('INSERT OR IGNORE INTO wa_local_preview_replies(id,group_id,kind,created_at) VALUES(?,?,?,?)').bind(body.messageId,match.id,result.kind,now()).run();
   return json({ok:true,preview:true,kind:result?.kind||'unrecognized'});
@@ -200,7 +205,7 @@ async function inbound(env,body,own,onInbound){
   const acquired=await env.DB.prepare("INSERT OR IGNORE INTO wa_local_reply_receipts(id,state,order_id,received_at) VALUES(?,'processing',?,?)").bind(id,match?.order_id||null,now()).run();
   if(!acquired.meta?.changes)return json({error:'Resposta em processamento.'},409);
  }
- const m={id,from:sourcePhone,type:'text',text:{body:body.text},...(linked?{context:{id:linked}}:{})};
+ const m={id,from:sourcePhone,type:mediaType||'text',...(mediaType?{[mediaType]:{caption:body.text}}:{text:{body:body.text}}),...(linked?{context:{id:linked}}:{})};
  await onInbound(m);
  await env.DB.prepare("UPDATE wa_local_reply_receipts SET state='done' WHERE id=?").bind(id).run();
  return json({ok:true});
@@ -209,6 +214,7 @@ async function inbound(env,body,own,onInbound){
 /** Called only after the existing bridge token and bound account have been verified. */
 export async function handleOrderBridgeAction(action,env,body,own,{onInbound}={}){
  if(action==='orders-status')return json({ok:true,...await orderBridgeStatus(env)});
+ if(action==='orders-billing-status')return json({ok:true,enabled:localOrdersReady(env),...await supplierBillingStatus(env)});
  if(action==='orders-preview')return await preview(env,own);
  if(action==='orders-inbound')return await inbound(env,body,own,onInbound);
  if(action==='orders-claim'){

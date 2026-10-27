@@ -1,4 +1,5 @@
 import {asaasConfig} from './asaas.js';
+import {loadSupplierBillingForAudit} from './supplier-billing.js';
 
 // Monetary inputs are converted to integer cents. No order/day spending ceiling is applied.
 function decimal(value,places=2){
@@ -87,12 +88,16 @@ export async function auditSupplierPayment(env,input,{request=fetch}={}){
  if(config.sandbox!==false||!config.apiKey||!env.DB){
   result.pendencias.push('É necessário consultar a conta de produção e o banco da loja.');return result;
  }
+ if(input?.billingId){
+  input=await loadSupplierBillingForAudit(env,input);
+  if(!input){result.pendencias.push('A cobrança registrada não está completa, atual ou vinculada ao fornecedor deste pedido.');return result;}
+ }
  if(!/^[a-f0-9-]{36}$/i.test(input?.orderId||'')||typeof input.pixPayload!=='string'||
   input.pixPayload.length<50||input.pixPayload.length>2048||!input.pixPayload.startsWith('000201')){
   result.pendencias.push('Informe o pedido e um código Pix Copia e Cola completo.');return result;
  }
  const order=await env.DB.prepare('SELECT id,status,total,payment_id,items_json FROM orders WHERE id=?').bind(input.orderId).first();
- if(!order||order.status!=='paid_supplier_pending'||!/^pay_[A-Za-z0-9_-]+$/.test(order.payment_id||'')){
+ if(!order||!['paid_supplier_pending','supplier_preparing'].includes(order.status)||!/^pay_[A-Za-z0-9_-]+$/.test(order.payment_id||'')){
   result.pendencias.push('O pedido não está disponível para conferência do pagamento ao fornecedor.');return result;
  }
  const evidence=await env.DB.prepare('SELECT environment,payment_id,received_at FROM order_payment_environments WHERE order_id=?').bind(order.id).first();
@@ -100,7 +105,7 @@ export async function auditSupplierPayment(env,input,{request=fetch}={}){
   result.pendencias.push('O recebimento de produção deste pedido não foi confirmado.');return result;
  }
  const supplier=await env.DB.prepare('SELECT d.state,d.details_sent_at,c.authorized,c.phone_e164,d.supplier_phone FROM supplier_dispatch d JOIN supplier_contacts c ON c.supplier_id=d.supplier_id WHERE d.order_id=?').bind(order.id).first();
- if(supplier?.authorized!==1||supplier.phone_e164!==supplier.supplier_phone||supplier.state!=='details_sent'||!supplier.details_sent_at){
+ if(supplier?.authorized!==1||supplier.phone_e164!==supplier.supplier_phone||!['details_sent','confirmed'].includes(supplier.state)||!supplier.details_sent_at){
   result.pendencias.push('O fornecedor atual e a confirmação dos detalhes do pedido precisam ser conferidos.');return result;
  }
  const [charge,decoded,balance]=await Promise.all([

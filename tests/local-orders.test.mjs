@@ -6,6 +6,8 @@ import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA} from '../worker
 import {localOrdersReady,recordPaymentEnvironment,recordPaymentReceipt,hasProductionReceipt} from '../worker/local-orders.js';
 import {enqueueLocalGroup} from '../worker/local-orders.js';
 import worker from '../worker/index.js';
+import {pixFixture} from './support/pix-fixture.mjs';
+import {auditSupplierPayment} from '../worker/supplier-payment-audit.js';
 
 const token='fake-local-order-secret-012345678901234567890';
 const self='5511999999999@s.whatsapp.net',supplier='8613800138000',second='8613900139000';
@@ -173,4 +175,133 @@ test('a reply interrupted after deduplication is surfaced for review without rep
  const r=await request(env,'orders-inbound',{messageId:message,fromJid:supplier+'@s.whatsapp.net',contextId:'INTERRUPTED_QUERY',text:'sim'});
  assert.equal(r.reviewRequired,true);assert.equal(one(query,'SELECT state FROM supplier_dispatch WHERE order_id=?',[orderId]).state,'needs_review');
  assert.equal(one(query,"SELECT COUNT(*) AS count FROM wa_local_groups WHERE purpose='order_details'").count,0);
+});
+
+async function readyForBill(env){
+ await request(env,'session');await routePaidOrder(env,orderId);await sendNext(env,'BILL_STOCK_QUERY');
+ await request(env,'orders-inbound',{messageId:'BILL_STOCK_YES',fromJid:supplier+'@s.whatsapp.net',contextId:'BILL_STOCK_QUERY',text:'sim'});
+ await sendNext(env,'BILL_ORDER_HEADER');await sendNext(env,'BILL_ORDER_PHOTO');
+}
+const billReply=(messageId,text,extra={})=>({messageId,fromJid:supplier+'@s.whatsapp.net',contextId:'BILL_ORDER_PHOTO',text,...extra});
+const auditInput=billingId=>({orderId,billingId,receiverCpfCnpj:'00000000000100',costs:{
+ items:[{productId:'demo',qty:1,unitUsd:'11.00'}],freightUsd:'4.00',exchangeRateBrlPerUsd:'5.12',gatewayFeeBrl:'0.00',pixFeeBrl:'1.99',otherCostsBrl:'5.00'}});
+
+test('a provider change requests standardized billing through the real order queue, once per missing-info category',async t=>{
+ const {db,query}=localD1(t),env=envFor(db);seed(query);await readyForBill(env);
+ const body=billReply('NEW_PROVIDER_LINK','Total BRL: 76,80\nhttps://new-provider.example.invalid/anything');
+ assert.equal((await request(env,'orders-inbound',body)).status,200);
+ assert.equal(one(query,'SELECT state FROM supplier_billing_messages').state,'needs_details');
+ assert.equal(one(query,'SELECT status FROM supplier_jobs WHERE order_id=?',[orderId]).status,'supplier_attention');
+ const followup=await sendNext(env,'BILL_REQUEST_DETAILS');assert.equal(followup.recipientJid,supplier+'@s.whatsapp.net');
+ assert.match(followup.payload.text.body,/Pix Copia e Cola/);assert.match(followup.payload.text.body,/1234abcd/);
+ assert.equal((await request(env,'orders-inbound',body)).duplicate,true);
+ await request(env,'orders-inbound',billReply('OTHER_PROVIDER_LINK','https://another-provider.example.invalid/changed'));
+ assert.equal(one(query,"SELECT COUNT(*) AS count FROM wa_local_groups WHERE purpose='billing_request'").count,1);
+ assert.equal((await request(env,'orders-claim',{allowLive:true})).job,null);
+ assert.equal(one(query,'SELECT status FROM orders WHERE id=?',[orderId]).status,'paid_supplier_pending');
+});
+
+test('a long complete bill is preserved and the audit reads its current evidence without fetching supplier pages or paying',async t=>{
+ const {db,query}=localD1(t),env=envFor(db);seed(query);await readyForBill(env);
+ const pix=pixFixture(),text='COBRANÇA 1234abcd\nTotal USD: 15.00\nTotal BRL: 76,80\n'+('Descrição fictícia do orçamento. '.repeat(20))+'\nPix: '+pix;
+ assert.ok(text.length>400);
+ await request(env,'orders-inbound',billReply('COMPLETE_LONG_BILL',text));
+ const evidence=one(query,'SELECT * FROM supplier_billing_messages');assert.equal(evidence.state,'ready_for_check');
+ assert.equal(JSON.parse(evidence.format_json).pixPayload,pix);
+ env.ASAAS_PRODUCTION_API_KEY='fake-key';const calls=[];
+ const provider=async(url,options)=>{
+  calls.push(String(url));assert.equal(options.redirect,'error');
+  if(String(url).endsWith('/payments/pay_fake_production'))return Response.json({id:'pay_fake_production',externalReference:orderId,value:199.9,netValue:197.91,status:'RECEIVED',deleted:false,refunds:[]});
+  if(String(url).endsWith('/finance/balance'))return Response.json({balance:500});
+  if(String(url).endsWith('/pix/qrCodes/decode')){
+   assert.deepEqual(JSON.parse(options.body),{payload:pix});return Response.json({payload:pix,value:76.8,totalValue:76.8,canBePaid:true,receiver:{cpfCnpj:'00000000000100'}});
+  }
+  assert.fail('Unexpected network or payment request');
+ };
+ const report=await auditSupplierPayment(env,auditInput(evidence.id),{request:provider});
+ assert.equal(report.conferenciaFinanceiraConcluida,true);assert.equal(report.pagamentoIniciado,false);assert.equal(calls.length,3);
+ assert.equal(one(query,'SELECT status FROM orders WHERE id=?',[orderId]).status,'paid_supplier_pending');
+ const status=await request(env,'orders-billing-status');assert.equal(status.available,true);assert.equal(status.latest.state,'ready_for_check');
+ assert.ok(!JSON.stringify(status).includes(pix));assert.ok(!JSON.stringify(status).includes('00000000000100'));
+});
+
+test('a bare invoice asks for an exact reference; it cannot be audited until the supplier replies to that request',async t=>{
+ const {db,query}=localD1(t),env=envFor(db);seed(query);await readyForBill(env);
+ const text='Total BRL: 76.80\n'+pixFixture();
+ await request(env,'orders-inbound',billReply('UNSCOPED_BILL',text,{contextId:''}));
+ const first=one(query,'SELECT * FROM supplier_billing_messages');assert.equal(first.linked,0);assert.equal(first.state,'needs_reference');
+ env.ASAAS_PRODUCTION_API_KEY='fake-key';
+ assert.equal((await auditSupplierPayment(env,auditInput(first.id),{request:()=>assert.fail('No provider call')})).conferenciaFinanceiraConcluida,false);
+ const followup=await sendNext(env,'BILL_EXACT_REFERENCE_REQUEST');assert.match(followup.payload.text.body,/identificar/);
+ await request(env,'orders-inbound',billReply('SCOPED_BILL',text,{contextId:'BILL_EXACT_REFERENCE_REQUEST'}));
+ assert.equal(one(query,'SELECT state FROM supplier_billing_messages ORDER BY seq DESC LIMIT 1').state,'ready_for_check');
+});
+
+test('photo, PDF and other attachment notices request text, never download files or confirm an order',async t=>{
+ const {db,query}=localD1(t),env=envFor(db);seed(query);await readyForBill(env);
+ for(const type of ['image','document','audio','video']){
+  assert.equal((await request(env,'orders-inbound',billReply('BILL_ATTACHMENT_'+type,'',{mediaType:type}))).status,200);
+ }
+ assert.equal(one(query,'SELECT COUNT(*) AS count FROM supplier_billing_messages').count,4);
+ assert.equal(one(query,"SELECT COUNT(*) AS count FROM wa_local_groups WHERE purpose='billing_request'").count,1);
+ assert.equal(one(query,'SELECT state FROM supplier_dispatch WHERE order_id=?',[orderId]).state,'details_sent');
+});
+
+test('new billing evidence, a changed supplier, stale timestamps or substituted payloads invalidate an old audit selection',async t=>{
+ const {db,query}=localD1(t),env=envFor(db);seed(query);await readyForBill(env);env.ASAAS_PRODUCTION_API_KEY='fake-key';
+ await request(env,'orders-inbound',billReply('FIRST_VALID_BILL','Total BRL: 76.80\n'+pixFixture()));
+ const row=one(query,'SELECT * FROM supplier_billing_messages');
+ const noProvider=()=>assert.fail('Stale or tampered evidence cannot reach provider');
+ const bad=async input=>assert.equal((await auditSupplierPayment(env,input,{request:noProvider})).conferenciaFinanceiraConcluida,false);
+ await bad({...auditInput(row.id),quotedTotalBrl:'90.00'});
+ await bad({...auditInput(row.id),pixPayload:pixFixture({txid:'SUBSTITUTE'})});
+ query({sql:'UPDATE supplier_billing_messages SET created_at=? WHERE id=?',args:['invalid-date',row.id]});await bad(auditInput(row.id));
+ query({sql:'UPDATE supplier_billing_messages SET created_at=? WHERE id=?',args:[new Date(Date.now()-25*3600e3).toISOString(),row.id]});await bad(auditInput(row.id));
+ query({sql:'UPDATE supplier_billing_messages SET created_at=? WHERE id=?',args:[new Date(Date.now()-1000).toISOString(),row.id]});
+ query({sql:'UPDATE supplier_contacts SET authorized=0 WHERE supplier_id=?',args:['supplier1']});await bad(auditInput(row.id));
+ query({sql:'UPDATE supplier_contacts SET authorized=1 WHERE supplier_id=?',args:['supplier1']});
+ await request(env,'orders-inbound',billReply('REPLACEMENT_BILL','Total BRL: 80.00\nhttps://changed.example.invalid/pay'));await bad(auditInput(row.id));
+});
+
+test('conflicting order references and third-party senders cannot register a payable bill or advance preparation',async t=>{
+ const {db,query}=localD1(t),env=envFor(db);seed(query);await readyForBill(env);
+ await request(env,'orders-inbound',billReply('WRONG_REFERENCE_BILL','COBRANÇA aabbccdd\nTotal BRL: 76.80\n'+pixFixture()));
+ const saved=one(query,'SELECT * FROM supplier_billing_messages');assert.equal(saved.state,'needs_details');
+ assert.ok(JSON.parse(saved.format_json).issues.includes('order_reference_conflict'));
+ assert.equal(one(query,"SELECT COUNT(*) AS count FROM wa_local_groups WHERE purpose='billing_request'").count,0);
+ await request(env,'orders-inbound',billReply('THIRD_PARTY_BILL','COBRANÇA 1234abcd\nTotal BRL: 76.80\n'+pixFixture(),{fromJid:'8613700137000@s.whatsapp.net'}));
+ assert.equal(one(query,'SELECT COUNT(*) AS count FROM supplier_billing_messages').count,1);
+ assert.equal(one(query,'SELECT status FROM orders WHERE id=?',[orderId]).status,'paid_supplier_pending');
+});
+
+test('missing billing migration preserves manual review and does not pretend the collector is available',async t=>{
+ const {db,query}=localD1(t),env=envFor(db);seed(query);await readyForBill(env);
+ query({sql:'DROP TABLE supplier_billing_messages'});
+ assert.equal((await request(env,'orders-billing-status')).available,false);
+ await request(env,'orders-inbound',billReply('MANUAL_BILL_FALLBACK','https://unknown.example.invalid/bill'));
+ assert.equal(one(query,'SELECT status FROM supplier_jobs WHERE order_id=?',[orderId]).status,'supplier_attention');
+});
+
+test('a supplier can send the bill after confirming preparation without changing that order or repeating a buyer update',async t=>{
+ const {db,query}=localD1(t),env=envFor(db);seed(query);await readyForBill(env);
+ await request(env,'orders-inbound',billReply('CONFIRMED_BEFORE_BILL','confirmar 1234abcd'));
+ await sendNext(env,'BILL_BUYER_PREPARING_NOTICE');
+ await request(env,'orders-inbound',billReply('LINK_AFTER_CONFIRMATION','https://changed.example.invalid/bill'));
+ const followup=await sendNext(env,'BILL_REQUEST_AFTER_CONFIRMATION');assert.equal(followup.recipientJid,supplier+'@s.whatsapp.net');
+ await request(env,'orders-inbound',billReply('PIX_AFTER_CONFIRMATION','Total BRL: 76.80\n'+pixFixture(),{contextId:'BILL_REQUEST_AFTER_CONFIRMATION'}));
+ assert.equal(one(query,'SELECT state FROM supplier_billing_messages ORDER BY seq DESC LIMIT 1').state,'ready_for_check');
+ assert.equal(one(query,'SELECT status FROM orders WHERE id=?',[orderId]).status,'supplier_preparing');
+ assert.equal(one(query,"SELECT COUNT(*) AS count FROM wa_local_groups WHERE purpose='buyer_update'").count,1);
+});
+
+test('a bill for a supplier with two eligible orders remains unassigned and visible for review',async t=>{
+ const {db,query}=localD1(t),env=envFor(db);seed(query);await readyForBill(env);
+ const other='aabbccdd-1234-4234-8234-123456789012',stamp=new Date().toISOString();
+ query({sql:'INSERT INTO orders(id,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total,payment_id) SELECT ?,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total,? FROM orders WHERE id=?',args:[other,'pay_second_order',orderId]});
+ query({sql:'INSERT INTO order_payment_environments(order_id,environment,payment_id,received_at,recorded_at) VALUES(?,?,?,?,?)',args:[other,'production','pay_second_order',stamp,stamp]});
+ query({sql:"INSERT INTO supplier_dispatch(order_id,supplier_id,supplier_phone,state,message_id,details_sent_at,created_at,updated_at) VALUES(?,?,?,'details_sent',?,?,?,?)",args:[other,'supplier1',supplier,'OTHER_ORDER_MESSAGE',stamp,stamp,stamp]});
+ await request(env,'orders-inbound',billReply('AMBIGUOUS_TWO_ORDERS','Total BRL: 76.80\n'+pixFixture(),{contextId:''}));
+ const evidence=one(query,'SELECT * FROM supplier_billing_messages');assert.equal(evidence.order_id,null);assert.equal(evidence.linked,0);
+ const status=await request(env,'orders-billing-status');assert.equal(status.latest.orderId,null);assert.match(status.latest.pendencias.join(' '),/vários pedidos/);
+ assert.equal(one(query,"SELECT COUNT(*) AS count FROM wa_local_groups WHERE purpose='billing_request'").count,0);
 });

@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import {ownJid} from './connection.mjs';
 import {readJson,writePrivateJson} from './state.mjs';
+import {BILLING_TEXT_LIMIT,isSupplierBilling,billingOrderReferences} from '../worker/supplier-billing-format.js';
 
 const validJob=id=>typeof id==='string'&&/^lo_[a-f0-9]{32}_\d{1,2}$/.test(id);
 const validMessage=id=>typeof id==='string'&&/^[A-Za-z0-9_-]{4,180}$/.test(id);
@@ -56,18 +57,23 @@ export function createOrderChannel({socket,account,config,paths,call,log=console
     }
     try{from=ownJid({id:from});}catch{return;}
     const content=normalizeMessageContent(message.message)||{};
-    const text=content.extendedTextMessage?.text||content.conversation;
-    const context=content.extendedTextMessage?.contextInfo?.stanzaId||'';
-    if(typeof text!=='string'||!text.trim()||text.length>400)return;
+    // Only metadata/captions cross the bridge. Media is never downloaded or executed.
+    const mediaType=Object.entries({image:'imageMessage',document:'documentMessage',audio:'audioMessage',video:'videoMessage'}).find(([,key])=>content[key])?.[0]||'';
+    const media=mediaType?content[{image:'imageMessage',document:'documentMessage',audio:'audioMessage',video:'videoMessage'}[mediaType]]:null;
+    const text=content.extendedTextMessage?.text??content.conversation??media?.caption??'';
+    const context=content.extendedTextMessage?.contextInfo?.stanzaId||media?.contextInfo?.stanzaId||'';
+    if(typeof text!=='string'||(!text.trim()&&!mediaType)||text.length>BILLING_TEXT_LIMIT)return;
     const quoted=Object.values(journal).find(entry=>entry.messageId===context&&entry.recipientJid===from);
     const pending=context?Object.values(journal).find(entry=>entry.phase==='sending'&&entry.recipientJid===from):null;
     if(message.key.fromMe&&!((quoted?.preview||pending?.preview)&&from===account))return;
     const explicit=/^(?:sem[_ -]?estoque|indispon[ií]vel|esgotado|dispon[ií]vel|temos|confirmar|preparando|detalhes)\s+[a-f0-9]{8}$/i.test(text.trim());
-    if(!quoted&&!pending&&(!explicit||!Object.values(journal).some(entry=>!entry.preview&&entry.recipientJid===from)))return;
+    const billing=isSupplierBilling(text,mediaType)||billingOrderReferences(text).length>0;
+    const known=Object.values(journal).some(entry=>!entry.preview&&entry.recipientJid===from);
+    if(!quoted&&!pending&&(!(explicit||billing)||!known||config.ordersEnabled!==true))return;
     if(Object.keys(inbox).length>=5000){log('A fila local de respostas requer atenção. Confira o diagnóstico.');return;}
     const id=from+':'+message.key.id;
     if(inbox[id])return;
-    inbox[id]={messageId:message.key.id,fromJid:from,text,contextId:(quoted||pending)?context:'',at:new Date().toISOString()};
+    inbox[id]={messageId:message.key.id,fromJid:from,text,contextId:(quoted||pending)?context:'',...(mediaType?{mediaType}:{}),at:new Date().toISOString()};
     writePrivateJson(paths.ordersInbox,inbox);
   }
   const listener=event=>{

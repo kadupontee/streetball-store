@@ -1,6 +1,7 @@
 import {classifyStockReply,classifySupplierMessage,supplierReplyAction} from './supplier-replies.js';
 import {supplierPhotoRequest} from './supplier-order-format.js';
 import {enqueueLocalGroup,hasProductionReceipt,imageLink,localOrdersReady,usesLocalWhatsApp} from './local-orders.js';
+import {collectSupplierBilling} from './supplier-billing.js';
 export {classifyStockReply,classifySupplierMessage,supplierReplyAction} from './supplier-replies.js';
 /** Fluxo seguro de fulfillment: fotos, WhatsApp oficial, fallback de 12h e prazo total de 72h.
  * Sem credenciais/consentimento não envia mensagens. Pix para fornecedor exige aprovação humana.
@@ -281,6 +282,7 @@ export async function handleSupplierInbound(env,message,ctx){
  if(!env.DB||!message?.id||env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true')return;
  if(usesLocalWhatsApp(env)&&!localOrdersReady(env))return;
  const from=normalizeWaPhone(message.from);
+ if(from&&await collectSupplierBilling(env,message,{enqueue:enqueueLocalGroup,productionReceipt:hasProductionReceipt}))return;
  const response=classifySupplierMessage(message);
  if(!from||!response)return;
  const duplicate=await env.DB.prepare("SELECT id FROM wa_message_events WHERE id=?").bind(message.id).first();

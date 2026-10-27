@@ -179,6 +179,21 @@ Somente pedidos de produção com cobrança recebida correspondente entram no en
 
 O Mac deve permanecer ligado, com internet e sem repouso. Para parar somente o encaminhamento local, use `npm run desativar-pedidos`; esse comando não desativa o checkout nem cancela cobranças. O pagamento ao fornecedor e os reembolsos continuam sob operação manual.
 
+## 9. Receber cobranças de fornecedores com formatos diferentes
+
+Depois de atualizar esta branch, na mesma pasta `whatsapp-local` do Mac:
+
+```bash
+npm run preparar-cobrancas
+npm run status-cobrancas
+```
+
+O primeiro comando aplica a tabela adicional, publica o Worker, confere a versão e reinicia a conexão já salva. Não repita os instaladores antigos de Sandbox. Não altera chaves ou as opções do checkout e não libera débitos automáticos.
+
+O conector passa a preservar textos de até 6.000 caracteres. Ao receber um link de outra plataforma, chave Pix, boleto ou aviso de anexo, o bot pode solicitar ao fornecedor o orçamento detalhado e o Pix Copia e Cola por texto. Anexos não são baixados nem lidos; sites externos não são navegados. O fornecedor deve responder à mensagem do pedido ou indicar `COBRANÇA`/`INVOICE` e os primeiros oito caracteres do pedido. Sem referência exata, a cobrança não pode ser usada para pagamento. O bot evita repetir o mesmo pedido de detalhes.
+
+`status-cobrancas` mostra `available`, `enabled`, a fila e pendências. `ready_for_check` representa total e Pix coletados para conferência, não um pagamento concluído. Ainda faltam a referência de custos e recebedores por fornecedor, o executor com registro exclusivo de débitos e a confirmação da autorização de saídas no Asaas para automatizar pagamentos. A conferência pode selecionar a cobrança registrada por `billingId`; veja `worker/SUPPLIER_PAYMENTS.md`.
+
 ## Validação local
 
 ```bash

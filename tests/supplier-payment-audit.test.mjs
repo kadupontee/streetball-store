@@ -135,6 +135,14 @@ test('revoked suppliers or order details not yet sent prevent any provider looku
  }
 });
 
+test('a production order already confirmed as preparing may still have its pending bill audited',async()=>{
+ const f=fixture();f.order.status='supplier_preparing';const original=f.env.DB.prepare;
+ f.env.DB.prepare=query=>query.includes('FROM supplier_dispatch ')?{bind(){return this;},async first(){
+  return {state:'confirmed',details_sent_at:'2026-10-27',authorized:1,phone_e164:'8613800138000',supplier_phone:'8613800138000'};
+ }}:original(query);
+ assert.equal((await auditSupplierPayment(f.env,f.input,{request:f.request})).conferenciaFinanceiraConcluida,true);
+});
+
 test('HTTP failures, malformed responses, timeouts and a changed decoded payload cannot confirm the audit',async()=>{
  for(const request of [async()=>Response.json({errors:[{description:'private-provider-detail'}]},{status:403}),
   async()=>new Response('<html>private</html>',{status:502}),async()=>{throw Error('private-provider-detail');}]){

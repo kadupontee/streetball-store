@@ -20,6 +20,8 @@
     "integrar-pedidos": "node integrate.mjs",
     "simular-pedido": "node store-cli.mjs orders-preview",
     "status-pedidos": "node store-cli.mjs orders-status",
+    "status-cobrancas": "node store-cli.mjs orders-billing-status",
+    "preparar-cobrancas": "node billing-setup.mjs",
     "ativar-pedidos": "node store-cli.mjs orders-enable",
     "desativar-pedidos": "node store-cli.mjs orders-disable",
     "configurar-asaas": "node payments-setup.mjs",
