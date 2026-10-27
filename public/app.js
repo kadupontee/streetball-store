@@ -646,7 +646,6 @@ $('closeCheckout').addEventListener('click',()=>openUI(null));
 $('overlay').addEventListener('click',()=>openUI(null));
 $('checkoutBtn').addEventListener('click',openCheckout);
 $('checkoutForm').addEventListener('submit',submitOrder);
-$('dismissNotice').addEventListener('click',()=>{$('demoNotice').style.display='none'});
 $('productModal').addEventListener('change',e=>{if(e.target.id==='optPersonalize'){state.choice.personalize=e.target.checked;$('personalizeFields').classList.toggle('hide',!e.target.checked);updateDetailPrice()}if(e.target.id==='optPatch'){state.choice.patch=e.target.checked;updateDetailPrice()}});
 $('productModal').addEventListener('input',e=>{if(e.target.id==='customName')state.choice.customName=e.target.value;if(e.target.id==='customNumber')state.choice.customNumber=e.target.value});
 $('productModal').addEventListener('click',e=>{if(e.target.closest('#detailAdd'))addCart()});
@@ -657,16 +656,14 @@ renderEditorialHero();
 categoryRender();catalogRender();cartRender();
 
 function checkoutIndicator(){
- const info=$('checkoutAvailability'),banner=$('demoText'),note=$('checkoutNote');
+ const info=$('checkoutAvailability'),note=$('checkoutNote');
  // NÃO sobrescreva checkoutIntro: contém divulgação tributária e link dos Correios.
  if(state.checkoutReady){
    info.textContent=state.checkoutSandbox?'Pagamento em ambiente de testes: nenhuma cobrança real será feita.':'Pagamento seguro por Pix ou cartão. Tributos de importação NÃO incluídos.';
    note.textContent=state.checkoutSandbox?'AMBIENTE DE TESTES: não há cobrança real. O cliente deverá assumir eventuais tributos de importação e Despacho Postal quando as vendas estiverem liberadas.':'O total pago à Streetball Store não inclui Imposto de Importação, ICMS nem eventual Despacho Postal. Se cobrados, são pagos pelo destinatário exclusivamente nos canais oficiais.';
-   banner.textContent=state.checkoutSandbox?'LOJA EM TESTES · nenhum pagamento real será cobrado':'LOJA · pagamento seguro via Asaas';
  }else{
    info.textContent='Checkout não liberado. O pagamento será disponibilizado após a configuração e os testes do backend.';
    note.textContent='Nenhuma cobrança será gerada nesta prévia. Eventuais tributos de importação e Despacho Postal serão de responsabilidade do destinatário quando as vendas reais estiverem liberadas.';
-   banner.textContent='PRÉVIA · pagamentos ainda não habilitados';
  }
  cartRender();
 }
