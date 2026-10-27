@@ -2,6 +2,7 @@ import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRout
 import {handleLocalWhatsApp} from './local-whatsapp.js';
 import {recordPaymentEnvironment,recordPaymentReceipt} from './local-orders.js';
 import {asaasConfig,asaasRequest as asaas} from './asaas.js';
+import {auditSupplierPayment} from './supplier-payment-audit.js';
 import {supplierIdValid} from './supplier-mapping.js';
 import {STAGES,safeTrackingCode,formatProgress} from './order-progress.js';
 import {customerTrackingLink,verifyTrackingKey} from './order-tracking-access.js';
@@ -131,6 +132,15 @@ async function adminApi(request,env,ctx){
  if(!env.ADMIN_TOKEN||request.headers.get('authorization')!=='Bearer '+env.ADMIN_TOKEN)return clientError('Não autorizado.',401);
  if(!env.DB)return clientError('Banco não configurado.',503);
  const url=new URL(request.url);
+ if(url.pathname==='/api/admin/supplier-payment-check'&&request.method==='POST'){
+   if(Number(request.headers.get('content-length')||0)>12000)return clientError('Dados de conferência muito grandes.',413);
+   const raw=await request.text();
+   if(raw.length>12000)return clientError('Dados de conferência muito grandes.',413);
+   let input;
+   try{input=JSON.parse(raw);}catch{return clientError('Dados de conferência inválidos.');}
+   if(!input||typeof input!=='object'||Array.isArray(input))return clientError('Dados de conferência inválidos.');
+   return json(await auditSupplierPayment(env,input));
+ }
  // Laboratório de classificação: read-only, sem acesso aos pedidos, D1 ou WhatsApp.
  if(url.pathname==='/api/admin/whatsapp-dry-run'&&request.method==='POST'){
    if(Number(request.headers.get('content-length')||0)>1600)return clientError('Mensagem de teste muito grande.',413);
