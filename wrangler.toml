@@ -37,12 +37,12 @@ WA_TRANSPORT = "local"
 WA_LOCAL_ORDERS_ENABLED = "false"
 # Dominio HTTPS da vitrine usado somente para montar URLs publicas das fotos na previa.
 STORE_PUBLIC_URL = "https://lojastreetball.com.br"
-# Valor TEMPORARIO apenas para simular cobranças no Sandbox. Nao habilitar producao com este frete.
+# Frete grátis em todos os pedidos, conforme definição comercial do proprietário.
 SHIPPING_FLAT_BRL = "0.00"
 # Catálogo compartilhado: números autorizados são cadastrados no painel /suppliers.html
 # e guardados no D1. A ordem de cadastro define a prioridade de consulta.
 # Nunca informe números de fornecedores em arquivo público.
-# Depois de simular custo de entrega, definir frete: exemplo SHIPPING_FLAT_BRL = "19.90"
+# Prazo de entrega informado ao comprador: 15 a 45 dias.
 # Não habilite checkout sem validar imposto de importação e prazos reais.
 
 # Segredos necessários (NUNCA escreva as chaves neste arquivo):

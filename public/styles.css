@@ -55,3 +55,11 @@ html{overflow-x:clip}
 .checkout-grand-total{padding-top:14px;margin-top:8px;border-top:2px solid #aab6a6}
 .checkout-grand-total strong{font-size:22px;color:#152016}
 #checkoutAvailability{font-size:11px;line-height:1.6}
+
+/* Condições comerciais exibidas antes do pagamento. */
+.checkout-order-terms{margin:16px 0;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:#f6f6f6}
+.checkout-modal .checkout-order-terms p{margin:4px 0;font-size:13px;line-height:1.6;color:var(--ink)}
+.checkout-order-terms a,.purchase-policy a{text-decoration:underline;overflow-wrap:anywhere}
+.purchase-policy{margin-top:12px;font-size:12px;line-height:1.7}
+.purchase-policy summary{cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.purchase-policy p{margin-top:10px}
