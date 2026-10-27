@@ -12,11 +12,13 @@ function fixture(t){
  const paths=statePaths(path.join(root,'home'),'darwin');prepareState(paths);
  const toml=fs.readFileSync(new URL('../wrangler.toml',import.meta.url),'utf8');
  fs.writeFileSync(path.join(root,'wrangler.toml'),toml);
+ fs.mkdirSync(path.join(root,'scripts'));
+ fs.copyFileSync(new URL('../scripts/costs.json',import.meta.url),path.join(root,'scripts','costs.json'));
  writePrivateJson(path.join(paths.auth,'creds.json'),{me:{id:'5511999999999@s.whatsapp.net'}});
  writePrivateJson(paths.config,{enabled:true,ordersEnabled:true,storeUrl:'https://lojastreetball.com.br',token:'a'.repeat(43)});
  const calls=[],messages=[];
  const options={platform:'darwin',root,paths,run(...args){calls.push({run:args});return {status:0};},
-  async api(...args){calls.push({api:args});return {ok:true,available:true,enabled:true,version:BILLING_FORMAT_VERSION,pagamentoAutomaticoHabilitado:false};},
+  async api(...args){calls.push({api:args});return {ok:true,available:true,enabled:true,version:BILLING_FORMAT_VERSION,pagamentoAutomaticoHabilitado:false,costTable:{configured:true,version:'shared-usd-20261027-v1',suppliers:5}};},
   async restart(...args){calls.push({restart:args});},log:value=>messages.push(value)};
  return {root,paths,toml,calls,messages,options};
 }
@@ -24,8 +26,9 @@ function fixture(t){
 test('billing setup migrates then deploys, confirms the version and restarts without changing private config or activating payouts',async t=>{
  const f=fixture(t),config=fs.readFileSync(f.paths.config,'utf8');
  const result=await prepareBilling(f.options);
- assert.equal(f.calls.length,4);assert.deepEqual(f.calls[0].run[1],['--yes','wrangler@4','d1','execute','streetball-db','--remote','--file=worker/local-orders-schema.sql','--yes']);
- assert.deepEqual(f.calls[1].run[1],['--yes','wrangler@4','deploy']);assert.equal(f.calls[2].api[2],'orders-billing-status');assert.ok(f.calls[3].restart);
+ assert.equal(f.calls.length,5);assert.deepEqual(f.calls[0].run[1],['--yes','wrangler@4','d1','execute','streetball-db','--remote','--file=worker/local-orders-schema.sql','--yes']);
+ assert.deepEqual(f.calls[1].run[1],['--yes','wrangler@4','deploy']);assert.equal(f.calls[2].api[2],'orders-billing-status');
+ assert.equal(f.calls[3].api[2],'orders-costs-configure');assert.equal(f.calls[3].api[3].policyVersion,'shared-usd-20261027-v1');assert.ok(f.calls[4].restart);
  assert.equal(fs.readFileSync(f.paths.config,'utf8'),config);assert.equal(fs.readFileSync(path.join(f.root,'wrangler.toml'),'utf8'),f.toml);
  assert.equal(result.pagamentoAutomaticoHabilitado,false);assert.ok(f.messages.some(m=>m.includes('não libera débitos')));
 });
@@ -44,4 +47,10 @@ test('migration/deploy failures and unconfirmed published versions stop setup be
  }
  const f=fixture(t);f.options.api=async()=>({ok:true,available:false,version:'old'});
  await assert.rejects(prepareBilling(f.options),/não confirmou/);assert.ok(!f.calls.some(c=>c.restart));
+});
+test('unconfirmed supplier costs cannot be reported as configured and cannot proceed to a success/restart',async t=>{
+ const f=fixture(t),original=f.options.api;
+ f.options.api=async(...args)=>args[2]==='orders-costs-configure'?{ok:true,costTable:{configured:false,suppliers:0}}:original(...args);
+ await assert.rejects(prepareBilling(f.options),/tabela compartilhada não foi confirmada/);
+ assert.ok(!f.calls.some(c=>c.restart));assert.ok(!f.messages.some(m=>m.includes('Recebimento de cobranças preparado')));
 });

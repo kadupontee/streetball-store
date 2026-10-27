@@ -4,7 +4,7 @@ import {enqueueLocalGroup,hasProductionReceipt,imageLink,localOrdersReady,usesLo
 import {collectSupplierBilling} from './supplier-billing.js';
 export {classifyStockReply,classifySupplierMessage,supplierReplyAction} from './supplier-replies.js';
 /** Fluxo seguro de fulfillment: fotos, WhatsApp oficial, fallback de 12h e prazo total de 72h.
- * Sem credenciais/consentimento não envia mensagens. Pix para fornecedor exige aprovação humana.
+ * Sem credenciais/consentimento não envia mensagens. Saídas Pix usam o executor e a autorização próprios.
  */
 const digits=v=>String(v||'').replace(/\D/g,'');
 export const normalizeWaPhone=v=>{const p=digits(v);return /^[1-9]\d{7,14}$/.test(p)?p:'';};

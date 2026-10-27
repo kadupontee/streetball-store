@@ -1,8 +1,10 @@
 import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply,supplierReplyAction,sendBuyerUpdate} from './fulfillment.js';
 import {handleLocalWhatsApp} from './local-whatsapp.js';
-import {recordPaymentEnvironment,recordPaymentReceipt} from './local-orders.js';
+import {recordPaymentEnvironment,recordPaymentReceipt,enqueueLocalGroup} from './local-orders.js';
+import {supplierPayoutStatus,processSupplierPayouts,handlePayoutAuthorization,payoutSchemaAvailable} from './supplier-payouts.js';
 import {asaasConfig,asaasRequest as asaas} from './asaas.js';
 import {auditSupplierPayment} from './supplier-payment-audit.js';
+import {recordSharedSupplierCostReference,SUPPLIER_COST_VERSION,sharedCostSchemaAvailable} from './supplier-cost-reference.js';
 import {RETAIL_PRICE_POLICY_VERSION,apparelPriceMode} from '../public/store-settings.js';
 import {supplierIdValid} from './supplier-mapping.js';
 import {STAGES,safeTrackingCode,formatProgress} from './order-progress.js';
@@ -14,7 +16,7 @@ import {handleStoreEditor,publicStoreSettings,editedCatalog,loadStoreSettings} f
 import accountPageHtml from '../public/account.html';
 /** Streetball Store - Cloudflare Worker + D1 + Asaas sandbox/production
  * Nunca armazene tokens ou chaves na pasta public/.
- * IMPORTANTE: pagamento ao fornecedor NÃO é automatizado neste MVP.
+ * Saídas Pix dependem da ativação explícita, custos conferidos, recebedor cadastrado e autorização no Asaas.
  */
 const json=(data,status=200,more={})=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...more}});
 const cors={ 'access-control-allow-origin':'https://lojastreetball.com.br', 'access-control-allow-headers':'content-type', 'access-control-allow-methods':'GET, POST, OPTIONS'};
@@ -60,7 +62,7 @@ function playerShortsRepriceServer(product){
 }
 async function catalogFor(request,env,snapshot){const r=await env.ASSETS.fetch(new Request(new URL('/catalog.json',request.url)));if(!r.ok)throw Error('CATALOG_UNAVAILABLE');const products=await r.json();return editedCatalog(products.map(p=>playerShortsRepriceServer(retroRepriceServer(p))),env,snapshot)}
 const fail=(msg)=>{throw new Error(msg)};
-function validateItems(raw,products){if(!Array.isArray(raw)||!raw.length||raw.length>35)fail('Sua sacola precisa conter entre 1 e 35 itens.');let subtotal=0,count=0,usesApparelPricing=false;const clean=[];for(const i of raw){const p=products.find(x=>x.id===i.id);if(!p)fail('Produto indisponível: '+safeText(i.id,30));if(apparelPriceMode(p))usesApparelPricing=true;if(!p.sizes.includes(i.size))fail('Tamanho inválido para '+safeText(p.title));const qty=Number(i.qty);if(!Number.isInteger(qty)||qty<1||qty>10)fail('Quantidade inválida.');const patch=i.patch===true,personalize=i.personalize===true;let customName=safeText(i.customName,14),customNumber=safeText(i.customNumber,3);if(!personalize){customName='';customNumber=''}if(personalize&&!customName&&!customNumber)fail('Personalização incompleta.');if(customName&&!/^[\p{L}0-9 .'-]+$/u.test(customName))fail('Nome de personalização inválido.');if(customNumber&&!/^\d{1,3}$/.test(customNumber))fail('Número de personalização inválido.');const sizeExtra=({XXL:5,'3XL':10,'4XL':15})[i.size]||0;const unit=round(Number(p.price)+sizeExtra+(patch?8:0)+(personalize?20:0));if(!(unit>=0&&unit<10000))fail('Preço inválido.');subtotal+=unit*qty;count+=qty;clean.push({id:p.id,title:p.title,qty,size:i.size,patch,personalize,customName,customNumber,unitPrice:unit,image:p.image||null,sourceUrl:p.sourceUrl||null,supplierId:safeText(p.supplierId||'',40)})}if(count>50)fail('Quantidade total excedida.');return {items:clean,subtotal:round(subtotal),usesApparelPricing}}
+function validateItems(raw,products){if(!Array.isArray(raw)||!raw.length||raw.length>35)fail('Sua sacola precisa conter entre 1 e 35 itens.');let subtotal=0,count=0,usesApparelPricing=false;const clean=[];for(const i of raw){const p=products.find(x=>x.id===i.id);if(!p)fail('Produto indisponível: '+safeText(i.id,30));if(apparelPriceMode(p))usesApparelPricing=true;if(!p.sizes.includes(i.size))fail('Tamanho inválido para '+safeText(p.title));const qty=Number(i.qty);if(!Number.isInteger(qty)||qty<1||qty>10)fail('Quantidade inválida.');const patch=i.patch===true,personalize=i.personalize===true;let customName=safeText(i.customName,14),customNumber=safeText(i.customNumber,3);if(!personalize){customName='';customNumber=''}if(personalize&&!customName&&!customNumber)fail('Personalização incompleta.');if(customName&&!/^[\p{L}0-9 .'-]+$/u.test(customName))fail('Nome de personalização inválido.');if(customNumber&&!/^\d{1,3}$/.test(customNumber))fail('Número de personalização inválido.');const sizeExtra=({XXL:5,'3XL':10,'4XL':15})[i.size]||0;const unit=round(Number(p.price)+sizeExtra+(patch?8:0)+(personalize?20:0));if(!(unit>=0&&unit<10000))fail('Preço inválido.');subtotal+=unit*qty;count+=qty;clean.push({id:p.id,title:p.title,qty,size:i.size,patch,personalize,customName,customNumber,unitPrice:unit,image:p.image||null,sourceUrl:p.sourceUrl||null,supplierId:safeText(p.supplierId||'',40)})}if(count>50)fail('Quantidade total excedida.');return {items:clean,subtotal:round(subtotal),usesApparelPricing,supplierCostProducts:raw.map(item=>products.find(p=>p.id===item.id))}}
 function checkoutReady(env){
  const shipping=Number(env.SHIPPING_FLAT_BRL);
  const credentials=asaasConfig(env);
@@ -70,8 +72,9 @@ function checkoutReady(env){
   env.IMPORT_COMPLIANCE_APPROVED==='true';
  return !!(env.DB&&env.ASSETS&&credentials.apiKey&&env.SHIPPING_FLAT_BRL!==undefined&&Number.isFinite(shipping)&&shipping>=0&&shipping<=500&&env.SALES_ENABLED==='true'&&(credentials.sandbox===true||prodReady));
 }
-function checkoutConfig(env){
- return json({enabled:checkoutReady(env),sandbox:env.ASAAS_SANDBOX==='true',shipping:checkoutReady(env)?Number(env.SHIPPING_FLAT_BRL):null,methods:['PIX','CREDIT_CARD'],supplierPaymentAutomated:false,customerPaysImportTaxesPlanned:env.CUSTOMER_PAYS_IMPORT_TAXES==='true',productionImportComplianceReviewed:env.IMPORT_COMPLIANCE_APPROVED==='true'&&env.IMPORT_TAX_DISCLOSURE_APPROVED==='true',pricingPolicyVersion:RETAIL_PRICE_POLICY_VERSION});
+async function checkoutConfig(env){
+ const automated=env.ASAAS_SUPPLIER_PAYOUT_AUTH_TOKEN?(await supplierPayoutStatus(env)).enabled:false;
+ return json({enabled:checkoutReady(env),sandbox:env.ASAAS_SANDBOX==='true',shipping:checkoutReady(env)?Number(env.SHIPPING_FLAT_BRL):null,methods:['PIX','CREDIT_CARD'],supplierPaymentAutomated:automated,customerPaysImportTaxesPlanned:env.CUSTOMER_PAYS_IMPORT_TAXES==='true',productionImportComplianceReviewed:env.IMPORT_COMPLIANCE_APPROVED==='true'&&env.IMPORT_TAX_DISCLOSURE_APPROVED==='true',pricingPolicyVersion:RETAIL_PRICE_POLICY_VERSION});
 }
 async function createOrder(req,env){if(!env.DB||!env.ASSETS)return clientError('Banco e catálogo não configurados.',503);if(!checkoutReady(env))return clientError('Checkout ainda não liberado: configure cobrança, frete e ambiente autorizado.',503);if(Number(req.headers.get('content-length')||0)>22000)return clientError('Requisição muito grande.',413);const body=await req.json().catch(()=>null);if(!body)return clientError('Requisição inválida.');const storeSnapshot=await loadStoreSettings(env);if((body.storeRevision!==undefined&&body.storeRevision!==storeSnapshot.revision)||(storeSnapshot.revision>0&&!Number.isSafeInteger(body.storeRevision)))return clientError('Os preços da loja foram atualizados. Recarregue a página e confira sua sacola antes de continuar.',409);const whatsappOptIn=body.whatsappOptIn===true;const importTaxAcknowledged=body.importTaxAcknowledged===true;if(env.ASAAS_SANDBOX!=='true'&&!importTaxAcknowledged)return clientError('Confirme que entendeu que tributos de importação e eventual Despacho Postal não estão incluídos no valor pago à loja.',400);const billingType=['PIX','CREDIT_CARD'].includes(body.paymentMethod)?body.paymentMethod:null;if(!billingType)return clientError('Escolha Pix ou cartão de crédito.');const c=body.customer||{};const name=safeText(c.name,110),email=safeText(c.email,180).toLowerCase(),phone=unaccent(c.phone),cpf=unaccent(c.cpf),zip=unaccent(c.zip),address=safeText(c.address,180),city=safeText(c.city,90),state=safeText(c.state,2).toUpperCase();if(name.length<3||!/^\S+@\S+\.\S+$/.test(email)||!(phone.length===10||phone.length===11)||!cpfValid(cpf)||zip.length!==8||!address||!city||!(/^[A-Z]{2}$/.test(state)))return clientError('Confira seus dados, CPF, telefone e endereço.');let cart;try{cart=validateItems(body.items,await catalogFor(req,env,storeSnapshot))}catch(e){return clientError(e.message)}if(cart.usesApparelPricing&&body.pricingPolicyVersion!==RETAIL_PRICE_POLICY_VERSION)return clientError('Os preços da loja foram atualizados. Recarregue a página e confira sua sacola antes de continuar.',409);const shipping=Number(env.SHIPPING_FLAT_BRL);if(!Number.isFinite(shipping)||shipping<0||shipping>500)return clientError('Configuração de entrega inválida.',503);const total=round(cart.subtotal+shipping);if(total<=0)return clientError('Valor de pedido inválido.');
 const requestKey=safeText(req.headers.get('Idempotency-Key'),60);
@@ -88,7 +91,7 @@ if(!attempt.meta?.changes){
  if(saved?.payment_url&&saved.status==='awaiting_payment'){await linkAuthenticatedCheckout(req,env,saved.id,email);return json({orderId:saved.id,paymentUrl:saved.payment_url,total:saved.total,shipping:saved.shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',reused:true,trackingUrl:await customerTrackingLink(env,saved.id)});}
  return clientError('Sua cobrança ainda está em processamento ou precisa ser conferida. Consulte o pedido antes de tentar outra compra.',409);
 }
-await env.DB.prepare('INSERT INTO orders(id,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id,now,now,'awaiting_payment',name,email,phone,cpf,zip,address,city,state,JSON.stringify(cart.items),cart.subtotal,shipping,total).run();await linkAuthenticatedCheckout(req,env,id,email);if(whatsappOptIn)await env.DB.prepare('INSERT OR IGNORE INTO buyer_message_optin(order_id,consented_at) VALUES(?,?)').bind(id,now).run();
+await env.DB.prepare('INSERT INTO orders(id,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(id,now,now,'awaiting_payment',name,email,phone,cpf,zip,address,city,state,JSON.stringify(cart.items),cart.subtotal,shipping,total).run();await recordSharedSupplierCostReference(env,id,cart.items,cart.supplierCostProducts);await linkAuthenticatedCheckout(req,env,id,email);if(whatsappOptIn)await env.DB.prepare('INSERT OR IGNORE INTO buyer_message_optin(order_id,consented_at) VALUES(?,?)').bind(id,now).run();
 if(importTaxAcknowledged)await env.DB.prepare('INSERT OR IGNORE INTO order_import_disclosures(order_id,accepted_at,policy) VALUES(?,?,?)').bind(id,now,'customer_pays_import_taxes_v1').run();
 if(env.WA_TRANSPORT==='local')await recordPaymentEnvironment(env,id);
 try{const customer=await asaas('/customers',env,{name,email,cpfCnpj:cpf,mobilePhone:phone,postalCode:zip,addressNumber:(address.match(/\b\d{1,5}\b/)||[])[0]||'S/N',externalReference:id,notificationDisabled:true});const due=new Date(Date.now()+48*3600*1000).toISOString().slice(0,10);const charge=await asaas('/payments',env,{customer:customer.id,billingType,value:total,dueDate:due,description:`Streetball Store pedido ${id.slice(0,8)}`,externalReference:id});if(!charge.id||!charge.invoiceUrl)throw Error('Cobrança não retornou link seguro.');await env.DB.prepare('UPDATE orders SET payment_id=?,payment_url=?,updated_at=? WHERE id=?').bind(charge.id,charge.invoiceUrl,new Date().toISOString(),id).run();return json({orderId:id,paymentUrl:charge.invoiceUrl,total,subtotal:cart.subtotal,shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',trackingUrl:await customerTrackingLink(env,id)});}catch(e){await env.DB.prepare('UPDATE orders SET status=?,updated_at=? WHERE id=?').bind('payment_setup_failed',new Date().toISOString(),id).run();return clientError('Não foi possível gerar a cobrança. Tente novamente mais tarde.',502)}}
@@ -133,6 +136,14 @@ async function adminApi(request,env,ctx){
  if(!env.ADMIN_TOKEN||request.headers.get('authorization')!=='Bearer '+env.ADMIN_TOKEN)return clientError('Não autorizado.',401);
  if(!env.DB)return clientError('Banco não configurado.',503);
  const url=new URL(request.url);
+ if(url.pathname==='/api/admin/supplier-cost-reference'&&request.method==='GET'){
+   const orderId=url.searchParams.get('orderId');
+   if(!/^[a-f0-9-]{36}$/i.test(orderId||''))return clientError('Pedido inválido.');
+   if(!await sharedCostSchemaAvailable(env))return clientError('Referências de custo ainda não configuradas.',409);
+   const saved=await env.DB.prepare('SELECT policy_version,reference_json,created_at FROM supplier_order_cost_references WHERE order_id=?').bind(orderId).first();
+   if(!saved)return clientError('O pedido ainda não possui referência de compra registrada.',409);
+   return json({ok:true,consultaSomenteLeitura:true,orderId,policyVersion:saved.policy_version,currentPolicyVersion:SUPPLIER_COST_VERSION,reference:JSON.parse(saved.reference_json),createdAt:saved.created_at});
+ }
  if(url.pathname==='/api/admin/supplier-payment-check'&&request.method==='POST'){
    if(Number(request.headers.get('content-length')||0)>12000)return clientError('Dados de conferência muito grandes.',413);
    const raw=await request.text();
@@ -358,7 +369,17 @@ async function adminApi(request,env,ctx){
   if(!body||!allowed.includes(body.status)||typeof body.orderId!=='string')return clientError('Ação inválida.');
   const order=await env.DB.prepare('SELECT id,status,phone FROM orders WHERE id=?').bind(body.orderId).first();
   if(!order||!['paid_supplier_pending','supplier_preparing'].includes(order.status))return clientError('Pedido não elegível.',409);
-  await env.DB.prepare('UPDATE supplier_jobs SET status=?,updated_at=? WHERE order_id=?').bind(body.status,new Date().toISOString(),order.id).run();
+  const updatedAt=new Date().toISOString();
+  if(body.status==='supplier_paid'&&await payoutSchemaAvailable(env)){
+   const pending="NOT EXISTS(SELECT 1 FROM supplier_payout_intents WHERE order_id=? AND state NOT IN ('paid','refused','cancelled'))";
+   const result=await env.DB.batch([
+    env.DB.prepare("INSERT OR IGNORE INTO supplier_paid_order_records(order_id,source,reference_id,recorded_at) SELECT ?,CASE WHEN p.state='paid' THEN 'executor' ELSE 'manual' END,p.id,? FROM orders o LEFT JOIN supplier_payout_intents p ON p.order_id=o.id WHERE o.id=? AND "+pending)
+     .bind(order.id,updatedAt,order.id,order.id),
+    env.DB.prepare("UPDATE supplier_jobs SET status='supplier_paid',updated_at=? WHERE order_id=? AND EXISTS(SELECT 1 FROM supplier_paid_order_records WHERE order_id=?) AND "+pending)
+     .bind(updatedAt,order.id,order.id,order.id)
+   ]);
+   if(!result[1]?.meta?.changes)return clientError('Há uma tentativa de Pix pendente de conferência. Confira a transação no Asaas antes de registrar um pagamento manual.',409);
+  }else await env.DB.prepare('UPDATE supplier_jobs SET status=?,updated_at=? WHERE order_id=?').bind(body.status,updatedAt,order.id).run();
   if(body.status==='supplier_confirmed'&&order.status==='paid_supplier_pending'){
     await env.DB.prepare('UPDATE orders SET status=?,updated_at=? WHERE id=?').bind('supplier_preparing',new Date().toISOString(),order.id).run();
     if(ctx&&env.WA_AUTOMATION_ENABLED==='true'&&env.ASAAS_SANDBOX!=='true')ctx.waitUntil(sendBuyerUpdate(env,order).catch(()=>{}));
@@ -379,7 +400,11 @@ async function whatsappInbound(req,env,ctx){
  return json({ok:true});
 }
 export default {async fetch(request,env,ctx){const url=new URL(request.url);if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors});try{
- if(url.pathname.startsWith('/api/local-whatsapp/'))return await handleLocalWhatsApp(request,env,{onInbound:message=>handleSupplierInbound(env,message,ctx)});
+ if(url.pathname==='/api/webhooks/asaas/supplier-payout-authorization')return await handlePayoutAuthorization(request,env);
+ if(url.pathname.startsWith('/api/local-whatsapp/'))return await handleLocalWhatsApp(request,env,{
+  onInbound:message=>handleSupplierInbound(env,message,ctx),
+  onPayoutTick:()=>{if(env.ASAAS_SUPPLIER_PAYOUT_AUTH_TOKEN&&ctx?.waitUntil)ctx.waitUntil(processSupplierPayouts(env,{enqueue:enqueueLocalGroup}).catch(()=>{}));}
+ });
  // Rotas de conta explícitas: evitam 404 da camada de assets em navegadores mobile.
  if(request.method==='GET'&&['/conta','/criar-conta','/pedidos'].includes(url.pathname)){
   const fragment=url.pathname==='/criar-conta'?'#criar-conta':url.pathname==='/pedidos'?'#pedidos':'';
@@ -426,7 +451,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);if(r
    const updates=await env.DB.prepare('SELECT stage,evidence_source,created_at FROM order_tracking_events WHERE order_id=? ORDER BY created_at DESC LIMIT 50').bind(id).all();
    return json(formatProgress(order,meta,updates.results||[]));
  }
- if(url.pathname==='/api/checkout/config'&&request.method==='GET')return checkoutConfig(env);
+ if(url.pathname==='/api/checkout/config'&&request.method==='GET')return await checkoutConfig(env);
  if(url.pathname==='/api/orders'&&request.method==='POST')return await createOrder(request,env);
  if(url.pathname==='/api/webhooks/asaas'&&request.method==='POST')return await paymentWebhook(request,env,ctx);
  if(url.pathname==='/api/webhooks/whatsapp'&&request.method==='GET'){const q=url.searchParams;if(q.get('hub.mode')==='subscribe'&&q.get('hub.verify_token')===env.WA_VERIFY_TOKEN)return new Response(q.get('hub.challenge')||'');return clientError('Token inválido.',403)}
@@ -443,9 +468,9 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);if(r
   }));
   return json({ok:images.every(x=>x.ok),available:images.filter(x=>x.ok).length,total:images.length,images});
  }
- if(url.pathname==='/api/health')return json({ok:true,service:'streetball-store',checkoutReady:checkoutReady(env),sandbox:env.ASAAS_SANDBOX==='true',supplierPaymentAutomated:false});
+ if(url.pathname==='/api/health')return json({ok:true,service:'streetball-store',checkoutReady:checkoutReady(env),sandbox:env.ASAAS_SANDBOX==='true',supplierPaymentAutomated:env.ASAAS_SUPPLIER_PAYOUT_AUTH_TOKEN?(await supplierPayoutStatus(env)).enabled:false});
  if(url.pathname.startsWith('/api/'))return clientError('Endpoint não encontrado.',404);
  if(env.ASSETS)return env.ASSETS.fetch(request);return new Response('Assets não configurados.',{status:503});
 }catch(err){return clientError('Serviço indisponível. Tente novamente.',500)}} ,
- async scheduled(event,env){if(!env.DB)return;await monitorSupplierSLA(env);await retryPendingRoutes(env);}
+ async scheduled(event,env){if(!env.DB)return;await monitorSupplierSLA(env);await retryPendingRoutes(env);if(env.ASAAS_SUPPLIER_PAYOUT_AUTH_TOKEN)await processSupplierPayouts(env,{enqueue:enqueueLocalGroup});}
 };

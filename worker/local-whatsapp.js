@@ -41,6 +41,7 @@ export async function handleLocalWhatsApp(request,env,callbacks={}){
   if(action==='status'&&!binding)return reply({ok:true,mode:'self_test_only',online:false,heartbeatAt:null,queue:[],latest:null});
   if(!binding||binding.account_jid!==own)return reply({error:'A ponte deve usar a mesma conta secundária cadastrada.'},409);
   if(action==='session'||action==='claim')await env.DB.prepare('UPDATE wa_local_bridge SET heartbeat_at=? WHERE id=1 AND account_jid=?').bind(instant(),own).run();
+  if(action==='claim')callbacks.onPayoutTick?.();
   if(action==='session')return reply({ok:true,mode:'self_test_only'});
   if(action==='production-status')return reply(await productionReadiness(env));
   if(action.startsWith('orders-'))return await handleOrderBridgeAction(action,env,body,own,callbacks);

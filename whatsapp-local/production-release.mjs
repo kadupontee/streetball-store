@@ -82,7 +82,7 @@ export async function releaseProduction({root=repositoryRoot,paths=statePaths(),
   throw new Error('O checkout foi publicado, mas o encaminhamento de pedidos não foi confirmado. Confira npm run status-pedidos e npm run status-loja.');
  }
  const summary={ok:true,ambienteAtivo:'producao',checkoutAtivo:true,whatsappOnline:true,
-  encaminhamentoPedidosAtivo:true,localOrdersEnabled:true,pagamentoFornecedorAutomatico:false};
+  encaminhamentoPedidosAtivo:true,localOrdersEnabled:true,pagamentoFornecedorAutomatico:checkout.supplierPaymentAutomated===true};
  log(JSON.stringify(summary,null,2));
  log('Vendas reais liberadas. Acompanhe o recebimento do primeiro pagamento no Asaas e o pedido na loja.');
  return summary;

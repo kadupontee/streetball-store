@@ -31,7 +31,9 @@ test('Google JWT checks real signature, audience, issuer, verified email, nonce 
  const user=await verifyGoogleIdToken(token,clientId,nonce,options);
  assert.equal(user.email,email);assert.equal(user.sub,'104958729103948572910');
  await assert.rejects(()=>verifyGoogleIdToken(token,clientId,'a'.repeat(64),options),/claims/);
- await assert.rejects(()=>verifyGoogleIdToken(token.replace(/.$/,token.at(-1)==='A'?'B':'A'),clientId,nonce,options),/signature|Invalid/);
+ // Changing the final base64url character can leave all decoded signature bytes unchanged.
+ const parts=token.split('.'),badSignature=Buffer.from(parts[2],'base64url');badSignature[0]^=1;
+ await assert.rejects(()=>verifyGoogleIdToken(parts.slice(0,2).join('.')+'.'+b64(badSignature),clientId,nonce,options),/signature|Invalid/);
  await assert.rejects(()=>verifyGoogleIdToken(token,clientId+'x',nonce,options),/configured|nonce/);
  for(const claims of [{email_verified:false},{iss:'https://fake-google.com'},{aud:'another-app'},{exp:10},{sub:'123'},{nbf:Math.floor(Date.now()/1000)+1000}]){
   await assert.rejects(async()=>verifyGoogleIdToken(await signGoogleToken(claims),clientId,nonce,options));

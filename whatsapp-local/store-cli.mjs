@@ -6,7 +6,7 @@ import { bridgeApi, readBridgeConfig } from './store-bridge.mjs';
 import {restartConnection} from './restart.mjs';
 
 export async function storeCommand(action, paths = statePaths()) {
-  if (!['test','status','orders-preview','orders-status','orders-billing-status','orders-enable','orders-disable','production-status'].includes(action)) throw new Error('Comando da loja inválido.');
+  if (!['test','status','orders-preview','orders-status','orders-billing-status','orders-payout-status','orders-payout-disable','orders-enable','orders-disable','production-status'].includes(action)) throw new Error('Comando da loja inválido.');
   const config = readBridgeConfig(paths);
   if (!config) throw new Error('Primeiro execute npm run integrar-loja.');
   const account = ownJid(readJson(path.join(paths.auth, 'creds.json'))?.me);

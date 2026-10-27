@@ -2,7 +2,7 @@
 
 Alternativa local: vincular o número por QR code, guardar a sessão no Mac, testar uma mensagem na conversa do próprio número, manter a conexão em segundo plano e validar a ligação com o site. Não depende da conclusão da verificação empresarial da Meta.
 
-**Estado desta entrega:** conexão local, fila de pedidos, envio de fotos, leitura de respostas vinculadas e avisos consentidos ao comprador. O proprietário confirmou atividade comercial e emissão fiscal para os pedidos enviados do exterior e autorizou a liberação de produção. A configuração atual está pronta para `npm run liberar-vendas`, descrito na seção 8; a publicação e a conferência ainda precisam ser executadas no Mac autenticado. O pagamento ao fornecedor continua manual.
+**Estado desta entrega:** conexão local, pedidos/fotos, respostas vinculadas, avisos consentidos e executor Pix com tabela de compra compartilhada pelos cinco fornecedores. A operação da loja já foi liberada pelo proprietário; novos pagamentos ao fornecedor vêm desligados e têm preparação e ativação próprias, descritas na seção 10. Instalar/publicar o código não declara um Pix pago nem conclui a configuração de saídas da conta Asaas.
 
 As etapas de instalação e preparação abaixo descrevem a fase anterior em Sandbox. Os instaladores `integrar-loja`/`integrar-pedidos` e os comandos `configurar-asaas`/`preparar-producao` exigem essa configuração anterior e não devem ser repetidos para liberar a configuração atual.
 
@@ -177,7 +177,7 @@ npm run status-pedidos
 
 Somente pedidos de produção com cobrança recebida correspondente entram no encaminhamento. Os testes antigos permanecem como testes. A confirmação do token do webhook exige o primeiro evento real recebido. Acompanhe o pagamento no Asaas e o pedido na loja para conferir esse percurso.
 
-O Mac deve permanecer ligado, com internet e sem repouso. Para parar somente o encaminhamento local, use `npm run desativar-pedidos`; esse comando não desativa o checkout nem cancela cobranças. O pagamento ao fornecedor e os reembolsos continuam sob operação manual.
+O Mac deve permanecer ligado, com internet e sem repouso. Para parar somente o encaminhamento local, use `npm run desativar-pedidos`; esse comando não desativa o checkout nem cancela cobranças. O pagamento ao fornecedor continua manual até a preparação e a ativação da seção 10. Os reembolsos continuam sob operação manual.
 
 ## 9. Receber cobranças de fornecedores com formatos diferentes
 
@@ -192,7 +192,37 @@ O primeiro comando aplica a tabela adicional, publica o Worker, confere a versã
 
 O conector passa a preservar textos de até 6.000 caracteres. Ao receber um link de outra plataforma, chave Pix, boleto ou aviso de anexo, o bot pode solicitar ao fornecedor o orçamento detalhado e o Pix Copia e Cola por texto. Anexos não são baixados nem lidos; sites externos não são navegados. O fornecedor deve responder à mensagem do pedido ou indicar `COBRANÇA`/`INVOICE` e os primeiros oito caracteres do pedido. Sem referência exata, a cobrança não pode ser usada para pagamento. O bot evita repetir o mesmo pedido de detalhes.
 
-`status-cobrancas` mostra `available`, `enabled`, a fila e pendências. `ready_for_check` representa total e Pix coletados para conferência, não um pagamento concluído. Ainda faltam a referência de custos e recebedores por fornecedor, o executor com registro exclusivo de débitos e a confirmação da autorização de saídas no Asaas para automatizar pagamentos. A conferência pode selecionar a cobrança registrada por `billingId`; veja `worker/SUPPLIER_PAYMENTS.md`.
+`status-cobrancas` mostra a recepção, `costTable` com a tabela comum confirmada e `payouts` com o executor. `ready_for_check` representa total e Pix coletados para conferência, não pagamento concluído. Novos pedidos guardam a referência de compra em USD antes da cobrança; alterações do catálogo não mudam esse custo. Pedidos antigos sem referência e produtos sem custo exato ficam para conferência. A conferência seleciona a cobrança por `billingId` e preenche itens/frete pelo servidor.
+
+## 10. Preparar o pagamento automático ao fornecedor
+
+```bash
+npm run preparar-pagamentos-fornecedores
+npm run status-pagamentos-fornecedores
+```
+
+O comando aplica a migração, publica o código, confirma a tabela dos fornecedores e prepara uma chave específica de autorização. O token é guardado em arquivo privado e copiado para a área de transferência, sem aparecer no Terminal. No Asaas, em **Menu do usuário > Integrações > Mecanismos de segurança**, cadastre a URL mostrada, o e-mail `contato@streetball.com.br` e cole o token. O validador atende somente aos Pix registrados pelo bot; não atende outras modalidades nem operações opcionais pela interface.
+
+A instalação inicial mantém débitos desligados. Quando houver uma cobrança real com Pix e custo conhecido, cadastre o recebedor e a regra financeira:
+
+```bash
+npm run configurar-pagamento-fornecedor
+```
+
+O cadastro consulta o recebedor no banco e não solicita Pix. Escolha câmbio fixo conferido ou a cotação explicitamente declarada em cada cobrança. No segundo modo, o bot confere USD, conversão, tarifas e resultado positivo, sem comparar com uma taxa de mercado. Informe despesas e validade reais; campos ausentes não viram zero.
+
+Com o mecanismo de segurança salvo no Asaas e um perfil vigente, a ativação permite processar cobranças elegíveis presentes e futuras:
+
+```bash
+npm run ativar-pagamentos-fornecedores
+npm run status-pagamentos-fornecedores
+```
+
+O executor registra uma intenção exclusiva por pedido, consulta recebimento/saldo/tarifas e não repete um POST inconclusivo. Só marca pagamento após consulta separada confirmar `DONE`, valor e recebedor. Depois, envia o link oficial do comprovante pelo transporte existente. O status distingue envio solicitado, conclusão no banco, tarifa/resultado reais e comprovante enfileirado/enviado. Não há teto fixo por pedido/dia definido no bot.
+
+Para parar novos envios, use `npm run desativar-pagamentos-fornecedores`. Isso não desfaz um Pix já solicitado ou concluído. Repetir a preparação preserva uma ativação anterior e o histórico exclusivo. Consulte `worker/SUPPLIER_PAYMENTS.md` para as condições completas.
+
+Um pedido já registrado como pago manualmente fica protegido contra pagamento automático, mesmo se chegar outra cobrança. Se uma tentativa perdeu a resposta do Asaas, use `npm run conferir-pix-pendente` com o ID da intenção mostrado no status e o ID correspondente na conta. O comando só consulta essa transação e exige a referência exclusiva, valor e recebedor; não solicita outro Pix. Com o executor já habilitado, uma atualização de perfil pode liberar cobranças que aguardavam esses dados.
 
 ## Validação local
 

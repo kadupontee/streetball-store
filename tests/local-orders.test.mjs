@@ -8,6 +8,7 @@ import {enqueueLocalGroup} from '../worker/local-orders.js';
 import worker from '../worker/index.js';
 import {pixFixture} from './support/pix-fixture.mjs';
 import {auditSupplierPayment} from '../worker/supplier-payment-audit.js';
+import {recordSharedSupplierCostReference,SUPPLIER_COST_VERSION} from '../worker/supplier-cost-reference.js';
 
 const token='fake-local-order-secret-012345678901234567890';
 const self='5511999999999@s.whatsapp.net',supplier='8613800138000',second='8613900139000';
@@ -165,6 +166,9 @@ test('checkout records its environment and only the received-payment webhook rel
  assert.equal(one(query,'SELECT COUNT(*) AS count FROM wa_local_outbox').count,0);
  assert.equal((await post('PAYMENT_RECEIVED')).status,200);assert.equal(await hasProductionReceipt(env,result.orderId),true);
  assert.equal(one(query,'SELECT state FROM supplier_dispatch WHERE order_id=?',[result.orderId]).state,'queued_local');
+ const costReference=JSON.parse(one(query,'SELECT reference_json FROM supplier_order_cost_references WHERE order_id=?',[result.orderId]).reference_json);
+ assert.equal(costReference.complete,true);assert.equal(costReference.totalUsd,'15.00');
+ assert.ok(!one(query,'SELECT items_json FROM orders WHERE id=?',[result.orderId]).items_json.includes('unitUsd'));
 });
 test('a reply interrupted after deduplication is surfaced for review without repeating its business action',async t=>{
  const {db,query}=localD1(t),env=envFor(db);seed(query);await request(env,'session');await routePaidOrder(env,orderId);await sendNext(env,'INTERRUPTED_QUERY');
@@ -178,7 +182,11 @@ test('a reply interrupted after deduplication is surfaced for review without rep
 });
 
 async function readyForBill(env){
- await request(env,'session');await routePaidOrder(env,orderId);await sendNext(env,'BILL_STOCK_QUERY');
+ await request(env,'session');
+ assert.equal((await request(env,'orders-costs-configure',{policyVersion:SUPPLIER_COST_VERSION})).status,200);
+ const order=await env.DB.prepare('SELECT items_json FROM orders WHERE id=?').bind(orderId).first();
+ await recordSharedSupplierCostReference(env,orderId,JSON.parse(order.items_json),[{id:'demo',kind:'fan',sizes:['P']}]);
+ await routePaidOrder(env,orderId);await sendNext(env,'BILL_STOCK_QUERY');
  await request(env,'orders-inbound',{messageId:'BILL_STOCK_YES',fromJid:supplier+'@s.whatsapp.net',contextId:'BILL_STOCK_QUERY',text:'sim'});
  await sendNext(env,'BILL_ORDER_HEADER');await sendNext(env,'BILL_ORDER_PHOTO');
 }
@@ -220,6 +228,11 @@ test('a long complete bill is preserved and the audit reads its current evidence
  };
  const report=await auditSupplierPayment(env,auditInput(evidence.id),{request:provider});
  assert.equal(report.conferenciaFinanceiraConcluida,true);assert.equal(report.pagamentoIniciado,false);assert.equal(calls.length,3);
+ assert.equal(report.referenciaCustos.origem,'tabela_compartilhada_do_pedido');
+ const withAutomaticItems=auditInput(evidence.id);delete withAutomaticItems.costs.items;delete withAutomaticItems.costs.freightUsd;
+ assert.equal((await auditSupplierPayment(env,withAutomaticItems,{request:provider})).conferenciaFinanceiraConcluida,true);
+ const mismatched=auditInput(evidence.id);mismatched.costs.items[0].unitUsd='12.00';
+ assert.equal((await auditSupplierPayment(env,mismatched,{request:()=>assert.fail('Cost mismatch cannot reach bank')})).conferenciaFinanceiraConcluida,false);
  assert.equal(one(query,'SELECT status FROM orders WHERE id=?',[orderId]).status,'paid_supplier_pending');
  const status=await request(env,'orders-billing-status');assert.equal(status.available,true);assert.equal(status.latest.state,'ready_for_check');
  assert.ok(!JSON.stringify(status).includes(pix));assert.ok(!JSON.stringify(status).includes('00000000000100'));

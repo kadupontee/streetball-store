@@ -1,14 +1,16 @@
 import {normalizeSupplierBilling,isSupplierBilling,billingOrderReferences,billingRequestText,BILLING_FORMAT_VERSION,BILLING_TEXT_LIMIT} from './supplier-billing-format.js';
+import {sharedSupplierCostStatus} from './supplier-cost-reference.js';
 
 const hash=async value=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const now=()=>new Date().toISOString();
 const issueText={ambiguous_total:'Informe a moeda e o total sem ambiguidade.',message_too_long:'A mensagem excede o tamanho aceito.',
  invalid_pix:'O Pix está incompleto ou inválido.',multiple_pix:'Há mais de um código Pix na cobrança.',
- conflicting_brl_totals:'Há totais em reais diferentes na mensagem.',missing_brl_total:'Falta o total final em reais.',
+ conflicting_brl_totals:'Há totais em reais diferentes na mensagem.',conflicting_usd_totals:'Há totais em dólares diferentes na mensagem.',missing_brl_total:'Falta o total final em reais.',
  attachment_needs_text:'Solicitado orçamento e Pix Copia e Cola por texto.',missing_pix_copy_paste:'Falta o Pix Copia e Cola completo.',
  pix_quote_mismatch:'O valor do Pix difere do orçamento.',order_reference_conflict:'A referência indica outro pedido.',
  missing_order_reference:'Falta vincular a cobrança à mensagem ou ao código exato do pedido.',
- multiple_eligible_orders:'Há vários pedidos possíveis. A cobrança aguarda uma referência exata.'};
+ multiple_eligible_orders:'Há vários pedidos possíveis. A cobrança aguarda uma referência exata.',
+ conflicting_exchange_rates:'A mensagem contém cotações de câmbio diferentes.',invalid_exchange_rate:'O câmbio declarado é inválido.'};
 
 export async function supplierBillingAvailable(env){
  if(!env.DB)return false;
@@ -70,7 +72,7 @@ export async function collectSupplierBilling(env,message,{enqueue,productionRece
  }
  await env.DB.prepare('UPDATE supplier_billing_messages SET state=?,updated_at=? WHERE id=? AND state=?')
   .bind(state,now(),id,'collecting').run();
- await env.DB.prepare('UPDATE supplier_jobs SET status=?,updated_at=? WHERE order_id=?')
+ await env.DB.prepare("UPDATE supplier_jobs SET status=?,updated_at=? WHERE order_id=? AND status!='supplier_paid'")
   .bind(envelope.readyForCheck?'supplier_payment_pending':'supplier_attention',now(),order.id).run();
  // Never mark stock, production, payment or receipt confirmed by invoice content.
  return true;
@@ -79,7 +81,7 @@ export async function collectSupplierBilling(env,message,{enqueue,productionRece
 export async function supplierBillingStatus(env){
  const available=await supplierBillingAvailable(env);
  const report={available,version:BILLING_FORMAT_VERSION,pagamentoAutomaticoHabilitado:false,pagamentoIniciado:false,
-  limitePorPedido:null,limitePorDia:null};
+  limitePorPedido:null,limitePorDia:null,costTable:await sharedSupplierCostStatus(env)};
  if(!available)return {...report,queue:[],latest:null};
  const rows=await env.DB.prepare('SELECT state,COUNT(*) AS count FROM supplier_billing_messages GROUP BY state').all();
  const last=await env.DB.prepare('SELECT id,order_id,state,format_json,created_at FROM supplier_billing_messages ORDER BY seq DESC LIMIT 1').first();
@@ -108,5 +110,5 @@ export async function loadSupplierBillingForAudit(env,input){
  // Clients cannot substitute any part of the recorded bill while retaining its ID.
  if(('pixPayload'in input&&input.pixPayload!==envelope.pixPayload)||
   ('quotedTotalBrl'in input&&input.quotedTotalBrl!==envelope.quotedTotalBrl))return null;
- return {...input,pixPayload:envelope.pixPayload,quotedTotalBrl:envelope.quotedTotalBrl};
+ return {...input,pixPayload:envelope.pixPayload,quotedTotalBrl:envelope.quotedTotalBrl,quotedTotalUsd:envelope.quotedTotalUsd??null,quotedExchangeRateBrlPerUsd:envelope.quotedExchangeRateBrlPerUsd??null};
 }

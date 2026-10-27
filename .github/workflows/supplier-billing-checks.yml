@@ -6,12 +6,14 @@ on:
       - worker/**
       - whatsapp-local/**
       - tests/**
+      - scripts/costs.json
       - .github/workflows/supplier-billing-checks.yml
   pull_request:
     paths:
       - worker/**
       - whatsapp-local/**
       - tests/**
+      - scripts/costs.json
       - .github/workflows/supplier-billing-checks.yml
 permissions:
   contents: read
@@ -31,5 +33,7 @@ jobs:
         run: npm ci --prefix whatsapp-local
       - name: Conferir loja, cobrancas e isolamento de pagamentos
         run: node --import ./tests/register-worker-html.mjs --test tests/*.test.mjs
+      - name: Conferir tabela de compra e precos de venda separados
+        run: python scripts/test_supplier_costs.py
       - name: Conferir conector, atualizacao e respostas de fornecedores
         run: npm test --prefix whatsapp-local

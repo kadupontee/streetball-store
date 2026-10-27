@@ -2,6 +2,10 @@ import {supplierPhotoRequest} from './supplier-order-format.js';
 import {classifyStockReply} from './supplier-replies.js';
 import {BILLING_TEXT_LIMIT} from './supplier-billing-format.js';
 import {supplierBillingStatus} from './supplier-billing.js';
+import {configureSharedSupplierCosts} from './supplier-cost-reference.js';
+import {supplierPayoutStatus,handleSupplierPayoutAction} from './supplier-payouts.js';
+import {localOrdersReady,usesLocalWhatsApp} from './fulfillment-readiness.js';
+export {localOrdersReady,usesLocalWhatsApp} from './fulfillment-readiness.js';
 
 const now=()=>new Date().toISOString();
 const plus=ms=>new Date(Date.now()+ms).toISOString();
@@ -10,12 +14,6 @@ const jobId=value=>typeof value==='string'&&/^lo_[a-f0-9]{32}_\d{1,2}$/.test(val
 const messageId=value=>typeof value==='string'&&/^[A-Za-z0-9_-]{4,180}$/.test(value);
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store'}});
 const hash=async text=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)))].map(b=>b.toString(16).padStart(2,'0')).join('');
-export const usesLocalWhatsApp=env=>env.WA_TRANSPORT==='local';
-export function localOrdersReady(env){
- return !!(env.DB&&env.WA_LOCAL_BRIDGE_TOKEN&&usesLocalWhatsApp(env)&&env.WA_LOCAL_ORDERS_ENABLED==='true'&&
-  env.WA_AUTOMATION_ENABLED==='true'&&env.ASAAS_SANDBOX==='false'&&env.PAYMENTS_PRODUCTION_ENABLED==='true'&&
-  env.SALES_ENABLED==='true'&&env.CUSTOMER_PAYS_IMPORT_TAXES==='true'&&env.IMPORT_TAX_DISCLOSURE_APPROVED==='true'&&env.IMPORT_COMPLIANCE_APPROVED==='true');
-}
 export async function recordPaymentEnvironment(env,orderId){
  await env.DB.prepare('INSERT OR IGNORE INTO order_payment_environments(order_id,environment,recorded_at) VALUES(?,?,?)')
   .bind(orderId,env.ASAAS_SANDBOX==='true'?'sandbox':'production',now()).run();
@@ -57,12 +55,16 @@ async function eligible(env,group){
   const consent=await env.DB.prepare('SELECT order_id FROM buyer_message_optin WHERE order_id=?').bind(order.id).first();
   return !!consent&&(group.purpose==='buyer_update'?order.status==='supplier_preparing':order.status==='paid_supplier_pending');
  }
- if(order.status!=='paid_supplier_pending'&&group.purpose!=='billing_request')return false;
+ if(order.status!=='paid_supplier_pending'&&!['billing_request','supplier_payment_receipt'].includes(group.purpose))return false;
  const d=await env.DB.prepare('SELECT supplier_id,supplier_phone,state,message_id FROM supplier_dispatch WHERE order_id=?').bind(order.id).first();
  if(!d||d.supplier_phone+'@s.whatsapp.net'!==group.recipient_jid)return false;
  const c=await env.DB.prepare('SELECT phone_e164,authorized FROM supplier_contacts WHERE supplier_id=?').bind(d.supplier_id).first();
  if(c?.authorized!==1||c.phone_e164!==d.supplier_phone)return false;
- const states={stock_query:['sending','queued_local'],order_details:['awaiting_reply','overdue_24h','details_queued_local'],stock_details:['awaiting_reply','overdue_24h','details_sent'],billing_request:['details_sent','confirmed']};
+ if(group.purpose==='supplier_payment_receipt'){
+  const paid=await env.DB.prepare("SELECT id FROM supplier_payout_intents WHERE order_id=? AND supplier_id=? AND supplier_phone=? AND state='paid' AND receipt_url IS NOT NULL").bind(order.id,d.supplier_id,d.supplier_phone).first();
+  if(!paid)return false;
+ }
+ const states={stock_query:['sending','queued_local'],order_details:['awaiting_reply','overdue_24h','details_queued_local'],stock_details:['awaiting_reply','overdue_24h','details_sent'],billing_request:['details_sent','confirmed'],supplier_payment_receipt:['details_sent','confirmed']};
  return (states[group.purpose]||[]).includes(d.state);
 }
 
@@ -214,7 +216,20 @@ async function inbound(env,body,own,onInbound){
 /** Called only after the existing bridge token and bound account have been verified. */
 export async function handleOrderBridgeAction(action,env,body,own,{onInbound}={}){
  if(action==='orders-status')return json({ok:true,...await orderBridgeStatus(env)});
- if(action==='orders-billing-status')return json({ok:true,enabled:localOrdersReady(env),...await supplierBillingStatus(env)});
+ if(action==='orders-billing-status'){
+  const billing=await supplierBillingStatus(env),payouts=await supplierPayoutStatus(env);
+  return json({ok:true,enabled:localOrdersReady(env),...billing,pagamentoAutomaticoHabilitado:payouts.enabled,
+   pagamentoIniciado:!!payouts.latest,payouts});
+ }
+ if(action.startsWith('orders-payout-')){
+  try{return json(await handleSupplierPayoutAction(action.slice('orders-payout-'.length),env,body));}
+  catch(error){return json({error:String(error.message||'Confira a configuração financeira.').slice(0,500)},409);}
+ }
+ if(action==='orders-costs-configure'){
+  if(!localOrdersReady(env))return json({error:'O transporte de produção precisa estar ativo.'},409);
+  const costTable=await configureSharedSupplierCosts(env,body.policyVersion);
+  return costTable?json({ok:true,costTable}):json({error:'A tabela compartilhada ou os fornecedores ainda não foram confirmados.'},409);
+ }
  if(action==='orders-preview')return await preview(env,own);
  if(action==='orders-inbound')return await inbound(env,body,own,onInbound);
  if(action==='orders-claim'){

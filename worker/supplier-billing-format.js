@@ -1,6 +1,6 @@
 // Supplier content is evidence, never an instruction or an authorization to debit.
 export const BILLING_TEXT_LIMIT=6000;
-export const BILLING_FORMAT_VERSION='supplier-billing-v1';
+export const BILLING_FORMAT_VERSION='supplier-billing-v2-shared-costs';
 const normalized=value=>String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const unique=values=>[...new Set(values)];
 
@@ -102,18 +102,28 @@ export function normalizeSupplierBilling(text,mediaType=''){
  if(mediaType)formats.push(mediaType==='document'?'document':'media');
  if(quoted.totals.length)formats.push('quote');
  if(!formats.length)formats.push('text');
+ const rates=[...raw.split(/\r?\n/).map(line=>normalized(line).trim().match(/^(?:cambio(?:\s+brl(?:\s+por\s+usd)?)?|exchange rate|usd\/brl|usd to brl|taxa de cambio)\s*[:=]?\s*(\d+(?:[.,]\d{1,6})?)\s*(?:brl|r\$)?$/i)?.[1]).filter(Boolean)].map(value=>value.replace(',','.'));
+ const distinctRates=[...new Set(rates.map(value=>{
+  if(value.length>24)return null;
+  const [whole,fraction='']=value.split('.'),part=fraction.replace(/0+$/,'');
+  return BigInt(whole).toString()+(part?'.'+part:'');
+ }).filter(Boolean))];
  const issues=[...quoted.unclear];
+ if(rates.length&&!distinctRates.length)issues.push('invalid_exchange_rate');
+ if(distinctRates.length>1)issues.push('conflicting_exchange_rates');
  if(raw.length>BILLING_TEXT_LIMIT)issues.push('message_too_long');
  if(parsed.invalid)issues.push('invalid_pix');
  if(parsed.valid.length>1)issues.push('multiple_pix');
  const brl=quoted.totals.filter(x=>x.currency==='BRL');
+ const dollars=quoted.totals.filter(x=>x.currency==='USD');
  if(brl.length>1)issues.push('conflicting_brl_totals');
+ if(dollars.length>1)issues.push('conflicting_usd_totals');
  if(!brl.length)issues.push('missing_brl_total');
  if(parsed.valid.length===0)issues.push(mediaType?'attachment_needs_text':'missing_pix_copy_paste');
  const pix=parsed.valid.length===1?parsed.valid[0]:null,total=brl.length===1?brl[0].value:null;
  if(pix?.amountBrl&&total&&BigInt(pix.amountBrl.replace('.',''))!==BigInt(total.replace('.','')))issues.push('pix_quote_mismatch');
  return {version:BILLING_FORMAT_VERSION,formats:unique(formats),orderReferences:billingOrderReferences(raw),
-  totals:quoted.totals,quotedTotalBrl:total,pixPayload:pix?.payload??null,pixAmountBrl:pix?.amountBrl??null,
+  totals:quoted.totals,quotedTotalBrl:total,quotedTotalUsd:dollars.length===1?dollars[0].value:null,quotedExchangeRateBrlPerUsd:distinctRates.length===1?distinctRates[0]:null,pixPayload:pix?.payload??null,pixAmountBrl:pix?.amountBrl??null,
   links,issues:unique(issues),readyForCheck:issues.length===0};
 }
 

@@ -13,6 +13,8 @@ export async function prepareBilling({platform=process.platform,paths=statePaths
  api=bridgeApi,restart=restartConnection,log=console.log}={}){
  if(platform!=='darwin')throw Error('Execute este comando no Mac que mantém o WhatsApp conectado.');
  const toml=fs.readFileSync(path.join(root,'wrangler.toml'),'utf8');
+ const policy=JSON.parse(fs.readFileSync(path.join(root,'scripts','costs.json'),'utf8')).shared_supplier_policy;
+ if(policy?.owner_confirmed!==true||policy.scope!=='five_registered_suppliers'||!/^shared-usd-[a-z0-9-]+$/.test(policy.version||''))throw Error('A tabela de compra compartilhada ainda não foi confirmada nesta versão.');
  const flags={ASAAS_SANDBOX:'false',WA_TRANSPORT:'local',SALES_ENABLED:'true',PAYMENTS_PRODUCTION_ENABLED:'true',
   WA_AUTOMATION_ENABLED:'true',WA_LOCAL_ORDERS_ENABLED:'true',CUSTOMER_PAYS_IMPORT_TAXES:'true',
   IMPORT_TAX_DISCLOSURE_APPROVED:'true',IMPORT_COMPLIANCE_APPROVED:'true',SHIPPING_FLAT_BRL:'0.00',STORE_PUBLIC_URL:'https://lojastreetball.com.br'};
@@ -36,8 +38,11 @@ export async function prepareBilling({platform=process.platform,paths=statePaths
  }
  const status=await api(config,account,'orders-billing-status');
  if(status.available!==true||status.enabled!==true||status.version!==BILLING_FORMAT_VERSION)throw Error('A versão publicada não confirmou o registro de cobranças. Confira npm run status-cobrancas.');
+ const costs=await api(config,account,'orders-costs-configure',{policyVersion:policy.version});
+ if(costs.costTable?.configured!==true||costs.costTable.version!==policy.version||costs.costTable.suppliers<1)throw Error('A tabela compartilhada não foi confirmada para os fornecedores cadastrados. Confira npm run status-cobrancas.');
  await restart({paths});
  log('Recebimento de cobranças preparado. O bot pode pedir os dados faltantes ao fornecedor.');
+ log('Tabela de compra compartilhada confirmada para '+costs.costTable.suppliers+' fornecedores autorizados.');
  log('Este comando não libera débitos automáticos. Confira npm run status-cobrancas.');
  return status;
 }
