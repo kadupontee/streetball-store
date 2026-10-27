@@ -231,3 +231,5 @@ npm test
 ```
 
 Os testes usam sockets simulados: não conectam ao WhatsApp nem enviam mensagens reais. A conexão real e o serviço do macOS devem ser validados no Mac após a leitura do QR code.
+
+Se o envio do token foi confirmado pela Cloudflare mas a consulta imediata ainda não o encontrou, a preparação tenta novamente a confirmação. Para retomar sem migrar, publicar ou enviar o segredo outra vez, use `npm run concluir-preparacao-pagamentos` no Mac original. O comando preserva a chave privada já salva, consulta a loja e só a copia para a área de transferência depois da confirmação. Também pode ser usado para copiar a mesma chave novamente ao preencher o formulário do Asaas. Não habilita pagamentos.

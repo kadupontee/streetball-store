@@ -23,6 +23,7 @@
     "status-cobrancas": "node store-cli.mjs orders-billing-status",
     "preparar-cobrancas": "node billing-setup.mjs",
     "preparar-pagamentos-fornecedores": "node payout-setup.mjs",
+    "concluir-preparacao-pagamentos": "node payout-setup.mjs resume",
     "configurar-pagamento-fornecedor": "node payout-config.mjs profile",
     "ativar-pagamentos-fornecedores": "node payout-config.mjs enable",
     "desativar-pagamentos-fornecedores": "node store-cli.mjs orders-payout-disable",

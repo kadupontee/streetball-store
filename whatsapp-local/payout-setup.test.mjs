@@ -12,7 +12,7 @@ function fixture(t){
  const paths=statePaths(home,'darwin');prepareState(paths);
  writePrivateJson(paths.config,{enabled:true,ordersEnabled:true,storeUrl:'https://lojastreetball.com.br',token:'a'.repeat(43)});
  writePrivateJson(path.join(paths.auth,'creds.json'),{me:{id:'5511999999999@s.whatsapp.net'}});
- const calls=[],logs=[],state={configured:false,enabled:false},options={paths,root:home,log:line=>logs.push(line),
+ const calls=[],logs=[],state={configured:false,enabled:false},options={paths,root:home,wait:async()=>{},log:line=>logs.push(line),
   async prepare(){calls.push({prepare:true});},
   async api(_config,_account,action,body){calls.push({action,body});return {ok:true,available:true,version:'supplier-pix-v1',authorizationTokenConfigured:state.configured,enabled:state.enabled};},
   run(command,args,opts){calls.push({command,args,opts});if(command==='npx')state.configured=true;return {status:0};}};
@@ -88,4 +88,27 @@ test('pending Pix recovery sends only the existing intent and transaction IDs to
  const intentId='11111111-2222-4333-8444-555555555555',transactionId='aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
  const f=configFixture(t,[intentId,transactionId]);const result=await configureSupplierPayout('resolve',f.options);
  assert.equal(result.novoPagamentoSolicitado,false);assert.deepEqual(f.calls,[{action:'orders-payout-resolve',body:{intentId,transactionId}}]);
+});
+
+test('secret confirmation retries stale responses and transient read failures without uploading or generating another key',async t=>{
+ const f=fixture(t),original=f.options.api;let reads=0;
+ f.options.api=async(...args)=>{reads++;if(reads===2)return {ok:true,available:true,version:'supplier-pix-v1',authorizationTokenConfigured:false};if(reads===3)throw Error('temporary');return original(...args);};
+ await prepareSupplierPayouts(f.options);assert.equal(reads,4);assert.equal(f.calls.filter(c=>c.command==='npx').length,1);
+ assert.equal(f.calls.filter(c=>c.command==='pbcopy').length,1);
+});
+test('confirmation timeout preserves the uploaded key and can resume with only read calls and local clipboard copy',async t=>{
+ const f=fixture(t),original=f.options.api;f.options.api=async()=>({ok:true,available:true,version:'supplier-pix-v1',authorizationTokenConfigured:false});
+ await assert.rejects(prepareSupplierPayouts(f.options),/concluir-preparacao-pagamentos/);
+ const file=path.join(f.paths.base,'supplier-payout-setup.json'),before=fs.readFileSync(file,'utf8'),token=readJson(file).token;
+ assert.ok(!f.calls.some(c=>c.command==='pbcopy'));f.calls.length=0;f.options.api=original;
+ const result=await prepareSupplierPayouts({...f.options,resume:true});assert.equal(result.enabled,false);
+ assert.equal(fs.readFileSync(file,'utf8'),before);assert.equal(f.calls.find(c=>c.command==='pbcopy').opts.input,token);
+ assert.ok(!f.calls.some(c=>c.command==='npx'||c.prepare||c.action==='orders-payout-enable'));
+});
+test('resume refuses missing local credentials and wrong remote version without inventing a token or declaring success',async t=>{
+ const f=fixture(t);await assert.rejects(prepareSupplierPayouts({...f.options,resume:true}),/original/);
+ await prepareSupplierPayouts(f.options);f.calls.length=0;
+ f.options.api=async()=>({ok:true,available:true,version:'older',authorizationTokenConfigured:true});
+ await assert.rejects(prepareSupplierPayouts({...f.options,resume:true}),/não foi confirmado/);
+ assert.ok(!f.calls.some(c=>c.command==='pbcopy'||c.command==='npx'));
 });
