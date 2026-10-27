@@ -120,6 +120,18 @@ A foto e os dados fictícios chegam somente à própria conta secundária. No ce
 
 As consultas reais exigem liberação de produção no Worker e ativação separada no Mac. Consulte `worker/LOCAL_WHATSAPP_ORDERS.md` para o fluxo e os limites. O instalador não converte pagamentos simulados em compras reais.
 
+## 6. Preparar a chave Asaas de produção
+
+Com a conta real do Asaas aprovada, crie uma chave em **Integrações > Chaves de API**. Nesta pasta:
+
+```bash
+npm run configurar-asaas
+```
+
+O comando verifica se o projeto e a loja publicada continuam em Sandbox e pede que a chave seja colada diretamente no campo de segredo do Wrangler. Ela será cadastrada no Worker como `ASAAS_PRODUCTION_API_KEY`, preservando a chave atual de testes. Não cole a chave no chat ou em comandos de shell.
+
+Esta etapa prepara uma credencial. A configuração do webhook real e as definições comerciais continuam necessárias antes da liberação de vendas. O conector em segundo plano pode permanecer ativo durante o cadastro. Veja `worker/SETUP.md`, passo 5.
+
 ## Validação local
 
 ```bash

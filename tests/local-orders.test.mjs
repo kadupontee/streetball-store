@@ -144,10 +144,12 @@ test('buyer notifications require recorded consent even for a paid production or
 });
 test('checkout records its environment and only the received-payment webhook releases a local query',async t=>{
  const {db,query}=localD1(t),env=envFor(db);seed(query);
- env.ASAAS_API_KEY='fake-api-key';env.ASAAS_WEBHOOK_TOKEN='fake-webhook-token';env.SHIPPING_FLAT_BRL='0';
+ env.ASAAS_PRODUCTION_API_KEY='fake-api-key';env.ASAAS_PRODUCTION_WEBHOOK_TOKEN='fake-webhook-token';env.SHIPPING_FLAT_BRL='0';
  env.ASSETS={async fetch(){return Response.json([{id:'demo',title:'Camisa Clube Exemplo',image:'/images/demo.webp',sizes:['P'],price:199.9,kind:'fan'}]);}};
  const previous=globalThis.fetch;t.after(()=>{globalThis.fetch=previous;});
- globalThis.fetch=async url=>{
+ globalThis.fetch=async (url,options)=>{
+  assert.ok(String(url).startsWith('https://api.asaas.com/v3/'));
+  assert.equal(options.headers.access_token,env.ASAAS_PRODUCTION_API_KEY);
   if(String(url).endsWith('/customers'))return Response.json({id:'cus_fake'});
   if(String(url).endsWith('/payments'))return Response.json({id:'pay_created_api',invoiceUrl:'https://checkout.example.invalid/pay'});
   throw Error('Unexpected network request');
@@ -156,7 +158,7 @@ test('checkout records its environment and only the received-payment webhook rel
  const checkout=await worker.fetch(new Request('https://loja.example/api/orders',{method:'POST',headers:{'content-type':'application/json','Idempotency-Key':crypto.randomUUID()},body:JSON.stringify(body)}),env);
  const result=await checkout.json();assert.equal(checkout.status,200,JSON.stringify(result));
  assert.equal(one(query,'SELECT environment FROM order_payment_environments WHERE order_id=?',[result.orderId]).environment,'production');
- const post=event=>worker.fetch(new Request('https://loja.example/api/webhooks/asaas',{method:'POST',headers:{'content-type':'application/json','asaas-access-token':env.ASAAS_WEBHOOK_TOKEN},body:JSON.stringify({id:'event_'+event,event,payment:{id:'pay_created_api',externalReference:result.orderId,value:199.9}})}),env);
+ const post=event=>worker.fetch(new Request('https://loja.example/api/webhooks/asaas',{method:'POST',headers:{'content-type':'application/json','asaas-access-token':env.ASAAS_PRODUCTION_WEBHOOK_TOKEN},body:JSON.stringify({id:'event_'+event,event,payment:{id:'pay_created_api',externalReference:result.orderId,value:199.9}})}),env);
  assert.equal((await post('PAYMENT_CONFIRMED')).status,200);assert.equal(await hasProductionReceipt(env,result.orderId),false);
  assert.equal(one(query,'SELECT COUNT(*) AS count FROM wa_local_outbox').count,0);
  assert.equal((await post('PAYMENT_RECEIVED')).status,200);assert.equal(await hasProductionReceipt(env,result.orderId),true);

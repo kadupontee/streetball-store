@@ -2,6 +2,8 @@
 
 O código já está publicado no Cloudflare em modo Sandbox; **vendas reais e automação WhatsApp continuam desativadas**. A notificação de desculpas exige consentimento opcional do comprador no checkout e template aprovado pela Meta. A loja do GitHub Pages continua sendo apenas vitrine. Para receber pedidos e pagamentos, é preciso publicar o **Cloudflare Worker** do repositório, vinculado ao banco **D1** e à conta **Asaas**. Não cole credenciais no GitHub ou no chat.
 
+Para o transporte pelo número secundário no Mac, siga também [LOCAL_WHATSAPP_ORDERS.md](LOCAL_WHATSAPP_ORDERS.md). As exigências de templates Meta abaixo se aplicam ao transporte oficial.
+
 ## O que já existe no código
 
 1. Carrinho e checkout na mesma loja, com seleção de **Pix** ou **cartão de crédito**.
@@ -93,7 +95,26 @@ Nunca inclua token nos arquivos públicos ou nos prints de divulgação.
 
 ## Passo 5 — Produção, depois da validação
 
-Troque a chave Sandbox pela chave Asaas real **no Worker**, cadastre webhook real, e apenas após teste de frete, nota fiscal/tributos, fluxo de compra, SLA e reembolsos altere:
+A conta real aprovada pode ter sua chave preparada enquanto a loja continua em Sandbox. No painel real do Asaas, crie uma chave de API para a Streetball Store em **Integrações > Chaves de API**. Na pasta `whatsapp-local` do Mac, execute:
+
+```bash
+npm run configurar-asaas
+```
+
+Cole a chave apenas no campo solicitado pelo Wrangler. O comando verifica a configuração local e o modo publicado antes de cadastrar `ASAAS_PRODUCTION_API_KEY` como segredo do Worker. A chave não é passada como argumento, salva em arquivo deste projeto nem exibida pelo programa de instalação. O segredo de testes existente é preservado; a etapa não muda as variáveis de ativação nem cria cobranças.
+
+Os ambientes usam credenciais separadas:
+
+| Ambiente | Chave de API | Token do webhook |
+| --- | --- | --- |
+| Sandbox | `ASAAS_SANDBOX_API_KEY`, ou o segredo existente `ASAAS_API_KEY` | `ASAAS_SANDBOX_WEBHOOK_TOKEN`, ou `ASAAS_WEBHOOK_TOKEN` |
+| Produção | `ASAAS_PRODUCTION_API_KEY` | `ASAAS_PRODUCTION_WEBHOOK_TOKEN` |
+
+O Worker exige ambiente explícito e não usa os segredos legados como credenciais de produção. Chaves com prefixo reconhecido do ambiente oposto são recusadas. Os dois ambientes podem ficar cadastrados; apenas o ativo é utilizado.
+
+Cadastre o webhook na conta real para `https://lojastreetball.com.br/api/webhooks/asaas`, com um token de autenticação próprio, diferente da chave de API, e os eventos `PAYMENT_RECEIVED`, `PAYMENT_REFUNDED` e `PAYMENT_CHARGEBACK_REQUESTED`. O mesmo token deve ser cadastrado como segredo `ASAAS_PRODUCTION_WEBHOOK_TOKEN` no Worker. Ative esse webhook junto da liberação do ambiente real; enquanto a loja estiver em Sandbox, ela aceita apenas o token do Sandbox.
+
+Depois de preparar essas credenciais e concluir a definição de frete, informação sobre tributos, prazo, troca, fluxo de compra e reembolsos, libere as variáveis comerciais existentes e altere:
 
 ```toml
 ASAAS_SANDBOX = "false"
@@ -102,6 +123,8 @@ PAYMENTS_PRODUCTION_ENABLED = "true"
 ```
 
 O ambiente Sandbox e o ambiente real são diferentes. Não coloque valores de cartão no site; o Asaas faz a captura na própria fatura. Defina termos comerciais e política de privacidade/LGPD antes de disponibilizar o checkout real.
+
+Referências: [Chaves de API do Asaas](https://docs.asaas.com/docs/chaves-de-api), [autenticação por ambiente](https://docs.asaas.com/docs/autentica%C3%A7%C3%A3o-1) e [segredos do Cloudflare Workers](https://developers.cloudflare.com/workers/configuration/secrets/).
 
 ## Limites deste MVP
 

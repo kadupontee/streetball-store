@@ -1,6 +1,7 @@
 import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply,supplierReplyAction,sendBuyerUpdate} from './fulfillment.js';
 import {handleLocalWhatsApp} from './local-whatsapp.js';
 import {recordPaymentEnvironment,recordPaymentReceipt} from './local-orders.js';
+import {asaasConfig,asaasRequest as asaas} from './asaas.js';
 import {supplierIdValid} from './supplier-mapping.js';
 import {STAGES,safeTrackingCode,formatProgress} from './order-progress.js';
 import {customerTrackingLink,verifyTrackingKey} from './order-tracking-access.js';
@@ -58,14 +59,14 @@ function playerShortsRepriceServer(product){
 async function catalogFor(request,env,snapshot){const r=await env.ASSETS.fetch(new Request(new URL('/catalog.json',request.url)));if(!r.ok)throw Error('CATALOG_UNAVAILABLE');const products=await r.json();return editedCatalog(products.map(p=>playerShortsRepriceServer(retroRepriceServer(p))),env,snapshot)}
 const fail=(msg)=>{throw new Error(msg)};
 function validateItems(raw,products){if(!Array.isArray(raw)||!raw.length||raw.length>35)fail('Sua sacola precisa conter entre 1 e 35 itens.');let subtotal=0,count=0;const clean=[];for(const i of raw){const p=products.find(x=>x.id===i.id);if(!p)fail('Produto indisponível: '+safeText(i.id,30));if(!p.sizes.includes(i.size))fail('Tamanho inválido para '+safeText(p.title));const qty=Number(i.qty);if(!Number.isInteger(qty)||qty<1||qty>10)fail('Quantidade inválida.');const patch=i.patch===true,personalize=i.personalize===true;let customName=safeText(i.customName,14),customNumber=safeText(i.customNumber,3);if(!personalize){customName='';customNumber=''}if(personalize&&!customName&&!customNumber)fail('Personalização incompleta.');if(customName&&!/^[\p{L}0-9 .'-]+$/u.test(customName))fail('Nome de personalização inválido.');if(customNumber&&!/^\d{1,3}$/.test(customNumber))fail('Número de personalização inválido.');const sizeExtra=({XXL:5,'3XL':10,'4XL':15})[i.size]||0;const unit=round(Number(p.price)+sizeExtra+(patch?8:0)+(personalize?20:0));if(!(unit>=0&&unit<10000))fail('Preço inválido.');subtotal+=unit*qty;count+=qty;clean.push({id:p.id,title:p.title,qty,size:i.size,patch,personalize,customName,customNumber,unitPrice:unit,image:p.image||null,sourceUrl:p.sourceUrl||null,supplierId:safeText(p.supplierId||'',40)})}if(count>50)fail('Quantidade total excedida.');return {items:clean,subtotal:round(subtotal)}}
-async function asaas(endpoint,env,body){const api=env.ASAAS_SANDBOX==='true'?'https://api-sandbox.asaas.com/v3':'https://api.asaas.com/v3';const r=await fetch(api+endpoint,{method:'POST',headers:{'content-type':'application/json','access_token':env.ASAAS_API_KEY,'user-agent':'StreetballStore/1.0'},body:JSON.stringify(body)});const data=await r.json().catch(()=>({}));if(!r.ok)throw Error('Erro no provedor de pagamento: '+(data.errors?.[0]?.description||r.status));return data}
 function checkoutReady(env){
  const shipping=Number(env.SHIPPING_FLAT_BRL);
- const prodReady=env.PAYMENTS_PRODUCTION_ENABLED==='true'&&
+ const credentials=asaasConfig(env);
+ const prodReady=env.PAYMENTS_PRODUCTION_ENABLED==='true'&&credentials.webhookToken&&
   env.CUSTOMER_PAYS_IMPORT_TAXES==='true'&&
   env.IMPORT_TAX_DISCLOSURE_APPROVED==='true'&&
   env.IMPORT_COMPLIANCE_APPROVED==='true';
- return !!(env.DB&&env.ASSETS&&env.ASAAS_API_KEY&&env.SHIPPING_FLAT_BRL!==undefined&&Number.isFinite(shipping)&&shipping>=0&&shipping<=500&&env.SALES_ENABLED==='true'&&(env.ASAAS_SANDBOX==='true'||prodReady));
+ return !!(env.DB&&env.ASSETS&&credentials.apiKey&&env.SHIPPING_FLAT_BRL!==undefined&&Number.isFinite(shipping)&&shipping>=0&&shipping<=500&&env.SALES_ENABLED==='true'&&(credentials.sandbox===true||prodReady));
 }
 function checkoutConfig(env){
  return json({enabled:checkoutReady(env),sandbox:env.ASAAS_SANDBOX==='true',shipping:checkoutReady(env)?Number(env.SHIPPING_FLAT_BRL):null,methods:['PIX','CREDIT_CARD'],supplierPaymentAutomated:false,customerPaysImportTaxesPlanned:env.CUSTOMER_PAYS_IMPORT_TAXES==='true',productionImportComplianceReviewed:env.IMPORT_COMPLIANCE_APPROVED==='true'&&env.IMPORT_TAX_DISCLOSURE_APPROVED==='true'});
@@ -90,7 +91,8 @@ if(importTaxAcknowledged)await env.DB.prepare('INSERT OR IGNORE INTO order_impor
 if(env.WA_TRANSPORT==='local')await recordPaymentEnvironment(env,id);
 try{const customer=await asaas('/customers',env,{name,email,cpfCnpj:cpf,mobilePhone:phone,postalCode:zip,addressNumber:(address.match(/\b\d{1,5}\b/)||[])[0]||'S/N',externalReference:id,notificationDisabled:true});const due=new Date(Date.now()+48*3600*1000).toISOString().slice(0,10);const charge=await asaas('/payments',env,{customer:customer.id,billingType,value:total,dueDate:due,description:`Streetball Store pedido ${id.slice(0,8)}`,externalReference:id});if(!charge.id||!charge.invoiceUrl)throw Error('Cobrança não retornou link seguro.');await env.DB.prepare('UPDATE orders SET payment_id=?,payment_url=?,updated_at=? WHERE id=?').bind(charge.id,charge.invoiceUrl,new Date().toISOString(),id).run();return json({orderId:id,paymentUrl:charge.invoiceUrl,total,subtotal:cart.subtotal,shipping,method:billingType,sandbox:env.ASAAS_SANDBOX==='true',trackingUrl:await customerTrackingLink(env,id)});}catch(e){await env.DB.prepare('UPDATE orders SET status=?,updated_at=? WHERE id=?').bind('payment_setup_failed',new Date().toISOString(),id).run();return clientError('Não foi possível gerar a cobrança. Tente novamente mais tarde.',502)}}
 async function paymentWebhook(req,env,ctx){
- if(!env.ASAAS_WEBHOOK_TOKEN||req.headers.get('asaas-access-token')!==env.ASAAS_WEBHOOK_TOKEN)return clientError('Não autorizado.',401);
+ const token=asaasConfig(env).webhookToken;
+ if(!token||req.headers.get('asaas-access-token')!==token)return clientError('Não autorizado.',401);
  if(!env.DB)return clientError('Banco não disponível.',503);
  const event=await req.json().catch(()=>null);
  if(!event?.id||!event?.event||!event?.payment?.id)return clientError('Evento inválido.');
