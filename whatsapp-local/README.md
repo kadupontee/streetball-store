@@ -152,6 +152,8 @@ npm run status-producao
 
 O cadastro do vendedor fica em `public/merchant.json`, no rodapé e no resumo do checkout. A verificação do CNPJ valida formato e correspondência com a conta; não é uma avaliação de CNAEs ou do enquadramento fiscal. O relatório mantém essa revisão separada. A correspondência entre o token salvo e o token do webhook ainda requer a validação de um evento recebido. Nesta preparação, o webhook desativado e os pagamentos reais desligados continuam sendo pendências esperadas.
 
+Quando uma consulta falha, os resultados que dependem dela ficam `null` (não verificados). Isso não significa reprovação da conta nem ausência do webhook. O bloco `consultasAsaas` informa o status HTTP, códigos conhecidos de autenticação e o tipo da falha, distinguindo recusa de acesso, rede, timeout, redirecionamento ou resposta inesperada. Não inclui descrições brutas, URLs de redirecionamento ou valores de credenciais. Redirecionamentos não são seguidos.
+
 ## Validação local
 
 ```bash

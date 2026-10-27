@@ -7,15 +7,15 @@ const token='owner-bridge-secret-with-more-than-32-characters',account='55119999
 const key='$aact_prod_PRIVATE_KEY',webhookToken='PRIVATE_WEBHOOK_TOKEN';
 const merchant={legalName:'Empresa de teste',cnpj:'11.222.333/0001-81',address:'Rua Exemplo, 123',email:'store@example.invalid',shippingBrl:0,deliveryMinDays:15,deliveryMaxDays:45,customerPaysImportTaxes:true};
 const goodHook={url:'https://lojastreetball.com.br/api/webhooks/asaas',enabled:false,interrupted:false,apiVersion:3,sendType:'SEQUENTIALLY',events:['PAYMENT_RECEIVED','PAYMENT_REFUNDED','PAYMENT_CHARGEBACK_REQUESTED'],authToken:'PRIVATE_PROVIDER_TOKEN'};
-function fixture({profile=merchant,status={general:'APPROVED'},commercial={cpfCnpj:merchant.cnpj,email:'PRIVATE_EMAIL',incomeValue:12345},hooks=[goodHook],providerStatus=200}={}){
+function fixture({profile=merchant,status={general:'APPROVED'},commercial={cpfCnpj:merchant.cnpj,email:'PRIVATE_EMAIL',incomeValue:12345},hooks=[goodHook],providerStatus=200,providerCode}={}){
  const calls=[];
  const env={ASAAS_SANDBOX:'true',ASAAS_PRODUCTION_API_KEY:key,ASAAS_API_KEY:'sandbox-key',ASAAS_PRODUCTION_WEBHOOK_TOKEN:webhookToken,
   IMPORT_TAX_DISCLOSURE_APPROVED:'false',IMPORT_COMPLIANCE_APPROVED:'false',SALES_ENABLED:'true',PAYMENTS_PRODUCTION_ENABLED:'false',
   ASSETS:{async fetch(req){assert.equal(new URL(req.url).pathname,'/merchant.json');return Response.json(profile);}}};
  const request=async(url,options)=>{
-  calls.push({url,options});assert.equal(options.method,'GET');assert.equal(options.body,undefined);assert.equal(options.redirect,'error');
+  calls.push({url,options});assert.equal(options.method,'GET');assert.equal(options.body,undefined);assert.equal(options.redirect,'manual');
   assert.equal(options.headers.access_token,key);assert.ok(String(url).startsWith('https://api.asaas.com/v3/'));
-  if(providerStatus!==200)return Response.json({errors:[{description:'PRIVATE_ERROR '+key}]},{status:providerStatus});
+  if(providerStatus!==200)return Response.json({errors:[{code:providerCode,description:'PRIVATE_ERROR '+key}]},{status:providerStatus});
   if(url.endsWith('/myAccount/status/'))return Response.json(status);
   if(url.endsWith('/myAccount/commercialInfo/'))return Response.json(commercial);
   if(url.endsWith('/webhooks?limit=100'))return Response.json({data:hooks,hasMore:false});
@@ -64,10 +64,67 @@ test('webhook duplicates, wrong targets, missing events and interrupted delivery
 });
 test('provider errors and unavailable requests are sanitized and cannot confirm readiness',async()=>{
  const {env,request}=fixture({providerStatus:401});
- for(const read of [request,async()=>{throw Error('PRIVATE_NETWORK '+key);}]){
-  const report=await productionReadiness(env,{request:read});assert.equal(report.verificacoes.chaveAutenticada,false);
+ const timeout=Object.assign(new Error('PRIVATE_TIMEOUT'),{name:'TimeoutError'});
+ for(const [read,expected,reason] of [[request,false,'autenticacao_recusada'],[async()=>{throw Error('PRIVATE_NETWORK '+key);},null,'falha_conexao'],[async()=>{throw timeout;},null,'tempo_esgotado']]){
+  const report=await productionReadiness(env,{request:read});assert.equal(report.verificacoes.chaveAutenticada,expected);
   assert.equal(report.configuracaoPagamentoConferida,false);assert.ok(!JSON.stringify(report).includes('PRIVATE'));
+  assert.equal(report.consultasAsaas.situacaoConta.resultado,reason);
  }
+});
+
+test('failed HTTP queries leave account and webhook findings unknown rather than falsely absent',async()=>{
+ for(const providerStatus of [401,403,429,500]){
+  const {env,request}=fixture({providerStatus});const report=await productionReadiness(env,{request});
+  for(const name of ['contaAprovada','contaCorrespondeAoCnpj','webhookEncontrado','webhookUnico','webhookAtivado','eventosCorretos','entregaWebhookCorreta'])assert.equal(report.verificacoes[name],null,name);
+  for(const query of Object.values(report.consultasAsaas))assert.equal(query.httpStatus,providerStatus);
+  assert.ok(!report.pendencias.some(p=>p.includes('não foi localizado')));
+ }
+});
+
+test('only known provider authentication codes are returned, without descriptions or arbitrary code values',async()=>{
+ for(const providerCode of ['invalid_access_token','invalid_environment','access_token_not_found','invalid_access_token_format',key]){
+  const {env,request}=fixture({providerStatus:401,providerCode});const report=await productionReadiness(env,{request});
+  assert.equal(report.consultasAsaas.situacaoConta.codigoAsaas,providerCode===key?null:providerCode);
+  assert.equal(report.consultasAsaas.situacaoConta.tipoResposta,'json');
+  assert.ok(!JSON.stringify(report).includes('PRIVATE'));
+ }
+});
+
+test('HTML failures and incomplete success responses are distinguished without returning their bodies',async()=>{
+ const {env}=fixture();
+ for(const [response,expected] of [[()=>new Response('<html>PRIVATE_PROXY</html>',{status:403,headers:{'content-type':'text/html'}}),'acesso_recusado'],
+  [()=>new Response('PRIVATE_BAD_JSON',{status:200,headers:{'content-type':'application/json'}}),'formato_invalido'],
+  [()=>Response.json({private:'PRIVATE_DATA'}),'resposta_incompleta']]){
+  const report=await productionReadiness(env,{request:async()=>response()});
+  assert.equal(report.consultasAsaas.situacaoConta.resultado,expected);assert.equal(report.verificacoes.contaAprovada,null);
+  assert.equal(report.verificacoes.webhookEncontrado,null);assert.equal(report.verificacoes.chaveAutenticada,null);
+  assert.ok(!JSON.stringify(report).includes('PRIVATE'));
+ }
+});
+
+test('provider redirects are inspected without following them or exposing their destination',async()=>{
+ const {env}=fixture();let calls=0;
+ const report=await productionReadiness(env,{request:async(url,options)=>{
+  calls++;assert.ok(url.startsWith('https://api.asaas.com/'));assert.equal(options.redirect,'manual');
+  return new Response(null,{status:302,headers:{location:'https://untrusted.example/PRIVATE_REDIRECT'}});
+ }});
+ assert.equal(calls,3);assert.equal(report.consultasAsaas.situacaoConta.httpStatus,302);
+ assert.equal(report.consultasAsaas.situacaoConta.resultado,'redirecionamento');
+ assert.ok(!JSON.stringify(report).includes('untrusted.example'));assert.ok(!JSON.stringify(report).includes('PRIVATE'));
+});
+
+test('a failed business query does not discard independent successful account and webhook queries',async()=>{
+ const {env,request}=fixture();
+ const report=await productionReadiness(env,{request:async(url,options)=>url.endsWith('/myAccount/commercialInfo/')?Response.json({errors:[]},{status:403}):request(url,options)});
+ assert.equal(report.verificacoes.chaveAutenticada,true);assert.equal(report.verificacoes.contaAprovada,true);
+ assert.equal(report.verificacoes.contaCorrespondeAoCnpj,null);assert.equal(report.verificacoes.webhookEncontrado,true);
+ assert.equal(report.consultasAsaas.dadosComerciais.httpStatus,403);
+});
+
+test('an empty successful webhook listing confirms absence while request failures do not',async()=>{
+ const {env,request}=fixture({hooks:[]});const report=await productionReadiness(env,{request});
+ assert.equal(report.verificacoes.webhookEncontrado,false);assert.equal(report.verificacoes.chaveAutenticada,true);
+ assert.equal(report.consultasAsaas.webhooks.httpStatus,200);assert.ok(report.pendencias.some(p=>p.includes('não foi localizado')));
 });
 test('complete settings are distinguished from confirmation of token delivery by a real event',async()=>{
  const {env,request}=fixture({hooks:[{...goodHook,enabled:true}]});
