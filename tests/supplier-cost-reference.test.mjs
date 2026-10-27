@@ -120,12 +120,14 @@ test('a missing optional snapshot table does not take checkout offline, and the 
  assert.equal(await recordSharedSupplierCostReference(env,id,[item()],[product()]),false);
 });
 
-test('USD difference is at most three dollars for the entire order, never multiplied by units',()=>{
- for(const quantity of [1,2,100]){
-  const r={complete:true,totalUsd:'100.00',quantity};
-  assert.equal(sharedSupplierQuotedTotal(r,'103.00'),'103.00');assert.equal(sharedSupplierQuotedTotal(r,'97.00'),'97.00');
-  for(const q of ['103.01','96.99','106.00','0.00','invalid'])assert.equal(sharedSupplierQuotedTotal(r,q),null);
-  assert.equal(sharedSupplierQuotedTotal(r,null),'100.00');
+test('USD tolerance scales by purchased units, with exact boundaries and no allowance for invalid quantities',()=>{
+ for(const quantity of [1,2,3,100]){
+  const r={complete:true,totalUsd:'1000.00',quantity},delta=2*quantity;
+  const upper=(1000+delta).toFixed(2),lower=(1000-delta).toFixed(2);
+  assert.equal(sharedSupplierQuotedTotal(r,upper),upper);assert.equal(sharedSupplierQuotedTotal(r,lower),lower);
+  for(const q of [(1000+delta+0.01).toFixed(2),(1000-delta-0.01).toFixed(2),'0.00','invalid'])assert.equal(sharedSupplierQuotedTotal(r,q),null);
+  assert.equal(sharedSupplierQuotedTotal(r,null),'1000.00');
  }
- assert.equal(sharedSupplierQuotedTotal({complete:false,totalUsd:'100.00'},'101.00'),null);
+ for(const quantity of [undefined,0,-1,1.5,'2',Infinity])assert.equal(sharedSupplierQuotedTotal({complete:true,totalUsd:'100.00',quantity},'101.00'),null);
+ assert.equal(sharedSupplierQuotedTotal({complete:false,totalUsd:'100.00',quantity:1},'101.00'),null);
 });

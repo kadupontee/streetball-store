@@ -1,6 +1,6 @@
 import {asaasConfig} from './asaas.js';
 import {loadSupplierBillingForAudit} from './supplier-billing.js';
-import {loadSharedSupplierCosts,applySharedSupplierCosts,SUPPLIER_COST_VERSION,sharedSupplierQuotedTotal,SUPPLIER_ORDER_TOLERANCE_USD} from './supplier-cost-reference.js';
+import {loadSharedSupplierCosts,applySharedSupplierCosts,SUPPLIER_COST_VERSION,sharedSupplierQuotedTotal,SUPPLIER_UNIT_TOLERANCE_USD,sharedSupplierToleranceUsd} from './supplier-cost-reference.js';
 
 // Monetary inputs are converted to integer cents. No order/day spending ceiling is applied.
 function decimal(value,places=2){
@@ -104,7 +104,7 @@ export async function auditSupplierPayment(env,input,{request=fetch}={}){
   result.pendencias.push('O pedido não está disponível para conferência do pagamento ao fornecedor.');return result;
  }
  const usesSharedCosts=!!input.billingId;
- let supplierTotalUsd,referenceTotalUsd;
+ let supplierTotalUsd,referenceTotalUsd,toleranceTotalUsd,referenceQuantity;
  if(usesSharedCosts){
   const reference=await loadSharedSupplierCosts(env,order);
   if(!reference){result.pendencias.push('O pedido precisa de uma referência de compra completa e do fornecedor incluído na tabela compartilhada.');return result;}
@@ -112,8 +112,9 @@ export async function auditSupplierPayment(env,input,{request=fetch}={}){
   if(!costs){result.pendencias.push('Os custos ou o frete informados diferem da tabela compartilhada do pedido.');return result;}
   input={...input,costs};
   supplierTotalUsd=sharedSupplierQuotedTotal(reference,input.quotedTotalUsd);referenceTotalUsd=reference.totalUsd;
+  toleranceTotalUsd=sharedSupplierToleranceUsd(reference);referenceQuantity=reference.quantity;
   if(supplierTotalUsd===null){
-   result.pendencias.push('O total em USD declarado pelo fornecedor excede a diferença permitida de US$3 no pedido inteiro, incluindo produtos, adicionais e frete, ou é inválido.');return result;
+   result.pendencias.push('O total em USD declarado pelo fornecedor excede a diferença permitida de US$2 por peça do pedido, incluindo produtos, adicionais e frete, ou é inválido.');return result;
   }
   if(input.quotedExchangeRateBrlPerUsd!==null&&decimal(input.quotedExchangeRateBrlPerUsd,6)!==decimal(costs.exchangeRateBrlPerUsd,6)){
    result.pendencias.push('O câmbio declarado na cobrança difere do utilizado na conferência.');return result;
@@ -141,6 +142,6 @@ export async function auditSupplierPayment(env,input,{request=fetch}={}){
  const compared=compareSupplierPayment({order,charge,decoded,balance,costs:input.costs,
   quotedTotalBrl:input.quotedTotalBrl,receiverCpfCnpj:input.receiverCpfCnpj,supplierTotalUsd});
  compared.referenciaCustos=usesSharedCosts?{origem:'tabela_compartilhada_do_pedido',versao:SUPPLIER_COST_VERSION,
-  totalReferenciaUsd:referenceTotalUsd,totalConferidoUsd:supplierTotalUsd,toleranciaPorPedidoUsd:SUPPLIER_ORDER_TOLERANCE_USD}:{origem:'administrador'};
+  totalReferenciaUsd:referenceTotalUsd,totalConferidoUsd:supplierTotalUsd,quantidade:referenceQuantity,toleranciaPorPecaUsd:SUPPLIER_UNIT_TOLERANCE_USD,toleranciaTotalUsd:toleranceTotalUsd}:{origem:'administrador'};
  return compared;
 }

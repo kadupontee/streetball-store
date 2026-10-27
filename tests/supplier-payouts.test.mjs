@@ -16,7 +16,7 @@ const one=(query,sql,args=[])=>query({sql,args}).results[0];
 const profile=changes=>({receiverCpfCnpj:receiver,exchangeRateMode:'fixed',exchangeRateBrlPerUsd:'5.12',gatewayFeeBrl:'0.00',
  otherCostsBrlPerOrder:'5.00',otherCostsBrlPerUnit:'0.00',salesCostRate:'0',validUntil:new Date(Date.now()+3600000).toISOString(),...changes});
 
-async function fixture(t,{enabled=true,withProfile=true,withRate=true,profileChanges={},quotedUsd="15.00"}={}){
+async function fixture(t,{enabled=true,withProfile=true,withRate=true,profileChanges={},quotedUsd="15.00",quantity=1}={}){
  const {db,query}=localD1(t),calls=[],posts=[];
  const env={DB:db,WA_LOCAL_BRIDGE_TOKEN:'fake-private-bridge-token-with-more-than-32-characters',WA_TRANSPORT:'local',WA_LOCAL_ORDERS_ENABLED:'true',WA_AUTOMATION_ENABLED:'true',
   ASAAS_SANDBOX:'false',SALES_ENABLED:'true',PAYMENTS_PRODUCTION_ENABLED:'true',CUSTOMER_PAYS_IMPORT_TAXES:'true',IMPORT_TAX_DISCLOSURE_APPROVED:'true',IMPORT_COMPLIANCE_APPROVED:'true',
@@ -33,7 +33,7 @@ async function fixture(t,{enabled=true,withProfile=true,withRate=true,profileCha
   receiptUrl:'https://www.asaas.com/comprovantes/ficticio',chargeStatus:'RECEIVED',chargeRefunds:[],accountApproved:true};
  const charges=new Map();
  const seedOrder=async(orderId=id,paymentId='pay_fake',context='ORDER_REFERENCE',withFx=withRate)=>{
-  const items=[{id:'p',qty:1,size:'P',patch:false,personalize:false}];
+  const items=[{id:'p',qty:quantity,size:'P',patch:false,personalize:false}];
   query({sql:'INSERT INTO orders(id,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total,payment_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',args:[orderId,stamp,stamp,'paid_supplier_pending','Teste','test@example.invalid','11999999999','00000000000','00000000','Rua Exemplo','São Paulo','SP',JSON.stringify(items),199.9,0,199.9,paymentId]});
   query({sql:'INSERT INTO order_payment_environments(order_id,environment,payment_id,received_at,recorded_at) VALUES(?,?,?,?,?)',args:[orderId,'production',paymentId,stamp,stamp]});
   query({sql:'INSERT INTO supplier_jobs(id,order_id,status,created_at,updated_at) VALUES(?,?,?,?,?)',args:['job-'+orderId,orderId,'supplier_payment_pending',stamp,stamp]});
@@ -206,7 +206,7 @@ test('a crash while persisting the returned transaction ID retains the exclusive
 });
 test('a conflicting USD total or an expired financial profile cannot be used to release a Pix',async t=>{
  const f=await fixture(t,{profileChanges:{exchangeRateMode:'supplier_quote',exchangeRateBrlPerUsd:null}});
- const envelope=JSON.parse(f.bill.format_json);envelope.quotedTotalUsd='18.01';
+ const envelope=JSON.parse(f.bill.format_json);envelope.quotedTotalUsd='17.01';
  f.query({sql:'UPDATE supplier_billing_messages SET format_json=? WHERE id=?',args:[JSON.stringify(envelope),f.bill.id]});
  await f.process();assert.equal(f.posts.length,0);
  assert.match(one(f.query,'SELECT reason FROM supplier_payout_checks').reason,/total em USD/);
@@ -300,14 +300,27 @@ test('a complete connector tick stays within 50 subrequests for both submission 
  }finally{globalThis.fetch=originalFetch;f.env.DB.prepare=prepare;}
 });
 
-test('the whole-order USD allowance uses the actual quote for conversion, expenses and final bank confirmation',async t=>{
- const f=await fixture(t,{quotedUsd:'18.00'});await f.process();assert.equal(f.posts.length,1);assert.equal(f.posts[0].value,92.16);
- assert.equal((await f.authorize({changes:{value:92.16}})).status,'APPROVED');f.bank.transactionStatus='DONE';await f.process();
- assert.equal((await supplierPayoutStatus(f.env)).latest.resultAfterRecordedCostsBrl,'98.76');
+test('the single-unit USD allowance uses the actual quote for conversion, expenses and final bank confirmation',async t=>{
+ const f=await fixture(t,{quotedUsd:'17.00'});await f.process();assert.equal(f.posts.length,1);assert.equal(f.posts[0].value,87.04);
+ assert.equal((await f.authorize({changes:{value:87.04}})).status,'APPROVED');f.bank.transactionStatus='DONE';await f.process();
+ assert.equal((await supplierPayoutStatus(f.env)).latest.resultAfterRecordedCostsBrl,'103.88');
  const a=JSON.parse(one(f.query,'SELECT audit_json FROM supplier_payout_intents').audit_json);
- assert.equal(a.referenciaCustos.totalReferenciaUsd,'15.00');assert.equal(a.referenciaCustos.totalConferidoUsd,'18.00');
+ assert.equal(a.referenciaCustos.totalReferenciaUsd,'15.00');assert.equal(a.referenciaCustos.totalConferidoUsd,'17.00');
 });
-test('a quote one cent beyond the whole-order allowance is held before any Pix request',async t=>{
- const f=await fixture(t,{quotedUsd:'18.01'});await f.process();assert.equal(f.posts.length,0);
- assert.match(one(f.query,'SELECT reason FROM supplier_payout_checks').reason,/US\$3/);
+test('a quote one cent beyond the single-unit allowance is held before any Pix request',async t=>{
+ const f=await fixture(t,{quotedUsd:'17.01'});await f.process();assert.equal(f.posts.length,0);
+ assert.match(one(f.query,'SELECT reason FROM supplier_payout_checks').reason,/US\$2/);
+});
+
+test('two units permit four USD total variation and reconcile using the actual cost',async t=>{
+ const f=await fixture(t,{quantity:2,quotedUsd:'29.00'});await f.process();assert.equal(f.posts.length,1);assert.equal(f.posts[0].value,148.48);
+ assert.equal((await f.authorize({changes:{value:148.48}})).status,'APPROVED');f.bank.transactionStatus='DONE';await f.process();
+ const a=JSON.parse(one(f.query,'SELECT audit_json FROM supplier_payout_intents').audit_json);
+ assert.equal(a.referenciaCustos.totalReferenciaUsd,'25.00');assert.equal(a.referenciaCustos.toleranciaPorPecaUsd,'2.00');
+ assert.equal(a.referenciaCustos.quantidade,2);assert.equal(a.referenciaCustos.toleranciaTotalUsd,'4.00');
+ assert.equal((await supplierPayoutStatus(f.env)).latest.resultAfterRecordedCostsBrl,'42.44');
+});
+test('two units reject a variation of four USD and one cent before any bank submission',async t=>{
+ const f=await fixture(t,{quantity:2,quotedUsd:'29.01'});await f.process();assert.equal(f.posts.length,0);
+ assert.match(one(f.query,'SELECT reason FROM supplier_payout_checks').reason,/US\$2 por peça/);
 });
