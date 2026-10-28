@@ -28,3 +28,9 @@ O aviso contém somente a referência curta do pedido. Ao tocar, abre `/ops/?ord
 - **Envio e entrega:** mostram os eventos de rastreamento verificados existentes, sem inferir postagem a partir de uma conversa.
 
 Os avisos rodam no Cloudflare, independentemente do Mac. O envio WhatsApp pelo conector local ainda exige o Mac conectado; o acompanhamento informa quando o sinal recente do conector está ausente. Este recurso não ativa nem muda o executor Pix.
+
+## Conferir falhas de teste (v2)
+
+O painel distingue falhas no cadastro, criptografia, identificação da loja, conexão com o serviço e rejeição pelo provedor. **Copiar resultado do teste** copia somente a versão, estado de permissão, modo de instalação, código de erro, etapa, status HTTP, motivo conhecido do provedor e referência do teste. Não inclui a chave administrativa, cookies, endpoint de inscrição, chaves de criptografia, conteúdo de pedidos ou respostas brutas do provedor.
+
+Uma resposta HTTP aceita não é transformada em falha caso o encerramento do corpo da resposta tenha erro. Cadastros recusados como expirados (404/410) são desativados. **Reconectar notificações**, acionado pelo usuário, renova a inscrição do aparelho sem gerar novas chaves da loja nem modificar os pedidos. A tabela adicional de diagnósticos é criada ao registrar um resultado; sessões existentes continuam funcionando.

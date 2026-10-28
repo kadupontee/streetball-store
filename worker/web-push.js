@@ -1,5 +1,9 @@
 // RFC 8291 (aes128gcm) and RFC 8292 (VAPID), using Workers Web Crypto.
 const utf8=new TextEncoder();
+export class WebPushError extends Error{
+ constructor(code,phase,message){super(message);this.name='WebPushError';this.code=code;this.phase=phase;}
+}
+const providerReasons=new Set(['BadJwtToken','ExpiredJwtToken','BadVapidPublicKey','BadWebPushRequest','BadTtl','MissingTtl','PayloadTooLarge','TooManyRequests','Unregistered','NotFound','BadPath','Forbidden','Unauthorized']);
 export const base64url=bytes=>btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 export function fromBase64url(value){
  if(typeof value!=='string'||!value||!/^[-_A-Za-z0-9]+$/.test(value))throw Error('Chave de notificação inválida.');
@@ -49,11 +53,29 @@ export async function vapidAuthorization(endpoint,keys,subject){
  return 'vapid t='+unsigned+'.'+base64url(sig)+', k='+keys.publicKey;
 }
 export async function sendWebPush(raw,payload,keys,{subject='https://lojastreetball.com.br',topic,request=fetch}={}){
- const subscription=validatePushSubscription(raw);
- const body=await encryptPushPayload(subscription,payload);
- const headers={authorization:await vapidAuthorization(subscription.endpoint,keys,subject),'content-encoding':'aes128gcm','content-type':'application/octet-stream',TTL:'86400',Urgency:'high'};
+ let subscription,body,authorization;
+ try{subscription=validatePushSubscription(raw);}catch{throw new WebPushError('PUSH_SUBSCRIPTION_INVALID','subscription','O cadastro de notificações deste aparelho precisa ser renovado.');}
+ try{body=await encryptPushPayload(subscription,payload);}catch{throw new WebPushError('PUSH_ENCRYPTION_FAILED','encryption','Não foi possível preparar o aviso para este aparelho.');}
+ try{authorization=await vapidAuthorization(subscription.endpoint,keys,subject);}catch{throw new WebPushError('PUSH_SIGNING_FAILED','authentication','A configuração de envio da loja precisa ser conferida.');}
+ const headers={authorization,'content-encoding':'aes128gcm','content-type':'application/octet-stream',TTL:'86400',Urgency:'high'};
  if(topic)headers.Topic=topic;
- const response=await request(subscription.endpoint,{method:'POST',headers,body,redirect:'error',signal:AbortSignal.timeout(12000)});
- await response.body?.cancel();
- return {accepted:response.status>=200&&response.status<300,gone:[404,410].includes(response.status),status:response.status};
+ let response;
+ try{response=await request(subscription.endpoint,{method:'POST',headers,body,redirect:'error',signal:AbortSignal.timeout(12000)});}
+ catch(error){
+  const timeout=['AbortError','TimeoutError'].includes(error?.name);
+  throw new WebPushError(timeout?'PUSH_TIMEOUT':'PUSH_CONNECTION_FAILED','transport',timeout?'O serviço de notificações demorou para responder. Tente enviar o teste novamente.':'A loja não conseguiu se conectar ao serviço de notificações. Tente novamente.');
+ }
+ const accepted=response.status>=200&&response.status<300;
+ let reason=null;
+ // An HTTP acceptance is definitive. Cleanup must not turn it into an unknown
+ // network failure or trigger another delivery. Never expose raw provider bodies.
+ if(!accepted&&response.body){
+  let reader;
+  try{
+   reader=response.body.getReader();let size=0,text='';const decoder=new TextDecoder();
+   while(size<2048){const chunk=await reader.read();if(chunk.done)break;size+=chunk.value.byteLength;text+=decoder.decode(chunk.value,{stream:true});}
+   const data=JSON.parse(text);if(providerReasons.has(data?.reason))reason=data.reason;
+  }catch{}finally{try{await reader?.cancel();}catch{}}
+ }else{try{await response.body?.cancel();}catch{}}
+ return {accepted,gone:[404,410].includes(response.status),status:response.status,...(reason?{reason}:{})};
 }

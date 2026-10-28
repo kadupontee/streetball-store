@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createECDH,hkdfSync,createDecipheriv,createPublicKey,verify} from 'node:crypto';
-import {base64url,validatePushSubscription,generateVapidKeys,encryptPushPayload,vapidAuthorization,sendWebPush} from '../worker/web-push.js';
+import {base64url,validatePushSubscription,generateVapidKeys,encryptPushPayload,vapidAuthorization,sendWebPush,WebPushError} from '../worker/web-push.js';
 
 function client(){const ecdh=createECDH('prime256v1');ecdh.generateKeys();return {ecdh,auth:crypto.getRandomValues(new Uint8Array(16)),subscription:null};}
 function subscription(c){return {endpoint:'https://web.push.apple.com/example-token',keys:{p256dh:base64url(c.ecdh.getPublicKey()),auth:base64url(c.auth)}};}
@@ -35,4 +35,25 @@ test('push is encrypted, never follows redirects and distinguishes expired subsc
  const send=status=>sendWebPush(sub,{title:'Teste',url:'/ops/'},keys,{topic:'fake-topic',request:async(url,options)=>{calls.push({url,options});return new Response(null,{status});}});
  assert.deepEqual(await send(201),{accepted:true,gone:false,status:201});assert.equal((await send(410)).gone,true);assert.equal((await send(503)).gone,false);
  const options=calls[0].options;assert.equal(options.redirect,'error');assert.equal(options.headers['content-encoding'],'aes128gcm');assert.equal(options.headers.Topic,'fake-topic');assert.ok(!Buffer.from(options.body).includes(Buffer.from('Teste')));
+});
+test('response cleanup cannot turn an accepted push into a failed delivery',async()=>{
+ const sub=subscription(client()),keys=await generateVapidKeys();
+ const response=new Response('accepted',{status:201}),locked=response.body.getReader();
+ try{assert.equal((await sendWebPush(sub,{title:'Teste'},keys,{request:async()=>response})).accepted,true);}
+ finally{await locked.cancel();}
+});
+test('transport failures expose a stable safe code instead of endpoint tokens or raw provider errors',async()=>{
+ const sub=subscription(client()),keys=await generateVapidKeys();
+ for(const [name,code]of [['TimeoutError','PUSH_TIMEOUT'],['Error','PUSH_CONNECTION_FAILED']]){
+  await assert.rejects(sendWebPush(sub,{title:'Teste'},keys,{request:async()=>{const error=Error('private endpoint token and network internals');error.name=name;throw error;}}),error=>{
+   assert.ok(error instanceof WebPushError);assert.equal(error.code,code);assert.equal(error.phase,'transport');assert.ok(!error.message.includes('private'));return true;
+  });
+ }
+});
+test('only allowlisted provider reason codes are returned and broken response bodies preserve the HTTP result',async()=>{
+ const sub=subscription(client()),keys=await generateVapidKeys();
+ const valid=await sendWebPush(sub,{title:'Teste'},keys,{request:async()=>Response.json({reason:'BadJwtToken'},{status:403})});assert.equal(valid.reason,'BadJwtToken');
+ const unsafe=await sendWebPush(sub,{title:'Teste'},keys,{request:async()=>Response.json({reason:'private endpoint token',endpoint:sub.endpoint},{status:403})});assert.equal(unsafe.reason,undefined);
+ const locked=new Response('ignored',{status:410}),reader=locked.body.getReader();
+ try{const sent=await sendWebPush(sub,{title:'Teste'},keys,{request:async()=>locked});assert.equal(sent.gone,true);assert.equal(sent.status,410);}finally{await reader.cancel();}
 });

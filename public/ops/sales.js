@@ -7,14 +7,14 @@ const onIPhone=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform
 const standalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const supported=()=>window.isSecureContext&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
 const selected=()=>{const id=new URL(location.href).searchParams.get('orderId');return validId(id)?id:null;};
-let loggedIn=false,busy=false,settingsOpen=false,pushConfig=null,lastData=null,lastUpdated=null,registration=null;
+let loggedIn=false,busy=false,settingsOpen=false,pushConfig=null,lastData=null,lastUpdated=null,registration=null,lastPushResult=null;
 const registered='serviceWorker' in navigator?navigator.serviceWorker.register('/ops/sw.js',{scope:'/ops/'}).then(()=>navigator.serviceWorker.ready).then(r=>{registration=r;return r;}).catch(()=>null):Promise.resolve(null);
 async function api(action,{body,token}={}){
  const response=await fetch('/api/admin/sales/'+action,{method:body!==undefined?'POST':'GET',credentials:'same-origin',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(15000),
   headers:{...(body!==undefined?{'content-type':'application/json'}:{}),...(token?{authorization:'Bearer '+token}:{})},body:body!==undefined?JSON.stringify(body):undefined});
  const data=await response.json();
  if(response.status===401&&!token)showLogin();
- if(!response.ok)throw Error(data.error||'Não foi possível consultar a loja.');
+ if(!response.ok){const error=Error(data.error||'Não foi possível consultar a loja.');Object.assign(error,{code:data.code,phase:data.phase,providerStatus:data.providerStatus,providerReason:data.providerReason,attemptId:data.attemptId});throw error;}
  return data;
 }
 function showLogin(){loggedIn=false;$('login').hidden=false;$('app').hidden=true;$('nav').hidden=true;$('starting').hidden=true;}
@@ -62,6 +62,7 @@ async function updatePushStatus(){
  $('enablePush').disabled=true;$('testPush').hidden=true;$('disablePush').hidden=true;
  try{
   pushConfig=await api('notifications');
+  if(pushConfig.lastAttempt)showPushResult(pushConfig.lastAttempt);
   if(onIPhone&&!standalone()){$('pushStatus').textContent='No iPhone, abra pelo ícone da Tela de Início para permitir os avisos.';return;}
   if(!supported()){$('pushStatus').textContent='Este navegador não oferece notificações. No iPhone, use o Safari e adicione à Tela de Início (iOS 16.4 ou posterior).';return;}
   const reg=await registered;if(!reg)throw Error('Não foi possível preparar os avisos. Atualize esta página.');
@@ -69,27 +70,46 @@ async function updatePushStatus(){
   const active=!!subscription&&Notification.permission==='granted'&&pushConfig.active;
   $('pushStatus').textContent=active?'Notificações ativadas neste aparelho. Envie um teste para conferir.':Notification.permission==='denied'?'Os avisos estão bloqueados. Permita as notificações da Streetball nos Ajustes do iPhone.':'Toque em Ativar notificações e escolha Permitir.';
   $('enablePush').disabled=Notification.permission==='denied';$('enablePush').hidden=active;$('testPush').hidden=!active;$('disablePush').hidden=!active;
+  $('reconnectPush').hidden=!subscription||Notification.permission!=='granted';
  }catch(error){$('pushStatus').textContent=error.message;}
 }
 function decodeKey(key){return Uint8Array.from(atob(key.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(key.length/4)*4,'=')),c=>c.charCodeAt(0));}
-$('enablePush').addEventListener('click',async()=>{
+function showPushResult(result){
+ lastPushResult={version:pushConfig?.version||'iphone-sales-v2',permission:'Notification' in window?Notification.permission:'unsupported',installed:standalone(),...result};
+ $('pushDiagnostic').hidden=false;$('copyPushResult').hidden=false;
+ $('pushDiagnostic').textContent=result.state==='accepted'?'O serviço de notificações aceitou o último envio.':'Resultado do teste: '+(result.code||'PUSH_TEST_FAILED')+(result.providerStatus?' · HTTP '+result.providerStatus:'')+(result.providerReason?' · '+result.providerReason:'');
+}
+async function activatePush(renew=false){
  if(!supported()||onIPhone&&!standalone()||!pushConfig?.publicKey)return;
  // Keep the permission prompt in the user's click, before any network await.
  const permissionPromise=Notification.requestPermission();
- $('enablePush').disabled=true;
+ $('enablePush').disabled=true;$('reconnectPush').disabled=true;
  try{
   if(await permissionPromise!=='granted')throw Error('Você precisa permitir os avisos para receber as vendas.');
   const reg=await registered;if(!reg)throw Error('Atualize o painel e tente outra vez.');
   let subscription=await reg.pushManager.getSubscription();
+  if(subscription&&(renew||!pushConfig.active)){
+   await api('notifications/unsubscribe',{body:{}});await subscription.unsubscribe();subscription=null;
+  }
   if(!subscription)subscription=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:decodeKey(pushConfig.publicKey)});
   await api('notifications/subscribe',{body:{subscription:subscription.toJSON()}});
   await updatePushStatus();
- }catch(error){$('pushStatus').textContent=error.message;$('enablePush').disabled=false;}
-});
+ }catch(error){$('pushStatus').textContent=error.message;$('enablePush').disabled=false;}finally{$('reconnectPush').disabled=false;}
+}
+$('enablePush').addEventListener('click',()=>activatePush(false));
+$('reconnectPush').addEventListener('click',()=>activatePush(true));
 $('testPush').addEventListener('click',async()=>{
  $('testPush').disabled=true;
- try{await api('notifications/test',{body:{}});$('pushStatus').textContent='Teste enviado ao serviço de notificações. Confira o aviso no iPhone e toque para abrir este painel.';}
- catch(error){$('pushStatus').textContent=error.message;}finally{$('testPush').disabled=false;}
+ try{const result=await api('notifications/test',{body:{}});showPushResult({state:'accepted',id:result.attemptId,attemptedAt:new Date().toISOString()});$('pushStatus').textContent='Teste aceito pelo serviço de notificações. Confira o aviso no iPhone e toque para abrir este painel.';}
+ catch(error){
+  showPushResult({state:'failed',code:error.code||'PUSH_BROWSER_CONNECTION_FAILED',phase:error.phase||'browser',providerStatus:error.providerStatus,providerReason:error.providerReason,id:error.attemptId,attemptedAt:new Date().toISOString()});
+  $('pushStatus').textContent=error.message;
+  if(['PUSH_SUBSCRIPTION_EXPIRED','PUSH_SUBSCRIPTION_INVALID'].includes(error.code)){$('reconnectPush').hidden=false;pushConfig.active=false;}
+ }finally{$('testPush').disabled=false;}
+});
+$('copyPushResult').addEventListener('click',async()=>{
+ try{await navigator.clipboard.writeText(JSON.stringify(lastPushResult,null,2));$('copyPushResult').textContent='Resultado copiado';}
+ catch{$('pushStatus').textContent='Não foi possível copiar. Informe a mensagem e o código exibidos acima.';}
 });
 $('disablePush').addEventListener('click',async()=>{
  try{await api('notifications/unsubscribe',{body:{}});const sub=await registration?.pushManager.getSubscription();await sub?.unsubscribe();$('enablePush').hidden=false;await updatePushStatus();}

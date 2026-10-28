@@ -1,14 +1,15 @@
-import {base64url,generateVapidKeys,validatePushSubscription,sendWebPush,fromBase64url} from './web-push.js';
+import {base64url,generateVapidKeys,validatePushSubscription,sendWebPush,fromBase64url,WebPushError} from './web-push.js';
 import {salesProgress} from './admin-sales-progress.js';
 import {STAGES} from './order-progress.js';
 
-export const SALES_NOTIFICATIONS_VERSION='iphone-sales-v1';
+export const SALES_NOTIFICATIONS_VERSION='iphone-sales-v2';
 const PREFIX='/api/admin/sales/',COOKIE='__Host-streetball_ops';
 const now=()=>new Date().toISOString();
 const json=(value,status=200,headers={})=>new Response(JSON.stringify(value),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...headers}});
 const idValid=id=>typeof id==='string'&&/^[a-f0-9-]{36}$/i.test(id);
 const hash=async value=>base64url(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)));
 const cookieHeader=(token,age=15552000)=>`${COOKIE}=${token}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=${age}`;
+const attemptsSchema=`CREATE TABLE IF NOT EXISTS admin_push_attempt_results(subscription_id TEXT PRIMARY KEY REFERENCES admin_push_subscriptions(id),kind TEXT NOT NULL,state TEXT NOT NULL,phase TEXT NOT NULL,error_code TEXT,provider_status INTEGER,provider_reason TEXT,attempt_id TEXT NOT NULL,attempted_at TEXT NOT NULL)`;
 const schema=[
  `CREATE TABLE IF NOT EXISTS admin_sales_config(id INTEGER PRIMARY KEY CHECK(id=1),public_key TEXT NOT NULL,private_jwk TEXT NOT NULL,created_at TEXT NOT NULL)`,
  `CREATE TABLE IF NOT EXISTS admin_sales_sessions(id TEXT PRIMARY KEY,token_hash TEXT NOT NULL UNIQUE,created_at TEXT NOT NULL,expires_at TEXT NOT NULL)`,
@@ -16,8 +17,24 @@ const schema=[
  `CREATE TABLE IF NOT EXISTS admin_sale_events(order_id TEXT NOT NULL REFERENCES orders(id),kind TEXT NOT NULL,occurred_at TEXT NOT NULL,PRIMARY KEY(order_id,kind))`,
  `CREATE TABLE IF NOT EXISTS admin_sale_notifications(order_id TEXT PRIMARY KEY REFERENCES orders(id),created_at TEXT NOT NULL)`,
  `CREATE TABLE IF NOT EXISTS admin_push_deliveries(order_id TEXT NOT NULL REFERENCES admin_sale_notifications(order_id),subscription_id TEXT NOT NULL REFERENCES admin_push_subscriptions(id),state TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,lease_until TEXT,next_attempt_at TEXT,last_status INTEGER,updated_at TEXT NOT NULL,PRIMARY KEY(order_id,subscription_id))`,
- `CREATE INDEX IF NOT EXISTS idx_admin_push_pending ON admin_push_deliveries(state,next_attempt_at)`
+ `CREATE INDEX IF NOT EXISTS idx_admin_push_pending ON admin_push_deliveries(state,next_attempt_at)`,
+ attemptsSchema
 ];
+async function saveAttempt(env,subscriptionId,result){
+ // Diagnostics are additive and best effort. A logging failure must not alter
+ // whether a push was accepted or cause a duplicate send.
+ try{
+  await env.DB.prepare(attemptsSchema).run();
+  await env.DB.prepare('INSERT INTO admin_push_attempt_results(subscription_id,kind,state,phase,error_code,provider_status,provider_reason,attempt_id,attempted_at) VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(subscription_id) DO UPDATE SET kind=excluded.kind,state=excluded.state,phase=excluded.phase,error_code=excluded.error_code,provider_status=excluded.provider_status,provider_reason=excluded.provider_reason,attempt_id=excluded.attempt_id,attempted_at=excluded.attempted_at')
+   .bind(subscriptionId,result.kind,result.state,result.phase,result.code||null,result.status??null,result.reason||null,result.id,now()).run();
+ }catch{}
+}
+function pushFailure(result){
+ if(result.gone)return {code:'PUSH_SUBSCRIPTION_EXPIRED',phase:'subscription',message:'O cadastro de notificações expirou. Toque em Reconectar notificações para renovar o acesso deste aparelho.'};
+ if([401,403].includes(result.status))return {code:'PUSH_PROVIDER_AUTH_REJECTED',phase:'authentication',message:'O serviço de notificações recusou a identificação da loja. A configuração de envio precisa ser conferida.'};
+ if(result.status===429)return {code:'PUSH_RATE_LIMITED',phase:'provider',message:'O serviço de notificações limitou os testes. Aguarde um pouco e tente novamente.'};
+ return {code:'PUSH_PROVIDER_REJECTED',phase:'provider',message:'O serviço de notificações não aceitou o teste agora. Tente novamente.'};
+}
 async function tables(env){return new Set((await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all()).results.map(r=>r.name));}
 export async function salesNotificationsReady(env){
  if(!env.DB)return false;
@@ -101,7 +118,9 @@ export async function handleAdminSales(request,env,ctx){
   if(action==='notifications'&&method==='GET'){
    const keys=await keysFor(env);
    const active=await env.DB.prepare('SELECT COUNT(*) AS count FROM admin_push_subscriptions WHERE device_id=? AND disabled=0').bind(session.id).first();
-   return json({publicKey:keys?.publicKey,active:!!active?.count,expiresAt:session.expires_at,version:SALES_NOTIFICATIONS_VERSION});
+   let lastAttempt=null;
+   try{lastAttempt=await env.DB.prepare('SELECT r.kind,r.state,r.phase,r.error_code AS code,r.provider_status AS providerStatus,r.provider_reason AS providerReason,r.attempt_id AS id,r.attempted_at AS attemptedAt FROM admin_push_attempt_results r JOIN admin_push_subscriptions s ON s.id=r.subscription_id WHERE s.device_id=? ORDER BY r.attempted_at DESC LIMIT 1').bind(session.id).first();}catch{}
+   return json({publicKey:keys?.publicKey,active:!!active?.count,lastAttempt,expiresAt:session.expires_at,version:SALES_NOTIFICATIONS_VERSION});
   }
   if(action==='notifications/subscribe'&&method==='POST'){
    const raw=await bodyFor(request),subscription=validatePushSubscription(raw.subscription);
@@ -116,14 +135,28 @@ export async function handleAdminSales(request,env,ctx){
    return json({ok:true});
   }
   if(action==='notifications/test'&&method==='POST'){
-   const sub=await env.DB.prepare('SELECT subscription_json FROM admin_push_subscriptions WHERE device_id=? AND disabled=0 ORDER BY updated_at DESC LIMIT 1').bind(session.id).first();
+   let sub,keys;const attemptId=crypto.randomUUID();
+   try{sub=await env.DB.prepare('SELECT id,subscription_json FROM admin_push_subscriptions WHERE device_id=? AND disabled=0 ORDER BY updated_at DESC LIMIT 1').bind(session.id).first();keys=await keysFor(env);}
+   catch{return json({error:'Não foi possível consultar o cadastro de notificações deste aparelho. Atualize o painel e tente novamente.',code:'PUSH_REGISTRATION_UNAVAILABLE',phase:'registration',attemptId},503);}
    if(!sub)return json({error:'Ative as notificações neste aparelho primeiro.'},409);
-   const sent=await sendWebPush(JSON.parse(sub.subscription_json),{title:'Streetball · Teste de notificação',body:'Os avisos de venda estão prontos neste aparelho. Toque para abrir suas vendas.',url:'/ops/',tag:'streetball-test'},await keysFor(env));
-   return sent.accepted?json({ok:true,acceptedByPushService:true}):json({error:'O serviço de notificações não aceitou o teste. Ative novamente e tente outra vez.'},502);
+   try{
+    let subscription;try{subscription=JSON.parse(sub.subscription_json);}catch{throw new WebPushError('PUSH_SUBSCRIPTION_INVALID','subscription','O cadastro de notificações deste aparelho precisa ser renovado.');}
+    const sent=await sendWebPush(subscription,{title:'Streetball · Teste de notificação',body:'Os avisos de venda estão prontos neste aparelho. Toque para abrir suas vendas.',url:'/ops/',tag:'streetball-test'},keys);
+    const failure=sent.accepted?null:pushFailure(sent);
+    await saveAttempt(env,sub.id,{kind:'test',state:sent.accepted?'accepted':'failed',phase:failure?.phase||'provider',code:failure?.code,status:sent.status,reason:sent.reason,id:attemptId});
+    if(sent.gone)await env.DB.prepare('UPDATE admin_push_subscriptions SET disabled=1,updated_at=? WHERE id=?').bind(now(),sub.id).run().catch(()=>{});
+    return sent.accepted?json({ok:true,acceptedByPushService:true,attemptId}):json({error:failure.message,code:failure.code,phase:failure.phase,providerStatus:sent.status,providerReason:sent.reason||null,attemptId},502);
+   }catch(error){
+    const safe=error instanceof WebPushError?error:new WebPushError('PUSH_TEST_FAILED','preparation','Não foi possível preparar o teste de notificação. Atualize o painel e tente novamente.');
+    await saveAttempt(env,sub.id,{kind:'test',state:'failed',phase:safe.phase,code:safe.code,id:attemptId});
+    return json({error:safe.message,code:safe.code,phase:safe.phase,attemptId},503);
+   }
   }
   return json({error:'Endereço não encontrado.'},404);
  }catch(error){
   if(/inválid|grandes|reconhecido/.test(error.message||''))return json({error:'Confira os dados de ativação das notificações.'},400);
+  if(action==='notifications/test')return json({error:'Não foi possível conferir o acesso deste aparelho para enviar o teste. Atualize o painel e tente novamente.',code:'PUSH_SESSION_UNAVAILABLE',phase:'session'},503);
+  if(action==='notifications')return json({error:'Não foi possível carregar a configuração dos avisos deste aparelho. Atualize o painel e tente novamente.',code:'PUSH_SETTINGS_UNAVAILABLE',phase:'settings'},503);
   return json({error:'Não foi possível consultar as vendas agora. Tente novamente.'},503);
  }
 }
@@ -182,8 +215,11 @@ export async function deliverSaleNotifications(env,{request=fetch,orderId}={}){
    await env.DB.prepare('UPDATE admin_push_deliveries SET state=?,last_status=?,lease_until=NULL,next_attempt_at=?,updated_at=? WHERE order_id=? AND subscription_id=?')
     .bind(state,sent.status,new Date(Date.now()+Math.min(3600,60*2**Math.min(claimed.attempts,6))*1000).toISOString(),now(),row.order_id,row.subscription_id).run();
    if(sent.gone)await env.DB.prepare('UPDATE admin_push_subscriptions SET disabled=1,updated_at=? WHERE id=?').bind(now(),row.subscription_id).run();
-  }catch{
+   const failure=sent.accepted?null:pushFailure(sent);
+   await saveAttempt(env,row.subscription_id,{kind:'sale',state:sent.accepted?'accepted':'failed',phase:failure?.phase||'provider',code:failure?.code,status:sent.status,reason:sent.reason,id:crypto.randomUUID()});
+  }catch(error){
    await env.DB.prepare("UPDATE admin_push_deliveries SET state='pending',lease_until=NULL,next_attempt_at=?,updated_at=? WHERE order_id=? AND subscription_id=?").bind(new Date(Date.now()+300000).toISOString(),now(),row.order_id,row.subscription_id).run();
+   await saveAttempt(env,row.subscription_id,{kind:'sale',state:'failed',phase:error instanceof WebPushError?error.phase:'preparation',code:error instanceof WebPushError?error.code:'PUSH_DELIVERY_FAILED',id:crypto.randomUUID()});
   }
  }
 }

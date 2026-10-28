@@ -9,7 +9,7 @@ export async function publishSalesNotifications({repositoryRoot=root,run=spawnSy
  if(result.error||result.status!==0)throw Error('A publicação não foi confirmada. Confira a mensagem do Wrangler.');
  const response=await request('https://lojastreetball.com.br/api/health/notifications',{redirect:'error',signal:AbortSignal.timeout(15000)});
  const status=await response.json();
- if(!response.ok||status.version!=='iphone-sales-v1')throw Error('A nova versão ainda não foi confirmada no domínio. Aguarde um pouco e confira https://lojastreetball.com.br/ops/ .');
+ if(!response.ok||status.version!=='iphone-sales-v2')throw Error('A nova versão ainda não foi confirmada no domínio. Aguarde um pouco e confira https://lojastreetball.com.br/ops/ .');
  log('Painel publicado: https://lojastreetball.com.br/ops/');
  log('No iPhone: abra no Safari, adicione à Tela de Início, abra pelo ícone e entre com a chave administrativa.');
  log('Toque em Ativar notificações, permita os avisos e envie um teste.');

@@ -94,3 +94,32 @@ test('the real authenticated payment webhook records a sale before acknowledging
  assert.equal(one(query,'SELECT COUNT(*) AS n FROM admin_push_deliveries').n,1);assert.equal(one(query,'SELECT state FROM admin_push_deliveries').state,'accepted');
  assert.equal(one(query,'SELECT status FROM orders').status,'awaiting_payment');
 });
+test('the test route identifies a transport failure without leaking raw errors and saves only safe diagnostics',async t=>{
+ const {env}=await fixture(t),device=await enroll(env);
+ t.mock.method(globalThis,'fetch',async()=>{throw Error('private endpoint and credentials must never reach the browser');});
+ const result=await call(env,'notifications/test',{body:{},cookie:device.cookie});
+ assert.equal(result.status,503);assert.equal(result.data.code,'PUSH_CONNECTION_FAILED');assert.equal(result.data.phase,'transport');assert.ok(!JSON.stringify(result.data).includes('credentials'));
+ const config=await call(env,'notifications',{cookie:device.cookie});assert.equal(config.data.lastAttempt.code,'PUSH_CONNECTION_FAILED');assert.ok(!JSON.stringify(config.data.lastAttempt).includes('web.push.apple.com'));
+});
+test('an expired push registration is disabled and the browser receives a reconnection instruction',async t=>{
+ const {env,query}=await fixture(t),device=await enroll(env);
+ t.mock.method(globalThis,'fetch',async()=>Response.json({reason:'Unregistered'},{status:410}));
+ const result=await call(env,'notifications/test',{body:{},cookie:device.cookie});
+ assert.equal(result.status,502);assert.equal(result.data.code,'PUSH_SUBSCRIPTION_EXPIRED');assert.equal(result.data.providerStatus,410);assert.equal(result.data.providerReason,'Unregistered');
+ assert.equal(one(query,'SELECT disabled FROM admin_push_subscriptions').disabled,1);assert.equal((await call(env,'notifications',{cookie:device.cookie})).data.active,false);
+});
+test('provider authentication errors and invalid signing keys are distinguished from sales lookup failures',async t=>{
+ const {env,query}=await fixture(t),device=await enroll(env);
+ const mock=t.mock.method(globalThis,'fetch',async()=>Response.json({reason:'BadJwtToken'},{status:403}));
+ let result=await call(env,'notifications/test',{body:{},cookie:device.cookie});assert.equal(result.data.code,'PUSH_PROVIDER_AUTH_REJECTED');assert.equal(result.data.providerReason,'BadJwtToken');
+ query({sql:'UPDATE admin_sales_config SET private_jwk=?',args:['{}']});
+ result=await call(env,'notifications/test',{body:{},cookie:device.cookie});assert.equal(result.data.code,'PUSH_SIGNING_FAILED');assert.equal(result.data.phase,'authentication');assert.equal(mock.mock.callCount(),1);
+});
+test('a missing diagnostics table is created for existing sessions without resetting registrations or VAPID keys',async t=>{
+ const {env,query}=await fixture(t),device=await enroll(env),before=one(query,'SELECT private_jwk FROM admin_sales_config').private_jwk;
+ query({sql:'DROP TABLE admin_push_attempt_results'});
+ t.mock.method(globalThis,'fetch',async()=>new Response(null,{status:201}));
+ const result=await call(env,'notifications/test',{body:{},cookie:device.cookie});assert.equal(result.status,200);assert.equal(result.data.acceptedByPushService,true);
+ assert.equal(one(query,'SELECT private_jwk FROM admin_sales_config').private_jwk,before);assert.equal(one(query,'SELECT COUNT(*) AS n FROM admin_push_subscriptions WHERE disabled=0').n,1);
+ assert.equal((await call(env,'notifications',{cookie:device.cookie})).data.lastAttempt.state,'accepted');
+});
