@@ -16,7 +16,7 @@ o cupom. Não inclui frete cobrado do comprador.
 
 Preço mínimo antes do cupom = (custo estimado + 10) / (0,95 × 0,615).
 O resultado é arredondado para cima em preços terminados em R$ 9,90.
-As promoções de tabela de 20%/17% continuam apenas na apresentação; a base
+As promoções de tabela de 20% continuam apenas na apresentação; a base
 desta conta é o preço efetivamente praticado, antes do cupom adicional.
 
 | Tipo | Novo preço | Sobra estimada sem adicionais |
@@ -57,6 +57,11 @@ importação também aplica o piso após as revisões de fotos e classificação
 `tests/commission-pricing.test.mjs` verifica as variantes com custo cadastrado
 e o valor efetivamente enviado ao provedor de pagamentos, com provedor falso.
 
-Este reajuste não cadastra vendedores nem ativa cupons no checkout. Ele prepara
-os preços para as condições comerciais acima. A publicação deve manter a loja,
+O painel de vendas permite cadastrar vendedores, definir apelido, cupom e comissão
+de até 25%. O vendedor deve ter uma conta na loja; o acesso financeiro fica
+vinculado ao ID dessa conta pelo administrador. O cupom concede 5% no checkout.
+A atribuição guarda percentual e comissão de cada pedido; alterações posteriores
+não mudam o histórico. Só pagamentos recebidos geram comissão; estornos e
+contestações reduzem o saldo. A baixa administrativa apenas registra o pagamento
+feito pelo proprietário e não transfere dinheiro. A publicação deve manter a loja,
 o banco, as fotos, os pedidos e as configurações de pagamento existentes.

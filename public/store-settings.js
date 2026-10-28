@@ -29,7 +29,7 @@ const CURRENT_SHIRT_KINDS=new Set(['fan','female','kids','long','player_adidas',
 export function productOfferPrice(product,{unitPrice=product?.price,quantity=1}={}){
  if(!Number.isFinite(unitPrice)||unitPrice<=0||!Number.isSafeInteger(quantity)||quantity<1)return null;
  const retro=product?.category==='retro'||['retro','retro_long'].includes(product?.kind);
- const percent=!retro&&!apparelPriceMode(product)&&CURRENT_SHIRT_KINDS.has(product?.kind)?20:17;
+ const percent=20;
  const currentUnitCents=Math.round(unitPrice*100);
  if(currentUnitCents<1||!Number.isSafeInteger(currentUnitCents*100))return null;
  // Divide by the amount paid after discount, rather than adding 20%/17%:

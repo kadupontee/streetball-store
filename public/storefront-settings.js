@@ -70,7 +70,7 @@
   window.addEventListener('streetball:catalog-error',event=>send('error',{message:event.detail}));
  }
  window.STREETBALL_SETTINGS_READY=(async()=>{
-  model=await import('./store-settings.js?v=20261028-commission-pricing-v1');
+  model=await import('./store-settings.js?v=20261028-seller-portals-v1');
   let info;
   if(location.hostname.endsWith('.github.io')||location.protocol==='file:')info={revision:0,settings:model.emptySettings()};
   else{

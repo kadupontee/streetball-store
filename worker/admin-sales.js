@@ -1,3 +1,4 @@
+import {sellerAdmin} from './seller-sales.js';
 import {base64url,generateVapidKeys,validatePushSubscription,sendWebPush,fromBase64url,WebPushError} from './web-push.js';
 import {salesProgress} from './admin-sales-progress.js';
 import {STAGES} from './order-progress.js';
@@ -96,6 +97,7 @@ export async function handleAdminSales(request,env,ctx){
   }
   const session=await deviceSession(request,env);
   if(!session&&!admin)return json({error:'Entre com sua chave administrativa para acompanhar as vendas.'},401);
+  const sellerResponse=await sellerAdmin(request,env,action);if(sellerResponse)return sellerResponse;
   if(action==='session'&&method==='GET')return json({ok:true,deviceReady:!!session,version:SALES_NOTIFICATIONS_VERSION});
   if(action==='logout'&&method==='POST'){
    if(session){

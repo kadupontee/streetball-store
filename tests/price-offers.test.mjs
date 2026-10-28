@@ -5,21 +5,21 @@ import {readFileSync} from 'node:fs';
 import {productOfferPrice,applyProductOverride,emptySettings,RETAIL_PRICE_POLICY_VERSION} from '../public/store-settings.js';
 import worker from '../worker/index.js';
 
-test('camisas atuais mostram 20%; retrô, agasalhos e demais produtos mostram 17%',()=>{
+test('camisas atuais mostram 20%; retrô, agasalhos e demais produtos também mostram 20%',()=>{
  for(const kind of ['fan','female','kids','long','player_adidas','player_nike','player_puma']){
   assert.equal(productOfferPrice({kind,price:159.9}).percent,20);
-  assert.equal(productOfferPrice({kind,category:'retro',price:199.9}).percent,17);
+  assert.equal(productOfferPrice({kind,category:'retro',price:199.9}).percent,20);
  }
- for(const kind of ['retro','retro_long','shorts','shorts_player','socks','set','jacket','coat','blouse','unknown'])assert.equal(productOfferPrice({kind,price:199.9}).percent,17);
+ for(const kind of ['retro','retro_long','shorts','shorts_player','socks','set','jacket','coat','blouse','unknown'])assert.equal(productOfferPrice({kind,price:199.9}).percent,20);
  const corrected=applyProductOverride({kind:'fan',title:'Corinthian Home',price:159.9},{title:'Corinthians — Blusa',price:379.8});
- assert.equal(productOfferPrice(corrected).percent,17);
+ assert.equal(productOfferPrice(corrected).percent,20);
 });
 
 test('a referência corresponde ao desconto anunciado, sem alterar o preço efetivo',()=>{
  const shirt=Object.freeze({kind:'fan',price:160});
  assert.deepEqual(productOfferPrice(shirt),{percent:20,currentUnit:160,referenceUnit:200,quantity:1,currentTotal:160,referenceTotal:200});
  assert.equal(shirt.price,160);
- const cases=[[{kind:'fan',price:159.9},199.88],[{kind:'retro',price:199.9},240.85],[{kind:'coat',price:379.8},457.6]];
+ const cases=[[{kind:'fan',price:159.9},199.88],[{kind:'retro',price:199.9},249.88],[{kind:'coat',price:379.8},474.75]];
  for(const [p,reference]of cases){const offer=productOfferPrice(p);assert.equal(offer.referenceUnit,reference);assert.equal(offer.currentUnit,p.price);assert.ok((offer.referenceUnit-offer.currentUnit)/offer.referenceUnit*100>=offer.percent-1e-9);}
 });
 
@@ -27,7 +27,7 @@ test('a vitrine usa o preço e a classificação efetivamente publicados no edit
  const product={kind:'fan',category:'europa',price:159.9};
  const edited=applyProductOverride(product,{price:149.9});
  assert.equal(productOfferPrice(edited).currentTotal,189.9);assert.equal(productOfferPrice(edited).referenceTotal,237.38);
- const retro=applyProductOverride(product,{kind:'retro',price:199.9});assert.equal(productOfferPrice(retro).percent,17);
+ const retro=applyProductOverride(product,{kind:'retro',price:199.9});assert.equal(productOfferPrice(retro).percent,20);
 });
 
 test('quantidades preservam a referência unitária e entradas inválidas não inventam uma oferta',()=>{
