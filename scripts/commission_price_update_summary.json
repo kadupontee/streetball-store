@@ -1,7 +1,7 @@
 {
   "policy": "commission25-coupon5-min10-20261028",
   "products": 11210,
-  "changed": 11210,
+  "changed": 0,
   "assumptions": {
     "usd_brl": "5.30",
     "acquisition_cushion": "1.25",
