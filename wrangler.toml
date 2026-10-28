@@ -21,7 +21,7 @@ database_name = "streetball-db"
 database_id = "72f1d273-c678-485c-9ec1-237453a01bd9"
 
 [triggers]
-crons = ["0 * * * *"]
+crons = ["0 * * * *", "*/5 * * * *"]
 
 [vars]
 ASAAS_SANDBOX = "false"

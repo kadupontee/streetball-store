@@ -35,6 +35,7 @@
     "preparar-producao": "node payments-setup.mjs prepare",
     "status-producao": "node store-cli.mjs production-status",
     "liberar-vendas": "node production-release.mjs",
+    "preparar-notificacoes": "node notifications-setup.mjs",
     "test": "node --test *.test.mjs"
   },
   "dependencies": {

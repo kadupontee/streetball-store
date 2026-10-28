@@ -1,0 +1,12 @@
+{
+ "id":"/ops/",
+ "name":"Streetball · Vendas",
+ "short_name":"Streetball",
+ "lang":"pt-BR",
+ "start_url":"/ops/",
+ "scope":"/ops/",
+ "display":"standalone",
+ "background_color":"#f4f5ef",
+ "theme_color":"#15271e",
+ "icons":[{"src":"/apple-touch-icon.png","sizes":"180x180","type":"image/png","purpose":"any"}]
+}

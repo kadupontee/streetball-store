@@ -1,5 +1,6 @@
 import {routePaidOrder,handleSupplierInbound,monitorSupplierSLA,retryPendingRoutes,previewSupplierOrder,loadSupplierCandidates,classifyStockReply,supplierReplyAction,sendBuyerUpdate} from './fulfillment.js';
 import {handleLocalWhatsApp} from './local-whatsapp.js';
+import {handleAdminSales,recordSalePaymentEvent,deliverSaleNotifications} from './admin-sales.js';
 import {recordPaymentEnvironment,recordPaymentReceipt,enqueueLocalGroup} from './local-orders.js';
 import {supplierPayoutStatus,processSupplierPayouts,handlePayoutAuthorization,payoutSchemaAvailable} from './supplier-payouts.js';
 import {asaasConfig,asaasRequest as asaas} from './asaas.js';
@@ -113,6 +114,9 @@ async function paymentWebhook(req,env,ctx){
  if(Math.abs(Number(event.payment.value)-Number(order.total))>0.009||!Number.isFinite(Number(event.payment.value)))return clientError('Valor da cobrança divergente.',409);
  if(order.payment_id&&order.payment_id!==event.payment.id)return clientError('ID da cobrança divergente.',409);
  if(event.event==='PAYMENT_RECEIVED'&&env.WA_TRANSPORT==='local')await recordPaymentReceipt(env,order.id,event.payment.id);
+ // Persist the notification before acknowledging the webhook. Financial actions
+ // remain independent; push delivery is retried from its own durable outbox.
+ const notify=await recordSalePaymentEvent(env,order.id,event.event);
  await env.DB.prepare('INSERT OR IGNORE INTO webhook_events(id,received_at,event_name) VALUES(?,?,?)').bind(event.id,new Date().toISOString(),event.event).run();
  if(!order.payment_id)await env.DB.prepare('UPDATE orders SET payment_id=?,updated_at=? WHERE id=? AND payment_id IS NULL').bind(event.payment.id,new Date().toISOString(),order.id).run();
  // PAYMENT_CONFIRMED pode não significar saldo disponível; só liberar fornecedor quando RECEIVED.
@@ -129,6 +133,7 @@ async function paymentWebhook(req,env,ctx){
    await env.DB.prepare("UPDATE orders SET status=?,updated_at=? WHERE id=? AND status IN ('awaiting_payment','paid_supplier_pending','supplier_preparing')").bind(state,new Date().toISOString(),order.id).run();
    await env.DB.prepare("UPDATE supplier_jobs SET status='manual_review',updated_at=? WHERE order_id=?").bind(new Date().toISOString(),order.id).run();
  }
+ if(notify){const task=deliverSaleNotifications(env,{orderId:order.id}).catch(()=>{});if(ctx?.waitUntil)ctx.waitUntil(task);else await task;}
  return json({ok:true});
 }
 // Painel administrativo protegido por token, nunca público.
@@ -400,6 +405,7 @@ async function whatsappInbound(req,env,ctx){
  return json({ok:true});
 }
 export default {async fetch(request,env,ctx){const url=new URL(request.url);if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors});try{
+ if(url.pathname.startsWith('/api/admin/sales/')||url.pathname==='/api/health/notifications')return await handleAdminSales(request,env,ctx);
  if(url.pathname==='/api/webhooks/asaas/supplier-payout-authorization')return await handlePayoutAuthorization(request,env);
  if(url.pathname.startsWith('/api/local-whatsapp/'))return await handleLocalWhatsApp(request,env,{
   onInbound:message=>handleSupplierInbound(env,message,ctx),
@@ -472,5 +478,5 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);if(r
  if(url.pathname.startsWith('/api/'))return clientError('Endpoint não encontrado.',404);
  if(env.ASSETS)return env.ASSETS.fetch(request);return new Response('Assets não configurados.',{status:503});
 }catch(err){return clientError('Serviço indisponível. Tente novamente.',500)}} ,
- async scheduled(event,env){if(!env.DB)return;await monitorSupplierSLA(env);await retryPendingRoutes(env);if(env.ASAAS_SUPPLIER_PAYOUT_AUTH_TOKEN)await processSupplierPayouts(env,{enqueue:enqueueLocalGroup});}
+ async scheduled(event,env){if(!env.DB)return;if(event.cron==='*/5 * * * *'){await deliverSaleNotifications(env);return;}await monitorSupplierSLA(env);await retryPendingRoutes(env);if(env.ASAAS_SUPPLIER_PAYOUT_AUTH_TOKEN)await processSupplierPayouts(env,{enqueue:enqueueLocalGroup});}
 };
