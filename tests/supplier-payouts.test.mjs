@@ -49,7 +49,7 @@ async function fixture(t,{enabled=true,withProfile=true,withRate=true,profileCha
  if(enabled)query({sql:'UPDATE supplier_payout_settings SET enabled=1,security_confirmed=1 WHERE id=1'});
  const request=async(url,options)=>{
   const u=new URL(url);assert.equal(u.origin,'https://api.asaas.com');assert.equal(options.headers.access_token,env.ASAAS_PRODUCTION_API_KEY);
-  assert.ok(['error','manual'].includes(options.redirect));calls.push({url:String(url),method:options.method,body:options.body});
+  assert.equal(options.redirect,'manual');calls.push({url:String(url),method:options.method,body:options.body});
   if(u.pathname==='/v3/myAccount/fees/')return Response.json({transfer:{pix:{feeValue:bank.fee,discountValue:0}}});
   if(u.pathname==='/v3/pix/qrCodes/decode')return Response.json({payload:JSON.parse(options.body).payload,type:bank.decodeType,value:Number(quotedBrl),totalValue:Number(quotedBrl),canBePaid:true,finality:null,receiver:{cpfCnpj:receiver,name:'Recebedor fictício'}});
   if(u.pathname==='/v3/finance/balance')return Response.json({balance:bank.balance});

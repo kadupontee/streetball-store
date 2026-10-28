@@ -34,3 +34,9 @@ Os avisos rodam no Cloudflare, independentemente do Mac. O envio WhatsApp pelo c
 O painel distingue falhas no cadastro, criptografia, identificação da loja, conexão com o serviço e rejeição pelo provedor. **Copiar resultado do teste** copia somente a versão, estado de permissão, modo de instalação, código de erro, etapa, status HTTP, motivo conhecido do provedor e referência do teste. Não inclui a chave administrativa, cookies, endpoint de inscrição, chaves de criptografia, conteúdo de pedidos ou respostas brutas do provedor.
 
 Uma resposta HTTP aceita não é transformada em falha caso o encerramento do corpo da resposta tenha erro. Cadastros recusados como expirados (404/410) são desativados. **Reconectar notificações**, acionado pelo usuário, renova a inscrição do aparelho sem gerar novas chaves da loja nem modificar os pedidos. A tabela adicional de diagnósticos é criada ao registrar um resultado; sessões existentes continuam funcionando.
+
+## Compatibilidade HTTP do Cloudflare (v3)
+
+O código `PUSH_CONNECTION_FAILED` foi reproduzido no workerd: o modo `redirect: 'error'` não é implementado e gerava uma exceção antes de qualquer envio HTTP. A versão v3 usa `redirect: 'manual'` e recusa respostas 3xx explicitamente. Aplica a mesma correção às chamadas Asaas que usavam a opção incompatível. Redirecionamentos não encaminham autorização, conteúdo da notificação ou credenciais bancárias a outro destino.
+
+`npm test` agora inclui uma regressão no workerd com o `fetch` nativo preservado. Somente o serviço HTTP de saída é simulado, sem contato com aparelhos ou bancos reais. O teste percorre a construção e o envio nativo da requisição, além da recusa de redirecionamentos. As verificações financeiras continuam usando dados fictícios.

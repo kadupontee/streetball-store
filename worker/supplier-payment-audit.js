@@ -77,9 +77,10 @@ export function compareSupplierPayment({order,charge,decoded,balance,costs,quote
 
 async function providerRead(config,path,{body,request}){
  try{
-  const response=await request(config.apiUrl+path,{method:body?'POST':'GET',redirect:'error',signal:AbortSignal.timeout(8000),
+  const response=await request(config.apiUrl+path,{method:body?'POST':'GET',redirect:'manual',signal:AbortSignal.timeout(8000),
    headers:{'access_token':config.apiKey,'user-agent':'StreetballStore/1.0',accept:'application/json',
     ...(body?{'content-type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
+  if(response.status>=300&&response.status<400){try{await response.body?.cancel();}catch{}return null;}
   const data=await response.json().catch(()=>null);
   return response.ok&&data&&typeof data==='object'&&!Array.isArray(data)?data:null;
  }catch{return null;}

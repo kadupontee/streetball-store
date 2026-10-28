@@ -218,7 +218,7 @@ test('a long complete bill is preserved and the audit reads its current evidence
  assert.equal(JSON.parse(evidence.format_json).pixPayload,pix);
  env.ASAAS_PRODUCTION_API_KEY='fake-key';const calls=[];
  const provider=async(url,options)=>{
-  calls.push(String(url));assert.equal(options.redirect,'error');
+  calls.push(String(url));assert.equal(options.redirect,'manual');
   if(String(url).endsWith('/payments/pay_fake_production'))return Response.json({id:'pay_fake_production',externalReference:orderId,value:199.9,netValue:197.91,status:'RECEIVED',deleted:false,refunds:[]});
   if(String(url).endsWith('/finance/balance'))return Response.json({balance:500});
   if(String(url).endsWith('/pix/qrCodes/decode')){

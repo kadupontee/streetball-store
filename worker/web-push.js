@@ -60,10 +60,14 @@ export async function sendWebPush(raw,payload,keys,{subject='https://lojastreetb
  const headers={authorization,'content-encoding':'aes128gcm','content-type':'application/octet-stream',TTL:'86400',Urgency:'high'};
  if(topic)headers.Topic=topic;
  let response;
- try{response=await request(subscription.endpoint,{method:'POST',headers,body,redirect:'error',signal:AbortSignal.timeout(12000)});}
+ try{response=await request(subscription.endpoint,{method:'POST',headers,body,redirect:'manual',signal:AbortSignal.timeout(12000)});}
  catch(error){
   const timeout=['AbortError','TimeoutError'].includes(error?.name);
   throw new WebPushError(timeout?'PUSH_TIMEOUT':'PUSH_CONNECTION_FAILED','transport',timeout?'O serviço de notificações demorou para responder. Tente enviar o teste novamente.':'A loja não conseguiu se conectar ao serviço de notificações. Tente novamente.');
+ }
+ if(response.status>=300&&response.status<400){
+  try{await response.body?.cancel();}catch{}
+  throw new WebPushError('PUSH_UNEXPECTED_REDIRECT','provider','O serviço de notificações retornou um redirecionamento inesperado. O envio foi interrompido.');
  }
  const accepted=response.status>=200&&response.status<300;
  let reason=null;

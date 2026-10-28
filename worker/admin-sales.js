@@ -2,7 +2,7 @@ import {base64url,generateVapidKeys,validatePushSubscription,sendWebPush,fromBas
 import {salesProgress} from './admin-sales-progress.js';
 import {STAGES} from './order-progress.js';
 
-export const SALES_NOTIFICATIONS_VERSION='iphone-sales-v2';
+export const SALES_NOTIFICATIONS_VERSION='iphone-sales-v3';
 const PREFIX='/api/admin/sales/',COOKIE='__Host-streetball_ops';
 const now=()=>new Date().toISOString();
 const json=(value,status=200,headers={})=>new Response(JSON.stringify(value),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...headers}});

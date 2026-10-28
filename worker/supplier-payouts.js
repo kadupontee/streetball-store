@@ -34,9 +34,10 @@ const keyReady=env=>typeof env.ASAAS_SUPPLIER_PAYOUT_AUTH_TOKEN==='string'&&/^[A
 async function bank(env,path,{body,request=fetch}={}){
  const config=asaasConfig(env);if(config.sandbox!==false||!config.apiKey)return null;
  try{
-  const r=await request(config.apiUrl+path,{method:body===undefined?'GET':'POST',redirect:'error',signal:AbortSignal.timeout(8000),
+  const r=await request(config.apiUrl+path,{method:body===undefined?'GET':'POST',redirect:'manual',signal:AbortSignal.timeout(8000),
    headers:{access_token:config.apiKey,'user-agent':'StreetballStore/1.0',accept:'application/json',...(body===undefined?{}:{'content-type':'application/json'})},
    ...(body===undefined?{}:{body:JSON.stringify(body)})});
+  if(r.status>=300&&r.status<400){try{await r.body?.cancel();}catch{}return null;}
   const data=await r.json().catch(()=>null);return r.ok&&plain(data)?data:null;
  }catch{return null;}
 }

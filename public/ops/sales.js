@@ -75,7 +75,7 @@ async function updatePushStatus(){
 }
 function decodeKey(key){return Uint8Array.from(atob(key.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(key.length/4)*4,'=')),c=>c.charCodeAt(0));}
 function showPushResult(result){
- lastPushResult={version:pushConfig?.version||'iphone-sales-v2',permission:'Notification' in window?Notification.permission:'unsupported',installed:standalone(),...result};
+ lastPushResult={version:pushConfig?.version||'iphone-sales-v3',permission:'Notification' in window?Notification.permission:'unsupported',installed:standalone(),...result};
  $('pushDiagnostic').hidden=false;$('copyPushResult').hidden=false;
  $('pushDiagnostic').textContent=result.state==='accepted'?'O serviço de notificações aceitou o último envio.':'Resultado do teste: '+(result.code||'PUSH_TEST_FAILED')+(result.providerStatus?' · HTTP '+result.providerStatus:'')+(result.providerReason?' · '+result.providerReason:'');
 }

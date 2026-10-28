@@ -24,7 +24,7 @@ function fixture(){
    assert.fail('Unexpected SQL');
   },run(){assert.fail('Read-only audit cannot write to D1');}};}}};
  const request=async(url,options)=>{
-  assert.equal(options.redirect,'error');assert.equal(options.headers.access_token,env.ASAAS_PRODUCTION_API_KEY);
+  assert.equal(options.redirect,'manual');assert.equal(options.headers.access_token,env.ASAAS_PRODUCTION_API_KEY);
   calls.push({url,options});
   if(url==='https://api.asaas.com/v3/payments/pay_example'){assert.equal(options.method,'GET');assert.equal(options.body,undefined);return Response.json(charge);}
   if(url==='https://api.asaas.com/v3/finance/balance'){assert.equal(options.method,'GET');assert.equal(options.body,undefined);return Response.json(balance);}

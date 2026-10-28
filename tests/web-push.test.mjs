@@ -34,7 +34,7 @@ test('push is encrypted, never follows redirects and distinguishes expired subsc
  const sub=subscription(client()),keys=await generateVapidKeys(),calls=[];
  const send=status=>sendWebPush(sub,{title:'Teste',url:'/ops/'},keys,{topic:'fake-topic',request:async(url,options)=>{calls.push({url,options});return new Response(null,{status});}});
  assert.deepEqual(await send(201),{accepted:true,gone:false,status:201});assert.equal((await send(410)).gone,true);assert.equal((await send(503)).gone,false);
- const options=calls[0].options;assert.equal(options.redirect,'error');assert.equal(options.headers['content-encoding'],'aes128gcm');assert.equal(options.headers.Topic,'fake-topic');assert.ok(!Buffer.from(options.body).includes(Buffer.from('Teste')));
+ const options=calls[0].options;assert.equal(options.redirect,'manual');assert.equal(options.headers['content-encoding'],'aes128gcm');assert.equal(options.headers.Topic,'fake-topic');assert.ok(!Buffer.from(options.body).includes(Buffer.from('Teste')));
 });
 test('response cleanup cannot turn an accepted push into a failed delivery',async()=>{
  const sub=subscription(client()),keys=await generateVapidKeys();
@@ -56,4 +56,9 @@ test('only allowlisted provider reason codes are returned and broken response bo
  const unsafe=await sendWebPush(sub,{title:'Teste'},keys,{request:async()=>Response.json({reason:'private endpoint token',endpoint:sub.endpoint},{status:403})});assert.equal(unsafe.reason,undefined);
  const locked=new Response('ignored',{status:410}),reader=locked.body.getReader();
  try{const sent=await sendWebPush(sub,{title:'Teste'},keys,{request:async()=>locked});assert.equal(sent.gone,true);assert.equal(sent.status,410);}finally{await reader.cancel();}
+});
+test('a push redirect is rejected after one request without forwarding VAPID credentials or encrypted content',async()=>{
+ const sub=subscription(client()),keys=await generateVapidKeys();let calls=0;
+ await assert.rejects(sendWebPush(sub,{title:'Teste'},keys,{request:async(url,options)=>{calls++;assert.equal(url,sub.endpoint);assert.equal(options.redirect,'manual');return new Response(null,{status:307,headers:{location:'https://unexpected.example.invalid/'}});}}),error=>error.code==='PUSH_UNEXPECTED_REDIRECT');
+ assert.equal(calls,1);
 });

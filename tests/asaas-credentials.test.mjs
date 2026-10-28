@@ -42,7 +42,7 @@ test('requests go only to the active provider environment with its matching key'
   await asaasRequest('/customers',{...secrets,ASAAS_SANDBOX:mode},{name:'Example'}, {request:async(url,options)=>{
    count++;assert.equal(url,mode==='true'?'https://api-sandbox.asaas.com/v3/customers':'https://api.asaas.com/v3/customers');
    assert.equal(options.headers.access_token,mode==='true'?sandboxKey:productionKey);
-   assert.equal(options.redirect,'error');assert.equal(options.headers['user-agent'],'StreetballStore/1.0');
+   assert.equal(options.redirect,'manual');assert.equal(options.headers['user-agent'],'StreetballStore/1.0');
    return Response.json({id:'fake_customer'});
   }});
   assert.equal(count,1);
@@ -70,4 +70,11 @@ test('the webhook accepts only the active environment token before touching paym
    assert.equal(response.status,candidate===active?400:401);
   }
  }
+});
+test('payment redirects are rejected without a second request or forwarding the account credential',async()=>{
+ let count=0;
+ await assert.rejects(asaasRequest('/customers',{...secrets,ASAAS_SANDBOX:'true'},{name:'Teste'}, {request:async(url,options)=>{
+  count++;assert.equal(options.redirect,'manual');return new Response(null,{status:307,headers:{location:'https://unexpected.example.invalid/'}});
+ }}),/Redirecionamento inesperado/);
+ assert.equal(count,1);
 });

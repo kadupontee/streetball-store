@@ -6,6 +6,8 @@ on:
       - worker/**
       - whatsapp-local/**
       - tests/**
+      - package.json
+      - package-lock.json
       - scripts/costs.json
       - .github/workflows/supplier-billing-checks.yml
   pull_request:
@@ -13,6 +15,8 @@ on:
       - worker/**
       - whatsapp-local/**
       - tests/**
+      - package.json
+      - package-lock.json
       - scripts/costs.json
       - .github/workflows/supplier-billing-checks.yml
 permissions:
@@ -31,6 +35,8 @@ jobs:
           node-version: '22'
       - name: Instalar o conector local
         run: npm ci --prefix whatsapp-local
+      - name: Instalar o runtime de testes do Worker
+        run: npm ci
       - name: Conferir loja, cobrancas e isolamento de pagamentos
         run: node --import ./tests/register-worker-html.mjs --test tests/*.test.mjs
       - name: Conferir tabela de compra e precos de venda separados

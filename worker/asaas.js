@@ -15,8 +15,9 @@ export function asaasConfig(env) {
 export async function asaasRequest(endpoint,env,body,{request=fetch}={}) {
  const config=asaasConfig(env);
  if(!config.apiKey)throw new Error('Chave Asaas não configurada para o ambiente ativo.');
- const response=await request(config.apiUrl+endpoint,{method:'POST',redirect:'error',
+ const response=await request(config.apiUrl+endpoint,{method:'POST',redirect:'manual',
   headers:{'content-type':'application/json','access_token':config.apiKey,'user-agent':'StreetballStore/1.0'},body:JSON.stringify(body)});
+ if(response.status>=300&&response.status<400){try{await response.body?.cancel();}catch{}throw new Error('Redirecionamento inesperado no provedor de pagamento.');}
  const data=await response.json().catch(()=>({}));
  if(!response.ok)throw new Error('Erro no provedor de pagamento: '+(data.errors?.[0]?.description||response.status));
  return data;
