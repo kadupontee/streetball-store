@@ -265,7 +265,7 @@ function resetEuropeLeague(){
  $('europeLeagues').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-const ADDON={personalization:20,patch:8,size:{XXL:5,'3XL':10,'4XL':15}};
+const ADDON={personalization:35,patch:12,size:{XXL:12,'3XL':23,'4XL':35}};
 const PRODUCT_LIMIT=36;
 const isBasketball=p=>p?.category==='nba'||p?.kind==='nba'||/\b(nba|basketball)\b/i.test(String(p?.title||''));
 let catalog=(Array.isArray(window.STREETBALL_CATALOG)?window.STREETBALL_CATALOG:[]).filter(p=>!isBasketball(p));
@@ -416,7 +416,7 @@ function playerShortsReprice(p){
  const playerShorts=kind==='shorts_player'||(kind==='shorts'&&/\b(?:shorts?|calcao|bermuda)\b/.test(title)&&/\b(?:player|jogador|versao\s+jogador)\b/.test(title));
  if(!playerShorts)return item;
  if(!item.kindLocked)item.kind='shorts_player';
- if(!item.priceLocked&&Math.abs(Number(item.price)-119.90)<0.005)item.price=143.90;
+ if(!item.priceLocked&&Math.abs(Number(item.price)-119.90)<0.005)item.price=199.90;
  return item;
 }
 function assignTeam(product){
@@ -720,7 +720,7 @@ if(/^https?:$/.test(location.protocol)){
   window.STREETBALL_SETTINGS_READY||Promise.resolve({settings:{products:{}},model:null})
  ]).then(([data,info])=>{
   if(!Array.isArray(data)||!data.length)throw Error('Catálogo vazio');
-  storeSettingsModel=info.model;storePublishedRevision=info.revision||0;storeProductEdits=info.settings.products||{};storeEditsSignature=JSON.stringify(storeProductEdits);
+  storeSettingsModel=info.model;if(info.model?.RETAIL_ADDONS_BRL)Object.assign(ADDON,info.model.RETAIL_ADDONS_BRL);storePublishedRevision=info.revision||0;storeProductEdits=info.settings.products||{};storeEditsSignature=JSON.stringify(storeProductEdits);
   editorBaseCatalog=prepareCatalog(data);applyStoreProductEdits();renderEditorialHero();categoryRender();loadCheckoutConfig();
   if(editorPreview)window.dispatchEvent(new CustomEvent('streetball:catalog-ready',{detail:editorCatalogSummary()}));
  }).catch(err=>{

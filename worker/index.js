@@ -6,7 +6,7 @@ import {supplierPayoutStatus,processSupplierPayouts,handlePayoutAuthorization,pa
 import {asaasConfig,asaasRequest as asaas} from './asaas.js';
 import {auditSupplierPayment} from './supplier-payment-audit.js';
 import {recordSharedSupplierCostReference,SUPPLIER_COST_VERSION,sharedCostSchemaAvailable} from './supplier-cost-reference.js';
-import {RETAIL_PRICE_POLICY_VERSION,apparelPriceMode} from '../public/store-settings.js';
+import {RETAIL_PRICE_POLICY_VERSION,RETAIL_PRICES_BRL,RETAIL_ADDONS_BRL,apparelPriceMode} from '../public/store-settings.js';
 import {supplierIdValid} from './supplier-mapping.js';
 import {STAGES,safeTrackingCode,formatProgress} from './order-progress.js';
 import {customerTrackingLink,verifyTrackingKey} from './order-tracking-access.js';
@@ -45,7 +45,7 @@ function retroRepriceServer(product){
  if(['fan','long','retro','retro_long','player_nike','player_adidas','player_puma'].includes(k)){
   const long=k==='long'||k==='retro_long'||/long\s*[- ]?sleeves?|manga\s*longa/i.test(title);
   if(!p.kindLocked)p.kind=long?'retro_long':'retro';
-  if(!p.priceLocked)p.price=Math.round(Math.max(Number(p.price)||0,long?229.90:199.90)*100)/100;
+  if(!p.priceLocked)p.price=Math.round(Math.max(Number(p.price)||0,long?RETAIL_PRICES_BRL.retro_long:RETAIL_PRICES_BRL.retro)*100)/100;
  }
  return p;
 }
@@ -58,12 +58,12 @@ function playerShortsRepriceServer(product){
  const isPlayerShorts=kind==='shorts_player'||(kind==='shorts'&&/\b(?:shorts?|calcao|bermuda)\b/.test(title)&&/\b(?:player|jogador|versao\s+jogador)\b/.test(title));
  if(!isPlayerShorts)return p;
  if(!p.kindLocked)p.kind='shorts_player';
- if(!p.priceLocked&&Math.abs(Number(p.price)-119.90)<0.005)p.price=143.90;
+ if(!p.priceLocked&&Math.abs(Number(p.price)-119.90)<0.005)p.price=RETAIL_PRICES_BRL.shorts_player;
  return p;
 }
 async function catalogFor(request,env,snapshot){const r=await env.ASSETS.fetch(new Request(new URL('/catalog.json',request.url)));if(!r.ok)throw Error('CATALOG_UNAVAILABLE');const products=await r.json();return editedCatalog(products.map(p=>playerShortsRepriceServer(retroRepriceServer(p))),env,snapshot)}
 const fail=(msg)=>{throw new Error(msg)};
-function validateItems(raw,products){if(!Array.isArray(raw)||!raw.length||raw.length>35)fail('Sua sacola precisa conter entre 1 e 35 itens.');let subtotal=0,count=0,usesApparelPricing=false;const clean=[];for(const i of raw){const p=products.find(x=>x.id===i.id);if(!p)fail('Produto indisponível: '+safeText(i.id,30));if(apparelPriceMode(p))usesApparelPricing=true;if(!p.sizes.includes(i.size))fail('Tamanho inválido para '+safeText(p.title));const qty=Number(i.qty);if(!Number.isInteger(qty)||qty<1||qty>10)fail('Quantidade inválida.');const patch=i.patch===true,personalize=i.personalize===true;let customName=safeText(i.customName,14),customNumber=safeText(i.customNumber,3);if(!personalize){customName='';customNumber=''}if(personalize&&!customName&&!customNumber)fail('Personalização incompleta.');if(customName&&!/^[\p{L}0-9 .'-]+$/u.test(customName))fail('Nome de personalização inválido.');if(customNumber&&!/^\d{1,3}$/.test(customNumber))fail('Número de personalização inválido.');const sizeExtra=({XXL:5,'3XL':10,'4XL':15})[i.size]||0;const unit=round(Number(p.price)+sizeExtra+(patch?8:0)+(personalize?20:0));if(!(unit>=0&&unit<10000))fail('Preço inválido.');subtotal+=unit*qty;count+=qty;clean.push({id:p.id,title:p.title,qty,size:i.size,patch,personalize,customName,customNumber,unitPrice:unit,image:p.image||null,sourceUrl:p.sourceUrl||null,supplierId:safeText(p.supplierId||'',40)})}if(count>50)fail('Quantidade total excedida.');return {items:clean,subtotal:round(subtotal),usesApparelPricing,supplierCostProducts:raw.map(item=>products.find(p=>p.id===item.id))}}
+function validateItems(raw,products){if(!Array.isArray(raw)||!raw.length||raw.length>35)fail('Sua sacola precisa conter entre 1 e 35 itens.');let subtotal=0,count=0,usesApparelPricing=false;const clean=[];for(const i of raw){const p=products.find(x=>x.id===i.id);if(!p)fail('Produto indisponível: '+safeText(i.id,30));if(RETAIL_PRICES_BRL[p.kind]||apparelPriceMode(p))usesApparelPricing=true;if(!p.sizes.includes(i.size))fail('Tamanho inválido para '+safeText(p.title));const qty=Number(i.qty);if(!Number.isInteger(qty)||qty<1||qty>10)fail('Quantidade inválida.');const patch=i.patch===true,personalize=i.personalize===true;let customName=safeText(i.customName,14),customNumber=safeText(i.customNumber,3);if(!personalize){customName='';customNumber=''}if(personalize&&!customName&&!customNumber)fail('Personalização incompleta.');if(customName&&!/^[\p{L}0-9 .'-]+$/u.test(customName))fail('Nome de personalização inválido.');if(customNumber&&!/^\d{1,3}$/.test(customNumber))fail('Número de personalização inválido.');const sizeExtra=RETAIL_ADDONS_BRL.size[i.size]||0;const unit=round(Number(p.price)+sizeExtra+(patch?RETAIL_ADDONS_BRL.patch:0)+(personalize?RETAIL_ADDONS_BRL.personalization:0));if(!(unit>=0&&unit<10000))fail('Preço inválido.');subtotal+=unit*qty;count+=qty;clean.push({id:p.id,title:p.title,qty,size:i.size,patch,personalize,customName,customNumber,unitPrice:unit,image:p.image||null,sourceUrl:p.sourceUrl||null,supplierId:safeText(p.supplierId||'',40)})}if(count>50)fail('Quantidade total excedida.');return {items:clean,subtotal:round(subtotal),usesApparelPricing,supplierCostProducts:raw.map(item=>products.find(p=>p.id===item.id))}}
 function checkoutReady(env){
  const shipping=Number(env.SHIPPING_FLAT_BRL);
  const credentials=asaasConfig(env);

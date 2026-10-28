@@ -34,8 +34,16 @@
     "three_or_more": 0
   },
   "promotions_usd": [
-    {"kind": "fan", "quantity": 5, "goods_usd": 55},
-    {"kind": "fan", "quantity": 10, "goods_usd": 105}
+    {
+      "kind": "fan",
+      "quantity": 5,
+      "goods_usd": 55
+    },
+    {
+      "kind": "fan",
+      "quantity": 10,
+      "goods_usd": 105
+    }
   ],
   "additions_usd": {
     "personalization": 3,
@@ -53,17 +61,17 @@
     "shipping": "Valores de frete informados pelo fornecedor. Validar condições antes de cobranças reais.",
     "exchange": "Cotação USD/BRL não foi fixada. Informá-la ao gerar simulações de margem.",
     "jacket": "Jaquetas e corta-ventos individuais: custo US$ 30. Conjuntos com calça não usam esse custo automaticamente.",
-    "retro_long": "Camisa retrô de manga longa: custo US$ 19; venda de referência R$ 229,90.",
-    "long": "Camisa atual de manga longa: custo US$ 15; venda de referência R$ 189,90.",
+    "retro_long": "Camisa retrô de manga longa: custo US$ 19; venda de referência R$ 279,90.",
+    "long": "Camisa atual de manga longa: custo US$ 15; venda de referência R$ 239,90.",
     "classification": "Classificação conservadora por títulos/álbuns e existência de fotos, não confirmação visual de cada imagem. Casos ambíguos ficam pendentes de revisão.",
-    "coat": "Casacos e blusas vendidos por R$ 379,80, igual às jaquetas. O custo de compra específico do casaco e da blusa não foi informado.",
-    "apparel_retail": "Jaquetas, blusas e casacos: preço comum de venda R$ 379,80, conforme correção do proprietário. Na dúvida de classificação, manter o maior preço aplicável."
+    "coat": "Casacos e blusas vendidos por R$ 409,90, igual às jaquetas. O custo de compra específico do casaco e da blusa não foi informado.",
+    "apparel_retail": "Jaquetas, blusas e casacos: preço comum de venda R$ 409,90, conforme correção do proprietário. Na dúvida de classificação, manter o maior preço aplicável."
   },
   "retail_brl_reference": {
-    "retro_long": 229.9,
-    "long": 189.9,
-    "jacket": 379.8,
-    "coat": 379.8,
-    "blouse": 379.8
+    "retro_long": 279.9,
+    "long": 239.9,
+    "jacket": 409.9,
+    "coat": 409.9,
+    "blouse": 409.9
   }
 }

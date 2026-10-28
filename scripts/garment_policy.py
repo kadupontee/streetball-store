@@ -1,7 +1,7 @@
 """Política conservadora de jaquetas e camisas de manga longa da Streetball Store.
 
 Custo USD: jaqueta 30, manga longa 15, manga longa retrô 19; custo de casaco não informado.
-Preços BRL: jaqueta, casaco e blusa 379,80; manga longa retrô 229,90.
+Preços BRL: jaqueta, casaco e blusa 409,90; manga longa retrô 279,90.
 Não infere pixel de imagens: exige foto cadastrada na migração e classificações
 claras por título/álbum; registros ambíguos ficam no relatório de revisão.
 """
@@ -11,10 +11,10 @@ import re
 import unicodedata
 from datetime import date
 
-APPAREL_PRICE_BRL = 379.80
+APPAREL_PRICE_BRL = 409.90
 APPAREL_KINDS = {"jacket", "coat", "blouse"}
-APPAREL_RETAIL_POLICY = "apparel-37980-20261027"
-PRICES_BRL = {"jacket":APPAREL_PRICE_BRL,"coat":APPAREL_PRICE_BRL,"blouse":APPAREL_PRICE_BRL,"long":189.90,"retro_long":229.90}
+APPAREL_RETAIL_POLICY = "commission25-coupon5-min10-20261028"
+PRICES_BRL = {"jacket":APPAREL_PRICE_BRL,"coat":APPAREL_PRICE_BRL,"blouse":APPAREL_PRICE_BRL,"long":239.90,"retro_long":279.90}
 COSTS_USD = {"jacket":30,"long":15,"retro_long":19}
 # Tipos e preços antigos do importador que podem ser corrigidos automaticamente.
 LEGACY_PRICES = {159.90,189.90,199.90,229.90,209.90,219.90,299.90}

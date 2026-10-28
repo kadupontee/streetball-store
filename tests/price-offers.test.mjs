@@ -26,7 +26,7 @@ test('a referência corresponde ao desconto anunciado, sem alterar o preço efet
 test('a vitrine usa o preço e a classificação efetivamente publicados no editor',()=>{
  const product={kind:'fan',category:'europa',price:159.9};
  const edited=applyProductOverride(product,{price:149.9});
- assert.equal(productOfferPrice(edited).currentTotal,149.9);assert.equal(productOfferPrice(edited).referenceTotal,187.38);
+ assert.equal(productOfferPrice(edited).currentTotal,189.9);assert.equal(productOfferPrice(edited).referenceTotal,237.38);
  const retro=applyProductOverride(product,{kind:'retro',price:199.9});assert.equal(productOfferPrice(retro).percent,17);
 });
 
@@ -45,7 +45,7 @@ function environment(product,settings=emptySettings()){
 }
 test('checkout e cobrança mantêm o valor atual, inclusive adicionais e quantidades, sem cobrar a referência',async t=>{
  const calls=[];t.mock.method(globalThis,'fetch',async(url,options)=>{calls.push({url,body:JSON.parse(options.body)});return Response.json(String(url).endsWith('/customers')?{id:'fake-customer'}:{id:'fake-payment',invoiceUrl:'https://sandbox.asaas.com/i/fake'});});
- for(const [kind,price,extras,quantity]of [['fan',159.9,0,1],['retro',199.9,0,1],['coat',379.8,0,1],['fan',159.9,33,2]]){
+ for(const [kind,price,extras,quantity]of [['fan',189.9,0,1],['retro',249.9,0,1],['coat',409.9,0,1],['fan',189.9,59,2]]){
   const product={id:'fake-'+kind,title:kind==='retro'?'Camisa retrô de exemplo':'Produto de exemplo',kind,price,sizes:['P','XXL']};
   const {env,sqlite}=environment(product);t.after(()=>sqlite.close());
   const offer=productOfferPrice(product,{unitPrice:price+extras,quantity});

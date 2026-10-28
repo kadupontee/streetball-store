@@ -56,10 +56,10 @@ test('o modelo valida a seleção manual do clube antes de publicar',()=>{
  assert.throws(()=>normalizeSettings(settings));
 });
 test('tabela de varejo altera preço quando troca camisa por blusa',()=>{
- assert.equal(RETAIL_PRICES_BRL.fan,159.90);
- assert.equal(RETAIL_PRICES_BRL.blouse,379.80);
- assert.equal(RETAIL_PRICES_BRL.coat,379.80);
- assert.equal(RETAIL_PRICES_BRL.jacket,379.80);
+ assert.equal(RETAIL_PRICES_BRL.fan,189.90);
+ assert.equal(RETAIL_PRICES_BRL.blouse,409.90);
+ assert.equal(RETAIL_PRICES_BRL.coat,409.90);
+ assert.equal(RETAIL_PRICES_BRL.jacket,409.90);
  const editor=readFileSync(new URL('../public/editor.js',import.meta.url),'utf8');
  for(const token of ['setSuggestedPrice(input.value)','id="productTeam"','chosenTeam','onlyUnassigned'])assert.ok(editor.includes(token),token);
 });

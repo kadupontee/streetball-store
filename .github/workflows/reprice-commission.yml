@@ -1,0 +1,50 @@
+name: Atualizar preços para comissão e cupom
+on:
+  push:
+    branches: [main, codex/whatsapp-secundario-local-20261026, codex/commission-pricing-20261028]
+    paths:
+      - scripts/commission_pricing.py
+      - scripts/costs.json
+      - public/store-settings.js
+      - .github/workflows/reprice-commission.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: streetball-commission-pricing-${{ github.ref_name }}
+  cancel-in-progress: false
+jobs:
+  reprice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Aplicar preços e conferir variantes e checkout sem cobrança real
+        run: |
+          python scripts/commission_pricing.py
+          python scripts/commission_pricing.py --check
+          python scripts/test_supplier_costs.py
+          node --import ./tests/register-worker-html.mjs --test tests/commission-pricing.test.mjs
+      - name: Salvar apenas o catálogo reajustado na mesma branch
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "streetball-pricing[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin "$TARGET_BRANCH"
+          git reset --hard "origin/$TARGET_BRANCH"
+          python scripts/commission_pricing.py
+          python scripts/commission_pricing.py --check
+          git add public/catalog.json public/catalog.js scripts/commission_price_update_summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m "catalog: reajustar preços para comissão de 25% e sobra mínima de R10"
+            git push origin "HEAD:$TARGET_BRANCH"
+          fi

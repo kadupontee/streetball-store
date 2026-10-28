@@ -25,13 +25,13 @@ class SupplierCostTests(unittest.TestCase):
         self.assertEqual(data["shipping_usd"]["one_piece"], 4)
 
     def test_supplier_cost_and_retail_price_are_distinct(self):
-        # A product's published BRL price must remain unchanged by this update.
-        self.assertEqual(PRICES["shorts"], 119.90)
-        self.assertEqual(PRICES["shorts_player"], 143.90)
-        self.assertEqual(PRICES["jacket"], 379.80)
+        # The owner-approved retail policy remains separate from supplier USD costs.
+        self.assertEqual(PRICES["shorts"], 179.90)
+        self.assertEqual(PRICES["shorts_player"], 199.90)
+        self.assertEqual(PRICES["jacket"], 409.90)
         self.assertEqual(PRICES["coat"], PRICES["jacket"])
-        self.assertEqual(PRICES["coat"], 379.80)
-        self.assertEqual(PRICES["retro_long"], 229.90)
+        self.assertEqual(PRICES["coat"], 409.90)
+        self.assertEqual(PRICES["retro_long"], 279.90)
 
     def test_report_shows_both_costs_without_inventing_retail(self):
         with TemporaryDirectory() as directory:
@@ -42,8 +42,8 @@ class SupplierCostTests(unittest.TestCase):
             self.assertEqual(entries["shorts_player"]["compra_USD"], "12.00")
             self.assertEqual(entries["shorts_player"]["custo_produto_mais_frete_BRL"], "80.00")
             self.assertEqual(entries["shorts"]["custo_produto_mais_frete_BRL"], "70.00")
-            self.assertEqual(entries["shorts_player"]["preco_venda_referencia_BRL"], "143.90")
-            self.assertEqual(entries["shorts_player"]["margem_bruta_parcial_percentual"], "44.40")
+            self.assertEqual(entries["shorts_player"]["preco_venda_referencia_BRL"], "199.90")
+            self.assertEqual(entries["shorts_player"]["margem_bruta_parcial_percentual"], "60.00")
 
     def test_player_shorts_category_and_existing_prices(self):
         self.assertEqual(classify("Sao Paulo Player Shorts 26-27"), ("acessorios", "shorts_player"))
@@ -51,7 +51,7 @@ class SupplierCostTests(unittest.TestCase):
         self.assertEqual(classify("Calção comum Brasil 2026"), ("acessorios", "shorts"))
         old = normalize_product({"id": "TEST-PLAYER-SHORTS", "title": "Sao Paulo Player Shorts", "kind": "shorts", "price": 119.90})
         self.assertEqual(old["kind"], "shorts_player")
-        self.assertEqual(old["price"], 143.90)
+        self.assertEqual(old["price"], 199.90)
         locked = normalize_product({"id": "TEST-LOCKED-SHORTS", "title": "Sao Paulo Player Shorts", "kind": "shorts", "price": 119.90, "priceLocked": True})
         self.assertEqual(locked["price"], 119.90)
 
