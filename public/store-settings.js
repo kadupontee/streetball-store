@@ -20,6 +20,22 @@ export function applyApparelRetailPrice(product){
  const price=mode==='highest'?Math.max(Number(product.price)||0,APPAREL_PRICE_BRL):APPAREL_PRICE_BRL;
  return product.price===price?product:{...product,price};
 }
+const CURRENT_SHIRT_KINDS=new Set(['fan','female','kids','long','player_adidas','player_nike','player_puma']);
+// Table-price presentation only. The existing product price remains the amount
+// charged; a reference is never treated as a previously charged historical price.
+export function productOfferPrice(product,{unitPrice=product?.price,quantity=1}={}){
+ if(!Number.isFinite(unitPrice)||unitPrice<=0||!Number.isSafeInteger(quantity)||quantity<1)return null;
+ const retro=product?.category==='retro'||['retro','retro_long'].includes(product?.kind);
+ const percent=!retro&&!apparelPriceMode(product)&&CURRENT_SHIRT_KINDS.has(product?.kind)?20:17;
+ const currentUnitCents=Math.round(unitPrice*100);
+ if(currentUnitCents<1||!Number.isSafeInteger(currentUnitCents*100))return null;
+ // Divide by the amount paid after discount, rather than adding 20%/17%:
+ // a 20% markup would only represent 16.67% off when charging today's price.
+ const referenceUnitCents=Math.ceil(currentUnitCents*100/(100-percent));
+ if(!Number.isSafeInteger(referenceUnitCents*quantity))return null;
+ return {percent,currentUnit:currentUnitCents/100,referenceUnit:referenceUnitCents/100,quantity,
+  currentTotal:currentUnitCents*quantity/100,referenceTotal:referenceUnitCents*quantity/100};
+}
 export const BRAZIL_TEAMS=Object.freeze([['athletico-pr','Athletico-PR'],['atletico-mg','Atlético-MG'],['bahia','Bahia'],['botafogo','Botafogo'],['chapecoense','Chapecoense'],['corinthians','Corinthians'],['coritiba','Coritiba'],['cruzeiro','Cruzeiro'],['flamengo','Flamengo'],['fluminense','Fluminense'],['gremio','Grêmio'],['internacional','Internacional'],['mirassol','Mirassol'],['palmeiras','Palmeiras'],['bragantino','Red Bull Bragantino'],['remo','Remo'],['santos','Santos'],['sao-paulo','São Paulo'],['vasco','Vasco da Gama'],['vitoria','Vitória']]);
 export const SECTIONS={hero:'Banner principal',services:'Serviços',categories:'Coleções',catalog:'Produtos',story:'Destaque retrô',promises:'Diferenciais'};
 export const TEXTS={announcement:'Faixa superior',heroEyebrow:'Chamada do banner',heroLine1:'Título do banner · linha 1',heroLine2:'Título do banner · linha 2',heroSubtitle:'Subtítulo do banner',heroButton:'Botão do banner',categoryTitle:'Título das coleções',catalogTitle:'Título dos produtos',storyTitle:'Título do destaque retrô',storyText:'Texto do destaque retrô',footerText:'Texto do rodapé'};
