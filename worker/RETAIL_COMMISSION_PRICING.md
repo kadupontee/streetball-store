@@ -73,3 +73,11 @@ A navegação de `/ops/` contém uma aba Vendedores, com lista completa (inclui 
 Excluir desativa o vendedor e o cupom e revoga o acesso ao painel. O registro recebe `deleted_at`; pedidos e baixas permanecem disponíveis ao dono em “Mostrar vendedores excluídos”. Editar e salvar um excluído restaura o cadastro. Não apaga a conta de cliente. A coluna é adicionada automaticamente, inclusive em bancos existentes.
 
 Em `/vendedor.html`, o vendedor entra diretamente com e-mail e senha da sua conta da loja. O vínculo é pelo ID da conta; nenhum parâmetro de URL permite selecionar outro vendedor. Quem usa Google pode entrar pela página de conta e voltar ao painel. Cada vendedor precisa ter sua própria conta e ser vinculado pelo administrador.
+
+### Cadastro e aparência — revisão 3
+
+O campo interno do formulário usa `sellerId` e a delegação de envio verifica o formulário pelo seletor, evitando que controles nomeados substituam propriedades nativas como `form.id`. A confirmação de sucesso depende da resposta da gravação e de uma nova consulta que contenha o vendedor. Quando a gravação funciona mas a consulta falha, a tela diferencia as duas situações, remove o formulário já enviado e oferece atualização da lista.
+
+A aba fica em `/ops/?tab=vendedores` e é restaurada após a autenticação; avisos de notificações não cobrem a equipe. O painel usa a paleta da vitrine (cinza, preto e lilás), cartões responsivos, busca por apelido/e-mail/cupom e indicação explícita de vendedores sem vendas. Resumos financeiros incluem o histórico de vendedores excluídos.
+
+`tests/seller-admin-ui.test.mjs` executa os scripts da página em DOM com o Worker e SQLite de teste: cadastro, consulta após reabrir, edição, exclusão/restauração, e-mail inexistente, falha de atualização após gravação e troca entre abas. Como jsdom não implementa LegacyOverrideBuiltIns em formulários, o caso de colisão de `form.id` é modelado explicitamente em um teste.

@@ -33,3 +33,13 @@ test('owner sees zero-sale sellers, can exclude and restore, preserving attribut
  assert.equal(sql.prepare('SELECT commission_bps FROM sales_attributions').get().commission_bps,2500);
  assert.equal(sql.prepare('SELECT paid_cents FROM sales_commission_settlements').get().paid_cents,4510);
 });
+
+test('commission percentages are parsed exactly in hundredths without floating-point rejection',async t=>{
+ const{sql,env}=setup(t);await sellerSchema(env);
+ const id=await seller(env,sql,'decimal@example.invalid','DECIMAL',20.15);
+ assert.equal(sql.prepare('SELECT commission_bps FROM sales_sellers WHERE id=?').get(id).commission_bps,2015);
+ const update={id,email:'decimal@example.invalid',nickname:'Decimal',coupon:'DECIMAL',active:true};
+ for(const commissionPercent of ['25.01','20.155','NaN','']){
+  const response=await sellerAdmin(req('/x',{...update,commissionPercent}),env,'sellers/save');assert.equal(response.status,400);
+ }
+});

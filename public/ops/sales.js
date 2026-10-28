@@ -17,8 +17,8 @@ async function api(action,{body,token}={}){
  if(!response.ok){const error=Error(data.error||'Não foi possível consultar a loja.');Object.assign(error,{code:data.code,phase:data.phase,providerStatus:data.providerStatus,providerReason:data.providerReason,attemptId:data.attemptId});throw error;}
  return data;
 }
-function showLogin(){document.getElementById('sellersPanel').replaceChildren();document.getElementById('sellersPanel').hidden=true;loggedIn=false;$('login').hidden=false;$('app').hidden=true;$('nav').hidden=true;$('starting').hidden=true;}
-function showApp(){loggedIn=true;$('login').hidden=true;$('app').hidden=false;$('nav').hidden=false;$('starting').hidden=true;}
+function showLogin(){document.dispatchEvent(new Event('streetball:ops-locked'));document.getElementById('sellersPanel').replaceChildren();document.getElementById('sellersPanel').hidden=true;loggedIn=false;$('login').hidden=false;$('app').hidden=true;$('nav').hidden=true;$('starting').hidden=true;}
+function showApp(){loggedIn=true;$('login').hidden=true;$('app').hidden=false;$('nav').hidden=false;$('starting').hidden=true;document.dispatchEvent(new Event('streetball:ops-ready'));}
 function showConnection(error){
  const element=$('connection');element.classList.toggle('error',!!error);
  element.textContent=error?(lastUpdated?'Não foi possível atualizar. Exibindo dados de '+date(lastUpdated)+'. '+error:error):'Atualizado em '+date(lastUpdated)+' · Atualiza a cada 20 segundos enquanto você acompanha.';
@@ -117,9 +117,10 @@ $('disablePush').addEventListener('click',async()=>{
 });
 $('loginForm').addEventListener('submit',async event=>{
  event.preventDefault();const key=$('adminKey').value.trim(),button=event.target.querySelector('button');button.disabled=true;$('loginMessage').textContent='Conferindo seu acesso…';
- try{await api('session',{body:{},token:key});$('adminKey').value='';showApp();await refresh();await openSettings(true);}
+ try{await api('session',{body:{},token:key});$('adminKey').value='';showApp();await refresh();if($('sellersPanel').hidden)await openSettings(true);}
  catch(error){$('loginMessage').textContent=error.message;}finally{button.disabled=false;}
 });
+document.addEventListener('streetball:ops-sellers',()=>{settingsOpen=false;$('notificationSettings').hidden=true;});
 $('home').addEventListener('click',()=>navigate(null));
 $('settings').addEventListener('click',()=>openSettings(!settingsOpen));
 $('refresh').addEventListener('click',refresh);
@@ -133,4 +134,4 @@ addEventListener('online',()=>refresh());
 addEventListener('offline',()=>showConnection('O aparelho está sem internet.'));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 setInterval(refresh,20000);
-(async()=>{try{await api('session');showApp();await refresh();const config=await api('notifications');if(!config.active)await openSettings(true);}catch{showLogin();}})();
+(async()=>{try{await api('session');showApp();await refresh();const config=await api('notifications');if(!config.active&&$('sellersPanel').hidden)await openSettings(true);}catch{showLogin();}})();

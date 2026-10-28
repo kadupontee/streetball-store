@@ -59,7 +59,9 @@ export async function sellerAdmin(request,env,action){
   return json({ok:true});
  }
  if(action==='sellers/save'){
-  const email=String(body.email||'').trim().toLowerCase(),nickname=String(body.nickname||'').trim(),coupon=String(body.coupon||'').trim().toUpperCase(),bps=Number(body.commissionPercent)*100;
+  const email=String(body.email||'').trim().toLowerCase(),nickname=String(body.nickname||'').trim(),coupon=String(body.coupon||'').trim().toUpperCase();
+  const parts=/^(\d{1,2})(?:\.(\d{1,2}))?$/.exec(String(body.commissionPercent??'').trim());
+  const bps=parts?Number(parts[1])*100+Number((parts[2]||'').padEnd(2,'0')):NaN;
   if(!/^\S+@\S+\.\S+$/.test(email)||email.length>180||nickname.length<2||nickname.length>60||!/^[-A-Z0-9_]{2,32}$/.test(coupon)||!Number.isInteger(bps)||bps<0||bps>2500||typeof body.active!=='boolean')return json({error:'Confira e-mail, apelido, cupom e comissão de 0% a 25%.'},400);
   if(body.id&&!await env.DB.prepare('SELECT id FROM sales_sellers WHERE id=?').bind(body.id).first())return json({error:'Vendedor não encontrado.'},404);
   let account;try{account=await env.DB.prepare('SELECT id FROM customer_accounts WHERE email=?').bind(email).first()}catch{}
