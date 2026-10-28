@@ -17,7 +17,7 @@ async function api(action,{body,token}={}){
  if(!response.ok){const error=Error(data.error||'Não foi possível consultar a loja.');Object.assign(error,{code:data.code,phase:data.phase,providerStatus:data.providerStatus,providerReason:data.providerReason,attemptId:data.attemptId});throw error;}
  return data;
 }
-function showLogin(){loggedIn=false;$('login').hidden=false;$('app').hidden=true;$('nav').hidden=true;$('starting').hidden=true;}
+function showLogin(){document.getElementById('sellersPanel').replaceChildren();document.getElementById('sellersPanel').hidden=true;loggedIn=false;$('login').hidden=false;$('app').hidden=true;$('nav').hidden=true;$('starting').hidden=true;}
 function showApp(){loggedIn=true;$('login').hidden=true;$('app').hidden=false;$('nav').hidden=false;$('starting').hidden=true;}
 function showConnection(error){
  const element=$('connection');element.classList.toggle('error',!!error);
@@ -49,7 +49,7 @@ async function refresh(){
   // Ignore a response if the user has opened a different order in the meantime.
   if(selected()!==id)return;
   lastData=data;lastUpdated=data.observedAt||new Date().toISOString();
-  id?renderOrder(data):renderOrders(data);showConnection();
+  if(document.getElementById('sellersPanel').hidden){id?renderOrder(data):renderOrders(data);}showConnection();
  }catch(error){if(selected()===id)showConnection(error.message||'Confira sua conexão.');}
  finally{busy=false;$('refresh').disabled=false;if(loggedIn&&selected()!==id)queueMicrotask(refresh);}
 }

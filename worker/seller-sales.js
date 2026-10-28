@@ -8,7 +8,14 @@ const schema=[
 `CREATE INDEX IF NOT EXISTS sales_attributions_seller ON sales_attributions(seller_id)`,
 `CREATE TABLE IF NOT EXISTS sales_commission_settlements(order_id TEXT PRIMARY KEY REFERENCES sales_attributions(order_id),paid_cents INTEGER NOT NULL,paid_at TEXT NOT NULL)`
 ];
-export async function sellerSchema(env){await env.DB.batch(schema.map(sql=>env.DB.prepare(sql)));}
+export async function sellerSchema(env){
+ await env.DB.batch(schema.map(sql=>env.DB.prepare(sql)));
+ const columns=(await env.DB.prepare('PRAGMA table_info(sales_sellers)').all()).results||[];
+ if(!columns.some(c=>c.name==='deleted_at'))try{await env.DB.prepare('ALTER TABLE sales_sellers ADD COLUMN deleted_at TEXT').run()}catch(e){
+  const current=(await env.DB.prepare('PRAGMA table_info(sales_sellers)').all()).results||[];
+  if(!current.some(c=>c.name==='deleted_at'))throw e;
+ }
+}
 async function ready(env){return !!env.DB&&!!await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='sales_sellers'").first();}
 export async function sellerCoupon(env,code,subtotal){
  if(!code)return null;
@@ -34,16 +41,23 @@ export function sellerTotals(orders){
  return {revenueCents:revenue,earnedCents:earned,paidCents:paid,dueCents:earned-paid,sales};
 }
 export async function sellerAdmin(request,env,action){
- if(!['sellers','sellers/save','sellers/settle'].includes(action))return null;
+ if(!['sellers','sellers/save','sellers/delete','sellers/settle'].includes(action))return null;
  await sellerSchema(env);
  if(action==='sellers'&&request.method==='GET'){
-  const sellers=(await env.DB.prepare('SELECT id,email,nickname,coupon,commission_bps,active FROM sales_sellers').all()).results||[];
+  const sellers=(await env.DB.prepare('SELECT id,email,nickname,coupon,commission_bps,active,deleted_at FROM sales_sellers').all()).results||[];
   const all=await rows(env);
   return json({sellers:sellers.map(s=>({...s,...sellerTotals(all.filter(a=>a.seller_id===s.id))})).sort((a,b)=>b.revenueCents-a.revenueCents||b.sales-a.sales||a.nickname.localeCompare(b.nickname)),orders:all,discountPercent:5});
  }
  if(request.method!=='POST')return json({error:'Método inválido.'},405);
  const raw=await request.text();if(raw.length>4000)return json({error:'Dados muito grandes.'},413);
  let body;try{body=JSON.parse(raw);}catch{return json({error:'Dados inválidos.'},400);}
+ if(action==='sellers/delete'){
+  const seller=await env.DB.prepare('SELECT id FROM sales_sellers WHERE id=?').bind(String(body.id||'')).first();
+  if(!seller)return json({error:'Vendedor não encontrado.'},404);
+  // Preserve frozen order attributions and settlement history; revoke coupon and seller access.
+  await env.DB.prepare('UPDATE sales_sellers SET active=0,deleted_at=?,updated_at=? WHERE id=?').bind(stamp(),stamp(),seller.id).run();
+  return json({ok:true});
+ }
  if(action==='sellers/save'){
   const email=String(body.email||'').trim().toLowerCase(),nickname=String(body.nickname||'').trim(),coupon=String(body.coupon||'').trim().toUpperCase(),bps=Number(body.commissionPercent)*100;
   if(!/^\S+@\S+\.\S+$/.test(email)||email.length>180||nickname.length<2||nickname.length>60||!/^[-A-Z0-9_]{2,32}$/.test(coupon)||!Number.isInteger(bps)||bps<0||bps>2500||typeof body.active!=='boolean')return json({error:'Confira e-mail, apelido, cupom e comissão de 0% a 25%.'},400);
@@ -51,7 +65,7 @@ export async function sellerAdmin(request,env,action){
   let account;try{account=await env.DB.prepare('SELECT id FROM customer_accounts WHERE email=?').bind(email).first()}catch{}
   if(!account)return json({error:'O vendedor precisa criar sua conta na loja antes do cadastro.'},400);
   const id=body.id||crypto.randomUUID();
-  try{await env.DB.prepare('INSERT INTO sales_sellers(id,customer_id,email,nickname,coupon,commission_bps,active,updated_at) VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET customer_id=excluded.customer_id,email=excluded.email,nickname=excluded.nickname,coupon=excluded.coupon,commission_bps=excluded.commission_bps,active=excluded.active,updated_at=excluded.updated_at').bind(id,account.id,email,nickname,coupon,bps,body.active?1:0,stamp()).run();}catch{return json({error:'E-mail ou cupom já cadastrado.'},409);}
+  try{await env.DB.prepare('INSERT INTO sales_sellers(id,customer_id,email,nickname,coupon,commission_bps,active,updated_at) VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET customer_id=excluded.customer_id,email=excluded.email,nickname=excluded.nickname,coupon=excluded.coupon,commission_bps=excluded.commission_bps,active=excluded.active,deleted_at=NULL,updated_at=excluded.updated_at').bind(id,account.id,email,nickname,coupon,bps,body.active?1:0,stamp()).run();}catch{return json({error:'E-mail ou cupom já cadastrado.'},409);}
   return json({ok:true,id});
  }
  if(action==='sellers/settle'){
@@ -75,5 +89,5 @@ export async function sellerRoute(request,env){
  const seller=await env.DB.prepare('SELECT id,nickname,coupon,commission_bps FROM sales_sellers WHERE customer_id=? AND active=1').bind(user.id).first();
  if(!seller)return json({error:'Acesso de vendedor não cadastrado.'},403);
  const orders=await rows(env,seller.id);
- return json({seller,...sellerTotals(orders),orders:orders.map(r=>({orderId:r.order_id,createdAt:r.created_at,status:r.status,received:!!r.received,revenueCents:r.net_cents,commissionCents:r.commission_cents,paidCents:r.paid_cents||0}))});
+ return json({seller,...sellerTotals(orders),orders:orders.map(r=>({orderId:r.order_id,createdAt:r.created_at,status:r.status,received:!!r.received,revenueCents:r.net_cents,commissionCents:r.commission_cents,commissionPercent:r.commission_bps/100,paidCents:r.paid_cents||0}))});
 }

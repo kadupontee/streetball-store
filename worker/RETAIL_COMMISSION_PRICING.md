@@ -65,3 +65,11 @@ não mudam o histórico. Só pagamentos recebidos geram comissão; estornos e
 contestações reduzem o saldo. A baixa administrativa apenas registra o pagamento
 feito pelo proprietário e não transfere dinheiro. A publicação deve manter a loja,
 o banco, as fotos, os pedidos e as configurações de pagamento existentes.
+
+### Gestão dos vendedores — revisão 2
+
+A navegação de `/ops/` contém uma aba Vendedores, com lista completa (inclui zero vendas), ranking por faturamento pago, e-mail, cupom, percentual, comissões acumuladas, pagas e a pagar. O detalhe por vendedor exibe pedidos com percentual e valor congelados no fechamento.
+
+Excluir desativa o vendedor e o cupom e revoga o acesso ao painel. O registro recebe `deleted_at`; pedidos e baixas permanecem disponíveis ao dono em “Mostrar vendedores excluídos”. Editar e salvar um excluído restaura o cadastro. Não apaga a conta de cliente. A coluna é adicionada automaticamente, inclusive em bancos existentes.
+
+Em `/vendedor.html`, o vendedor entra diretamente com e-mail e senha da sua conta da loja. O vínculo é pelo ID da conta; nenhum parâmetro de URL permite selecionar outro vendedor. Quem usa Google pode entrar pela página de conta e voltar ao painel. Cada vendedor precisa ter sua própria conta e ser vinculado pelo administrador.
