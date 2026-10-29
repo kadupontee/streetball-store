@@ -31,38 +31,38 @@ function provider(t){
  t.after(()=>globalThis.fetch=previous);return calls;
 }
 
-test('jaquetas, blusas e casacos usam exatamente R$ 379,80 no catálogo, no modelo do editor e na cobrança',async t=>{
+test('jaquetas, blusas e casacos usam exatamente o novo preço comum no catálogo, no modelo do editor e na cobrança',async t=>{
  const calls=provider(t);
  for(const kind of ['jacket','blouse','coat']){
-  assert.equal(RETAIL_PRICES_BRL[kind],379.80);
+  assert.equal(RETAIL_PRICES_BRL[kind],APPAREL_PRICE_BRL);
   const product={id:'EX-'+kind,title:'Modelo de inverno',kind,price:kind==='jacket'?379.90:189.90,priceLocked:true,kindLocked:true,sizes:['P'],image:'/images/example.webp'};
   assert.equal(applyProductOverride(product).price,APPAREL_PRICE_BRL);
   const {env,sqlite}=environment(product);t.after(()=>sqlite.close());
   const response=await worker.fetch(order(product.id),env);
-  assert.equal(response.status,200);assert.equal((await response.json()).total,379.80);
-  assert.equal(calls.at(-1).body.value,379.80);
+  assert.equal(response.status,200);assert.equal((await response.json()).total,APPAREL_PRICE_BRL);
+  assert.equal(calls.at(-1).body.value,APPAREL_PRICE_BRL);
   const saved=sqlite.prepare('SELECT total,items_json FROM orders').get();
-  assert.equal(saved.total,379.80);assert.equal(JSON.parse(saved.items_json)[0].unitPrice,379.80);
+  assert.equal(saved.total,APPAREL_PRICE_BRL);assert.equal(JSON.parse(saved.items_json)[0].unitPrice,APPAREL_PRICE_BRL);
  }
 });
 
 test('a correção publicada de Corinthians — Blusa acompanha a política mesmo com o tipo antigo de camisa',async t=>{
  const calls=provider(t),p={id:'EX-blusa-editada',title:'Corinthian Home',supplierTitle:'Corinthian Home',kind:'fan',price:159.90,sizes:['P']};
  const settings=emptySettings();settings.products[p.id]={title:'Corinthians — Blusa',price:379.90};
- assert.equal(normalizeSettings(settings).products[p.id].price,379.80);
- assert.equal(applyProductOverride(p,settings.products[p.id]).price,379.80);
+ assert.equal(normalizeSettings(settings).products[p.id].price,APPAREL_PRICE_BRL);
+ assert.equal(applyProductOverride(p,settings.products[p.id]).price,APPAREL_PRICE_BRL);
  const {env,sqlite}=environment(p,settings);t.after(()=>sqlite.close());
  const response=await worker.fetch(order(p.id),env);
- assert.equal(response.status,200);assert.equal((await response.json()).total,379.80);assert.equal(calls.at(-1).body.value,379.80);
+ assert.equal(response.status,200);assert.equal((await response.json()).total,APPAREL_PRICE_BRL);assert.equal(calls.at(-1).body.value,APPAREL_PRICE_BRL);
 });
 
 test('casos marcados como duvidosos usam o maior preço e uma classificação explícita resolve a dúvida',()=>{
  const p={id:'EX',kind:'set',price:299.90,apparelPriceReviewRequired:true};
- assert.equal(applyProductOverride(p).price,379.80);
- assert.equal(applyProductOverride({...p,price:450}).price,450);
- assert.equal(applyProductOverride(p,{kind:'fan',price:159.90}).price,159.90);
+ assert.equal(applyProductOverride(p).price,RETAIL_PRICES_BRL.set);
+ assert.equal(applyProductOverride({...p,price:650}).price,650);
+ assert.equal(applyProductOverride(p,{kind:'fan',price:159.90}).price,RETAIL_PRICES_BRL.fan);
  const confirmed={kind:'fan',price:159.90,title:'Argentina Hoodie',kindLocked:true};
- assert.equal(applyProductOverride(confirmed).price,159.90);
+ assert.equal(applyProductOverride(confirmed).price,RETAIL_PRICES_BRL.fan);
 });
 
 test('página com política antiga precisa atualizar antes de criar qualquer cobrança',async t=>{
@@ -75,11 +75,11 @@ test('página com política antiga precisa atualizar antes de criar qualquer cob
  assert.equal(calls.length,0);assert.equal(sqlite.prepare('SELECT COUNT(*) AS n FROM orders').get().n,0);
 });
 
-test('pedidos de camisas comuns continuam compatíveis com o contrato anterior',async t=>{
+test('pedidos de camisas comuns usam o novo piso e a versão atual da política',async t=>{
  const calls=provider(t),p={id:'EX-fan',title:'Brasil Home Jersey',kind:'fan',price:159.90,sizes:['P']};
  const {env,sqlite}=environment(p);t.after(()=>sqlite.close());
- const response=await worker.fetch(order(p.id,{pricingPolicyVersion:undefined}),env);
- assert.equal(response.status,200);assert.equal((await response.json()).total,159.90);assert.equal(calls.at(-1).body.value,159.90);
+ const response=await worker.fetch(order(p.id),env);
+ assert.equal(response.status,200);assert.equal((await response.json()).total,RETAIL_PRICES_BRL.fan);assert.equal(calls.at(-1).body.value,RETAIL_PRICES_BRL.fan);
 });
 
 test('o catálogo integral e seu arquivo JavaScript ficam sincronizados, incluindo todos os produtos dos três tipos',()=>{
@@ -89,6 +89,6 @@ test('o catálogo integral e seu arquivo JavaScript ficam sincronizados, incluin
  assert.ok(products.length>=10000);
  const apparel=products.filter(p=>['jacket','blouse','coat'].includes(p.kind));
  assert.ok(['jacket','blouse','coat'].every(kind=>apparel.some(p=>p.kind===kind)));
- assert.ok(apparel.every(p=>p.price===379.80));
- assert.ok(products.filter(p=>p.apparelPriceReviewRequired).every(p=>p.price>=379.80));
+ assert.ok(apparel.every(p=>p.price===APPAREL_PRICE_BRL));
+ assert.ok(products.filter(p=>p.apparelPriceReviewRequired).every(p=>p.price>=APPAREL_PRICE_BRL));
 });

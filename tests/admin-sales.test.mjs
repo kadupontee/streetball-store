@@ -1,3 +1,4 @@
+import {sellerSchema,sellerAdmin,sellerCoupon,attachSeller} from '../worker/seller-sales.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {localD1} from './support/local-d1.mjs';
@@ -122,4 +123,20 @@ test('a missing diagnostics table is created for existing sessions without reset
  const result=await call(env,'notifications/test',{body:{},cookie:device.cookie});assert.equal(result.status,200);assert.equal(result.data.acceptedByPushService,true);
  assert.equal(one(query,'SELECT private_jwk FROM admin_sales_config').private_jwk,before);assert.equal(one(query,'SELECT COUNT(*) AS n FROM admin_push_subscriptions WHERE disabled=0').n,1);
  assert.equal((await call(env,'notifications',{cookie:device.cookie})).data.lastAttempt.state,'accepted');
+});
+
+test('every admin order identifies its frozen seller coupon, even after seller edits and exclusion',async t=>{
+ const{env,query}=await fixture(t);
+ assert.equal((await readSale(env,orderId)).sellerAttribution,null);
+ await sellerSchema(env);assert.equal((await readSale(env,orderId)).sellerAttribution,null);
+ query({sql:"INSERT INTO customer_accounts(id,email,display_name,password_salt,password_hash,created_at) VALUES('seller-identity','seller-private@example.invalid','Seller','fake','fake','x')"});
+ const save=body=>sellerAdmin(new Request(origin+'/api/admin/sales/sellers/save',{method:'POST',body:JSON.stringify(body)}),env,'sellers/save');
+ const response=await save({email:'seller-private@example.invalid',nickname:'Nome inicial',coupon:'ORIGINAL',commissionPercent:25,active:true});assert.equal(response.status,200);const {id}=await response.json();
+ const quote=await sellerCoupon(env,'ORIGINAL',189.9);await attachSeller(env,orderId,quote);
+ await save({id,email:'seller-private@example.invalid',nickname:'Nome atualizado',coupon:'NOVO',commissionPercent:20,active:true});
+ await sellerAdmin(new Request(origin+'/api/admin/sales/sellers/delete',{method:'POST',body:JSON.stringify({id})}),env,'sellers/delete');
+ const data=(await call(env,'order?orderId='+orderId,{token:env.ADMIN_TOKEN})).data;
+ assert.deepEqual(data.sellerAttribution,{sellerId:id,nickname:'Nome atualizado',coupon:'ORIGINAL',commissionPercent:25,commissionCents:4510,discountCents:950,revenueCents:18040});
+ assert.ok(!JSON.stringify(data).includes('seller-private@example.invalid'));
+ assert.equal((await call(env,'order?orderId='+orderId)).status,401);
 });

@@ -17,8 +17,8 @@ async function api(action,{body,token}={}){
  if(!response.ok){const error=Error(data.error||'Não foi possível consultar a loja.');Object.assign(error,{code:data.code,phase:data.phase,providerStatus:data.providerStatus,providerReason:data.providerReason,attemptId:data.attemptId});throw error;}
  return data;
 }
-function showLogin(){loggedIn=false;$('login').hidden=false;$('app').hidden=true;$('nav').hidden=true;$('starting').hidden=true;}
-function showApp(){loggedIn=true;$('login').hidden=true;$('app').hidden=false;$('nav').hidden=false;$('starting').hidden=true;}
+function showLogin(){document.dispatchEvent(new Event('streetball:ops-locked'));document.getElementById('sellersPanel').replaceChildren();document.getElementById('sellersPanel').hidden=true;loggedIn=false;$('login').hidden=false;$('app').hidden=true;$('nav').hidden=true;$('starting').hidden=true;}
+function showApp(){loggedIn=true;$('login').hidden=true;$('app').hidden=false;$('nav').hidden=false;$('starting').hidden=true;document.dispatchEvent(new Event('streetball:ops-ready'));}
 function showConnection(error){
  const element=$('connection');element.classList.toggle('error',!!error);
  element.textContent=error?(lastUpdated?'Não foi possível atualizar. Exibindo dados de '+date(lastUpdated)+'. '+error:error):'Atualizado em '+date(lastUpdated)+' · Atualiza a cada 20 segundos enquanto você acompanha.';
@@ -30,9 +30,14 @@ function renderOrders(data){
  const rows=data.orders||[];
  $('content').innerHTML=rows.length?rows.map(o=>`<button class="sale" data-order="${esc(o.id)}"><div class="row"><strong>Pedido #${esc(o.id.slice(0,8))}</strong><span class="amount">${money(o.total)}</span></div><p>${esc(o.name)} · ${date(o.created_at)}</p><p><span class="pill">${esc(['payment_refunded','payment_disputed'].includes(o.status)?orderLabels[o.status]:jobLabels[o.supplier_status]||orderLabels[o.status]||'Consultar pedido')}</span></p></button>`).join(''):'<div class="empty"><h3>Suas vendas aparecerão aqui.</h3><p>Ative os avisos para receber uma notificação após cada pagamento confirmado.</p><button class="primary" data-settings>Configurar avisos no iPhone</button></div>';
 }
+function saleOriginHTML(attribution){
+ if(!attribution)return '<section class="panel sale-origin"><p class="eyebrow">ORIGEM DA VENDA</p><h3>Sem cupom de vendedor registrado</h3><p class="muted">Este pedido não está vinculado a um vendedor por cupom.</p></section>';
+ return `<section class="panel sale-origin"><p class="eyebrow">ORIGEM DA VENDA</p><div class="sale-origin-heading"><h3>Vendedor: ${esc(attribution.nickname)}</h3><span class="sale-coupon">Cupom ${esc(attribution.coupon)}</span></div><dl class="sale-origin-values"><div><dt>Desconto do cupom</dt><dd>${money(attribution.discountCents/100)}</dd></div><div><dt>Comissão registrada</dt><dd>${Number(attribution.commissionPercent).toLocaleString('pt-BR',{maximumFractionDigits:2})}% · ${money(attribution.commissionCents/100)}</dd></div></dl><p class="fine">Cupom e comissão registrados no fechamento do pedido. A liberação da comissão depende da confirmação do pagamento.</p></section>`;
+}
 function renderOrder(data){
  const o=data.order;$('pageTitle').textContent='Acompanhar venda';
  $('content').innerHTML=`<button class="text-button back" data-back>← Todas as vendas</button><section class="panel order-heading"><p class="eyebrow">PEDIDO #${esc(o.id.slice(0,8))}</p><div class="summary-row"><h2>${esc(data.summary)}</h2><span class="amount">${money(o.total)}</span></div><p>${esc(o.customerName)} · ${esc(o.city)} / ${esc(o.state)}</p><p>Criado em ${date(o.createdAt)}</p></section>
+ ${saleOriginHTML(data.sellerAttribution)}
  ${data.attention.length?'<div class="alert">'+data.attention.map(a=>'<p>'+esc(a)+'</p>').join('')+'</div>':''}
  <div class="stages">${data.stages.map(s=>`<section class="stage ${esc(s.state)}"><h3>${esc(s.label)}</h3><p>${esc(s.detail)}</p>${s.at?'<time>'+date(s.at)+'</time>':''}</section>`).join('')}</div>
  <section class="panel"><h3>O que já aconteceu</h3><p class="fine" style="margin:0 0 24px">Cada etapa abaixo usa um registro da loja, do envio pelo WhatsApp ou da confirmação bancária.</p>${data.activities.map(a=>`<div class="activity"><b>${esc(a.title)}</b><p>${date(a.at)} · ${esc(a.source)}</p></div>`).join('')}
@@ -49,7 +54,7 @@ async function refresh(){
   // Ignore a response if the user has opened a different order in the meantime.
   if(selected()!==id)return;
   lastData=data;lastUpdated=data.observedAt||new Date().toISOString();
-  id?renderOrder(data):renderOrders(data);showConnection();
+  if(document.getElementById('sellersPanel').hidden){id?renderOrder(data):renderOrders(data);}showConnection();
  }catch(error){if(selected()===id)showConnection(error.message||'Confira sua conexão.');}
  finally{busy=false;$('refresh').disabled=false;if(loggedIn&&selected()!==id)queueMicrotask(refresh);}
 }
@@ -117,9 +122,10 @@ $('disablePush').addEventListener('click',async()=>{
 });
 $('loginForm').addEventListener('submit',async event=>{
  event.preventDefault();const key=$('adminKey').value.trim(),button=event.target.querySelector('button');button.disabled=true;$('loginMessage').textContent='Conferindo seu acesso…';
- try{await api('session',{body:{},token:key});$('adminKey').value='';showApp();await refresh();await openSettings(true);}
+ try{await api('session',{body:{},token:key});$('adminKey').value='';showApp();await refresh();if($('sellersPanel').hidden)await openSettings(true);}
  catch(error){$('loginMessage').textContent=error.message;}finally{button.disabled=false;}
 });
+document.addEventListener('streetball:ops-sellers',()=>{settingsOpen=false;$('notificationSettings').hidden=true;});
 $('home').addEventListener('click',()=>navigate(null));
 $('settings').addEventListener('click',()=>openSettings(!settingsOpen));
 $('refresh').addEventListener('click',refresh);
@@ -133,4 +139,4 @@ addEventListener('online',()=>refresh());
 addEventListener('offline',()=>showConnection('O aparelho está sem internet.'));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 setInterval(refresh,20000);
-(async()=>{try{await api('session');showApp();await refresh();const config=await api('notifications');if(!config.active)await openSettings(true);}catch{showLogin();}})();
+(async()=>{try{await api('session');showApp();await refresh();const config=await api('notifications');if(!config.active&&$('sellersPanel').hidden)await openSettings(true);}catch{showLogin();}})();

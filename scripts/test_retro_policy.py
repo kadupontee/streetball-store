@@ -32,10 +32,10 @@ class RetroPolicyTests(unittest.TestCase):
     def test_retro_prices(self):
         standard=apply_retro_policy({'id':'x','title':'Real Madrid 2016/17 Home','category':'europa',
                                      'kind':'fan','price':159.90}, NOW)
-        self.assertEqual((standard['category'],standard['kind'],standard['price']),('retro','retro',199.90))
+        self.assertEqual((standard['category'],standard['kind'],standard['price']),('retro','retro',249.90))
         sleeve=apply_retro_policy({'id':'y','title':'Milan 2017/18 Long Sleeve','category':'europa',
                                    'kind':'long','price':189.90},NOW)
-        self.assertEqual((sleeve['category'],sleeve['kind'],sleeve['price']),('retro','retro_long',229.90))
+        self.assertEqual((sleeve['category'],sleeve['kind'],sleeve['price']),('retro','retro_long',279.90))
 
     def test_do_not_lower_premium(self):
         row=apply_retro_policy({'title':'Barcelona 2015/16 Player','category':'europa',

@@ -9,12 +9,12 @@ class ApparelPricingTest(unittest.TestCase):
         return {"id":"EXAMPLE", "title":"Modelo de inverno", "kind":kind, "price":price,
                 "image":"/images/yupoo/example.webp", "images":["/images/yupoo/example.webp"], **extras}
 
-    def test_every_apparel_kind_uses_exactly_379_80_even_with_old_price_locks(self):
+    def test_every_apparel_kind_uses_the_current_shared_price_even_with_old_price_locks(self):
         for kind in ("jacket", "coat", "blouse"):
             for price in (189.90, 379.90, 450):
                 original = self.item(kind, price, priceLocked=True, kindLocked=True)
                 updated = apply_apparel_retail_policy(original)
-                self.assertEqual(updated["price"], 379.80)
+                self.assertEqual(updated["price"], 409.90)
                 self.assertEqual(updated["kind"], kind)
                 self.assertEqual(updated["images"], original["images"])
                 self.assertEqual(original["price"], price)

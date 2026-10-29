@@ -6,12 +6,12 @@ from urllib.parse import urlparse
 from retro_policy import apply_retro_policy, is_older_than_five_seasons
 from garment_policy import garment_decision, apply_garment_pricing, apply_apparel_retail_policy, PRICES_BRL
 from visual_verified import apply_reviewed_visual_fix
+from commission_pricing import RETAIL_PRICES, apply_commission_floor
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / 'public' / 'catalog.json'
 CATALOG_JS = ROOT / 'public' / 'catalog.js'
 CATEGORIES = {'brasileirao','europa','selecoes','retro','infantil','feminino','nba','treino','acessorios','outras'}
-PRICES = {'fan':159.90,'female':159.90,'kids':179.90,'retro':199.90,'retro_long':229.90,'long':189.90,
-          'player_adidas':209.90,'player_puma':219.90,'player_nike':229.90,'nba':219.90,'shorts':119.90,'shorts_player':143.90,'socks':59.90,'jacket':PRICES_BRL['jacket'],'coat':PRICES_BRL['coat'],'blouse':PRICES_BRL['blouse'],'set':299.90}
+PRICES = {**RETAIL_PRICES, 'nba':219.90}
 KINDS = set(PRICES)
 BRAZIL = ('sao paulo','corinthians','palmeiras','flamengo','gremio','internacional','santos','vasco', 'botafogo','fluminense','bahia','fortaleza','remo','paysandu','cruzeiro','atletico mineiro','bragantino','ceara','sport recife','vitoria','nautico','athletico','paranaense','santa cruz','chapecoense','guarani','figueirense','goias','avai','corinthian')
 EUROPE = ('real madrid','barcelona','manchester','arsenal','chelsea','liverpool','tottenham','juventus','milan','napoli','paris','psg','bayern','dortmund','benfica','porto','sporting','braga','valencia','betis','sevilla','ajax','lyon','marseille','villarreal','roma','aston villa','leicester','newcastle','leeds','frankfurt','wolfsburg','st pauli','bremen','hannover')
@@ -136,6 +136,7 @@ def read_catalog():
 
 def save_catalog(products):
     products=[apply_apparel_retail_policy(apply_reviewed_visual_fix(apply_garment_pricing(apply_retro_policy(p),require_photo=True)),require_photo=True) for p in products if not is_nba_product(p)]
+    products=[apply_commission_floor(p) for p in products]
     CATALOG.parent.mkdir(parents=True,exist_ok=True)
     content=json.dumps(products,ensure_ascii=False,indent=2)
     path=CATALOG.with_suffix('.json.tmp')

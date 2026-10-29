@@ -35,3 +35,6 @@
   X-Robots-Tag: noindex, nofollow
   X-Content-Type-Options: nosniff
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; worker-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'
+
+/account-ui.css
+  Cache-Control: public, max-age=0, must-revalidate

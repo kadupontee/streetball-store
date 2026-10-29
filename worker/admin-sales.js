@@ -1,3 +1,4 @@
+import {sellerAdmin} from './seller-sales.js';
 import {base64url,generateVapidKeys,validatePushSubscription,sendWebPush,fromBase64url,WebPushError} from './web-push.js';
 import {salesProgress} from './admin-sales-progress.js';
 import {STAGES} from './order-progress.js';
@@ -96,6 +97,7 @@ export async function handleAdminSales(request,env,ctx){
   }
   const session=await deviceSession(request,env);
   if(!session&&!admin)return json({error:'Entre com sua chave administrativa para acompanhar as vendas.'},401);
+  const sellerResponse=await sellerAdmin(request,env,action);if(sellerResponse)return sellerResponse;
   if(action==='session'&&method==='GET')return json({ok:true,deviceReady:!!session,version:SALES_NOTIFICATIONS_VERSION});
   if(action==='logout'&&method==='POST'){
    if(session){
@@ -179,11 +181,15 @@ export async function readSale(env,id){
  all('supplier_attempts','SELECT a.supplier_id,a.state,a.updated_at,d.display_name FROM supplier_attempts a LEFT JOIN supplier_directory d ON d.id=a.supplier_id WHERE a.order_id=? ORDER BY a.created_at');
  all('order_tracking_events','SELECT id,stage,created_at FROM order_tracking_events WHERE order_id=? ORDER BY created_at DESC LIMIT 50');
  if(available.has('wa_local_groups'))all('wa_local_outbox',"SELECT g.id,g.purpose,g.created_at,COUNT(*) AS total,SUM(CASE WHEN o.state='sent' THEN 1 ELSE 0 END) AS sent,SUM(CASE WHEN o.state='uncertain' THEN 1 ELSE 0 END) AS uncertain,SUM(CASE WHEN o.state IN ('failed','cancelled','expired') THEN 1 ELSE 0 END) AS failed,MAX(o.updated_at) AS last_at FROM wa_local_groups g JOIN wa_local_outbox o ON o.group_id=g.id WHERE g.order_id=? AND g.preview=0 GROUP BY g.id ORDER BY g.created_at DESC LIMIT 50");
+ // Coupon and commission are read from the order's frozen attribution, even if the seller is edited or excluded later.
+ if(available.has('sales_attributions'))first('sales_attributions',`SELECT a.seller_id,a.coupon,a.commission_bps,a.commission_cents,a.discount_cents,a.net_cents,${available.has('sales_sellers')?'s.nickname':'NULL AS nickname'} FROM sales_attributions a ${available.has('sales_sellers')?'LEFT JOIN sales_sellers s ON s.id=a.seller_id':''} WHERE a.order_id=?`);
  const results=await env.DB.batch(reads.map(r=>r.statement));
  const data=Object.fromEntries(reads.map((r,i)=>[r.name,r.all?results[i].results:results[i].results[0]||null]));
- return salesProgress({order,job:data.supplier_jobs,dispatch:data.supplier_dispatch,payment:data.order_payment_environments,
+ const progress=salesProgress({order,job:data.supplier_jobs,dispatch:data.supplier_dispatch,payment:data.order_payment_environments,
   payout:data.supplier_payout_intents,paidRecord:data.supplier_paid_order_records,billing:data.supplier_billing_messages,bridge:data.wa_local_bridge,
   events:data.admin_sale_events,messages:data.wa_local_outbox,attempts:data.supplier_attempts,payoutEnabled:data.supplier_payout_settings?data.supplier_payout_settings.enabled===1:null,tracking:(data.order_tracking_events||[]).map(t=>({...t,label:STAGES[t.stage]||t.stage})),localTransport:env.WA_TRANSPORT==='local'});
+ const attribution=data.sales_attributions;
+ return {...progress,sellerAttribution:attribution?{sellerId:attribution.seller_id,nickname:attribution.nickname||'Vendedor não disponível',coupon:attribution.coupon,commissionPercent:attribution.commission_bps/100,commissionCents:attribution.commission_cents,discountCents:attribution.discount_cents,revenueCents:attribution.net_cents}:null};
 }
 
 /** Store before acknowledging a payment webhook; retries reuse the same order event and deliveries. */

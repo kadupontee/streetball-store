@@ -1,0 +1,72 @@
+{
+  "policy": "commission25-coupon5-min10-20261028",
+  "products": 11210,
+  "changed": 0,
+  "assumptions": {
+    "usd_brl": "5.30",
+    "acquisition_cushion": "1.25",
+    "customer_coupon": "0.05",
+    "seller_commission": "0.25",
+    "sales_deductions": "0.135",
+    "target_remainder_brl": "10.00"
+  },
+  "excludes": [
+    "advertising",
+    "fixed_expenses"
+  ],
+  "unverified_cost_kinds": [
+    "coat",
+    "blouse"
+  ],
+  "prices_brl": {
+    "fan": 189.9,
+    "female": 189.9,
+    "kids": 209.9,
+    "retro": 249.9,
+    "retro_long": 279.9,
+    "long": 239.9,
+    "player_adidas": 249.9,
+    "player_puma": 259.9,
+    "player_nike": 269.9,
+    "shorts": 179.9,
+    "shorts_player": 199.9,
+    "socks": 149.9,
+    "set": 579.9,
+    "jacket": 409.9,
+    "coat": 409.9,
+    "blouse": 409.9
+  },
+  "counts": {
+    "player_puma": 4,
+    "fan": 6099,
+    "player_nike": 4,
+    "retro": 1230,
+    "kids": 912,
+    "player_adidas": 1011,
+    "retro_long": 85,
+    "female": 346,
+    "long": 592,
+    "set": 421,
+    "shorts": 72,
+    "socks": 1,
+    "coat": 190,
+    "blouse": 95,
+    "jacket": 148
+  },
+  "estimated_remainder_brl": {
+    "fan": "11.57",
+    "female": "11.57",
+    "kids": "10.01",
+    "retro": "13.51",
+    "retro_long": "11.15",
+    "long": "14.28",
+    "player_adidas": "13.51",
+    "player_puma": "12.72",
+    "player_nike": "11.94",
+    "shorts": "12.36",
+    "shorts_player": "10.79",
+    "socks": "14.70",
+    "set": "14.18",
+    "jacket": "14.24"
+  }
+}

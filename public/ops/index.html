@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#15271e">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#17171b">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Streetball">
 <title>Vendas · Streetball</title><link rel="manifest" href="/ops/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/favicon.svg">
-<link rel="stylesheet" href="/ops/sales.css"><script src="/ops/sales.js" defer></script>
+<link rel="stylesheet" href="/ops/sales.css?v=20261028-order-coupon-v1"><script src="/ops/sales.js?v=20261028-order-coupon-v1" defer></script>
 </head><body>
-<header><div class="top"><a class="brand" href="/ops/" aria-label="Streetball, suas vendas">STREETBALL<span>SUAS VENDAS</span></a><span class="owner">ÁREA DO DONO</span></div>
-<nav id="nav" hidden><button id="home" class="nav-current">Vendas</button><button id="settings">Avisos no iPhone</button><button id="logout">Sair</button></nav></header>
+<header><div class="top"><a class="brand" href="/ops/" aria-label="Streetball, suas vendas"><img src="/brand-logo.svg?v=streetball-official-2" alt="Streetball Store" width="197" height="56"><span>PAINEL DE VENDAS</span></a><span class="owner">ÁREA DO DONO</span></div>
+<nav id="nav" hidden><button id="home" class="nav-current">Vendas</button><button id="sellersToggle" aria-expanded="false">Vendedores</button><button id="settings">Avisos no iPhone</button><button id="logout">Sair</button></nav></header>
 <main>
  <section id="login" class="panel" hidden><p class="eyebrow">SEU PAINEL, NO CELULAR</p><h1>Acompanhe cada venda.</h1><p>Veja o que já aconteceu com o pedido, o pagamento e a conversa do bot com o fornecedor.</p>
  <form id="loginForm"><label for="adminKey">Chave administrativa</label><input id="adminKey" type="password" autocomplete="off" required placeholder="A mesma chave do painel da loja"><button class="primary" type="submit">Entrar no meu painel</button><p id="loginMessage" role="status" class="muted"></p></form></section>
@@ -19,8 +19,8 @@
  <p>O aviso chega após a confirmação do pagamento do cliente. Ao tocar, você abre o pedido e acompanha as atualizações do bot.</p>
  <p id="pushStatus" role="status" class="muted"></p><p id="pushDiagnostic" class="fine" hidden></p><div class="buttons"><button id="enablePush" class="primary">Ativar notificações</button><button id="testPush" class="secondary" hidden>Enviar teste para este aparelho</button><button id="reconnectPush" class="secondary" hidden>Reconectar notificações</button><button id="copyPushResult" class="text-button" hidden>Copiar resultado do teste</button><button id="disablePush" class="text-button" hidden>Desativar neste aparelho</button></div>
  <p class="fine">Permita os avisos também nos Ajustes do iPhone. Modos Foco e preferências de som seguem a configuração do aparelho. O painel mantém o acesso neste aparelho por até 180 dias.</p></section>
- <div id="content" aria-live="polite"></div>
+ <section class="panel" id="sellersPanel" hidden></section><div id="content" aria-live="polite"></div>
  </section>
  <section id="starting" class="panel"><p class="muted">Abrindo seu painel…</p></section>
 </main><footer>STREETBALL / OPERAÇÕES</footer>
-</body></html>
+<script src="/seller-admin.js?v=20261028-v3" defer></script></body></html>
