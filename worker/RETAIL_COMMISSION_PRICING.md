@@ -81,3 +81,7 @@ O campo interno do formulário usa `sellerId` e a delegação de envio verifica 
 A aba fica em `/ops/?tab=vendedores` e é restaurada após a autenticação; avisos de notificações não cobrem a equipe. O painel usa a paleta da vitrine (cinza, preto e lilás), cartões responsivos, busca por apelido/e-mail/cupom e indicação explícita de vendedores sem vendas. Resumos financeiros incluem o histórico de vendedores excluídos.
 
 `tests/seller-admin-ui.test.mjs` executa os scripts da página em DOM com o Worker e SQLite de teste: cadastro, consulta após reabrir, edição, exclusão/restauração, e-mail inexistente, falha de atualização após gravação e troca entre abas. Como jsdom não implementa LegacyOverrideBuiltIns em formulários, o caso de colisão de `form.id` é modelado explicitamente em um teste.
+
+### Origem de cada venda
+
+O detalhe de qualquer pedido em `/ops/?orderId=...` exibe vendedor, cupom usado, desconto e percentual/valor de comissão registrados no fechamento. Alterar o cupom ou percentual do cadastro depois não modifica esse histórico. Vendedores excluídos mantêm a identificação nos pedidos. Pedidos sem atribuição mostram “Sem cupom de vendedor registrado”; nenhum vendedor é inferido para pedidos antigos. Esse dado integra apenas a API administrativa autenticada e não inclui o e-mail do vendedor.

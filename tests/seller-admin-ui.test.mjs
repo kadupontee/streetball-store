@@ -1,3 +1,4 @@
+import {sellerCoupon,attachSeller} from '../worker/seller-sales.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -13,13 +14,13 @@ function database(t){
  const sql=new DatabaseSync(':memory:');t.after(()=>sql.close());
  sql.exec(readFileSync(new URL('../worker/schema.sql',import.meta.url),'utf8'));
  sql.prepare("INSERT INTO customer_accounts(id,email,display_name,password_salt,password_hash,created_at) VALUES('seller-account','seller@example.invalid','Seller','fake','fake','x')").run();
- const DB={prepare(query){let args=[];return {bind(...values){args=values;return this},async first(){return sql.prepare(query).get(...args)||null},async all(){return {results:sql.prepare(query).all(...args)}},async run(){return {meta:{changes:Number(sql.prepare(query).run(...args).changes)}}}}},async batch(statements){sql.exec('BEGIN');try{const results=[];for(const statement of statements)results.push(await statement.run());sql.exec('COMMIT');return results}catch(error){sql.exec('ROLLBACK');throw error}}};
+ const DB={prepare(query){let args=[];return {bind(...values){args=values;return this},async first(){return sql.prepare(query).get(...args)||null},async all(){return {results:sql.prepare(query).all(...args)}},async run(){if(/^\s*(SELECT|PRAGMA)\b/i.test(query))return {results:sql.prepare(query).all(...args)};return {meta:{changes:Number(sql.prepare(query).run(...args).changes)}}}}},async batch(statements){sql.exec('BEGIN');try{const results=[];for(const statement of statements)results.push(await statement.run());sql.exec('COMMIT');return results}catch(error){sql.exec('ROLLBACK');throw error}}};
  return {sql,env:{DB,ADMIN_TOKEN:'unit-test-only'}};
 }
 async function until(check){for(let i=0;i<200;i++){if(check())return;await new Promise(resolve=>setTimeout(resolve,5))}assert.fail('UI condition did not complete');}
 async function setup(t,env,options={}){
  const errors=[],requests=[],virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',error=>errors.push(error));
- const dom=new JSDOM(page,{url:base+'/ops/?tab=vendedores',runScripts:'outside-only',virtualConsole});t.after(()=>dom.window.close());
+ const dom=new JSDOM(page,{url:base+'/ops/?tab=vendedores',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole});t.after(()=>dom.window.close());
  let cookie='';if(options.fullOps){const session=await worker.fetch(new Request(base+'/api/admin/sales/session',{method:'POST',headers:{authorization:'Bearer unit-test-only',origin:base,'content-type':'application/json'},body:'{}'}),env);assert.equal(session.status,200);cookie=session.headers.get('set-cookie').split(';')[0];}
  const {window}=dom,document=window.document;window.matchMedia=()=>({matches:false});window.AbortSignal=globalThis.AbortSignal;window.HTMLElement.prototype.scrollIntoView=function(){};window.confirm=()=>true;
  window.fetch=async(path,config={})=>{
@@ -100,4 +101,17 @@ test('full owner page restores the sellers tab on reload and notifications do no
  ui.click('#sellersToggle');await until(()=>ui.document.getElementById('sellerList'));
  assert.equal(ui.document.getElementById('notificationSettings').hidden,true);
  assert.deepEqual(ui.errors,[]);
+});
+
+test('opening each order shows the seller coupon, while a direct sale has an explicit no-coupon state',async t=>{
+ const{sql,env}=database(t),ui=await setup(t,env,{fullOps:true});
+ ui.click('[data-new]');submit(ui,fill(ui));await until(()=>ui.document.querySelector('[data-seller-card]'));
+ const insert=sql.prepare("INSERT INTO orders(id,created_at,updated_at,status,name,email,phone,cpf,zip,address,city,state,items_json,subtotal,shipping,total) VALUES(?,'2026-10-28T12:00:00Z','2026-10-28T12:00:00Z','awaiting_payment','Cliente','customer@example.invalid','11999999999','00000000000','00000000','Rua exemplo','São Paulo','SP','[]',180.4,0,180.4)");
+ const couponOrder='11111111-1111-4111-8111-111111111111',directOrder='22222222-2222-4222-8222-222222222222';insert.run(couponOrder);insert.run(directOrder);
+ await attachSeller(env,couponOrder,await sellerCoupon(env,'SEM-VENDAS',189.9));
+ ui.click('#home');await until(()=>ui.document.querySelector('[data-order]'));
+ ui.click('[data-order="'+couponOrder+'"]');await until(()=>ui.document.querySelector('.sale-origin'));
+ let origin=ui.document.querySelector('.sale-origin');assert.match(origin.textContent,/Vendedor: Nick Teste/);assert.match(origin.textContent,/Cupom SEM-VENDAS/);assert.match(origin.textContent,/25%/);assert.match(origin.textContent,/45,10/);
+ ui.click('[data-back]');await until(()=>ui.document.querySelector('[data-order]'));ui.click('[data-order="'+directOrder+'"]');await until(()=>ui.document.querySelector('.sale-origin'));
+ origin=ui.document.querySelector('.sale-origin');assert.match(origin.textContent,/Sem cupom de vendedor registrado/);assert.equal(origin.querySelector('.sale-coupon'),null);assert.deepEqual(ui.errors,[]);
 });

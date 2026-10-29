@@ -30,9 +30,14 @@ function renderOrders(data){
  const rows=data.orders||[];
  $('content').innerHTML=rows.length?rows.map(o=>`<button class="sale" data-order="${esc(o.id)}"><div class="row"><strong>Pedido #${esc(o.id.slice(0,8))}</strong><span class="amount">${money(o.total)}</span></div><p>${esc(o.name)} · ${date(o.created_at)}</p><p><span class="pill">${esc(['payment_refunded','payment_disputed'].includes(o.status)?orderLabels[o.status]:jobLabels[o.supplier_status]||orderLabels[o.status]||'Consultar pedido')}</span></p></button>`).join(''):'<div class="empty"><h3>Suas vendas aparecerão aqui.</h3><p>Ative os avisos para receber uma notificação após cada pagamento confirmado.</p><button class="primary" data-settings>Configurar avisos no iPhone</button></div>';
 }
+function saleOriginHTML(attribution){
+ if(!attribution)return '<section class="panel sale-origin"><p class="eyebrow">ORIGEM DA VENDA</p><h3>Sem cupom de vendedor registrado</h3><p class="muted">Este pedido não está vinculado a um vendedor por cupom.</p></section>';
+ return `<section class="panel sale-origin"><p class="eyebrow">ORIGEM DA VENDA</p><div class="sale-origin-heading"><h3>Vendedor: ${esc(attribution.nickname)}</h3><span class="sale-coupon">Cupom ${esc(attribution.coupon)}</span></div><dl class="sale-origin-values"><div><dt>Desconto do cupom</dt><dd>${money(attribution.discountCents/100)}</dd></div><div><dt>Comissão registrada</dt><dd>${Number(attribution.commissionPercent).toLocaleString('pt-BR',{maximumFractionDigits:2})}% · ${money(attribution.commissionCents/100)}</dd></div></dl><p class="fine">Cupom e comissão registrados no fechamento do pedido. A liberação da comissão depende da confirmação do pagamento.</p></section>`;
+}
 function renderOrder(data){
  const o=data.order;$('pageTitle').textContent='Acompanhar venda';
  $('content').innerHTML=`<button class="text-button back" data-back>← Todas as vendas</button><section class="panel order-heading"><p class="eyebrow">PEDIDO #${esc(o.id.slice(0,8))}</p><div class="summary-row"><h2>${esc(data.summary)}</h2><span class="amount">${money(o.total)}</span></div><p>${esc(o.customerName)} · ${esc(o.city)} / ${esc(o.state)}</p><p>Criado em ${date(o.createdAt)}</p></section>
+ ${saleOriginHTML(data.sellerAttribution)}
  ${data.attention.length?'<div class="alert">'+data.attention.map(a=>'<p>'+esc(a)+'</p>').join('')+'</div>':''}
  <div class="stages">${data.stages.map(s=>`<section class="stage ${esc(s.state)}"><h3>${esc(s.label)}</h3><p>${esc(s.detail)}</p>${s.at?'<time>'+date(s.at)+'</time>':''}</section>`).join('')}</div>
  <section class="panel"><h3>O que já aconteceu</h3><p class="fine" style="margin:0 0 24px">Cada etapa abaixo usa um registro da loja, do envio pelo WhatsApp ou da confirmação bancária.</p>${data.activities.map(a=>`<div class="activity"><b>${esc(a.title)}</b><p>${date(a.at)} · ${esc(a.source)}</p></div>`).join('')}
