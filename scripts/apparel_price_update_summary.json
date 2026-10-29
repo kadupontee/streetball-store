@@ -1,0 +1,23 @@
+{
+  "policy": "apparel-37980-20261027",
+  "retail_price_brl": 379.8,
+  "total_products": 11210,
+  "apparel_by_kind": {
+    "coat": 190,
+    "blouse": 95,
+    "jacket": 148
+  },
+  "ambiguous_products_at_higher_price": 152,
+  "price_changes": 561,
+  "price_changes_by_kind": {
+    "coat": 190,
+    "blouse": 95,
+    "jacket": 148,
+    "fan": 33,
+    "set": 47,
+    "long": 47,
+    "player_adidas": 1
+  },
+  "updated_records": 561,
+  "images_names_categories_and_ids_preserved": true
+}

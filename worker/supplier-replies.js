@@ -26,6 +26,7 @@ const production=/\b(?:aguarde alguns dias|enviarei (?:as )?fotos|fotos para con
  * @param {string} contextId id of the quoted original message; actual validation occurs in webhook handler
  */
 export function classifyStockReply(body,contextId=''){
+ if(typeof body!=='string'||body.length>400)return null; // Do not truncate an invoice into an approval.
  const raw=normalize(body).slice(0,400);
  if(!raw)return null;
  const command=raw.match(/^(sem[_ -]?estoque|indisponivel|esgotado|disponivel|temos|confirmar|preparando|detalhes)\s+([a-f0-9]{8})$/);

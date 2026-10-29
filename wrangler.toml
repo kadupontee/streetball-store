@@ -21,30 +21,36 @@ database_name = "streetball-db"
 database_id = "72f1d273-c678-485c-9ec1-237453a01bd9"
 
 [triggers]
-crons = ["0 * * * *"]
+crons = ["0 * * * *", "*/5 * * * *"]
 
 [vars]
-ASAAS_SANDBOX = "true"
+ASAAS_SANDBOX = "false"
 SALES_ENABLED = "true"
-PAYMENTS_PRODUCTION_ENABLED = "false"
+PAYMENTS_PRODUCTION_ENABLED = "true"
 # Opção B: destinatário paga eventuais tributos de importação e Despacho Postal
-# nos canais oficiais. Manter produção BLOQUEADA até revisão fiscal e da informação ao comprador.
+# nos canais oficiais. O proprietário confirmou atividade comercial e emissão fiscal
+# para pedidos enviados diretamente do exterior e autorizou a liberação.
 CUSTOMER_PAYS_IMPORT_TAXES = "true"
-IMPORT_TAX_DISCLOSURE_APPROVED = "false"
-IMPORT_COMPLIANCE_APPROVED = "false"
-WA_AUTOMATION_ENABLED = "false"
+IMPORT_TAX_DISCLOSURE_APPROVED = "true"
+IMPORT_COMPLIANCE_APPROVED = "true"
+WA_AUTOMATION_ENABLED = "true"
+WA_TRANSPORT = "local"
+WA_LOCAL_ORDERS_ENABLED = "true"
 # Dominio HTTPS da vitrine usado somente para montar URLs publicas das fotos na previa.
 STORE_PUBLIC_URL = "https://lojastreetball.com.br"
-# Valor TEMPORARIO apenas para simular cobranças no Sandbox. Nao habilitar producao com este frete.
+# Frete grátis em todos os pedidos, conforme definição comercial do proprietário.
 SHIPPING_FLAT_BRL = "0.00"
 # Catálogo compartilhado: números autorizados são cadastrados no painel /suppliers.html
 # e guardados no D1. A ordem de cadastro define a prioridade de consulta.
 # Nunca informe números de fornecedores em arquivo público.
-# Depois de simular custo de entrega, definir frete: exemplo SHIPPING_FLAT_BRL = "19.90"
-# Não habilite checkout sem validar imposto de importação e prazos reais.
+# Prazo de entrega informado ao comprador: 15 a 45 dias.
+# Publicar pelo comando npm run liberar-vendas em whatsapp-local:
+# confere Asaas e conexão do Mac antes de habilitar o checkout real.
 
 # Segredos necessários (NUNCA escreva as chaves neste arquivo):
-# ASAAS_API_KEY, ASAAS_WEBHOOK_TOKEN, ADMIN_TOKEN
+# Sandbox atual: ASAAS_API_KEY, ASAAS_WEBHOOK_TOKEN (ou ASAAS_SANDBOX_API_KEY, ASAAS_SANDBOX_WEBHOOK_TOKEN)
+# Produção: ASAAS_PRODUCTION_API_KEY, ASAAS_PRODUCTION_WEBHOOK_TOKEN
+# ADMIN_TOKEN
 # WA_TOKEN, WA_APP_SECRET, WA_VERIFY_TOKEN, WA_PHONE_NUMBER_ID
 # SUPPLIERS_JSON (até 5 fornecedores), BUYER_WA_TEMPLATE,
 # SUPPLIER_WA_TEMPLATE_MEDIA, OWNER_WA_PHONE, OWNER_WA_TEMPLATE

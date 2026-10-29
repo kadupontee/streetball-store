@@ -6,6 +6,10 @@ CREATE TABLE IF NOT EXISTS orders (
  payment_id TEXT UNIQUE,payment_url TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_orders_status_created ON orders(status,created_at);
+CREATE TABLE IF NOT EXISTS order_payment_environments (
+ order_id TEXT PRIMARY KEY REFERENCES orders(id), environment TEXT NOT NULL CHECK(environment IN ('sandbox','production')),
+ payment_id TEXT, received_at TEXT, recorded_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS webhook_events(id TEXT PRIMARY KEY,received_at TEXT NOT NULL,event_name TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS supplier_jobs(id TEXT PRIMARY KEY,order_id TEXT NOT NULL UNIQUE,
  status TEXT NOT NULL,created_at TEXT NOT NULL,updated_at TEXT NOT NULL,

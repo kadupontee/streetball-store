@@ -1,0 +1,45 @@
+name: Conferir cobrancas de fornecedores
+on:
+  push:
+    branches: [main, codex/whatsapp-secundario-local-20261026]
+    paths:
+      - worker/**
+      - whatsapp-local/**
+      - tests/**
+      - package.json
+      - package-lock.json
+      - scripts/costs.json
+      - .github/workflows/supplier-billing-checks.yml
+  pull_request:
+    paths:
+      - worker/**
+      - whatsapp-local/**
+      - tests/**
+      - package.json
+      - package-lock.json
+      - scripts/costs.json
+      - .github/workflows/supplier-billing-checks.yml
+permissions:
+  contents: read
+concurrency:
+  group: streetball-billing-checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar o conector local
+        run: npm ci --prefix whatsapp-local
+      - name: Instalar o runtime de testes do Worker
+        run: npm ci
+      - name: Conferir loja, cobrancas e isolamento de pagamentos
+        run: node --import ./tests/register-worker-html.mjs --test tests/*.test.mjs
+      - name: Conferir tabela de compra e precos de venda separados
+        run: python scripts/test_supplier_costs.py
+      - name: Conferir conector, atualizacao e respostas de fornecedores
+        run: npm test --prefix whatsapp-local

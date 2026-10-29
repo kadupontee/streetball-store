@@ -1,42 +1,54 @@
-name: Atualizar precos de jaquetas e mangas longas
+name: Unificar precos de jaquetas, blusas e casacos
 on:
   push:
-    branches: [main]
+    branches: [main, codex/whatsapp-secundario-local-20261026]
     paths:
       - scripts/garment_policy.py
-      - scripts/reprice_garments.py
+      - scripts/catalog_utils.py
+      - scripts/visual_verified.py
+      - scripts/unify_apparel_prices.py
+      - scripts/test_apparel_pricing.py
       - scripts/test_garment_policy.py
+      - public/store-settings.js
       - .github/workflows/reprice-garments.yml
   workflow_dispatch:
 permissions:
   contents: write
 concurrency:
-  group: streetball-reprice-garments
+  group: streetball-reprice-garments-${{ github.ref_name }}
   cancel-in-progress: false
 jobs:
   reprice:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
-          fetch-depth: 0
-      - name: Testar classificação e custos sem alterar catálogo
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Conferir politica de precos e revisoes anteriores
         run: |
+          python scripts/test_apparel_pricing.py
           python scripts/test_garment_policy.py
           python scripts/test_supplier_costs.py
+          python scripts/test_visual_verified.py
           node --check public/app.js
-      - name: Migrar apenas produtos seguros com imagem
+          node --check public/editor.js
+      - name: Sincronizar somente precos do catalogo completo
         run: |
-          python scripts/reprice_garments.py
-          python scripts/reprice_garments.py --check
-      - name: Enviar catálogo de 10936 produtos com novas classificações
+          python scripts/unify_apparel_prices.py
+          python scripts/unify_apparel_prices.py --check
+          node --import ./tests/register-worker-html.mjs --test tests/apparel-pricing.test.mjs
+      - name: Gravar catalogos sincronizados na mesma branch
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
         run: |
           git config user.name "streetball-pricing[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/catalog.json public/catalog.js scripts/garment_migration_summary.json
+          git add public/catalog.json public/catalog.js scripts/apparel_price_update_summary.json
           if ! git diff --cached --quiet; then
-            git commit -m "catalog: atualizar jaquetas US30 e mangas longas retro US19"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            git commit -m "catalog: unificar jaquetas blusas e casacos em R379.80"
+            git push origin "HEAD:$TARGET_BRANCH"
           fi

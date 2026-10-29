@@ -15,6 +15,8 @@
   Cache-Control: public, max-age=0, must-revalidate
 /styles.css
   Cache-Control: public, max-age=0, must-revalidate
+/price-offers.css
+  Cache-Control: public, max-age=0, must-revalidate
 
 /editor.html
   Cache-Control: no-store, max-age=0
@@ -26,3 +28,10 @@
   Cache-Control: public, max-age=0, must-revalidate
 /editor.js
   Cache-Control: public, max-age=0, must-revalidate
+
+/ops/*
+  Cache-Control: no-store
+  Referrer-Policy: same-origin
+  X-Robots-Tag: noindex, nofollow
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; worker-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'

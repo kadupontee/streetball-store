@@ -8,6 +8,7 @@ on:
       - 'public/app.js'
       - 'public/index.html'
       - 'package.json'
+      - 'package-lock.json'
       - 'tests/**'
       - '.github/workflows/test-checkout.yml'
   workflow_dispatch:
@@ -25,4 +26,6 @@ jobs:
         with:
           node-version: '22'
       - name: Verificar integrações sem pagamentos reais
-        run: npm test
+        run: |
+          npm ci
+          npm test

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {assertAssetVersion} from './support/asset-version.mjs';
 const base=new URL('../public/',import.meta.url);
 for(const name of ['retro','atuais','personalizadas','todas-colecoes']){
  test('imagem unificada '+name,()=>{
@@ -27,8 +28,8 @@ test('o cache do HTML no Cloudflare nao prende o mobile a versoes antigas',()=>{
  const css=readFileSync(new URL('editorial.css',base),'utf8');
  assert.match(headers,/\/index\.html\s+Cache-Control: no-store/);
  assert.match(headers,/\/\s+Cache-Control: no-store/);
- assert.match(html,/editorial\.css\?v=20261022-mobile-refresh-v8/);
- assert.match(html,/app\.js\?v=20261023-visual-blouses-v13/);
+ assertAssetVersion(html,'editorial.css');
+ assertAssetVersion(html,'app.js');
  assert.match(js,/EDITORIAL_IMAGE_REVISION='20261022-mobile-refresh-v8'/);
  assert.match(js,/EDITORIAL_ASSET_COMMIT='d27a00d6bcd45c27132f445b7e214f3bc934c61a'/);
  const mobile=css.split('V8 mobile: 4 novos banners')[1];
@@ -38,3 +39,4 @@ test('o cache do HTML no Cloudflare nao prende o mobile a versoes antigas',()=>{
  assert.match(mobile,/aspect-ratio: 960 \/ 557/);
  assert.match(mobile,/object-fit: contain/);
 });
+
