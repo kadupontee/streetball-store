@@ -133,10 +133,14 @@ test('every admin order identifies its frozen seller coupon, even after seller e
  const save=body=>sellerAdmin(new Request(origin+'/api/admin/sales/sellers/save',{method:'POST',body:JSON.stringify(body)}),env,'sellers/save');
  const response=await save({email:'seller-private@example.invalid',nickname:'Nome inicial',coupon:'ORIGINAL',commissionPercent:25,active:true});assert.equal(response.status,200);const {id}=await response.json();
  const quote=await sellerCoupon(env,'ORIGINAL',189.9);await attachSeller(env,orderId,quote);
+ const active=(await call(env,'order?orderId='+orderId,{token:env.ADMIN_TOKEN})).data;
+ assert.equal(active.sellerAttribution.couponActive,true,'active seller coupon provides a share link in Sales');
  await save({id,email:'seller-private@example.invalid',nickname:'Nome atualizado',coupon:'NOVO',commissionPercent:20,active:true});
+ const renamed=(await call(env,'order?orderId='+orderId,{token:env.ADMIN_TOKEN})).data;
+ assert.equal(renamed.sellerAttribution.couponActive,false,'old coupon remains in history but the share link disappears');
  await sellerAdmin(new Request(origin+'/api/admin/sales/sellers/delete',{method:'POST',body:JSON.stringify({id})}),env,'sellers/delete');
  const data=(await call(env,'order?orderId='+orderId,{token:env.ADMIN_TOKEN})).data;
- assert.deepEqual(data.sellerAttribution,{sellerId:id,nickname:'Nome atualizado',coupon:'ORIGINAL',commissionPercent:25,commissionCents:4510,discountCents:950,revenueCents:18040});
+ assert.deepEqual(data.sellerAttribution,{sellerId:id,nickname:'Nome atualizado',coupon:'ORIGINAL',commissionPercent:25,commissionCents:4510,discountCents:950,revenueCents:18040,couponActive:false});
  assert.ok(!JSON.stringify(data).includes('seller-private@example.invalid'));
  assert.equal((await call(env,'order?orderId='+orderId)).status,401);
 });
