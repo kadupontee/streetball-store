@@ -265,7 +265,7 @@ function resetEuropeLeague(){
  $('europeLeagues').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-const ADDON={personalization:20,patch:8,size:{XXL:5,'3XL':10,'4XL':15}};
+const ADDON={personalization:35,patch:12,size:{XXL:12,'3XL':23,'4XL':35}};
 const PRODUCT_LIMIT=36;
 const isBasketball=p=>p?.category==='nba'||p?.kind==='nba'||/\b(nba|basketball)\b/i.test(String(p?.title||''));
 let catalog=(Array.isArray(window.STREETBALL_CATALOG)?window.STREETBALL_CATALOG:[]).filter(p=>!isBasketball(p));
@@ -416,7 +416,7 @@ function playerShortsReprice(p){
  const playerShorts=kind==='shorts_player'||(kind==='shorts'&&/\b(?:shorts?|calcao|bermuda)\b/.test(title)&&/\b(?:player|jogador|versao\s+jogador)\b/.test(title));
  if(!playerShorts)return item;
  if(!item.kindLocked)item.kind='shorts_player';
- if(!item.priceLocked&&Math.abs(Number(item.price)-119.90)<0.005)item.price=143.90;
+ if(!item.priceLocked&&Math.abs(Number(item.price)-119.90)<0.005)item.price=199.90;
  return item;
 }
 function assignTeam(product){
@@ -565,13 +565,57 @@ document.addEventListener('error',event=>{
  const frame=img.closest('.editorial-frame');
  if(frame){frame.classList.add('image-unavailable');frame.setAttribute('aria-label','Foto temporariamente indisponível');}
 },true);
-function selectCategory(cat){state.category=cat;state.club='todos';state.europeLeague='todos';state.europeClub='todos';state.query='';$('globalSearch').value='';state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
-function openUI(kind){state.drawer=kind==='cart';state.checkout=kind==='checkout';$('cartDrawer').classList.toggle('open',state.drawer);$('checkoutModal').classList.toggle('open',state.checkout);$('productModal').classList.toggle('open',kind==='product');$('overlay').classList.toggle('visible',!!kind);document.body.classList.toggle('lock',!!kind);$('cartDrawer').setAttribute('aria-hidden',String(!state.drawer));}
+function selectCategory(cat){closeHeaderPanels();state.category=cat;state.club='todos';state.europeLeague='todos';state.europeClub='todos';state.query='';$('globalSearch').value='';state.limit=PRODUCT_LIMIT;state.favoritesOnly=false;catalogRender();document.querySelector('.desktop-nav').classList.remove('mobile-open');$('colecao').scrollIntoView({behavior:'smooth'});}
+function openUI(kind){closeHeaderPanels();state.drawer=kind==='cart';state.checkout=kind==='checkout';$('cartDrawer').classList.toggle('open',state.drawer);$('checkoutModal').classList.toggle('open',state.checkout);$('productModal').classList.toggle('open',kind==='product');$('overlay').classList.toggle('visible',!!kind);document.body.classList.toggle('lock',!!kind);$('cartDrawer').setAttribute('aria-hidden',String(!state.drawer));}
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),3100);}
 function findProduct(id){return catalog.find(p=>p.id===id)}
 function unitPrice(item){const p=findProduct(item.id);return p?(p.price+(ADDON.size[item.size]||0)+(item.patch?ADDON.patch:0)+(item.personalize?ADDON.personalization:0)):0}
+let appliedSellerCoupon="";
+const sellerLinkTools=window.StreetballSellerLinks;
+let sellerCouponRequest=0;
+let pendingSellerValidation=Promise.resolve();
+async function validateSellerCoupon(code){
+ const requestId=++sellerCouponRequest;
+ const valid=sellerLinkTools?.normalizeCode(code)||'';
+ if(!valid){
+  appliedSellerCoupon='';sellerLinkTools?.forget(localStorage);
+  $('sellerCouponStatus').textContent='Cupom inválido. Confira o código.';
+  cartRender();return false;
+ }
+ $('sellerCouponInput').value=valid;
+ $('sellerCouponStatus').textContent='Validando cupom…';
+ try{
+  const response=await fetch('/api/seller/coupon',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({coupon:valid})});
+  const data=await response.json().catch(()=>null);
+  if(!response.ok||!data?.coupon)throw Error(data?.error||'Cupom indisponível.');
+  if(requestId!==sellerCouponRequest)return false;
+  appliedSellerCoupon=data.coupon;
+  $('sellerCouponInput').value=data.coupon;
+  $('sellerCouponStatus').textContent='Cupom '+data.coupon+' aplicado: 5% de desconto nos produtos.';
+  sellerLinkTools?.remember(localStorage,data.coupon);
+  cartRender();return true;
+ }catch(error){
+  if(requestId!==sellerCouponRequest)return false;
+  appliedSellerCoupon='';sellerLinkTools?.forget(localStorage);
+  $('sellerCouponStatus').textContent=error.message||'Não foi possível validar o cupom.';
+  cartRender();return false;
+ }
+}
+function startSellerCouponValidation(value){
+ pendingSellerValidation=validateSellerCoupon(value);
+ return pendingSellerValidation;
+}
+function loadSellerCouponFromLink(){
+ if(editorPreview||!sellerLinkTools)return;
+ const link=sellerLinkTools.codeFromUrl(location.href);
+ if(link.present)sellerLinkTools.forget(localStorage);
+ const code=link.present?link.code:sellerLinkTools.getSaved(localStorage);
+ if(code){startSellerCouponValidation(code);}
+ else if(link.present){$('sellerCouponStatus').textContent='O link de cupom informado é inválido.';}
+}
+
 function cartSum(){return state.cart.reduce((acc,it)=>acc+unitPrice(it)*it.qty,0)}
-function cartRender(){const count=state.cart.reduce((a,it)=>a+it.qty,0);$('cartCount').textContent=count;$('drawerCount').textContent=`(${count})`;$('cartSubtotal').textContent=money(cartSum());$('checkoutSubtotal').textContent=money(cartSum());$('checkoutShipping').textContent=state.checkoutReady?(state.checkoutShipping===0?'Grátis':money(state.checkoutShipping)):'A calcular';$('checkoutGrandTotal').textContent=state.checkoutReady?money(cartSum()+state.checkoutShipping):'A calcular';$('checkoutBtn').disabled=!count||!state.checkoutReady;
+function cartRender(){const count=state.cart.reduce((a,it)=>a+it.qty,0);$('cartCount').textContent=count;$('drawerCount').textContent=`(${count})`;$('cartSubtotal').textContent=money(cartSum());$('checkoutSubtotal').textContent=money(cartSum());$('checkoutShipping').textContent=state.checkoutReady?(state.checkoutShipping===0?'Grátis':money(state.checkoutShipping)):'A calcular';$('checkoutGrandTotal').textContent=state.checkoutReady?money(cartSum()-(appliedSellerCoupon?Math.round(cartSum()*5)/100:0)+state.checkoutShipping):'A calcular';if($('sellerDiscountRow')){$('sellerDiscountRow').hidden=!appliedSellerCoupon;$('sellerDiscountAmount').textContent='− '+money(Math.round(cartSum()*5)/100);}$('checkoutBtn').disabled=!count||!state.checkoutReady;
  $('cartItems').innerHTML=state.cart.map((it,index)=>{const p=findProduct(it.id);if(!p)return '';return `<div class="cart-item"><div class="cart-thumb">${imageHTML(p)}</div><div><div class="cart-title">${esc(p.title)}</div><div class="cart-sub">${esc(it.size)} ${it.personalize?` · ${esc(it.customName)} #${esc(it.customNumber)}`:''}${it.patch?' · Patch':''}</div><div class="cart-qty"><button data-qty="${index}" data-dir="-1" aria-label="Diminuir quantidade">−</button><span>${it.qty}</span><button data-qty="${index}" data-dir="1" aria-label="Aumentar quantidade">+</button></div></div><div><button class="cart-remove" data-remove="${index}" title="Remover">×</button><div class="cart-price price-offer">${offerPriceHTML(p,unitPrice(it),it.qty)}</div></div></div>`}).join('')||'<div class="empty-cart"><svg viewBox="0 0 24 24"><path d="M4 7h16l-1 14H5L4 7ZM8 8V5a4 4 0 0 1 8 0v3" stroke-width="1.2"/></svg><strong>Sua sacola está vazia</strong><p>Encontre seu próximo manto na coleção.</p></div>';
  persist('streetball_cart',state.cart)}
 function detailPrice(){const p=findProduct(state.detail);if(!p)return 0;const c=state.choice;return p.price+(ADDON.size[c.size]||0)+(c.patch?ADDON.patch:0)+(c.personalize?ADDON.personalization:0)}
@@ -592,7 +636,7 @@ function openCheckout(){
    if(!form.elements.name.value)form.elements.name.value=me.user.displayName;
   }).catch(()=>{});
 }
-async function submitOrder(e){e.preventDefault();if(editorPreview){toast('A prévia não envia pedidos.');return;}const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length||!state.checkoutReady){status.textContent='Checkout ainda não habilitado.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;const whatsappOptIn=customer.whatsappOptIn==='on';delete customer.whatsappOptIn;const importTaxAcknowledged=customer.importTaxAcknowledged==='on';delete customer.importTaxAcknowledged;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={customer,whatsappOptIn,importTaxAcknowledged,storeRevision:storePublishedRevision,pricingPolicyVersion:storeSettingsModel?.RETAIL_PRICE_POLICY_VERSION,paymentMethod:data.get('paymentMethod'),items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};const fingerprint=JSON.stringify(payload);if(state.checkoutPayload!==fingerprint){state.checkoutRequestKey=crypto.randomUUID();state.checkoutPayload=fingerprint;}btn.disabled=true;status.textContent='Verificando integração segura...';
+async function submitOrder(e){e.preventDefault();await pendingSellerValidation;if(editorPreview){toast('A prévia não envia pedidos.');return;}const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length||!state.checkoutReady){status.textContent='Checkout ainda não habilitado.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;const whatsappOptIn=customer.whatsappOptIn==='on';delete customer.whatsappOptIn;const importTaxAcknowledged=customer.importTaxAcknowledged==='on';delete customer.importTaxAcknowledged;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={coupon:appliedSellerCoupon||undefined,customer,whatsappOptIn,importTaxAcknowledged,storeRevision:storePublishedRevision,pricingPolicyVersion:storeSettingsModel?.RETAIL_PRICE_POLICY_VERSION,paymentMethod:data.get('paymentMethod'),items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};const fingerprint=JSON.stringify(payload);if(state.checkoutPayload!==fingerprint){state.checkoutRequestKey=crypto.randomUUID();state.checkoutPayload=fingerprint;}btn.disabled=true;status.textContent='Verificando integração segura...';
  try{if(location.hostname.endsWith('.github.io'))throw new Error('Esta é uma vitrine de demonstração. O checkout exige a publicação do backend de pagamentos (Cloudflare/Asaas).');const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':state.checkoutRequestKey},body:JSON.stringify(payload)});const result=await res.json().catch(()=>null);if(!res.ok)throw new Error(result?.error||'Checkout indisponível. A loja ainda não está conectada a um provedor de pagamento.');if(!result?.paymentUrl||!/^https:\/\//.test(result.paymentUrl))throw new Error('A cobrança não retornou um endereço seguro.');if(typeof result.trackingUrl==='string'&&result.trackingUrl.startsWith(location.origin+'/track.html#')){try{localStorage.setItem('streetball_tracking_link',result.trackingUrl)}catch{}}
  status.textContent=result.sandbox?'Redirecionando ao ambiente de testes Asaas...':'Redirecionando para o pagamento seguro no Asaas...';window.location.assign(result.paymentUrl)}catch(err){status.textContent=err.message.includes('Failed to fetch')?'Prévia: conecte o backend e o Asaas antes de receber pedidos reais.':err.message;btn.disabled=false;}}
 // Links de cadastro aparecem apenas para visitantes, nunca para uma sessão autenticada.
@@ -630,22 +674,25 @@ $('heroShop').addEventListener('click',()=>selectCategory('todos'));
 document.querySelectorAll('[data-hero-slide]').forEach(button=>button.addEventListener('click',()=>showHeroSlide(Number(button.dataset.heroSlide))));
 $('storyRetro').addEventListener('click',()=>selectCategory('retro'));
 $('showAllCats').addEventListener('click',()=>selectCategory('todos'));
-$('menuToggle').addEventListener('click',()=>document.querySelector('.desktop-nav').classList.toggle('mobile-open'));
-$('mobileSearch').addEventListener('click',()=>{$('globalSearch').closest('.search-box').classList.toggle('open');$('globalSearch').focus()});
-$('favoriteTrigger').addEventListener('click',()=>{state.favoritesOnly=!state.favoritesOnly;state.category='todos';catalogRender();$('colecao').scrollIntoView({behavior:'smooth'})});
-const accountTrigger=$('accountTrigger'),accountDropdown=$('accountDropdown');
-if(accountTrigger&&accountDropdown){
- accountTrigger.addEventListener('click',event=>{
-  event.stopPropagation();
-  accountDropdown.hidden=!accountDropdown.hidden;
-  accountTrigger.setAttribute('aria-expanded',String(!accountDropdown.hidden));
- });
- document.addEventListener('click',event=>{
-  if(!event.target.closest('.account-menu-wrap')){
-   accountDropdown.hidden=true;accountTrigger.setAttribute('aria-expanded','false');
-  }
- });
-}
+// Header panels share a single open state: collections, search or account.
+const headerPanels={
+ collections:{trigger:$('menuToggle'),panel:document.querySelector('.desktop-nav'),className:'mobile-open'},
+ search:{trigger:$('mobileSearch'),panel:$('globalSearch').closest('.search-box'),className:'open'},
+ account:{trigger:$('accountTrigger'),panel:$('accountDropdown')}
+};
+function headerPanelOpen(name){const p=headerPanels[name];return p.className?p.panel.classList.contains(p.className):!p.panel.hidden;}
+function setHeaderPanel(name,open){const p=headerPanels[name];if(p.className)p.panel.classList.toggle(p.className,open);else p.panel.hidden=!open;p.trigger.setAttribute('aria-expanded',String(open));}
+function closeHeaderPanels(){for(const name of Object.keys(headerPanels))setHeaderPanel(name,false);}
+function toggleHeaderPanel(name){const open=!headerPanelOpen(name);closeHeaderPanels();setHeaderPanel(name,open);if(open&&name==='search')$('globalSearch').focus();}
+for(const [name,{trigger}] of Object.entries(headerPanels))trigger.addEventListener('click',()=>toggleHeaderPanel(name));
+document.addEventListener('click',event=>{
+ if(event.target.closest('a')||!Object.values(headerPanels).some(p=>p.trigger.contains(event.target)||p.panel.contains(event.target)))closeHeaderPanels();
+});
+document.addEventListener('focusin',event=>{
+ if(!Object.values(headerPanels).some(p=>p.trigger.contains(event.target)||p.panel.contains(event.target)))closeHeaderPanels();
+});
+$('favoriteTrigger').addEventListener('click',()=>{closeHeaderPanels();state.favoritesOnly=!state.favoritesOnly;state.category='todos';catalogRender();$('colecao').scrollIntoView({behavior:'smooth'})});
+// End header panels.
 $('cartTrigger').addEventListener('click',()=>openUI('cart'));
 $('closeCart').addEventListener('click',()=>openUI(null));
 $('closeProduct').addEventListener('click',()=>openUI(null));
@@ -653,10 +700,31 @@ $('closeCheckout').addEventListener('click',()=>openUI(null));
 $('overlay').addEventListener('click',()=>openUI(null));
 $('checkoutBtn').addEventListener('click',openCheckout);
 $('checkoutForm').addEventListener('submit',submitOrder);
+$('sellerCouponInput').addEventListener('input',()=>{
+ ++sellerCouponRequest;appliedSellerCoupon='';sellerLinkTools?.forget(localStorage);
+ const url=new URL(location.href);
+ if(url.searchParams.has('cupom')){url.searchParams.delete('cupom');history.replaceState(null,'',url.pathname+url.search+url.hash);}
+ $('sellerCouponStatus').textContent='';cartRender();
+});
+$('applySellerCoupon').addEventListener('click',async()=>{
+ const button=$('applySellerCoupon');button.disabled=true;
+ try{await startSellerCouponValidation($('sellerCouponInput').value);}
+ finally{button.disabled=false;}
+});
+loadSellerCouponFromLink();
 $('productModal').addEventListener('change',e=>{if(e.target.id==='optPersonalize'){state.choice.personalize=e.target.checked;$('personalizeFields').classList.toggle('hide',!e.target.checked);updateDetailPrice()}if(e.target.id==='optPatch'){state.choice.patch=e.target.checked;updateDetailPrice()}});
 $('productModal').addEventListener('input',e=>{if(e.target.id==='customName')state.choice.customName=e.target.value;if(e.target.id==='customNumber')state.choice.customNumber=e.target.value});
 $('productModal').addEventListener('click',e=>{if(e.target.closest('#detailAdd'))addCart()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){openUI(null);document.querySelector('.desktop-nav').classList.remove('mobile-open');if($('accountDropdown')){$('accountDropdown').hidden=true;$('accountTrigger').setAttribute('aria-expanded','false')}}if(e.key==='/'&&document.activeElement?.tagName!=='INPUT'){e.preventDefault();$('globalSearch').closest('.search-box').classList.add('open');$('globalSearch').focus()}});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){
+  const active=Object.keys(headerPanels).find(headerPanelOpen);
+  openUI(null);
+  if(active)headerPanels[active].trigger.focus();
+ }
+ if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)){
+  e.preventDefault();closeHeaderPanels();setHeaderPanel('search',true);$('globalSearch').focus();
+ }
+});
 $('year').textContent=new Date().getFullYear();
 catalog=prepareCatalog(catalog);
 renderEditorialHero();
@@ -720,7 +788,7 @@ if(/^https?:$/.test(location.protocol)){
   window.STREETBALL_SETTINGS_READY||Promise.resolve({settings:{products:{}},model:null})
  ]).then(([data,info])=>{
   if(!Array.isArray(data)||!data.length)throw Error('Catálogo vazio');
-  storeSettingsModel=info.model;storePublishedRevision=info.revision||0;storeProductEdits=info.settings.products||{};storeEditsSignature=JSON.stringify(storeProductEdits);
+  storeSettingsModel=info.model;if(info.model?.RETAIL_ADDONS_BRL)Object.assign(ADDON,info.model.RETAIL_ADDONS_BRL);storePublishedRevision=info.revision||0;storeProductEdits=info.settings.products||{};storeEditsSignature=JSON.stringify(storeProductEdits);
   editorBaseCatalog=prepareCatalog(data);applyStoreProductEdits();renderEditorialHero();categoryRender();loadCheckoutConfig();
   if(editorPreview)window.dispatchEvent(new CustomEvent('streetball:catalog-ready',{detail:editorCatalogSummary()}));
  }).catch(err=>{

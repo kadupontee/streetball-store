@@ -12,7 +12,7 @@
 .account-topline span:last-child{color:#b6b6c3}
 .sb-account-header{background:#f6f6f8;border-bottom:1px solid var(--account-border)}
 .sb-account-header .account-header-inner{min-height:90px;display:flex;align-items:center;gap:28px}
-.sb-account-header .brand{flex-shrink:0;gap:0}
+.sb-account-header .brand{flex-shrink:0;gap:0;min-width:0}
 .sb-account-header .brand-word{color:#17171b}
 .account-header-nav{display:flex!important;align-items:center;gap:26px;margin-left:auto}
 .account-header-nav a{font-size:12px;font-weight:800;color:#494956;white-space:nowrap;transition:color .2s}
@@ -37,7 +37,7 @@
 .account-side-links a::after,.account-side-links button::after{content:"";width:6px;height:6px;flex-shrink:0;border-top:1.5px solid #84849d;border-right:1.5px solid #84849d;transform:rotate(45deg)}
 .account-side-links a:hover,.account-side-links button:hover,.account-side-links a.active{background:#e6e7f1;border-color:#d8dbef}
 .account-side-links a.active{color:#4854a7}
-.account-main{min-width:0}
+.account-main{min-width:0;width:100%}
 .account-pane{background:#f8f8fa;border:1px solid var(--account-border);padding:clamp(24px,4vw,48px);min-height:380px;box-shadow:0 14px 32px #1818250a}
 .account-pane .micro{display:block;color:#6c74ba;letter-spacing:.17em;font-size:10px;font-weight:900;margin-bottom:14px}
 .account-pane h2{font-family:'Barlow Condensed',Impact,Arial Narrow,sans-serif;font-size:clamp(37px,5vw,54px);font-weight:900;line-height:.94;letter-spacing:-.025em;margin:0 0 15px;color:#17171d;max-width:650px}
@@ -89,6 +89,7 @@
  .account-topline .container{min-height:31px;justify-content:center}
  .account-topline span:last-child{display:none}
  .sb-account-header .account-header-inner{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 12px;padding-top:17px;padding-bottom:15px}
+ .sb-account-header .brand .brand-logo-img{width:clamp(124px,36vw,197px)}
  .sb-account-header .brand-word{font-size:29px}
  .sb-account-header .brand-word small{font-size:9px}
  .account-header-nav{display:flex!important;grid-column:1 / -1;grid-row:2;margin:0;gap:0;width:100%;border-top:1px solid #dfdfe5;padding-top:12px}
@@ -102,7 +103,7 @@
  .account-layout{display:flex;flex-direction:column;gap:16px;padding-top:16px;padding-bottom:42px}
  .account-side-nav{width:100%;padding:17px;position:static}
  .account-side-head{padding-bottom:12px}
- .account-side-links{grid-template-columns:1fr 1fr;gap:8px;padding-top:15px}
+ .account-side-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:15px}
  .account-side-links a,.account-side-links button{min-height:48px;padding:10px 12px;border:1px solid #dfdfe6;background:#fff;font-size:11px}
  .account-pane{padding:24px 19px;min-height:0}
  .account-pane h2{font-size:clamp(36px,9vw,49px)}

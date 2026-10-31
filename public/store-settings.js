@@ -1,9 +1,10 @@
 // Modelo compartilhado pela vitrine, pelo editor e pela validação do checkout.
 export const CATEGORIES={brasileirao:'Brasileirão',europa:'Europa',selecoes:'Seleções',retro:'Retrô',personalizadas:'Personalizadas',player:'Jogador',infantil:'Infantil',feminino:'Feminino',treino:'Treino',acessorios:'Acessórios',outras:'Outros'};
 export const KINDS={fan:'Torcedor',female:'Feminina',kids:'Infantil',retro:'Retrô',retro_long:'Retrô manga longa',long:'Manga longa',player_adidas:'Jogador Adidas',player_nike:'Jogador Nike',player_puma:'Jogador Puma',shorts:'Calção',shorts_player:'Calção jogador',socks:'Meião',jacket:'Jaqueta',coat:'Casaco',blouse:'Blusa',set:'Conjunto'};
-export const APPAREL_PRICE_BRL=379.80;
-export const RETAIL_PRICE_POLICY_VERSION='apparel-37980-20261027';
-export const RETAIL_PRICES_BRL=Object.freeze({fan:159.90,female:159.90,kids:179.90,retro:199.90,retro_long:229.90,long:189.90,player_adidas:209.90,player_puma:219.90,player_nike:229.90,shorts:119.90,shorts_player:143.90,socks:59.90,jacket:APPAREL_PRICE_BRL,coat:APPAREL_PRICE_BRL,blouse:APPAREL_PRICE_BRL,set:299.90});
+export const APPAREL_PRICE_BRL=409.90;
+export const RETAIL_PRICE_POLICY_VERSION='commission25-coupon5-min10-20261028';
+export const RETAIL_PRICES_BRL=Object.freeze({fan:189.90,female:189.90,kids:209.90,retro:249.90,retro_long:279.90,long:239.90,player_adidas:249.90,player_puma:259.90,player_nike:269.90,shorts:179.90,shorts_player:199.90,socks:149.90,jacket:APPAREL_PRICE_BRL,coat:APPAREL_PRICE_BRL,blouse:APPAREL_PRICE_BRL,set:579.90});
+export const RETAIL_ADDONS_BRL=Object.freeze({personalization:35,patch:12,size:Object.freeze({XXL:12,'3XL':23,'4XL':35})});
 const APPAREL_KINDS=new Set(['jacket','coat','blouse']);
 const APPAREL_TITLE=/\b(?:jaquetas?|jackets?|casacos?|coats?|blusas?|blusoes?|blusao|moletom|moletons|hoodies?|sweatshirts?|sweaters?|pullovers?|windbreakers?|corta[- ]?vento|half[- ]?zip|quarter[- ]?zip)\b/i;
 export function apparelPriceMode(product){
@@ -16,8 +17,10 @@ export function apparelPriceMode(product){
 }
 export function applyApparelRetailPrice(product){
  const mode=apparelPriceMode(product);
- if(!mode)return product;
- const price=mode==='highest'?Math.max(Number(product.price)||0,APPAREL_PRICE_BRL):APPAREL_PRICE_BRL;
+ const floor=RETAIL_PRICES_BRL[product?.kind];
+ if(!mode&&!floor)return product;
+ // Published editor corrections and old imports must not bypass the new floor.
+ const price=mode==='shared'?APPAREL_PRICE_BRL:Math.max(Number(product.price)||0,floor||0,mode==='highest'?APPAREL_PRICE_BRL:0);
  return product.price===price?product:{...product,price};
 }
 const CURRENT_SHIRT_KINDS=new Set(['fan','female','kids','long','player_adidas','player_nike','player_puma']);
@@ -26,7 +29,7 @@ const CURRENT_SHIRT_KINDS=new Set(['fan','female','kids','long','player_adidas',
 export function productOfferPrice(product,{unitPrice=product?.price,quantity=1}={}){
  if(!Number.isFinite(unitPrice)||unitPrice<=0||!Number.isSafeInteger(quantity)||quantity<1)return null;
  const retro=product?.category==='retro'||['retro','retro_long'].includes(product?.kind);
- const percent=!retro&&!apparelPriceMode(product)&&CURRENT_SHIRT_KINDS.has(product?.kind)?20:17;
+ const percent=20;
  const currentUnitCents=Math.round(unitPrice*100);
  if(currentUnitCents<1||!Number.isSafeInteger(currentUnitCents*100))return null;
  // Divide by the amount paid after discount, rather than adding 20%/17%:

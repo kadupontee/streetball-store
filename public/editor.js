@@ -1,4 +1,4 @@
-import {emptySettings,normalizeSettings,applyProductOverride,apparelPriceMode,DEFAULT_DESIGN,CATEGORIES,KINDS,RETAIL_PRICES_BRL,BRAZIL_TEAMS,SECTIONS,TEXTS} from './store-settings.js?v=20261027-apparel37980-v1';
+import {emptySettings,normalizeSettings,applyProductOverride,apparelPriceMode,DEFAULT_DESIGN,CATEGORIES,KINDS,RETAIL_PRICES_BRL,BRAZIL_TEAMS,SECTIONS,TEXTS} from './store-settings.js?v=20261028-seller-portals-v1';
 
 const $=id=>document.getElementById(id);
 const clone=x=>structuredClone(x);

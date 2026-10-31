@@ -1,0 +1,46 @@
+name: Testar links dos vendedores
+
+on:
+  push:
+    branches:
+      - codex/seller-share-links-20261031
+    paths:
+      - 'public/seller-referral.js'
+      - 'public/seller-admin.js'
+      - 'public/seller-dashboard.js'
+      - 'public/app.js'
+      - 'tests/seller-referral-links.test.mjs'
+      - 'tests/seller-admin-ui.test.mjs'
+      - '.github/workflows/test-seller-links.yml'
+  pull_request:
+    paths:
+      - 'public/seller-referral.js'
+      - 'public/seller-admin.js'
+      - 'public/seller-dashboard.js'
+      - 'public/app.js'
+      - 'tests/seller-referral-links.test.mjs'
+      - 'tests/seller-admin-ui.test.mjs'
+      - '.github/workflows/test-seller-links.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  seller-links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Verificar scripts
+        run: |
+          node --check public/seller-referral.js
+          node --check public/seller-admin.js
+          node --check public/seller-dashboard.js
+          node --check public/app.js
+      - name: Testar links, cupons e interface de vendedores
+        run: node --import ./tests/register-worker-html.mjs --test tests/seller-referral-links.test.mjs tests/seller-admin-ui.test.mjs

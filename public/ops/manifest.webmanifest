@@ -6,7 +6,7 @@
  "start_url":"/ops/",
  "scope":"/ops/",
  "display":"standalone",
- "background_color":"#f4f5ef",
- "theme_color":"#15271e",
+ "background_color":"#e9e9ed",
+ "theme_color":"#17171b",
  "icons":[{"src":"/apple-touch-icon.png","sizes":"180x180","type":"image/png","purpose":"any"}]
 }

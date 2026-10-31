@@ -15,8 +15,8 @@ from datetime import date
 import re
 import unicodedata
 
-RETRO_STANDARD_BRL = 199.90
-RETRO_LONG_BRL = 229.90
+RETRO_STANDARD_BRL = 249.90
+RETRO_LONG_BRL = 279.90
 RETR0_MARKERS = re.compile(r'\b(retro|vintage|classic|classica|classico)\b', re.I)
 SEASON_PATTERN = re.compile(
     r'(?<!\d)((?:19|20)\d{2}|\d{2})\s*[-/._]\s*((?:19|20)\d{2}|\d{2})(?!\d)'

@@ -1,3 +1,4 @@
+import {RETAIL_PRICE_POLICY_VERSION} from '../public/store-settings.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {localD1} from './support/local-d1.mjs';
@@ -157,7 +158,7 @@ test('checkout records its environment and only the received-payment webhook rel
   if(String(url).endsWith('/payments'))return Response.json({id:'pay_created_api',invoiceUrl:'https://checkout.example.invalid/pay'});
   throw Error('Unexpected network request');
  };
- const body={paymentMethod:'PIX',whatsappOptIn:true,importTaxAcknowledged:true,items:[{id:'demo',size:'P',qty:1}],customer:{name:'Pessoa Exemplo',email:'person@example.invalid',phone:'11999999999',cpf:'12345678909',zip:'00000000',address:'Rua Exemplo 123',city:'São Paulo',state:'SP'}};
+ const body={pricingPolicyVersion:RETAIL_PRICE_POLICY_VERSION,paymentMethod:'PIX',whatsappOptIn:true,importTaxAcknowledged:true,items:[{id:'demo',size:'P',qty:1}],customer:{name:'Pessoa Exemplo',email:'person@example.invalid',phone:'11999999999',cpf:'12345678909',zip:'00000000',address:'Rua Exemplo 123',city:'São Paulo',state:'SP'}};
  const checkout=await worker.fetch(new Request('https://loja.example/api/orders',{method:'POST',headers:{'content-type':'application/json','Idempotency-Key':crypto.randomUUID()},body:JSON.stringify(body)}),env);
  const result=await checkout.json();assert.equal(checkout.status,200,JSON.stringify(result));
  assert.equal(one(query,'SELECT environment FROM order_payment_environments WHERE order_id=?',[result.orderId]).environment,'production');
