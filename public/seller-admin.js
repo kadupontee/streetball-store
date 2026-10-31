@@ -1,6 +1,6 @@
 (()=>{
 'use strict';
-const $=id=>document.getElementById(id),panel=$('sellersPanel'),button=$('sellersToggle');
+const $=id=>document.getElementById(id),panel=$('sellersPanel'),button=$('sellersToggle'),sellerLinkTools=window.StreetballSellerLinks;
 let sellers=[],orders=[],selected='',includeDeleted=false,search='',open=false,draft=null,notice='',error=false,highlight='',saving=false,requestId=0;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=c=>(Number(c||0)/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -14,12 +14,21 @@ async function api(action,body){
  if(!data)throw Error('A loja retornou uma resposta incompleta. Atualize para tentar novamente.');
  return data;
 }
+async function copySellerShareLink(code){
+ const link=sellerLinkTools?.shareUrl(code);
+ if(!link)throw Error('Não foi possível montar o link deste cupom.');
+ if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(link);return;}
+ const textarea=document.createElement('textarea');textarea.value=link;textarea.style.position='fixed';textarea.style.opacity='0';document.body.appendChild(textarea);textarea.select();
+ const ok=document.execCommand?.('copy');textarea.remove();if(!ok)throw Error('Não foi possível copiar. Selecione o endereço exibido e copie manualmente.');
+}
 function showNotice(message,isError=false){notice=message;error=isError;const el=$('sellerNotice');if(el){el.textContent=message;el.className='team-notice'+(isError?' is-error':'');el.hidden=!message;el.setAttribute('role',isError?'alert':'status');}}
 function card(s,index){
  const state=s.deleted_at?'Excluído':s.active?'Ativo':'Inativo';
+ const shareLink=s.active&&!s.deleted_at?sellerLinkTools?.shareUrl(s.coupon):'';
  return `<article class="seller-card${highlight===s.id?' just-saved':''}" data-seller-card="${esc(s.id)}" tabindex="-1">
  <div class="seller-card-head"><span class="seller-rank">${String(index+1).padStart(2,'0')}</span><div class="seller-identity"><h3>${esc(s.nickname)}</h3><p>${esc(s.email)}</p></div><span class="team-badge ${s.deleted_at?'is-removed':s.active?'is-active':''}">${state}</span></div>
  <div class="seller-terms"><span>Cupom <b>${esc(s.coupon)}</b></span><span>Comissão <b>${s.commission_bps/100}%</b></span></div>
+ ${shareLink?`<div class="seller-share"><label>Link exclusivo do vendedor</label><div class="seller-share-actions"><input aria-label="Link exclusivo de ${esc(s.nickname)}" readonly value="${esc(shareLink)}"><button class="secondary" type="button" data-copy-coupon="${esc(s.coupon)}">Copiar link</button></div><small>O cupom é aplicado automaticamente nas compras pelo link.</small></div>`:''}
  <div class="seller-numbers">${metric('Vendas pagas',s.sales)}${metric('Faturamento para a loja',money(s.revenueCents))}${metric('Comissão a pagar',money(s.dueCents),'accent')}</div>
  <div class="seller-balances"><span>Acumulada <b>${money(s.earnedCents)}</b></span><span>Já paga <b>${money(s.paidCents)}</b></span>${s.sales?'':'<span class="seller-zero">Ainda sem vendas</span>'}</div>
  <div class="seller-card-actions"><button class="secondary" data-view="${esc(s.id)}">Ver pedidos</button><button class="text-button" data-edit="${esc(s.id)}">${s.deleted_at?'Restaurar / editar':'Editar cadastro'}</button>${s.deleted_at?'':`<button class="text-button danger" data-delete="${esc(s.id)}">Excluir</button>`}</div></article>`;
@@ -89,6 +98,7 @@ panel.addEventListener('click',async e=>{
  if(target.hasAttribute('data-cancel')){draft=null;render();return;}
  if(target.dataset.view||target.hasAttribute('data-all')){selected=target.dataset.view||'';render();$('sellerOrders').scrollIntoView({behavior:'smooth',block:'start'});return;}
  try{
+  if(target.hasAttribute('data-copy-coupon')){await copySellerShareLink(target.dataset.copyCoupon);showNotice('Link exclusivo copiado. Envie ao cliente pelo WhatsApp ou redes sociais.');return;}
   if(target.hasAttribute('data-reload')){await load();return;}
   if(target.dataset.delete){const s=sellers.find(s=>s.id===target.dataset.delete);if(!confirm('Excluir '+s.nickname+'? O cupom e o acesso serão desativados. Pedidos e comissões serão preservados.'))return;target.disabled=true;await api('sellers/delete',{id:s.id});draft=null;showNotice('Vendedor excluído. Consulte o histórico em “Incluir excluídos”.');await load();}
   if(target.dataset.settle&&confirm('Confirmar que você já pagou esta comissão? Esta ação registra a baixa, sem transferir dinheiro.')){target.disabled=true;await api('sellers/settle',{orderId:target.dataset.settle});showNotice('Pagamento de comissão registrado.');await load();}

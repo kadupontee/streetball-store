@@ -8,6 +8,7 @@ import worker from '../worker/index.js';
 
 const page=readFileSync(new URL('../public/ops/index.html',import.meta.url),'utf8');
 const script=readFileSync(new URL('../public/seller-admin.js',import.meta.url),'utf8');
+const referralScript=readFileSync(new URL('../public/seller-referral.js',import.meta.url),'utf8');
 const opsScript=readFileSync(new URL('../public/ops/sales.js',import.meta.url),'utf8');
 const base='https://store.example.invalid';
 function database(t){
@@ -30,7 +31,7 @@ async function setup(t,env,options={}){
   const response=await worker.fetch(new Request(new URL(path,base),{method:config.method||'GET',headers,...(config.body?{body:config.body}:{})}),env);
   if(path.endsWith('/save')&&response.ok)options.saved?.();return response;
  };
- window.eval(script);if(options.fullOps)window.eval(opsScript);else{document.getElementById('app').hidden=false;document.getElementById('nav').hidden=false;document.dispatchEvent(new window.Event('streetball:ops-ready'));}
+ window.eval(referralScript);window.eval(script);if(options.fullOps)window.eval(opsScript);else{document.getElementById('app').hidden=false;document.getElementById('nav').hidden=false;document.dispatchEvent(new window.Event('streetball:ops-ready'));}
  await until(()=>document.getElementById('sellerList'));
  return {window,document,requests,errors,click:selector=>{const el=document.querySelector(selector);assert.ok(el,selector);el.click()}};
 }
@@ -114,4 +115,22 @@ test('opening each order shows the seller coupon, while a direct sale has an exp
  let origin=ui.document.querySelector('.sale-origin');assert.match(origin.textContent,/Vendedor: Nick Teste/);assert.match(origin.textContent,/Cupom SEM-VENDAS/);assert.match(origin.textContent,/25%/);assert.match(origin.textContent,/45,10/);
  ui.click('[data-back]');await until(()=>ui.document.querySelector('[data-order]'));ui.click('[data-order="'+directOrder+'"]');await until(()=>ui.document.querySelector('.sale-origin'));
  origin=ui.document.querySelector('.sale-origin');assert.match(origin.textContent,/Sem cupom de vendedor registrado/);assert.equal(origin.querySelector('.sale-coupon'),null);assert.deepEqual(ui.errors,[]);
+});
+
+test('cada vendedor ativo recebe seu link e consegue copiá-lo no painel',async t=>{
+ const {env}=database(t),ui=await setup(t,env);
+ ui.click('[data-new]');submit(ui,fill(ui));await until(()=>ui.document.querySelector('[data-seller-card]'));
+ const input=ui.document.querySelector('.seller-share-actions input');
+ assert.equal(input?.value,'https://lojastreetball.com.br/?cupom=SEM-VENDAS');
+ let copied='';
+ Object.defineProperty(ui.window.navigator,'clipboard',{configurable:true,value:{writeText:async value=>{copied=value;}}});
+ ui.click('[data-copy-coupon]');
+ await until(()=>ui.document.getElementById('sellerNotice').textContent.includes('Link exclusivo copiado'));
+ assert.equal(copied,input.value);
+ ui.click('[data-delete]');
+ await until(()=>ui.document.querySelectorAll('[data-seller-card]').length===0);
+ ui.document.getElementById('showArchived').click();
+ const removed=ui.document.querySelector('[data-seller-card]');
+ assert.ok(removed,'deleted seller remains in archived history');
+ assert.equal(removed.querySelector('.seller-share'),null,'archived seller cannot promote revoked coupon');
 });
