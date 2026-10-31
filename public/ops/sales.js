@@ -32,7 +32,8 @@ function renderOrders(data){
 }
 function saleOriginHTML(attribution){
  if(!attribution)return '<section class="panel sale-origin"><p class="eyebrow">ORIGEM DA VENDA</p><h3>Sem cupom de vendedor registrado</h3><p class="muted">Este pedido não está vinculado a um vendedor por cupom.</p></section>';
- return `<section class="panel sale-origin"><p class="eyebrow">ORIGEM DA VENDA</p><div class="sale-origin-heading"><h3>Vendedor: ${esc(attribution.nickname)}</h3><span class="sale-coupon">Cupom ${esc(attribution.coupon)}</span></div><dl class="sale-origin-values"><div><dt>Desconto do cupom</dt><dd>${money(attribution.discountCents/100)}</dd></div><div><dt>Comissão registrada</dt><dd>${Number(attribution.commissionPercent).toLocaleString('pt-BR',{maximumFractionDigits:2})}% · ${money(attribution.commissionCents/100)}</dd></div></dl><p class="fine">Cupom e comissão registrados no fechamento do pedido. A liberação da comissão depende da confirmação do pagamento.</p></section>`;
+ const shareLink=attribution.couponActive?window.StreetballSellerLinks?.shareUrl(attribution.coupon):'';
+ return `<section class="panel sale-origin"><p class="eyebrow">ORIGEM DA VENDA</p><div class="sale-origin-heading"><h3>Vendedor: ${esc(attribution.nickname)}</h3><span class="sale-coupon">Cupom ${esc(attribution.coupon)}</span></div>${shareLink?`<div class="seller-share"><label>Link exclusivo deste vendedor</label><div class="seller-share-actions"><input aria-label="Link do cupom ${esc(attribution.coupon)}" readonly value="${esc(shareLink)}"><button class="secondary" type="button" data-copy-sale-link="${esc(attribution.coupon)}">Copiar link</button></div><small>Ativa automaticamente o cupom para quem acessar por este link.</small></div>`:''}<dl class="sale-origin-values"><div><dt>Desconto do cupom</dt><dd>${money(attribution.discountCents/100)}</dd></div><div><dt>Comissão registrada</dt><dd>${Number(attribution.commissionPercent).toLocaleString('pt-BR',{maximumFractionDigits:2})}% · ${money(attribution.commissionCents/100)}</dd></div></dl><p class="fine">Cupom e comissão registrados no fechamento do pedido. A liberação da comissão depende da confirmação do pagamento.</p></section>`;
 }
 function renderOrder(data){
  const o=data.order;$('pageTitle').textContent='Acompanhar venda';
@@ -133,7 +134,22 @@ $('logout').addEventListener('click',async()=>{
  try{await api('logout',{body:{}});const sub=await registration?.pushManager.getSubscription();await sub?.unsubscribe();$('content').innerHTML='';lastData=null;lastUpdated=null;showLogin();}
  catch(error){showConnection(error.message);}
 });
-$('content').addEventListener('click',event=>{const order=event.target.closest('[data-order]');if(order&&validId(order.dataset.order))navigate(order.dataset.order);if(event.target.closest('[data-back]'))navigate(null);if(event.target.closest('[data-settings]'))openSettings(true);});
+$('content').addEventListener('click',async event=>{
+ const copy=event.target.closest('[data-copy-sale-link]');
+ if(copy){
+  const link=window.StreetballSellerLinks?.shareUrl(copy.dataset.copySaleLink);
+  if(!link)return;
+  try{
+   if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(link);
+   else{
+    const input=copy.closest('.seller-share')?.querySelector('input');if(!input)return;
+    input.select();if(!document.execCommand?.('copy'))throw Error('Sem permissão');
+   }
+   copy.textContent='Link copiado';
+  }catch{copy.textContent='Copie o endereço do campo';}
+  return;
+ }
+ const order=event.target.closest('[data-order]');if(order&&validId(order.dataset.order))navigate(order.dataset.order);if(event.target.closest('[data-back]'))navigate(null);if(event.target.closest('[data-settings]'))openSettings(true);});
 addEventListener('popstate',()=>refresh());
 addEventListener('online',()=>refresh());
 addEventListener('offline',()=>showConnection('O aparelho está sem internet.'));
