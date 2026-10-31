@@ -571,6 +571,49 @@ function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('sho
 function findProduct(id){return catalog.find(p=>p.id===id)}
 function unitPrice(item){const p=findProduct(item.id);return p?(p.price+(ADDON.size[item.size]||0)+(item.patch?ADDON.patch:0)+(item.personalize?ADDON.personalization:0)):0}
 let appliedSellerCoupon="";
+const sellerLinkTools=window.StreetballSellerLinks;
+let sellerCouponRequest=0;
+let pendingSellerValidation=Promise.resolve();
+async function validateSellerCoupon(code){
+ const requestId=++sellerCouponRequest;
+ const valid=sellerLinkTools?.normalizeCode(code)||'';
+ if(!valid){
+  appliedSellerCoupon='';sellerLinkTools?.forget(localStorage);
+  $('sellerCouponStatus').textContent='Cupom inválido. Confira o código.';
+  cartRender();return false;
+ }
+ $('sellerCouponInput').value=valid;
+ $('sellerCouponStatus').textContent='Validando cupom…';
+ try{
+  const response=await fetch('/api/seller/coupon',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({coupon:valid})});
+  const data=await response.json().catch(()=>null);
+  if(!response.ok||!data?.coupon)throw Error(data?.error||'Cupom indisponível.');
+  if(requestId!==sellerCouponRequest)return false;
+  appliedSellerCoupon=data.coupon;
+  $('sellerCouponInput').value=data.coupon;
+  $('sellerCouponStatus').textContent='Cupom '+data.coupon+' aplicado: 5% de desconto nos produtos.';
+  sellerLinkTools?.remember(localStorage,data.coupon);
+  cartRender();return true;
+ }catch(error){
+  if(requestId!==sellerCouponRequest)return false;
+  appliedSellerCoupon='';sellerLinkTools?.forget(localStorage);
+  $('sellerCouponStatus').textContent=error.message||'Não foi possível validar o cupom.';
+  cartRender();return false;
+ }
+}
+function startSellerCouponValidation(value){
+ pendingSellerValidation=validateSellerCoupon(value);
+ return pendingSellerValidation;
+}
+function loadSellerCouponFromLink(){
+ if(editorPreview||!sellerLinkTools)return;
+ const link=sellerLinkTools.codeFromUrl(location.href);
+ if(link.present)sellerLinkTools.forget(localStorage);
+ const code=link.present?link.code:sellerLinkTools.getSaved(localStorage);
+ if(code){startSellerCouponValidation(code);}
+ else if(link.present){$('sellerCouponStatus').textContent='O link de cupom informado é inválido.';}
+}
+
 function cartSum(){return state.cart.reduce((acc,it)=>acc+unitPrice(it)*it.qty,0)}
 function cartRender(){const count=state.cart.reduce((a,it)=>a+it.qty,0);$('cartCount').textContent=count;$('drawerCount').textContent=`(${count})`;$('cartSubtotal').textContent=money(cartSum());$('checkoutSubtotal').textContent=money(cartSum());$('checkoutShipping').textContent=state.checkoutReady?(state.checkoutShipping===0?'Grátis':money(state.checkoutShipping)):'A calcular';$('checkoutGrandTotal').textContent=state.checkoutReady?money(cartSum()-(appliedSellerCoupon?Math.round(cartSum()*5)/100:0)+state.checkoutShipping):'A calcular';if($('sellerDiscountRow')){$('sellerDiscountRow').hidden=!appliedSellerCoupon;$('sellerDiscountAmount').textContent='− '+money(Math.round(cartSum()*5)/100);}$('checkoutBtn').disabled=!count||!state.checkoutReady;
  $('cartItems').innerHTML=state.cart.map((it,index)=>{const p=findProduct(it.id);if(!p)return '';return `<div class="cart-item"><div class="cart-thumb">${imageHTML(p)}</div><div><div class="cart-title">${esc(p.title)}</div><div class="cart-sub">${esc(it.size)} ${it.personalize?` · ${esc(it.customName)} #${esc(it.customNumber)}`:''}${it.patch?' · Patch':''}</div><div class="cart-qty"><button data-qty="${index}" data-dir="-1" aria-label="Diminuir quantidade">−</button><span>${it.qty}</span><button data-qty="${index}" data-dir="1" aria-label="Aumentar quantidade">+</button></div></div><div><button class="cart-remove" data-remove="${index}" title="Remover">×</button><div class="cart-price price-offer">${offerPriceHTML(p,unitPrice(it),it.qty)}</div></div></div>`}).join('')||'<div class="empty-cart"><svg viewBox="0 0 24 24"><path d="M4 7h16l-1 14H5L4 7ZM8 8V5a4 4 0 0 1 8 0v3" stroke-width="1.2"/></svg><strong>Sua sacola está vazia</strong><p>Encontre seu próximo manto na coleção.</p></div>';
@@ -593,7 +636,7 @@ function openCheckout(){
    if(!form.elements.name.value)form.elements.name.value=me.user.displayName;
   }).catch(()=>{});
 }
-async function submitOrder(e){e.preventDefault();if(editorPreview){toast('A prévia não envia pedidos.');return;}const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length||!state.checkoutReady){status.textContent='Checkout ainda não habilitado.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;const whatsappOptIn=customer.whatsappOptIn==='on';delete customer.whatsappOptIn;const importTaxAcknowledged=customer.importTaxAcknowledged==='on';delete customer.importTaxAcknowledged;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={coupon:appliedSellerCoupon||undefined,customer,whatsappOptIn,importTaxAcknowledged,storeRevision:storePublishedRevision,pricingPolicyVersion:storeSettingsModel?.RETAIL_PRICE_POLICY_VERSION,paymentMethod:data.get('paymentMethod'),items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};const fingerprint=JSON.stringify(payload);if(state.checkoutPayload!==fingerprint){state.checkoutRequestKey=crypto.randomUUID();state.checkoutPayload=fingerprint;}btn.disabled=true;status.textContent='Verificando integração segura...';
+async function submitOrder(e){e.preventDefault();await pendingSellerValidation;if(editorPreview){toast('A prévia não envia pedidos.');return;}const status=$('checkoutStatus');const btn=$('placeOrder');if(!state.cart.length||!state.checkoutReady){status.textContent='Checkout ainda não habilitado.';return;}const data=new FormData(e.currentTarget);const customer=Object.fromEntries(data.entries());delete customer.consent;const whatsappOptIn=customer.whatsappOptIn==='on';delete customer.whatsappOptIn;const importTaxAcknowledged=customer.importTaxAcknowledged==='on';delete customer.importTaxAcknowledged;customer.cpf=String(customer.cpf).replace(/\D/g,'');customer.phone=String(customer.phone).replace(/\D/g,'');customer.zip=String(customer.zip).replace(/\D/g,'');const payload={coupon:appliedSellerCoupon||undefined,customer,whatsappOptIn,importTaxAcknowledged,storeRevision:storePublishedRevision,pricingPolicyVersion:storeSettingsModel?.RETAIL_PRICE_POLICY_VERSION,paymentMethod:data.get('paymentMethod'),items:state.cart.map(({id,size,qty,patch,personalize,customName,customNumber})=>({id,size,qty,patch,personalize,customName,customNumber}))};const fingerprint=JSON.stringify(payload);if(state.checkoutPayload!==fingerprint){state.checkoutRequestKey=crypto.randomUUID();state.checkoutPayload=fingerprint;}btn.disabled=true;status.textContent='Verificando integração segura...';
  try{if(location.hostname.endsWith('.github.io'))throw new Error('Esta é uma vitrine de demonstração. O checkout exige a publicação do backend de pagamentos (Cloudflare/Asaas).');const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':state.checkoutRequestKey},body:JSON.stringify(payload)});const result=await res.json().catch(()=>null);if(!res.ok)throw new Error(result?.error||'Checkout indisponível. A loja ainda não está conectada a um provedor de pagamento.');if(!result?.paymentUrl||!/^https:\/\//.test(result.paymentUrl))throw new Error('A cobrança não retornou um endereço seguro.');if(typeof result.trackingUrl==='string'&&result.trackingUrl.startsWith(location.origin+'/track.html#')){try{localStorage.setItem('streetball_tracking_link',result.trackingUrl)}catch{}}
  status.textContent=result.sandbox?'Redirecionando ao ambiente de testes Asaas...':'Redirecionando para o pagamento seguro no Asaas...';window.location.assign(result.paymentUrl)}catch(err){status.textContent=err.message.includes('Failed to fetch')?'Prévia: conecte o backend e o Asaas antes de receber pedidos reais.':err.message;btn.disabled=false;}}
 // Links de cadastro aparecem apenas para visitantes, nunca para uma sessão autenticada.
@@ -657,8 +700,18 @@ $('closeCheckout').addEventListener('click',()=>openUI(null));
 $('overlay').addEventListener('click',()=>openUI(null));
 $('checkoutBtn').addEventListener('click',openCheckout);
 $('checkoutForm').addEventListener('submit',submitOrder);
-$('sellerCouponInput').addEventListener('input',()=>{appliedSellerCoupon='';$('sellerCouponStatus').textContent='';cartRender()});
-$('applySellerCoupon').addEventListener('click',async()=>{const button=$('applySellerCoupon');button.disabled=true;try{const r=await fetch('/api/seller/coupon',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({coupon:$('sellerCouponInput').value.trim()})});const d=await r.json();if(!r.ok)throw Error(d.error);appliedSellerCoupon=d.coupon;$('sellerCouponStatus').textContent='Cupom aplicado: 5% de desconto.';}catch(e){appliedSellerCoupon='';$('sellerCouponStatus').textContent=e.message}finally{button.disabled=false;cartRender()}});
+$('sellerCouponInput').addEventListener('input',()=>{
+ ++sellerCouponRequest;appliedSellerCoupon='';sellerLinkTools?.forget(localStorage);
+ const url=new URL(location.href);
+ if(url.searchParams.has('cupom')){url.searchParams.delete('cupom');history.replaceState(null,'',url.pathname+url.search+url.hash);}
+ $('sellerCouponStatus').textContent='';cartRender();
+});
+$('applySellerCoupon').addEventListener('click',async()=>{
+ const button=$('applySellerCoupon');button.disabled=true;
+ try{await startSellerCouponValidation($('sellerCouponInput').value);}
+ finally{button.disabled=false;}
+});
+loadSellerCouponFromLink();
 $('productModal').addEventListener('change',e=>{if(e.target.id==='optPersonalize'){state.choice.personalize=e.target.checked;$('personalizeFields').classList.toggle('hide',!e.target.checked);updateDetailPrice()}if(e.target.id==='optPatch'){state.choice.patch=e.target.checked;updateDetailPrice()}});
 $('productModal').addEventListener('input',e=>{if(e.target.id==='customName')state.choice.customName=e.target.value;if(e.target.id==='customNumber')state.choice.customNumber=e.target.value});
 $('productModal').addEventListener('click',e=>{if(e.target.closest('#detailAdd'))addCart()});
