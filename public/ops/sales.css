@@ -13,3 +13,13 @@ header{padding-top:calc(24px + env(safe-area-inset-top))}nav button{font-weight:
 @media(max-width:420px){.seller-numbers{grid-template-columns:repeat(2,minmax(0,1fr))}.seller-numbers>.accent{grid-column:1/-1;background:#eceef9;border-radius:8px;padding:12px;display:flex;flex-direction:row;align-items:center;justify-content:space-between}.seller-card-head{flex-wrap:wrap}.team-summary .team-metric strong{font-size:21px}}
 
 .sale-origin{border-color:#cbd0ed;background:#f6f6fc}.sale-origin .eyebrow{margin-bottom:13px}.sale-origin>p:last-child{margin-bottom:0}.sale-origin-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.sale-origin-heading h3{margin:0;overflow-wrap:anywhere}.sale-coupon{display:inline-flex;padding:8px 12px;background:#e5e7fa;border:1px solid #cdd2ef;border-radius:6px;color:#48549e;font-size:12px;font-weight:800;overflow-wrap:anywhere}.sale-origin-values{display:flex;gap:20px 40px;flex-wrap:wrap;margin:22px 0 0}.sale-origin-values dt{font-size:11px;color:var(--muted)}.sale-origin-values dd{margin:8px 0 0;font-size:18px;font-weight:750;font-variant-numeric:tabular-nums}.sale-origin>.muted{font-size:12px;margin:10px 0 0}
+
+
+/* Links individuais de venda: painéis do dono e do vendedor. */
+.seller-share{margin:0 0 20px;padding:16px;border:1px solid #d9deef;border-radius:11px;background:#f5f7fc}
+.seller-share label{display:block;margin-bottom:9px;color:#4b537b;font-size:11px;font-weight:800;letter-spacing:.02em}
+.seller-share-actions{display:flex;align-items:stretch;gap:9px}
+.seller-share-actions input{display:block;flex:1;min-width:0;max-width:100%;padding:11px 12px;border:1px solid #cbd2e9;border-radius:7px;background:#fff;color:#27304a;font-size:12px;overflow:hidden;text-overflow:ellipsis}
+.seller-share-actions button{flex-shrink:0;white-space:nowrap;min-height:42px;padding:10px 13px;font-size:12px}
+.seller-share small,.seller-share .fine{display:block;font-size:11px;line-height:1.6;color:#676e87;margin:10px 0 0}
+@media(max-width:520px){.seller-share-actions{flex-direction:column}.seller-share-actions button{width:100%;justify-content:center}.seller-share-actions input{width:100%;font-size:13px}}
