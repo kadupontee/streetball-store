@@ -182,14 +182,14 @@ export async function readSale(env,id){
  all('order_tracking_events','SELECT id,stage,created_at FROM order_tracking_events WHERE order_id=? ORDER BY created_at DESC LIMIT 50');
  if(available.has('wa_local_groups'))all('wa_local_outbox',"SELECT g.id,g.purpose,g.created_at,COUNT(*) AS total,SUM(CASE WHEN o.state='sent' THEN 1 ELSE 0 END) AS sent,SUM(CASE WHEN o.state='uncertain' THEN 1 ELSE 0 END) AS uncertain,SUM(CASE WHEN o.state IN ('failed','cancelled','expired') THEN 1 ELSE 0 END) AS failed,MAX(o.updated_at) AS last_at FROM wa_local_groups g JOIN wa_local_outbox o ON o.group_id=g.id WHERE g.order_id=? AND g.preview=0 GROUP BY g.id ORDER BY g.created_at DESC LIMIT 50");
  // Coupon and commission are read from the order's frozen attribution, even if the seller is edited or excluded later.
- if(available.has('sales_attributions'))first('sales_attributions',`SELECT a.seller_id,a.coupon,a.commission_bps,a.commission_cents,a.discount_cents,a.net_cents,${available.has('sales_sellers')?'s.nickname':'NULL AS nickname'} FROM sales_attributions a ${available.has('sales_sellers')?'LEFT JOIN sales_sellers s ON s.id=a.seller_id':''} WHERE a.order_id=?`);
+ if(available.has('sales_attributions'))first('sales_attributions',`SELECT a.seller_id,a.coupon,a.commission_bps,a.commission_cents,a.discount_cents,a.net_cents,${available.has('sales_sellers')?'s.nickname,s.active AS seller_active,s.coupon AS seller_current_coupon':'NULL AS nickname,NULL AS seller_active,NULL AS seller_current_coupon'} FROM sales_attributions a ${available.has('sales_sellers')?'LEFT JOIN sales_sellers s ON s.id=a.seller_id':''} WHERE a.order_id=?`);
  const results=await env.DB.batch(reads.map(r=>r.statement));
  const data=Object.fromEntries(reads.map((r,i)=>[r.name,r.all?results[i].results:results[i].results[0]||null]));
  const progress=salesProgress({order,job:data.supplier_jobs,dispatch:data.supplier_dispatch,payment:data.order_payment_environments,
   payout:data.supplier_payout_intents,paidRecord:data.supplier_paid_order_records,billing:data.supplier_billing_messages,bridge:data.wa_local_bridge,
   events:data.admin_sale_events,messages:data.wa_local_outbox,attempts:data.supplier_attempts,payoutEnabled:data.supplier_payout_settings?data.supplier_payout_settings.enabled===1:null,tracking:(data.order_tracking_events||[]).map(t=>({...t,label:STAGES[t.stage]||t.stage})),localTransport:env.WA_TRANSPORT==='local'});
  const attribution=data.sales_attributions;
- return {...progress,sellerAttribution:attribution?{sellerId:attribution.seller_id,nickname:attribution.nickname||'Vendedor não disponível',coupon:attribution.coupon,commissionPercent:attribution.commission_bps/100,commissionCents:attribution.commission_cents,discountCents:attribution.discount_cents,revenueCents:attribution.net_cents}:null};
+ return {...progress,sellerAttribution:attribution?{sellerId:attribution.seller_id,nickname:attribution.nickname||'Vendedor não disponível',coupon:attribution.coupon,commissionPercent:attribution.commission_bps/100,commissionCents:attribution.commission_cents,discountCents:attribution.discount_cents,revenueCents:attribution.net_cents,couponActive:attribution.seller_active===1&&attribution.seller_current_coupon===attribution.coupon}:null};
 }
 
 /** Store before acknowledging a payment webhook; retries reuse the same order event and deliveries. */

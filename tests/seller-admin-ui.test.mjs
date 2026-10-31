@@ -113,8 +113,12 @@ test('opening each order shows the seller coupon, while a direct sale has an exp
  ui.click('#home');await until(()=>ui.document.querySelector('[data-order]'));
  ui.click('[data-order="'+couponOrder+'"]');await until(()=>ui.document.querySelector('.sale-origin'));
  let origin=ui.document.querySelector('.sale-origin');assert.match(origin.textContent,/Vendedor: Nick Teste/);assert.match(origin.textContent,/Cupom SEM-VENDAS/);assert.match(origin.textContent,/25%/);assert.match(origin.textContent,/45,10/);
+ assert.equal(origin.querySelector('.seller-share-actions input')?.value,'https://lojastreetball.com.br/?cupom=SEM-VENDAS');
+ let copiedLink='';Object.defineProperty(ui.window.navigator,'clipboard',{configurable:true,value:{writeText:async link=>{copiedLink=link;}}});
+ ui.click('[data-copy-sale-link]');await until(()=>origin.querySelector('[data-copy-sale-link]')?.textContent==='Link copiado');
+ assert.equal(copiedLink,'https://lojastreetball.com.br/?cupom=SEM-VENDAS');
  ui.click('[data-back]');await until(()=>ui.document.querySelector('[data-order]'));ui.click('[data-order="'+directOrder+'"]');await until(()=>ui.document.querySelector('.sale-origin'));
- origin=ui.document.querySelector('.sale-origin');assert.match(origin.textContent,/Sem cupom de vendedor registrado/);assert.equal(origin.querySelector('.sale-coupon'),null);assert.deepEqual(ui.errors,[]);
+ origin=ui.document.querySelector('.sale-origin');assert.match(origin.textContent,/Sem cupom de vendedor registrado/);assert.equal(origin.querySelector('.sale-coupon'),null);assert.equal(origin.querySelector('[data-copy-sale-link]'),null);assert.deepEqual(ui.errors,[]);
 });
 
 test('cada vendedor ativo recebe seu link e consegue copiá-lo no painel',async t=>{
