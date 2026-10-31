@@ -2,7 +2,7 @@ name: Testar checkout e automação
 
 on:
   push:
-    branches: [main]
+    branches: [main, codex/commission-pricing-20261028]
     paths:
       - 'worker/**'
       - 'public/app.js'
