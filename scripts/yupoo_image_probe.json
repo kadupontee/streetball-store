@@ -1,17 +1,12 @@
 {
-  "testedAt": "2026-11-01T09:22:50.659951+00:00",
-  "checked": 1,
+  "testedAt": "2026-11-01T14:31:31.662525+00:00",
+  "checked": 0,
   "savedLocal": 0,
   "validFiles": 0,
   "cachedTotal": 11158,
   "totalYupooProducts": 11164,
   "batchBytes": 0,
-  "errors": [
-    {
-      "id": "YUP-259986580",
-      "reason": "HTTP Error 567: Unknown Status; Dimensoes inesperadas"
-    }
-  ],
+  "errors": [],
   "pendingWithExternal": 1,
   "failedRetryLater": 1
 }
