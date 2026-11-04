@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --import ./tests/register-worker-html.mjs --test tests/*.test.mjs",
     "test:editor": "node --import ./tests/register-worker-html.mjs --test tests/visual-editor.test.mjs"
+  },
+  "devDependencies": {
+    "miniflare": "5.20261023.1-beta"
   }
 }

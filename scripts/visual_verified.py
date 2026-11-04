@@ -7,53 +7,54 @@ Produtos com travas manuais conflitantes são preservados.
 from __future__ import annotations
 
 from copy import deepcopy
+from garment_policy import APPAREL_PRICE_BRL, APPAREL_KINDS
 
 # id: (categoria, tipo, preço BRL, nome público)
 PHOTO_CONFIRMED = {
     # Jaquetas / corta-ventos com zíper completo
-    "253733487": ("treino", "jacket", 379.90, "Brasil — Jaqueta Corta-Vento Rosa"),
-    "240293645": ("treino", "jacket", 379.90, "México — Jaqueta de Treino Branca"),
-    "239985687": ("treino", "jacket", 379.90, "Brasil — Jaqueta Corta-Vento Amarela"),
-    "239985290": ("treino", "jacket", 379.90, "Holanda — Jaqueta Corta-Vento Laranja"),
-    "239984784": ("treino", "jacket", 379.90, "Noruega — Jaqueta Corta-Vento Azul-Marinho"),
-    "235451056": ("treino", "jacket", 379.90, "Barcelona — Jaqueta de Treino Marrom"),
-    "231665554": ("treino", "jacket", 379.90, "Paris Saint-Germain — Jaqueta Corta-Vento Preta"),
-    "230605620": ("treino", "jacket", 379.90, "França — Jaqueta de Treino Azul-Marinho"),
-    "220752866": ("treino", "jacket", 379.90, "Corinthians — Jaqueta de Treino Preta"),
+    "253733487": ("treino", "jacket", APPAREL_PRICE_BRL, "Brasil — Jaqueta Corta-Vento Rosa"),
+    "240293645": ("treino", "jacket", APPAREL_PRICE_BRL, "México — Jaqueta de Treino Branca"),
+    "239985687": ("treino", "jacket", APPAREL_PRICE_BRL, "Brasil — Jaqueta Corta-Vento Amarela"),
+    "239985290": ("treino", "jacket", APPAREL_PRICE_BRL, "Holanda — Jaqueta Corta-Vento Laranja"),
+    "239984784": ("treino", "jacket", APPAREL_PRICE_BRL, "Noruega — Jaqueta Corta-Vento Azul-Marinho"),
+    "235451056": ("treino", "jacket", APPAREL_PRICE_BRL, "Barcelona — Jaqueta de Treino Marrom"),
+    "231665554": ("treino", "jacket", APPAREL_PRICE_BRL, "Paris Saint-Germain — Jaqueta Corta-Vento Preta"),
+    "230605620": ("treino", "jacket", APPAREL_PRICE_BRL, "França — Jaqueta de Treino Azul-Marinho"),
+    "220752866": ("treino", "jacket", APPAREL_PRICE_BRL, "Corinthians — Jaqueta de Treino Preta"),
     # Casacos acolchoados (preço de casaco já definido na política comercial)
-    "224576022": ("treino", "coat", 189.90, "Bélgica — Casaco Acolchoado Preto"),
-    "224575992": ("treino", "coat", 189.90, "Bayern de Munique — Casaco Acolchoado Preto"),
-    "224575931": ("treino", "coat", 189.90, "Alemanha — Casaco Acolchoado Preto"),
-    "224575800": ("treino", "coat", 189.90, "Real Betis — Casaco Acolchoado Preto"),
-    "224575760": ("treino", "coat", 189.90, "Espanha — Casaco Acolchoado Preto"),
-    "224575686": ("treino", "coat", 189.90, "Arsenal — Casaco Acolchoado Preto"),
-    "224575624": ("treino", "coat", 189.90, "Colômbia — Casaco Acolchoado Preto"),
-    "224573190": ("treino", "coat", 189.90, "Japão — Casaco Acolchoado Preto"),
-    "224573126": ("treino", "coat", 189.90, "México — Casaco Acolchoado Preto"),
-    "220746711": ("treino", "coat", 189.90, "Brasil — Casaco Longo Acolchoado Preto"),
+    "224576022": ("treino", "coat", APPAREL_PRICE_BRL, "Bélgica — Casaco Acolchoado Preto"),
+    "224575992": ("treino", "coat", APPAREL_PRICE_BRL, "Bayern de Munique — Casaco Acolchoado Preto"),
+    "224575931": ("treino", "coat", APPAREL_PRICE_BRL, "Alemanha — Casaco Acolchoado Preto"),
+    "224575800": ("treino", "coat", APPAREL_PRICE_BRL, "Real Betis — Casaco Acolchoado Preto"),
+    "224575760": ("treino", "coat", APPAREL_PRICE_BRL, "Espanha — Casaco Acolchoado Preto"),
+    "224575686": ("treino", "coat", APPAREL_PRICE_BRL, "Arsenal — Casaco Acolchoado Preto"),
+    "224575624": ("treino", "coat", APPAREL_PRICE_BRL, "Colômbia — Casaco Acolchoado Preto"),
+    "224573190": ("treino", "coat", APPAREL_PRICE_BRL, "Japão — Casaco Acolchoado Preto"),
+    "224573126": ("treino", "coat", APPAREL_PRICE_BRL, "México — Casaco Acolchoado Preto"),
+    "220746711": ("treino", "coat", APPAREL_PRICE_BRL, "Brasil — Casaco Longo Acolchoado Preto"),
     # Segunda rodada: inspeção humana de fotos que o modelo CLIP havia classificado com menor confiança.
-    "253737092": ("treino", "jacket", 379.90, "Itália — Jaqueta de Treino Verde e Azul"),
-    "249150245": ("treino", "jacket", 379.90, "Real Madrid — Jaqueta de Treino Azul"),
-    "248514946": ("treino", "jacket", 379.90, "Argentina — Jaqueta Branca de Treino"),
-    "248095837": ("treino", "jacket", 379.90, "Brasil — Jaqueta Corta-Vento Azul"),
-    "247430287": ("treino", "blouse", 189.90, "Espanha — Moletom Azul com Capuz"),
-    "240293298": ("treino", "jacket", 379.90, "País de Gales — Jaqueta de Treino Branca"),
-    "239985025": ("treino", "jacket", 379.90, "Inglaterra — Jaqueta Corta-Vento Azul"),
-    "236313526": ("treino", "jacket", 379.90, "Brasil — Jaqueta de Treino Azul-Claro"),
-    "235853547": ("treino", "jacket", 379.90, "Real Madrid — Jaqueta Azul-Marinho de Treino"),
-    "229794834": ("treino", "jacket", 379.90, "Inter de Milão — Jaqueta Clara com Capuz"),
-    "229794745": ("treino", "jacket", 379.90, "Paris Saint-Germain — Jaqueta Azul com Capuz"),
-    "229794657": ("treino", "blouse", 189.90, "Manchester United — Moletom Preto com Capuz"),
-    "224572812": ("treino", "blouse", 189.90, "México — Blusa Rosa de Treino com Meio Zíper"),
-    "223009182": ("treino", "blouse", 189.90, "Manchester City — Moletom Azul-Claro Manga Longa"),
-    "222838822": ("treino", "jacket", 379.90, "Paris Saint-Germain — Jaqueta Branca de Treino"),
-    "222024504": ("treino", "blouse", 189.90, "Oasis — Blusa Branca e Azul-Marinho"),
-    "220839632": ("treino", "coat", 189.90, "São Paulo — Casaco Longo Preto"),
-    "220839618": ("treino", "jacket", 379.90, "São Paulo — Jaqueta Vermelha e Preta"),
-    "220838810": ("treino", "coat", 189.90, "Palmeiras — Casaco Longo Preto"),
-    "220752322": ("treino", "blouse", 189.90, "Celtic — Moletom Vermelho com Capuz"),
-    "220637843": ("treino", "jacket", 379.90, "São Paulo — Jaqueta Corta-Vento Cinza"),
-    "220637341": ("treino", "jacket", 379.90, "Corinthians — Jaqueta de Treino Cinza e Preta"),
+    "253737092": ("treino", "jacket", APPAREL_PRICE_BRL, "Itália — Jaqueta de Treino Verde e Azul"),
+    "249150245": ("treino", "jacket", APPAREL_PRICE_BRL, "Real Madrid — Jaqueta de Treino Azul"),
+    "248514946": ("treino", "jacket", APPAREL_PRICE_BRL, "Argentina — Jaqueta Branca de Treino"),
+    "248095837": ("treino", "jacket", APPAREL_PRICE_BRL, "Brasil — Jaqueta Corta-Vento Azul"),
+    "247430287": ("treino", "blouse", APPAREL_PRICE_BRL, "Espanha — Moletom Azul com Capuz"),
+    "240293298": ("treino", "jacket", APPAREL_PRICE_BRL, "País de Gales — Jaqueta de Treino Branca"),
+    "239985025": ("treino", "jacket", APPAREL_PRICE_BRL, "Inglaterra — Jaqueta Corta-Vento Azul"),
+    "236313526": ("treino", "jacket", APPAREL_PRICE_BRL, "Brasil — Jaqueta de Treino Azul-Claro"),
+    "235853547": ("treino", "jacket", APPAREL_PRICE_BRL, "Real Madrid — Jaqueta Azul-Marinho de Treino"),
+    "229794834": ("treino", "jacket", APPAREL_PRICE_BRL, "Inter de Milão — Jaqueta Clara com Capuz"),
+    "229794745": ("treino", "jacket", APPAREL_PRICE_BRL, "Paris Saint-Germain — Jaqueta Azul com Capuz"),
+    "229794657": ("treino", "blouse", APPAREL_PRICE_BRL, "Manchester United — Moletom Preto com Capuz"),
+    "224572812": ("treino", "blouse", APPAREL_PRICE_BRL, "México — Blusa Rosa de Treino com Meio Zíper"),
+    "223009182": ("treino", "blouse", APPAREL_PRICE_BRL, "Manchester City — Moletom Azul-Claro Manga Longa"),
+    "222838822": ("treino", "jacket", APPAREL_PRICE_BRL, "Paris Saint-Germain — Jaqueta Branca de Treino"),
+    "222024504": ("treino", "blouse", APPAREL_PRICE_BRL, "Oasis — Blusa Branca e Azul-Marinho"),
+    "220839632": ("treino", "coat", APPAREL_PRICE_BRL, "São Paulo — Casaco Longo Preto"),
+    "220839618": ("treino", "jacket", APPAREL_PRICE_BRL, "São Paulo — Jaqueta Vermelha e Preta"),
+    "220838810": ("treino", "coat", APPAREL_PRICE_BRL, "Palmeiras — Casaco Longo Preto"),
+    "220752322": ("treino", "blouse", APPAREL_PRICE_BRL, "Celtic — Moletom Vermelho com Capuz"),
+    "220637843": ("treino", "jacket", APPAREL_PRICE_BRL, "São Paulo — Jaqueta Corta-Vento Cinza"),
+    "220637341": ("treino", "jacket", APPAREL_PRICE_BRL, "Corinthians — Jaqueta de Treino Cinza e Preta"),
     # Terceira rodada: camisetas de treino com manga curta incorretamente marcadas 'long'.
     "238767432": ("treino", "fan", 159.90, "Brasil — Camiseta de Treino Cinza"),
     "250242076": ("treino", "fan", 159.90, "Espanha — Camiseta de Treino Azul"),
@@ -66,8 +67,8 @@ PHOTO_CONFIRMED = {
     "245820955": ("treino", "fan", 159.90, "Brasil — Camiseta Estampada de Treino"),
     "223321809": ("acessorios", "shorts", 119.90, "Flamengo — Calção de Treino Preto"),
     # Quarta rodada: novas peças isoladas verificadas individualmente pela foto.
-    "221773922": ("treino", "jacket", 379.90, "Manchester City — Jaqueta Corta-Vento Azul"),
-    "220637211": ("treino", "jacket", 379.90, "São Paulo — Jaqueta Corta-Vento Vermelha"),
+    "221773922": ("treino", "jacket", APPAREL_PRICE_BRL, "Manchester City — Jaqueta Corta-Vento Azul"),
+    "220637211": ("treino", "jacket", APPAREL_PRICE_BRL, "São Paulo — Jaqueta Corta-Vento Vermelha"),
     # Quinta rodada: conferência direta das fotos de treino restantes.
     "213864129": ("treino", "fan", 159.90, "Olympique Lyonnais — Camiseta Estampada de Pré-Jogo"),
     "247420991": ("treino", "fan", 159.90, "Portugal — Camiseta Preta de Treino"),
@@ -111,7 +112,7 @@ def apply_reviewed_visual_fix(product: dict) -> dict:
     # Não anular decisão manual do lojista que conflite com o relatório.
     if (product.get("kindLocked") and product.get("kind") != kind
         or product.get("categoryLocked") and product.get("category") != category
-        or product.get("priceLocked") and abs(float(product.get("price") or 0)-price)>0.009):
+        or product.get("priceLocked") and kind not in APPAREL_KINDS and abs(float(product.get("price") or 0)-price)>0.009):
         return product
 
     result = deepcopy(product)

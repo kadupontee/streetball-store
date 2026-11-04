@@ -1,8 +1,10 @@
 import {classifyStockReply,classifySupplierMessage,supplierReplyAction} from './supplier-replies.js';
 import {supplierPhotoRequest} from './supplier-order-format.js';
+import {enqueueLocalGroup,hasProductionReceipt,imageLink,localOrdersReady,usesLocalWhatsApp} from './local-orders.js';
+import {collectSupplierBilling} from './supplier-billing.js';
 export {classifyStockReply,classifySupplierMessage,supplierReplyAction} from './supplier-replies.js';
 /** Fluxo seguro de fulfillment: fotos, WhatsApp oficial, fallback de 12h e prazo total de 72h.
- * Sem credenciais/consentimento não envia mensagens. Pix para fornecedor exige aprovação humana.
+ * Sem credenciais/consentimento não envia mensagens. Saídas Pix usam o executor e a autorização próprios.
  */
 const digits=v=>String(v||'').replace(/\D/g,'');
 export const normalizeWaPhone=v=>{const p=digits(v);return /^[1-9]\d{7,14}$/.test(p)?p:'';};
@@ -56,14 +58,6 @@ function phoneBR(raw){
  if(p.length===10||p.length===11)p='55'+p;
  return /^55\d{10,11}$/.test(p)?p:'';
 }
-function imageLink(raw,env){
- const value=String(raw||'');
- if(/^\/images\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp)$/i.test(value)&&!value.includes('..')&&/^https:\/\//.test(env.STORE_PUBLIC_URL||'')){
-   return String(env.STORE_PUBLIC_URL).replace(/\/+$/,'')+value;
- }
- if(/^https:\/\/photo\.yupoo\.com\/james66jersey\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp)$/i.test(value))return value;
- return '';
-}
 /**
  * Prévia administrativa de encaminhamento. Não gera mensagens, gravações ou chamadas de rede.
  * Nenhum dado de endereço/CPF do comprador é incluído aqui.
@@ -88,6 +82,9 @@ export function previewSupplierOrder(env,order,candidateOverride=null){
    waTokenConfigured:!!env.WA_TOKEN,
    waPhoneIdConfigured:!!env.WA_PHONE_NUMBER_ID
  };
+ if(usesLocalWhatsApp(env)){
+  checks.transport='local';checks.localOrdersEnabled=localOrdersReady(env);
+ }
  return {
    orderId:order.id,
    status:order.status,
@@ -106,9 +103,8 @@ export function previewSupplierOrder(env,order,candidateOverride=null){
    })),
    checks,
    readyForAutomaticSending:checks.supplierConfigured&&checks.firstPhotoAvailable&&
-     checks.supportedSingleProductOrder&&checks.minimalTemplateFormatConfigured&&
-     checks.photoTemplateConfigured&&checks.waTokenConfigured&&
-     checks.waPhoneIdConfigured&&!checks.whatsappAutomationDisabled&&!checks.sandbox
+     checks.supportedSingleProductOrder&&!checks.whatsappAutomationDisabled&&!checks.sandbox&&
+     (usesLocalWhatsApp(env)?checks.localOrdersEnabled:(checks.minimalTemplateFormatConfigured&&checks.photoTemplateConfigured&&checks.waTokenConfigured&&checks.waPhoneIdConfigured))
  };
 }
 async function sendWa(env,to,message){
@@ -154,6 +150,7 @@ export async function routePaidOrder(env,orderId){
  if(!env.DB)return false;
  const order=await env.DB.prepare("SELECT id,status,items_json,city,state FROM orders WHERE id=?").bind(orderId).first();
  if(!order||order.status!=='paid_supplier_pending')return false;
+ if(usesLocalWhatsApp(env)&&localOrdersReady(env)&&!await hasProductionReceipt(env,order.id))return false;
  const items=JSON.parse(order.items_json||'[]');
  const candidates=await loadSupplierCandidates(env);
  const excluded=await env.DB.prepare("SELECT supplier_id FROM supplier_attempts WHERE order_id=? AND state IN ('unavailable','ambiguous','timed_out')").bind(order.id).all();
@@ -178,14 +175,15 @@ export async function routePaidOrder(env,orderId){
   :env.SUPPLIER_WA_TEMPLATE_MEDIA||supplier.mediaTemplate;
  // Uma única foto representa um único modelo. Pedidos com vários modelos vão à conferência.
  // Só aceitar o novo template com 7 variáveis após a Meta aprová-lo.
- if(!photoRequest||env.SUPPLIER_TEMPLATE_FORMAT!=='minimal_v1'){
+ if(!photoRequest||(!usesLocalWhatsApp(env)&&env.SUPPLIER_TEMPLATE_FORMAT!=='minimal_v1')){
   await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_review',last_error=?,updated_at=? WHERE order_id=? AND state IN ('pending','needs_configuration')")
    .bind(!photoRequest?'Pedido com vários modelos ou endereço incompleto: preparar consulta visual sem perder itens':'Novo modelo de WhatsApp ainda não validado na Meta',now(),order.id).run();
   await env.DB.prepare("UPDATE supplier_jobs SET status='manual_review',updated_at=? WHERE order_id=?").bind(now(),order.id).run();
   return false;
  }
  // Sandbox nunca envia automaticamente a fornecedores reais, mesmo se alguém ativar WA_AUTOMATION_ENABLED.
- if(!env.STORE_PUBLIC_URL||!firstPhoto||!photoTemplate||
+ if(!env.STORE_PUBLIC_URL||!firstPhoto||(!usesLocalWhatsApp(env)&&!photoTemplate)||
+    (usesLocalWhatsApp(env)&&!localOrdersReady(env))||
     env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true'){
   await env.DB.prepare("UPDATE supplier_dispatch SET state='needs_configuration',supplier_id=?,supplier_phone=?,updated_at=? WHERE order_id=? AND state IN ('pending','needs_configuration')")
     .bind(supplier.id,supplier.phone,now(),order.id).run();
@@ -196,6 +194,10 @@ export async function routePaidOrder(env,orderId){
   .bind(supplier.id,supplier.phone,now(),order.id).run();
  if(!lock.meta?.changes)return false;
  try{
+  if(usesLocalWhatsApp(env)){
+   await enqueueLocalGroup(env,supplier.phone,[{type:'image',image:{link:firstPhoto,caption:photoRequest.text}}],{orderId:order.id,purpose:'stock_query'});
+   return true;
+  }
   const messageId=await sendTemplate(env,supplier.phone,photoTemplate,photoRequest.args,firstPhoto);
   await env.DB.prepare("INSERT INTO supplier_attempts(order_id,supplier_id,state,message_id,created_at,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(order_id,supplier_id) DO UPDATE SET state=excluded.state,message_id=excluded.message_id,updated_at=excluded.updated_at")
    .bind(order.id,supplier.id,'awaiting_reply',messageId,now(),now()).run();
@@ -214,6 +216,11 @@ async function sendStockDetails(env,order,to){
  // Não compartilhar nome, endereço ou telefone do comprador antes da confirmação de estoque.
  const items=JSON.parse(order.items_json||'[]');
  const lines=items.map((it,i)=>(i+1)+'. '+trim(it.title,100)+' | '+trim(it.size,12)+' | '+it.qty+' un'+(it.personalize?' | personalizado':'')+(it.patch?' | patch':'')).join('\n');
+ if(usesLocalWhatsApp(env)){
+  await enqueueLocalGroup(env,to,[{type:'text',text:{body:trim('Consulta de disponibilidade '+order.id.slice(0,8)+'\n'+lines,3900)}},
+   ...items.map(it=>({type:'image',image:{link:imageLink(it.image,env),caption:trim(it.title,130)+' / '+trim(it.size,12)+' x'+it.qty}}))],{orderId:order.id,purpose:'stock_details'});
+  return;
+ }
  await sendWa(env,to,{type:'text',text:{body:trim('Consulta de disponibilidade '+order.id.slice(0,8)+'\n'+lines,3900)}});
  for(const it of items){
   const photo=imageLink(it.image,env);
@@ -225,6 +232,11 @@ async function sendOrderDetails(env,order,dispatch){
  const items=JSON.parse(order.items_json||'[]');
  const header='Pedido '+order.id.slice(0,8)+' - '+trim(order.name,80)+'\nEntrega: '+trim(order.address,130)+', '+trim(order.city,80)+'/'+trim(order.state,2)+' - CEP '+digits(order.zip)+'\nContato do destinatário: '+phoneBR(order.phone);
  const descriptions=items.map((it,i)=>(i+1)+'. '+trim(it.title,100)+' | '+trim(it.size,12)+' | '+it.qty+' un'+(it.personalize?' | nome '+trim(it.customName,14)+' | nº '+trim(it.customNumber,3):'')+(it.patch?' | patch':'')).join('\n');
+ if(usesLocalWhatsApp(env)){
+  await enqueueLocalGroup(env,dispatch.supplier_phone,[{type:'text',text:{body:trim(header+'\n'+descriptions,3900)}},
+   ...items.map(it=>({type:'image',image:{link:imageLink(it.image,env),caption:trim(it.title,130)+' / '+trim(it.size,12)+' x'+it.qty}}))],{orderId:order.id,purpose:'order_details'});
+  return;
+ }
  await sendWa(env,dispatch.supplier_phone,{type:'text',text:{body:trim(header+'\n'+descriptions,3900)}});
  for(const item of items){
    const link=imageLink(item.image,env);
@@ -233,14 +245,18 @@ async function sendOrderDetails(env,order,dispatch){
  }
  await env.DB.prepare("UPDATE supplier_dispatch SET details_sent_at=?,updated_at=? WHERE order_id=?").bind(now(),now(),order.id).run();
 }
-async function sendBuyerUpdate(env,order){
- if(!env.BUYER_WA_TEMPLATE||env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true')return;
+export async function sendBuyerUpdate(env,order){
+ if((!usesLocalWhatsApp(env)&&!env.BUYER_WA_TEMPLATE)||env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true')return;
  const consent=await env.DB.prepare('SELECT order_id FROM buyer_message_optin WHERE order_id=?').bind(order.id).first();
  if(!consent)return;
  await env.DB.prepare("INSERT OR IGNORE INTO buyer_notifications(order_id,state,created_at,updated_at) VALUES(?,?,?,?)").bind(order.id,'pending',now(),now()).run();
  const claim=await env.DB.prepare("UPDATE buyer_notifications SET state='sending',updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
  if(!claim.meta?.changes)return;
  try{
+   if(usesLocalWhatsApp(env)){
+    await enqueueLocalGroup(env,phoneBR(order.phone),[{type:'text',text:{body:'O fornecedor confirmou o pedido '+order.id.slice(0,8)+'. Ele está em preparação. Você pode acompanhar as próximas atualizações na sua conta da Streetball Store.'}}],{orderId:order.id,purpose:'buyer_update'});
+    return;
+   }
    const msg=await sendTemplate(env,phoneBR(order.phone),env.BUYER_WA_TEMPLATE,[order.id.slice(0,8)]);
    await env.DB.prepare("UPDATE buyer_notifications SET state='sent',message_id=?,updated_at=? WHERE order_id=?").bind(msg,now(),order.id).run();
  }catch(err){
@@ -264,7 +280,9 @@ async function advanceSupplier(env,order,from,state,responseText){
 }
 export async function handleSupplierInbound(env,message,ctx){
  if(!env.DB||!message?.id||env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true')return;
+ if(usesLocalWhatsApp(env)&&!localOrdersReady(env))return;
  const from=normalizeWaPhone(message.from);
+ if(from&&await collectSupplierBilling(env,message,{enqueue:enqueueLocalGroup,productionReceipt:hasProductionReceipt}))return;
  const response=classifySupplierMessage(message);
  if(!from||!response)return;
  const duplicate=await env.DB.prepare("SELECT id FROM wa_message_events WHERE id=?").bind(message.id).first();
@@ -279,7 +297,8 @@ export async function handleSupplierInbound(env,message,ctx){
  if(order.status!=='paid_supplier_pending'||!['awaiting_reply','details_sent','overdue_24h'].includes(order.dispatch_state))return;
  const stage=order.dispatch_state==='details_sent'?'details_sent':'awaiting_reply';
  const action=supplierReplyAction(response.kind,stage);
- await env.DB.prepare("INSERT OR IGNORE INTO wa_message_events(id,order_id,received_at) VALUES(?,?,?)").bind(message.id,order.id,now()).run();
+ const recorded=await env.DB.prepare("INSERT OR IGNORE INTO wa_message_events(id,order_id,received_at) VALUES(?,?,?)").bind(message.id,order.id,now()).run();
+ if(!recorded.meta?.changes)return;
  if(action==='next_supplier'){
   // Registrar apenas a classificação, sem guardar mensagens com CPF/contato do cliente.
   const next=advanceSupplier(env,order,from,response.kind,response.kind);
@@ -330,7 +349,7 @@ const apologyDraft=id=>'Pedimos desculpas pela demora na confirmação de dispon
 export {apologyDraft};
 async function registerBuyerDelay(env,order){
  const t=now();
- if(!env.BUYER_DELAY_WA_TEMPLATE){
+ if(!usesLocalWhatsApp(env)&&!env.BUYER_DELAY_WA_TEMPLATE){
   await env.DB.prepare("INSERT OR IGNORE INTO buyer_delay_notifications(order_id,state,error,created_at,updated_at) VALUES(?,?,?,?,?)")
    .bind(order.id,'needs_manual_contact','Template de desculpas não configurado',t,t).run();
   return;
@@ -346,6 +365,10 @@ async function registerBuyerDelay(env,order){
  const lock=await env.DB.prepare("UPDATE buyer_delay_notifications SET state='sending',updated_at=? WHERE order_id=? AND state='pending'").bind(now(),order.id).run();
  if(!lock.meta?.changes)return;
  try{
+  if(usesLocalWhatsApp(env)){
+   await enqueueLocalGroup(env,phoneBR(order.phone),[{type:'text',text:{body:apologyDraft(order.id)}}],{orderId:order.id,purpose:'buyer_delay'});
+   return;
+  }
   const id=await sendTemplate(env,phoneBR(order.phone),env.BUYER_DELAY_WA_TEMPLATE,[order.id.slice(0,8)]);
   await env.DB.prepare("UPDATE buyer_delay_notifications SET state='sent',message_id=?,updated_at=? WHERE order_id=? AND state='sending'")
    .bind(id,now(),order.id).run();
@@ -358,6 +381,7 @@ async function registerBuyerDelay(env,order){
 export async function monitorSupplierSLA(env){
  // Nenhum evento simulado aciona busca real ou comunicação com compradores.
  if(!env.DB||env.WA_AUTOMATION_ENABLED!=='true'||env.ASAAS_SANDBOX==='true')return;
+ if(usesLocalWhatsApp(env)&&!localOrdersReady(env))return;
  const t=Date.now();
  const deadline=new Date(t-ORDER_SEARCH_DEADLINE_MS).toISOString();
  const perSupplier=new Date(t-PER_SUPPLIER_TIMEOUT_MS).toISOString();
@@ -384,6 +408,6 @@ export async function monitorSupplierSLA(env){
 }
 export async function retryPendingRoutes(env){
  if(!env.DB)return;
- const pending=await env.DB.prepare("SELECT id FROM orders WHERE status='paid_supplier_pending' AND id NOT IN (SELECT order_id FROM supplier_dispatch WHERE state IN ('sending','awaiting_reply','details_sent','confirmed','overdue_24h','needs_review','waiting_deadline','deadline_review')) ORDER BY updated_at ASC LIMIT 20").all();
+ const pending=await env.DB.prepare("SELECT id FROM orders WHERE status='paid_supplier_pending' AND id NOT IN (SELECT order_id FROM supplier_dispatch WHERE state IN ('sending','queued_local','details_queued_local','awaiting_reply','details_sent','confirmed','overdue_24h','needs_review','waiting_deadline','deadline_review')) ORDER BY updated_at ASC LIMIT 20").all();
  for(const row of pending.results||[])await routePaidOrder(env,row.id);
 }

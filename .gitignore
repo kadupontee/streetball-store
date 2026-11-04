@@ -5,6 +5,7 @@ __pycache__/
 .playwright/
 
 .venv/
+node_modules/
 
 # Dados de precificacao e notas internas; nao enviar ao repositorio publico
 DOCUMENTACAO_INTERNA.md

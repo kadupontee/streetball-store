@@ -1,4 +1,5 @@
 """Testes puros da lista de classificações conferidas por fotografia."""
+from garment_policy import APPAREL_KINDS
 from visual_verified import PHOTO_CONFIRMED, REVIEW_ONLY, AUDIT_TAG, expected_image, apply_reviewed_visual_fix
 
 assert len(PHOTO_CONFIRMED) == 62
@@ -19,5 +20,8 @@ for number, (category, kind, price, title) in PHOTO_CONFIRMED.items():
     changed_photo = {**p, "image":"/images/yupoo/other.webp"}
     assert apply_reviewed_visual_fix(changed_photo)==changed_photo
     manual = {**p, "priceLocked":True}
-    assert apply_reviewed_visual_fix(manual)==manual
+    if kind in APPAREL_KINDS:
+        assert apply_reviewed_visual_fix(manual)["price"] == price
+    else:
+        assert apply_reviewed_visual_fix(manual) == manual
 print("OK: 62 revisões idempotentes, 9 em revisão, preservação de preços manuais e fotos")

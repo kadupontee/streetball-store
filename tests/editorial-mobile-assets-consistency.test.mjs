@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {assertAssetVersion} from './support/asset-version.mjs';
 
 const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
 const css=readFileSync(new URL('../public/editorial.css',import.meta.url),'utf8');
@@ -25,7 +26,8 @@ test('botão Escolher opções usa uma seta SVG idêntica no desktop e no iPhone
  assert.match(css,/@media \(max-width:600px\)/);
 });
 test('o navegador é forçado a obter os arquivos atualizados',()=>{
- assert.match(html,/editorial\.css\?v=20261022-mobile-refresh-v8/);
- assert.match(html,/app\.js\?v=20261023-visual-blouses-v13/);
+ assertAssetVersion(html,'editorial.css');
+ assertAssetVersion(html,'app.js');
  assert.doesNotThrow(()=>new Function(app));
 });
+

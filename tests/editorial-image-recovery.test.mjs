@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import worker from '../worker/index.js';
+import {assertAssetVersion} from './support/asset-version.mjs';
 
 const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
 const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
@@ -20,7 +21,7 @@ test('se imagem da Cloudflare falhar, tenta os mesmos PNGs originais via GitHub 
  assert.doesNotMatch(app,/editorialFallback|data-editorial-fallback/);
  assert.doesNotThrow(()=>new Function(app));
  for(const name of names)assert.ok(app.includes('/images/editorial/'+name),name);
- assert.match(html,/app\.js\?v=20261023-visual-blouses-v13/);
+ assertAssetVersion(html,'app.js');
 });
 test('os nove PNGs publicados no GitHub existem e têm cabeçalho PNG válido',()=>{
  for(const filename of names){
@@ -56,3 +57,4 @@ test('diagnóstico não marca como imagem um HTML 200 do Cloudflare',async()=>{
  assert.equal(info.ok,false);
  assert.equal(info.available,0);
 });
+

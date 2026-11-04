@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
 import worker from '../worker/index.js';
-import {emptySettings,normalizeSettings} from '../public/store-settings.js';
+import {emptySettings,normalizeSettings,RETAIL_PRICE_POLICY_VERSION} from '../public/store-settings.js';
 import {handleStoreEditor,loadStoreSettings,editedCatalog} from '../worker/store-editor.js';
 
 const origin='https://lojastreetball.com.br';
@@ -23,7 +23,7 @@ function request(method='GET',body,options={}){
  return new Request(origin+'/api/admin/store-editor'+query,{method,headers:{authorization:'Bearer '+token,...(method==='POST'?{origin:requestOrigin,'content-type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
 }
 const sample={id:'YUP-12345',title:'Camisa antiga 1998',supplierTitle:'Brazil Home 1998',price:199.9,category:'retro',kind:'retro',sizes:['P','M'],image:'/images/camisa.jpg'};
-function changes(price=149.9){const state=emptySettings();state.design.accent='#123456';state.products[sample.id]={title:'Brasil 1998 — meu nome revisado',price,kind:'blouse',category:'treino'};return state;}
+function changes(price=149.9){const state=emptySettings();state.design.accent='#123456';state.products[sample.id]={title:'Brasil 1998 — meu nome revisado',price,kind:'long',category:'treino'};return state;}
 
 test('a vitrine sem edições mantém o catálogo existente e não cria tabelas em acesso público',async()=>{
  const DB=database(),env={DB};
@@ -46,7 +46,7 @@ test('publicação persiste de verdade em SQLite e não revela a chave administr
  const publicResponse=await worker.fetch(new Request(origin+'/api/storefront/config'),env),text=await publicResponse.text();
  assert.ok(text.includes('149.9'));assert.ok(!text.includes(adminKey));
  const imported={...sample,price:999,title:'Título substituído pelo fornecedor',kind:'fan'};
- const effective=await editedCatalog([imported],{DB});assert.equal(effective[0].price,149.9);assert.equal(effective[0].title,'Brasil 1998 — meu nome revisado');assert.equal(effective[0].kind,'blouse');assert.equal(effective[0].priceLocked,true);
+ const effective=await editedCatalog([imported],{DB});assert.equal(effective[0].price,149.9);assert.equal(effective[0].title,'Brasil 1998 — meu nome revisado');assert.equal(effective[0].kind,'long');assert.equal(effective[0].priceLocked,true);
 });
 test('duas abas concorrentes não sobrescrevem a publicação uma da outra',async()=>{
  const env={DB:database(),ADMIN_TOKEN:adminKey};
@@ -79,7 +79,7 @@ function checkoutEnv(){
  const DB=database();DB.sqlite.exec(readFileSync(new URL('../worker/schema.sql',import.meta.url),'utf8'));
  return {DB,ADMIN_TOKEN:adminKey,ASAAS_SANDBOX:'true',SALES_ENABLED:'true',PAYMENTS_PRODUCTION_ENABLED:'false',ASAAS_API_KEY:'apenas-uma-fixture',SHIPPING_FLAT_BRL:'0.00',ASSETS:{fetch:async()=>new Response(JSON.stringify([sample]),{headers:{'content-type':'application/json'}})}};
 }
-function orderBody(storeRevision=1){return {storeRevision,customer:{name:'Cliente de teste',email:'cliente@example.com',phone:'11999999999',cpf:'52998224725',zip:'01001000',address:'Rua de Teste 123',city:'São Paulo',state:'SP'},paymentMethod:'PIX',items:[{id:sample.id,size:'P',qty:1,price:0.01}]};}
+function orderBody(storeRevision=1){return {storeRevision,pricingPolicyVersion:RETAIL_PRICE_POLICY_VERSION,customer:{name:'Cliente de teste',email:'cliente@example.com',phone:'11999999999',cpf:'52998224725',zip:'01001000',address:'Rua de Teste 123',city:'São Paulo',state:'SP'},paymentMethod:'PIX',items:[{id:sample.id,size:'P',qty:1,price:0.01}]};}
 function orderRequest(body){return new Request(origin+'/api/orders',{method:'POST',headers:{'content-type':'application/json','Idempotency-Key':crypto.randomUUID()},body:JSON.stringify(body)});}
 test('checkout cobra o preço publicado e impede cobrança com uma versão antiga da sacola',async()=>{
  const env=checkoutEnv();await handleStoreEditor(request('POST',{expectedRevision:0,settings:changes(149.9)}),env);

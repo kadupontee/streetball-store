@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {assertAssetVersion} from './support/asset-version.mjs';
 const base=new URL('../public/',import.meta.url);
 const css=readFileSync(new URL('editorial.css',base),'utf8');
 const app=readFileSync(new URL('app.js',base),'utf8');
@@ -34,7 +35,7 @@ test('desktop e celular usam as nove fotos aprovadas, com navegação do carross
   assert.ok(app.includes('/images/editorial/'+img),img);
  }
  assert.match(html,/id="heroSliderControls"/);
- assert.match(html,/20261022-mobile-refresh-v8/);
+ assertAssetVersion(html,'editorial.css');
  assert.doesNotThrow(()=>new Function(app));
 });
 
@@ -55,6 +56,7 @@ test('iPhone e Android exibem imagens completas, sem height fixo nem crop',()=>{
   assert.ok(app.includes("EDITORIAL_ASSETS."+(name==='europa'?'atuais':name==='todos'?'colecoes':name)+",960]"),name+' dimensões');
  }
  assert.match(app,/width="'\+imageWidth\+'" height="557"/);
- assert.match(html,/editorial\.css\?v=20261022-mobile-refresh-v8/);
- assert.match(html,/app\.js\?v=20261023-visual-blouses-v13/);
+ assertAssetVersion(html,'editorial.css');
+ assertAssetVersion(html,'app.js');
 });
+

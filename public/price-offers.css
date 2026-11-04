@@ -1,0 +1,28 @@
+/* New table-price references, with today's actual selling prices. */
+.price-offer{min-width:0;font-variant-numeric:tabular-nums}
+.price-reference{display:block;margin-bottom:5px;font-size:.72em;font-weight:450;line-height:1.25;letter-spacing:0;color:#626462}
+.price-reference s{text-decoration-thickness:1.3px;text-decoration-color:currentColor}
+.price-offer-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:5px 9px;line-height:1.2;min-width:0}
+.price-current{font:inherit;font-weight:800;color:#111514;white-space:nowrap}
+.price-discount{color:#06b956;font-size:.71em;line-height:1.2;font-weight:600;letter-spacing:.01em;white-space:nowrap}
+.price-a11y{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.detail-content .price-offer{margin:15px 0 20px}
+.detail-content .price-reference{font-size:17px;margin-bottom:7px}
+.detail-content .price-offer-line{gap:7px 13px}
+.cart-price.price-offer{max-width:120px;text-align:right}
+.cart-price .price-reference{font-size:10px;margin-bottom:5px}
+.cart-price .price-offer-line{justify-content:flex-end;gap:4px 6px}
+.cart-price .price-discount{font-size:10px}
+.cart-item>div{min-width:0}
+.cart-title{overflow-wrap:anywhere}
+@media(max-width:680px){
+ .product-card .price-offer{font-size:19px}
+ .product-card .price-reference{font-size:13px}
+ .product-card .price-offer-line{gap:5px 7px}
+ .product-card .price-discount{font-size:12px}
+}
+@media(max-width:360px){
+ .product-card .price-offer{font-size:17px}
+ .product-card .price-discount{font-size:10px}
+ .cart-price.price-offer{max-width:96px}
+}

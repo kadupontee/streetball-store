@@ -10,6 +10,7 @@ function envWithAssets(mode='ok',dbReady=true){
   if(mode==='missing')return new Response('Not found',{status:404});
   if(name==='/account.html')return new Response('<html><title>Minha conta</title></html>',{headers:{'content-type':'text/html; charset=utf-8'}});
   if(name==='/account.js')return new Response('console.log("conta")',{headers:{'content-type':'application/javascript'}});
+  if(name.endsWith('.css'))return new Response('body{}',{headers:{'content-type':'text/css'}});
   return new Response('Not found',{status:404});
  }};
  const DB={prepare:()=>({first:async()=>dbReady?{name:'customer_accounts'}:null})};
@@ -28,10 +29,11 @@ test('rota HTML de cadastro é servida diretamente mesmo quando Worker responde 
  assert.equal(response.status,200);
  assert.match(await response.text(),/Minha conta/);
 });
-test('ausência do arquivo publicado mostra 503 explicativo em vez de 404 vazio',async()=>{
+test('HTML incorporado mantém o cadastro disponível quando o arquivo dos assets está ausente',async()=>{
  const response=await worker.fetch(new Request(base+'/account.html'),envWithAssets('missing'));
- assert.equal(response.status,503);
- assert.match(await response.text(),/não incluída/);
+ assert.equal(response.status,200);
+ assert.equal(response.headers.get('x-streetball-account'),'bundled-v1');
+ assert.match(await response.text(),/id="registerForm"/);
 });
 test('diagnóstico detecta versão incompleta, JavaScript ausente e banco pendente',async()=>{
  const good=await worker.fetch(new Request(base+'/api/health/account'),envWithAssets());
@@ -39,12 +41,16 @@ test('diagnóstico detecta versão incompleta, JavaScript ausente e banco penden
  const ok=await good.json();
  assert.equal(ok.ok,true);
  assert.equal(ok.accountPageReady,true);
+ assert.equal(ok.accountHtmlAssetReady,true);
+ assert.equal(ok.accountStylesReady,true);
  assert.equal(ok.accountScriptReady,true);
  assert.equal(ok.accountsDatabaseReady,true);
  const empty=await worker.fetch(new Request(base+'/api/health/account'),envWithAssets('missing',false));
  const bad=await empty.json();
  assert.equal(bad.ok,false);
- assert.equal(bad.accountPageReady,false);
+ assert.equal(bad.accountPageReady,true);
+ assert.equal(bad.accountHtmlAssetReady,false);
+ assert.equal(bad.accountStylesReady,false);
  assert.equal(bad.accountScriptReady,false);
  assert.equal(bad.accountsDatabaseReady,false);
 });
@@ -53,9 +59,12 @@ test('menu de criar conta no celular leva à rota correta e configuração Worke
  const toml=readFileSync(new URL('../wrangler.toml',import.meta.url),'utf8');
  const account=readFileSync(new URL('../public/account.html',import.meta.url),'utf8');
  const js=readFileSync(new URL('../public/account.js',import.meta.url),'utf8');
- assert.ok(html.includes('href="/account.html#criar-conta"'));
+ const links=[...html.matchAll(/href="(\/?account\.html#criar-conta)"/g)];
+ assert.equal(links.length,3);
+ for(const [,href]of links)assert.equal(new URL(href,base).pathname,'/account.html');
  assert.ok(toml.includes('"/account.html"'));
  assert.ok(account.includes('id="registerForm"'));
  assert.ok(js.includes("switchTab('register')"));
  assert.doesNotThrow(()=>new Function(js));
 });
+

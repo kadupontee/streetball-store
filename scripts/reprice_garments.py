@@ -8,7 +8,7 @@ import json
 import subprocess
 from collections import Counter
 from pathlib import Path
-from garment_policy import garment_decision, apply_garment_pricing, COSTS_USD, PRICES_BRL
+from garment_policy import garment_decision, apply_garment_pricing, COSTS_USD, PRICES_BRL, APPAREL_RETAIL_POLICY
 from catalog_utils import read_catalog, save_catalog, CATALOG, CATALOG_JS
 
 OUT=Path(__file__).with_name("garment_migration_summary.json")
@@ -18,7 +18,7 @@ ORIGINAL_CATALOG_REF="272cca3590a676fc3752b8e4d3bfde033b9a752f"
 
 def undo_ambiguous_jackets(products):
     needs=[p for p in products if p.get("garmentPriceSource")=="supplier_usd_garment_policy_20261022"
-           and p.get("kind") in ("jacket","blouse")
+           and p.get("kind") in ("jacket","blouse") and p.get("apparelRetailPolicy")!=APPAREL_RETAIL_POLICY
            and garment_decision(p,require_photo=True)[0] not in ("jacket","coat","blouse")]
     if not needs:return products,0
     baseline=json.loads(subprocess.check_output([
@@ -100,7 +100,7 @@ def main():
     updated,report=migrate(products)
     coats=[p for p in updated if p.get("kind")=="coat"]
     unlocked=[p for p in coats if not p.get("priceLocked")]
-    mismatches=[p for p in unlocked if abs(float(p.get("price") or 0)-189.90)>0.01]
+    mismatches=[p for p in coats if abs(float(p.get("price") or 0)-PRICES_BRL['coat'])>0.01]
     if mismatches:
         bad=", ".join(str(p.get("id")) for p in mismatches[:15])
         raise SystemExit("Casacos sem preço de blusa, revisão necessária: "+bad)
@@ -108,7 +108,7 @@ def main():
         "coat_products":len(coats),
         "unlocked_at_blouse_price":len(unlocked),
         "price_locked":len(coats)-len(unlocked),
-        "price_brl":189.90
+        "price_brl":PRICES_BRL['coat']
     }
     report["reverted_false_jackets"]=reverted
     report["jacket_products_now"]=sum(1 for p in updated if p.get("kind")=="jacket")
