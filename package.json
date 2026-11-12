@@ -10,5 +10,8 @@
   "devDependencies": {
     "jsdom": "^26.1.0",
     "miniflare": "5.20261023.1-beta"
+  },
+  "dependencies": {
+    "@noble/hashes": "1.8.0"
   }
 }

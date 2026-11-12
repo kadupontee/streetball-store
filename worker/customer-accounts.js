@@ -3,6 +3,7 @@
  */
 import {verifyTrackingKey,customerTrackingLink} from './order-tracking-access.js';
 import {verifyGoogleIdToken,googleClientIdValid} from './google-identity.js';
+import {hashCustomerPassword,verifyCustomerPassword} from './customer-passwords.js';
 const COOKIE='__Host-streetball_session';
 const GOOGLE_NONCE_COOKIE='__Host-streetball_google_nonce';
 const result=(body,status=200,headers={})=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff',...headers}});
@@ -14,16 +15,6 @@ const goodEmail=email=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)&&email.length<=1
 const goodPassword=p=>typeof p==='string'&&p.length>=12&&p.length<=128;
 const makeRandom=()=>bytesToHex(crypto.getRandomValues(new Uint8Array(32)));
 const sha=async text=>bytesToHex(await crypto.subtle.digest('SHA-256',encoder.encode(text)));
-const hashedPassword=async(password,salt)=>{
- const key=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveBits']);
- const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:encoder.encode(salt),iterations:140000,hash:'SHA-256'},key,256);
- return bytesToHex(bits);
-};
-const sameHash=(a,b)=>{
- if(typeof a!=='string'||typeof b!=='string'||a.length!==b.length)return false;
- let diff=0;for(let i=0;i<a.length;i++)diff|=a.charCodeAt(i)^b.charCodeAt(i);
- return diff===0;
-};
 const csrfOk=req=>{
  const origin=req.headers.get('origin');
  return origin&&origin===new URL(req.url).origin;
@@ -135,7 +126,7 @@ export async function handleAccountRoute(req,env){
   if(name.length<2||!goodEmail(email)||!goodPassword(body?.password))return safeError('Informe nome, e-mail válido e senha de 12 a 128 caracteres.');
   const existing=await env.DB.prepare('SELECT id FROM customer_accounts WHERE email=?').bind(email).first();
   if(existing)return safeError('Este e-mail já possui cadastro. Entre na sua conta.',409);
-  const salt=makeRandom(),hash=await hashedPassword(body.password,salt),id=crypto.randomUUID(),created=new Date().toISOString();
+  const salt=makeRandom(),hash=await hashCustomerPassword(body.password,salt),id=crypto.randomUUID(),created=new Date().toISOString();
   try{
    await env.DB.prepare('INSERT INTO customer_accounts(id,email,display_name,password_salt,password_hash,created_at) VALUES(?,?,?,?,?,?)').bind(id,email,name,salt,hash,created).run();
   }catch{return safeError('Não foi possível criar a conta. Confira o e-mail ou tente novamente.',409)}
@@ -147,8 +138,8 @@ export async function handleAccountRoute(req,env){
   const failed=await attemptsInfo(env,email),limitTime=new Date(Date.now()-15*60000).toISOString();
   if(failed&&failed.window_started_at>=limitTime&&failed.attempts>=8)return safeError('Muitas tentativas. Tente novamente mais tarde.',429);
   const account=await env.DB.prepare('SELECT id,email,display_name,password_salt,password_hash FROM customer_accounts WHERE email=?').bind(email).first();
-  const given=await hashedPassword(body.password,account?.password_salt||'00000000000000000000000000000000');
-  if(!account||!sameHash(given,account.password_hash)){
+  const valid=await verifyCustomerPassword(body.password,account?.password_salt||'00000000000000000000000000000000',account?.password_hash);
+  if(!account||!valid){
    await incrementAttempts(env,email);return safeError('E-mail ou senha incorretos.',401);
   }
   await env.DB.prepare('DELETE FROM customer_login_attempts WHERE email=?').bind(email).run();
