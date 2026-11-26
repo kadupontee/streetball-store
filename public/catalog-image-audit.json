@@ -1,12 +1,12 @@
 {
-  "checkedAt": "2026-11-25T18:12:12.557737+00:00",
-  "catalogProducts": 11500,
+  "checkedAt": "2026-11-26T17:54:29.731837+00:00",
+  "catalogProducts": 12018,
   "missingAnyUsableSource": 51,
-  "supplierAlbumsInCatalog": 11454,
-  "localFilesValidated": 11448,
+  "supplierAlbumsInCatalog": 11972,
+  "localFilesValidated": 11966,
   "remoteLinkNotValidatedInBrowser": 1,
-  "supplierAlbumsIndexed": 11524,
-  "withSource": 11449,
+  "supplierAlbumsIndexed": 12052,
+  "withSource": 11967,
   "missingIds": [
     "SB-0001",
     "SB-0002",
