@@ -348885,14 +348885,14 @@
     "category": "infantil",
     "kind": "kids",
     "price": 179.9,
-    "image": "https://photo.yupoo.com/james66jersey/dc2e71a80f/small.jpeg",
+    "image": "/images/yupoo/264284362.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/dc2e71a80f/small.jpeg"
+      "/images/yupoo/264284362.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "16",
       "18",
@@ -348904,7 +348904,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/dc2e71a80f/small.jpeg"
   },
   {
     "id": "YUP-264284351",
@@ -348913,14 +348914,14 @@
     "category": "treino",
     "kind": "coat",
     "price": 189.9,
-    "image": "https://photo.yupoo.com/james66jersey/402bad7124/small.jpeg",
+    "image": "/images/yupoo/264284351.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/402bad7124/small.jpeg"
+      "/images/yupoo/264284351.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -348932,7 +348933,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/402bad7124/small.jpeg"
   },
   {
     "id": "YUP-264284343",
@@ -348941,14 +348943,14 @@
     "category": "treino",
     "kind": "long",
     "price": 189.9,
-    "image": "https://photo.yupoo.com/james66jersey/aa8162569b/small.jpeg",
+    "image": "/images/yupoo/264284343.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/aa8162569b/small.jpeg"
+      "/images/yupoo/264284343.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -348960,7 +348962,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/aa8162569b/small.jpeg"
   },
   {
     "id": "YUP-264284337",
@@ -348969,14 +348972,14 @@
     "category": "treino",
     "kind": "set",
     "price": 299.9,
-    "image": "https://photo.yupoo.com/james66jersey/068f0fe504/small.jpeg",
+    "image": "/images/yupoo/264284337.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/068f0fe504/small.jpeg"
+      "/images/yupoo/264284337.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -348988,7 +348991,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/068f0fe504/small.jpeg"
   },
   {
     "id": "YUP-264284327",
@@ -348997,14 +349001,14 @@
     "category": "treino",
     "kind": "set",
     "price": 299.9,
-    "image": "https://photo.yupoo.com/james66jersey/fcdfbb98d0/small.jpeg",
+    "image": "/images/yupoo/264284327.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/fcdfbb98d0/small.jpeg"
+      "/images/yupoo/264284327.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349016,7 +349020,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/fcdfbb98d0/small.jpeg"
   },
   {
     "id": "YUP-264284317",
@@ -349025,14 +349030,14 @@
     "category": "treino",
     "kind": "jacket",
     "price": 379.9,
-    "image": "https://photo.yupoo.com/james66jersey/9109cac02e/small.jpeg",
+    "image": "/images/yupoo/264284317.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/9109cac02e/small.jpeg"
+      "/images/yupoo/264284317.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349044,7 +349049,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9109cac02e/small.jpeg"
   },
   {
     "id": "YUP-264284310",
@@ -349053,14 +349059,14 @@
     "category": "outras",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/3cdbc4f6a8/small.jpeg",
+    "image": "/images/yupoo/264284310.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/3cdbc4f6a8/small.jpeg"
+      "/images/yupoo/264284310.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349072,7 +349078,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/3cdbc4f6a8/small.jpeg"
   },
   {
     "id": "YUP-264284302",
@@ -349081,14 +349088,14 @@
     "category": "outras",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/9329d8fa08/small.jpeg",
+    "image": "/images/yupoo/264284302.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/9329d8fa08/small.jpeg"
+      "/images/yupoo/264284302.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349100,7 +349107,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/9329d8fa08/small.jpeg"
   },
   {
     "id": "YUP-264284292",
@@ -349109,14 +349117,14 @@
     "category": "outras",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/6d8936a001/small.jpeg",
+    "image": "/images/yupoo/264284292.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/6d8936a001/small.jpeg"
+      "/images/yupoo/264284292.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349128,7 +349136,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/6d8936a001/small.jpeg"
   },
   {
     "id": "YUP-264284284",
@@ -349137,14 +349146,14 @@
     "category": "europa",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/8dba206eaf/small.jpeg",
+    "image": "/images/yupoo/264284284.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/8dba206eaf/small.jpeg"
+      "/images/yupoo/264284284.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349156,7 +349165,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/8dba206eaf/small.jpeg"
   },
   {
     "id": "YUP-264284275",
@@ -349165,14 +349175,14 @@
     "category": "brasileirao",
     "kind": "player_adidas",
     "price": 209.9,
-    "image": "https://photo.yupoo.com/james66jersey/32053c813a/small.jpeg",
+    "image": "/images/yupoo/264284275.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/32053c813a/small.jpeg"
+      "/images/yupoo/264284275.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349184,7 +349194,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/32053c813a/small.jpeg"
   },
   {
     "id": "YUP-264284268",
@@ -349193,14 +349204,14 @@
     "category": "retro",
     "kind": "retro",
     "price": 199.9,
-    "image": "https://photo.yupoo.com/james66jersey/d7364f3d50/small.png",
+    "image": "/images/yupoo/264284268.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/d7364f3d50/small.png"
+      "/images/yupoo/264284268.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349212,7 +349223,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/d7364f3d50/small.png"
   },
   {
     "id": "YUP-264284257",
@@ -349221,14 +349233,14 @@
     "category": "brasileirao",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/70e2bcdc40/small.jpeg",
+    "image": "/images/yupoo/264284257.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/70e2bcdc40/small.jpeg"
+      "/images/yupoo/264284257.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349240,7 +349252,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/70e2bcdc40/small.jpeg"
   },
   {
     "id": "YUP-264284252",
@@ -349249,14 +349262,14 @@
     "category": "brasileirao",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/43b2c4fbde/small.jpeg",
+    "image": "/images/yupoo/264284252.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/43b2c4fbde/small.jpeg"
+      "/images/yupoo/264284252.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349268,7 +349281,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/43b2c4fbde/small.jpeg"
   },
   {
     "id": "YUP-264284240",
@@ -349277,14 +349291,14 @@
     "category": "brasileirao",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/7e25156744/small.jpeg",
+    "image": "/images/yupoo/264284240.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/7e25156744/small.jpeg"
+      "/images/yupoo/264284240.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349296,7 +349310,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/7e25156744/small.jpeg"
   },
   {
     "id": "YUP-264284232",
@@ -349305,14 +349320,14 @@
     "category": "selecoes",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/46d6f5b8ee/small.jpeg",
+    "image": "/images/yupoo/264284232.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/46d6f5b8ee/small.jpeg"
+      "/images/yupoo/264284232.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349324,7 +349339,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/46d6f5b8ee/small.jpeg"
   },
   {
     "id": "YUP-264284222",
@@ -349333,14 +349349,14 @@
     "category": "outras",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/b5fe06ea48/small.jpeg",
+    "image": "/images/yupoo/264284222.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/b5fe06ea48/small.jpeg"
+      "/images/yupoo/264284222.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349352,7 +349368,8 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/b5fe06ea48/small.jpeg"
   },
   {
     "id": "YUP-264284211",
@@ -349361,14 +349378,14 @@
     "category": "europa",
     "kind": "fan",
     "price": 159.9,
-    "image": "https://photo.yupoo.com/james66jersey/3f955f2c87/small.jpeg",
+    "image": "/images/yupoo/264284211.webp",
     "images": [
-      "https://photo.yupoo.com/james66jersey/3f955f2c87/small.jpeg"
+      "/images/yupoo/264284211.webp"
     ],
     "source": "import_yupoo_publico",
     "importStatus": "capa_catalogo",
     "description": "Produto importado do catálogo do fornecedor. Fotos, tamanho e disponibilidade sujeitos à confirmação.",
-    "imageOrigin": "fornecedor_yupoo",
+    "imageOrigin": "cache_autorizado",
     "sizes": [
       "P",
       "M",
@@ -349380,6 +349397,7 @@
     ],
     "primary": "#ededed",
     "accent": "#2e3936",
-    "badge": ""
+    "badge": "",
+    "sourceImageUrl": "https://photo.yupoo.com/james66jersey/3f955f2c87/small.jpeg"
   }
 ]
